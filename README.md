@@ -5,3 +5,4 @@ List of Java Interview Programs
 2. LinkedList
 3. ImmutableClass
 4. BinarySearch
+5. MergeSort
