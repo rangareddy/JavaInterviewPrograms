@@ -1,4 +1,4 @@
-# JavaInterviewPrograms
+# Java Interview Programs
 List of Java Interview Programs
 
 1. Anagram
