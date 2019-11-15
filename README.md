@@ -1,5 +1,6 @@
 # JavaInterviewPrograms
 List of Java Interview Programs
 
-1. [Anagram] (./Anagram.java)
+1. Anagram
 2. LinkedList
+3. ImmutableClass
