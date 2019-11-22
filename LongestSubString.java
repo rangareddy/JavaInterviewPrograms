@@ -28,8 +28,8 @@ public class LongestSubString {
                 set.add(str.charAt(j));
                 if (set.size() > max) {
                     subStr = set.toString();
+                    max = set.size();
                 }
-                max = Math.max(set.size(), max);
                 j++;
             } else {
                 set.remove(str.charAt(i));
