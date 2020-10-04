@@ -1,16 +1,18 @@
-# Definition:
-Immutable class are the classes, whose object is created once, we cannot modify its content, it means any modification on immutable object will result in another immutable object.
+# Immutable Class
+
+**Definition:**
+Immutable class are the classes, whose object is created once, we cannot modify its content, it means any modification on immutable object 
+will result in another immutable object.
 In Java, String class and all the wrapper classes (like Integer, Boolean, Byte, Short) are immutable. 
 
-## Advantages:
+**Advantages:**
 1. Thread-safe
 2. Caching
 
-## Dis-Advantages:
+**Dis-Advantages:**
 1. Consumes more memory
 
-### Notes While Creating Immutable class:
----------------------------------------------------------------------------------------------
+## Notes While Creating Immutable class:
 1. Declare the class as final so it can’t be extended.
 2. Make all fields private so that direct access is not allowed.
 3. Don’t provide setter methods for variables
@@ -18,8 +20,8 @@ In Java, String class and all the wrapper classes (like Integer, Boolean, Byte, 
 5. Initialize all the fields via a constructor performing deep copy.
 6. Perform cloning of objects in the getter methods to return a copy rather than returning the actual object reference.
 
-### Program:
-
+## ImmutableClassDemo.java
+```java
 import java.io.Serializable;
 import java.util.Date;
 
@@ -71,3 +73,4 @@ public class ImmutableClassDemo {
         System.out.println(i);
     }
 }
+```
