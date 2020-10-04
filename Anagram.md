@@ -1,6 +1,13 @@
-Definition: An anagram is a word or phrase formed by rearranging the letters of a different word or phrase, typically using all the original letters exactly once.
-Example: The word silent can be rearranged into listen.
+# Anagram
 
+**Definition:** An anagram is a word or phrase formed by rearranging the letters of a different word or phrase, 
+typically using all the original letters exactly once.
+    
+**Example:** The word **silent** can be rearranged into **listen**.
+    
+## Anagram.java 
+
+```java
 public class Anagram {
 
     public static void main(String[] args) {
@@ -39,3 +46,4 @@ public class Anagram {
         return value == 0;
     }
 }
+```
