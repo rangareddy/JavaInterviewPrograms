@@ -8,6 +8,20 @@
 
 ![Mergesort](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Merge_sort_algorithm_diagram.svg/600px-Merge_sort_algorithm_diagram.svg.png)
 
+## Merge Sort Complexity
+
+**Time Complexity**
+Best Case Time Complexity: O(n*log n)
+Worst Case Time Complexity: O(n*log n)
+Average Case Time Complexity: O(n*log n)
+
+**Space Complexity**
+Space complexity: O(n).
+
+**Note:** Time complexity of Merge Sort is O(n*Log n) in all the 3 cases (worst, average and best) as merge sort always divides the array in two halves and takes linear time to merge two halves.
+
+### MergeSort.java
+
 ```java
 import java.util.Arrays;
 
