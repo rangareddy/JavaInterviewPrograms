@@ -7,3 +7,4 @@ List of Java Interview Programs
 4. BinarySearch
 5. MergeSort
 6. PrintEvenOddUsingThreads
+7. [Binary Search Tree](https://github.com/rangareddy/JavaInterviewPrograms/blob/master/BinarySearchTree.md)
