@@ -1,4 +1,6 @@
+# Binary Search Tree
 
+```java
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -171,3 +173,4 @@ public class BinarySearchTree {
         tree.levelOrderTraversal();
     }
 }
+```
