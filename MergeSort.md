@@ -11,12 +11,12 @@
 ## Merge Sort Complexity
 
 **Time Complexity**
-Best Case Time Complexity: O(n*log n)
-Worst Case Time Complexity: O(n*log n)
-Average Case Time Complexity: O(n*log n)
+* Best Case Time Complexity: O(n*log n)
+* Worst Case Time Complexity: O(n*log n)
+* Average Case Time Complexity: O(n*log n)
 
 **Space Complexity**
-Space complexity: O(n).
+* Space complexity: O(n).
 
 **Note:** Time complexity of Merge Sort is O(n*Log n) in all the 3 cases (worst, average and best) as merge sort always divides the array in two halves and takes linear time to merge two halves.
 
