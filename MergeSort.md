@@ -1,4 +1,6 @@
+# Merge Sort
 
+```java
 import java.util.Arrays;
 
 /**
@@ -63,3 +65,4 @@ public class MergeSort {
         return result;
     }
 }
+```
