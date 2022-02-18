@@ -36,17 +36,18 @@ class BinaryTree {
     }
 
     private BinaryNode add(BinaryNode node, Integer t) {
+        // if the node is null, create a new node and return it
         if (node == null) {
             return new BinaryNode(t);
         }
+        // if the given value is less than the root node, recur for the left subtree
         if (t < node.value) {
             node.left = add(node.left, t);
-        } else if (t > node.value) {
+        } 
+        // if the given value is more than the root node, recur for the right subtree
+        else if (t > node.value) {
             node.right = add(node.right, t);
-        } else {
-            // value already exists
-            return node;
-        }
+        } 
         return node;
     }
 
