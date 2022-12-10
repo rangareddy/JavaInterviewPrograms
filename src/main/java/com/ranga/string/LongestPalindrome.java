@@ -1,3 +1,4 @@
+package com.ranga.string;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,7 +16,6 @@ public class LongestPalindrome {
             String longestStr = getLongestPalindrome(str);
             System.out.println(longestStr);
         }
-
     }
 
     private static String getLongestPalindrome(String str) {

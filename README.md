@@ -1,11 +1,16 @@
 # Java Interview Programs
-List of Java Interview Programs
 
-1. [Anagram](https://github.com/rangareddy/JavaInterviewPrograms/blob/master/Anagram.md)
-2. [LinkedList](https://github.com/rangareddy/JavaInterviewPrograms/blob/master/SingleLinkedListDemo.md)
-3. [Immutable Class](https://github.com/rangareddy/JavaInterviewPrograms/blob/master/ImmutableClass.md)
-4. BinarySearch
-5. [MergeSort](https://github.com/rangareddy/JavaInterviewPrograms/blob/master/MergeSort.md)
-6. [QuickSort](https://github.com/rangareddy/JavaInterviewPrograms/blob/master/QuickSort.md)
-7. PrintEvenOddUsingThreads
-8. [Binary Search Tree](https://github.com/rangareddy/JavaInterviewPrograms/blob/master/BinarySearchTree.md)
+!["Java Interview Programs"](Java_Interview_Programs.png)
+
+## List of Java Interview Programs
+
+1. [Anagram](./md_files/basic/Anagram.md)
+3. [Immutable Class](./md_files/basic/ImmutableClass.md)
+4. [BinarySearch](./md_files/search/BinarySearch.md)
+5. [BubbleSort](./md_files/sort/BubbleSort.md)
+6. [MergeSort](./md_files/sort/MergeSort.md)
+7. [QuickSort](./md_files/sort/QuickSort.md)
+8. [Binary Search Tree](./md_files/tree/BinarySearchTree.md)
+9. [Fibonacci](./md_files/basic/Fibonaci.md)
+10. [SingleLinkedList](./md_files/collection/SingleLinkedListDemo.md)
+11. PrintEvenOddUsingThreads
