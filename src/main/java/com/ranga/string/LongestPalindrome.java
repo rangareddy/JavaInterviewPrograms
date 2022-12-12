@@ -12,7 +12,7 @@ import java.util.List;
 public class LongestPalindrome {
     public static void main(String[] args) {
         List<String> list = Arrays.asList("BBABCBCAB", "aaa", "12321", "bananas");
-        for(String str : list) {
+        for (String str : list) {
             String longestStr = getLongestPalindrome(str);
             System.out.println(longestStr);
         }
@@ -28,15 +28,15 @@ public class LongestPalindrome {
         for (int i = 0; i < n; i++) {
 
             // get longest palindrome with center of i
-            String palindrome  = intermediatePalindrome(str, i, i);
-            if (palindrome .length() > longest.length()) {
-                longest = palindrome ;
+            String palindrome = intermediatePalindrome(str, i, i);
+            if (palindrome.length() > longest.length()) {
+                longest = palindrome;
             }
 
             // get longest palindrome with center of i, i+1
-            palindrome  = intermediatePalindrome(str, i, i + 1);
-            if (palindrome .length() > longest.length()) {
-                longest = palindrome ;
+            palindrome = intermediatePalindrome(str, i, i + 1);
+            if (palindrome.length() > longest.length()) {
+                longest = palindrome;
             }
         }
         return longest;

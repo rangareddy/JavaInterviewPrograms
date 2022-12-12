@@ -9,9 +9,9 @@ package com.ranga.threads;
 
 class EvenOrOdd implements Runnable {
 
-    private Printer printer;
-    private int max;
-    private boolean isEvenNumber;
+    private final Printer printer;
+    private final int max;
+    private final boolean isEvenNumber;
 
     public EvenOrOdd(Printer printer, int max, boolean isEvenNumber) {
         this.printer = printer;

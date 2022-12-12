@@ -12,7 +12,7 @@ import java.util.Set;
 public class LongestSubString {
     public static void main(String[] args) {
 
-        String words[] = {"abcadbc", "bbbb", "ABDEFGABEF", "GEEKSFORGEEKS"};
+        String[] words = {"abcadbc", "bbbb", "ABDEFGABEF", "GEEKSFORGEEKS"};
         for (String str : words) {
             int len = getLongestSubString(str);
             System.out.println(str + ", " + len);
