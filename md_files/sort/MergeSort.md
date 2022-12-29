@@ -8,29 +8,23 @@
 
 ![Mergesort](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Merge_sort_algorithm_diagram.svg/600px-Merge_sort_algorithm_diagram.svg.png)
 
-## Merge Sort Complexity
+### Time Complexity
 
-**Time Complexity**
-* Best Case Time Complexity: O(n*log n)
-* Worst Case Time Complexity: O(n*log n)
-* Average Case Time Complexity: O(n*log n)
+- Best: O(n*log n)
+- Average: O(n*log n)
+- Worst: O(n*log n)
 
-**Space Complexity**
-* Space complexity: O(n).
+> Time complexity of Merge Sort is O(n*Log n) in all the 3 cases (worst, average and best) as merge sort always divides the array in two halves and takes linear time to merge two halves.
 
-**Note:** Time complexity of Merge Sort is O(n*Log n) in all the 3 cases (worst, average and best) as merge sort always divides the array in two halves and takes linear time to merge two halves.
+### Space Complexity
+
+- O(n)
 
 ### MergeSort.java
 
 ```java
 import java.util.Arrays;
 
-/**
- * User: Ranga Reddy
- * Date: 11/15/2019
- * Time: 5:12 PM
- * Description:
- */
 public class MergeSort {
     public static void main(String[] args) {
         int arr[] = {12, 4, 5, 7, 9, 20, 30, 6, 15};
@@ -66,13 +60,13 @@ public class MergeSort {
 
     private static int[] merge(int[] left, int[] right) {
         int lengthL = left.length;
-        int rightN = right.length;
+        int lengthR = right.length;
 
-        int result[] = new int[lengthL + rightN];
+        int result[] = new int[lengthL + lengthR];
         int k = 0, i = 0, j = 0;
 
-        while (i < lengthL || j < rightN) {
-            if (i < lengthL && j < rightN) {
+        while (i < lengthL || j < lengthR) {
+            if (i < lengthL && j < lengthR) {
                 if (left[i] < right[j]) {
                     result[k++] = left[i++];
                 } else {
@@ -80,7 +74,7 @@ public class MergeSort {
                 }
             } else if (i < lengthL) {
                 result[k++] = left[i++];
-            } else if (j < rightN) {
+            } else if (j < lengthR) {
                 result[k++] = right[j++];
             }
         }

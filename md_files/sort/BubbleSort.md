@@ -11,9 +11,9 @@ Bubble sorting is a sorting algorithm where we check two elements and swap them 
 
 ### Space Complexity
 
-* O(1)
+- O(1)
 
-## BubbleSort.java
+### BubbleSort.java
 
 ```java
 import java.util.Arrays;

@@ -12,9 +12,9 @@ Selection sorting is a sorting algorithm where we select the minimum element fro
 
 ### Space Complexity
 
-* O(1)
+- O(1)
 
-## SelectionSort.java
+### SelectionSort.java
 
 ```java
 package com.ranga.sort;
