@@ -2,12 +2,6 @@ package com.ranga.search;
 
 import java.util.Arrays;
 
-/**
- * User: Ranga Reddy
- * Date: 11/15/2019
- * Time: 5:00 PM
- * Description:
- */
 public class BinarySearch {
     public static void main(String[] args) {
 
@@ -18,16 +12,13 @@ public class BinarySearch {
         Arrays.stream(arr).forEach(val -> System.out.print(val + " "));
         System.out.println();
 
-        int[] elements = {20, 16, 9, 4, 8};
-        for (int element : elements) {
-            int index = binarySearch(arr, element);
-            if (index != -1) {
-                System.out.println(element + " found at index " + index);
-            } else {
-                System.out.println(element + " is not found");
-            }
+        int element = 20;
+        int index = binarySearch(arr, element);
+        if (index != -1) {
+            System.out.println(element + " found at index " + index);
+        } else {
+            System.out.println(element + " is not found");
         }
-
     }
 
     public static int binarySearch(int[] arr, int element) {
