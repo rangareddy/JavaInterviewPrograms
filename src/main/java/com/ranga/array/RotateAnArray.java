@@ -6,12 +6,18 @@ import java.util.Arrays;
  * Utility class demonstrating in-place array rotation using the Reversal Algorithm.
  *
  * <p><b>Algorithm Strategy (3-Step Reversal):</b>
- * Given an array of size {@code n} and right-rotations {@code k}:
  * <ol>
- *   <li>Reverse the entire array {@code [0, n - 1]}</li>
- *   <li>Reverse the first {@code k} elements {@code [0, k - 1]}</li>
- *   <li>Reverse the remaining {@code n - k} elements {@code [k, n - 1]}</li>
+ *   <li>Normalize {@code k}: {@code k = k % n}, and add {@code n} if it is negative, so that any (even negative or very large) {@code k} becomes a right rotation in {@code [0, n - 1]}. If {@code k} is 0 nothing needs to be done.</li>
+ *   <li>Reverse the entire array {@code [0, n - 1]}. The last {@code k} elements are now at the front, but in reverse order.</li>
+ *   <li>Reverse the first {@code k} elements {@code [0, k - 1]} to restore their original order.</li>
+ *   <li>Reverse the remaining {@code n - k} elements {@code [k, n - 1]} to restore their original order.</li>
  * </ol>
+ *
+ * <p><b>Example walkthrough</b>
+ * <ul>
+ *   <li>For {@code [1, 2, 3, 4, 5, 6, 7]} and {@code k = 3}:</li>
+ *   <li>Reverse all: {@code [7, 6, 5, 4, 3, 2, 1]}. Reverse the first 3: {@code [5, 6, 7, 4, 3, 2, 1]}. Reverse the last 4: {@code [5, 6, 7, 1, 2, 3, 4]}.</li>
+ * </ul>
  *
  * <p><b>Complexity Analysis:</b>
  * <ul>

@@ -2,43 +2,85 @@
 
 Utility class to sort an integer array using the Merge Sort algorithm.
 
-### Algorithm Strategy (Divide and Conquer)
+## Algorithm Strategy (Divide and Conquer)
 
-1. **Divide:** Split the array into two halves recursively until base cases of size 0 or 1 are reached.
-2. **Conquer:** Sort each half recursively.
-3. **Combine:** Merge the two sorted sub-arrays into a single sorted output array.
+1. **Base case:** an array with 0 or 1 elements is already sorted.
+2. **Divide:** split the array at the middle into a left and a right half and recursively sort each half.
+3. **Combine:** merge the two sorted halves by comparing their front elements, copying the smaller one into the output, until both halves are consumed.
+4. Every element is copied once per recursion level, and there are `log n` levels.
 
-### Complexity Analysis
+## Example walkthrough
+
+- For `[3, 4, 1, 9]`:
+- Divide into `[3, 4]` and `[1, 9]` (each already sorted after further splitting).
+- Merge `[3, 4]` and `[1, 9]`: take 1, then 3, then 4, then 9, giving `[1, 3, 4, 9]`.
+
+## Complexity Analysis
 
 - **Time Complexity:** `O(n log n)` across all cases (Best, Average, Worst) due to consistent recursive tree splitting and linear merging work.
 - **Space Complexity:** `O(n)` auxiliary space for maintaining temporary sub-arrays and the recursive call stack depth of `O(log n)`.
+
+## Approaches
+
+The same problem can be solved in several ways. They are listed from the simplest to the most efficient.
+
+### Approach 1: Library Sort
+
+Use `Arrays.sort`, which is a tuned Dual-Pivot Quicksort for primitives (TimSort, a merge-sort variant, for objects). In real code this is the right answer; the exercise is about implementing the algorithm yourself.
+
+```java
+public static int[] sortLibrary(int[] arr) {
+    int[] copy = arr.clone();
+    Arrays.sort(copy);
+    return copy;
+}
+```
+
+- **Time Complexity:** O(n log n)
+- **Space Complexity:** O(n) for the copy
+
+### Approach 2: Merge Sort with `Arrays.copyOfRange`
+
+Split with `copyOfRange`, sort both halves recursively and merge them with two indices. This is the version implemented in the repository.
+
+```java
+public static int[] mergeSort(int[] arr) {
+    if (arr.length <= 1) return arr;
+    int mid = arr.length / 2;
+    int[] left = mergeSort(Arrays.copyOfRange(arr, 0, mid));
+    int[] right = mergeSort(Arrays.copyOfRange(arr, mid, arr.length));
+
+    int[] merged = new int[arr.length];
+    int i = 0, j = 0, k = 0;
+    while (i < left.length && j < right.length) {
+        merged[k++] = (left[i] <= right[j]) ? left[i++] : right[j++];
+    }
+    while (i < left.length) merged[k++] = left[i++];
+    while (j < right.length) merged[k++] = right[j++];
+    return merged;
+}
+```
+
+- **Time Complexity:** O(n log n)
+- **Space Complexity:** O(n)
+
+### Comparison
+
+| # | Approach | Time | Space |
+|---|----------|------|-------|
+| 1 | Library Sort | O(n log n) | O(n) for the copy |
+| 2 | Merge Sort with `Arrays.copyOfRange` | O(n log n) | O(n) |
+
+### Optimized Solution
+
+The optimized variants (one shared buffer, bottom-up iteration) are described on the [Merge Sort](./MergeSort.md) page.
+
+## Source Code
 
 ### SortMergeExample.java
 
 ```java
 import java.util.Arrays;
-
-/**
- * Utility class to sort an integer array using the Merge Sort algorithm.
- *
- * <p><b>Algorithm Strategy (Divide and Conquer):</b>
- * <ol>
- *   <li><b>Divide:</b> Split the array into two halves recursively until base cases
- *       of size 0 or 1 are reached.</li>
- *   <li><b>Conquer:</b> Sort each half recursively.</li>
- *   <li><b>Combine:</b> Merge the two sorted sub-arrays into a single sorted output array.</li>
- * </ol>
- *
- * <p><b>Complexity Analysis:</b>
- * <ul>
- *   <li><b>Time Complexity:</b> {@code O(n log n)} across all cases (Best, Average, Worst)
- *       due to consistent recursive tree splitting and linear merging work.</li>
- *   <li><b>Space Complexity:</b> {@code O(n)} auxiliary space for maintaining temporary sub-arrays
- *       and the recursive call stack depth of {@code O(log n)}.</li>
- * </ul>
- *
- * @author Ranga Reddy
- */
 
 public class SortMergeExample {
     public static void main(String[] args) {

@@ -2,58 +2,133 @@
 
 Utility class to find the majority element in an array using Boyer-Moore Voting Algorithm.
 
-### Algorithm Strategy (Boyer-Moore Voting)
+## Algorithm Strategy (Boyer-Moore Voting)
 
-1. Maintain a `candidate` element and a `count`.
-2. Iterate through the array. When `count` reaches 0, choose the current element as the new candidate.
-3. If the current element matches the candidate, increment `count`; otherwise, decrement `count`.
-4. Due to the definition of a majority element (appearing &gt; n/2 times), the true majority element will always survive as the final candidate.
+1. A majority element appears more than `n / 2` times, so it outnumbers all other elements combined.
+2. Maintain a `candidate` element and a `count`, both starting from the first element.
+3. Iterate through the array. When `count` is 0, adopt the current element as the new candidate.
+4. If the current element equals the candidate, increment `count`; otherwise decrement it (a pair of different elements cancels out).
+5. Because the majority element has more occurrences than all the others together, it cannot be fully cancelled and is the final candidate. (This assumes a majority element exists; otherwise verify with a second counting pass.)
 
-### Complexity Analysis
+## Example walkthrough
+
+- For `[2, 2, 1, 2, 1, 1, 2]`:
+- candidate/count after each element: 2/1, 2/2, 2/1, 2/2, 2/1, 2/0, then count is 0 so the last element 2 becomes the candidate with count 1.
+- Result: `2`.
+
+## Complexity Analysis
 
 - **Time Complexity:** `O(n)` — Single linear pass over the array.
 - **Space Complexity:** `O(1)` — Constant extra space used for pointers and counters.
+
+## Approaches
+
+The same problem can be solved in several ways. They are listed from the simplest to the most efficient.
+
+### Approach 1: Brute Force (Count Every Element)
+
+For every element count its occurrences with an inner loop; the first one that appears more than `n / 2` times is the majority element.
+
+```java
+public static int majorityBrute(int[] nums) {
+    for (int num : nums) {
+        int count = 0;
+        for (int other : nums) {
+            if (other == num) count++;
+        }
+        if (count > nums.length / 2) return num;
+    }
+    throw new IllegalArgumentException("No majority element");
+}
+```
+
+- **Time Complexity:** O(n^2)
+- **Space Complexity:** O(1)
+
+### Approach 2: Hash Map of Counts
+
+Count the occurrences of each value in a map and return the value whose count exceeds `n / 2`.
+
+```java
+public static int majorityMap(int[] nums) {
+    Map<Integer, Integer> counts = new HashMap<>();
+    for (int num : nums) {
+        int count = counts.merge(num, 1, Integer::sum);
+        if (count > nums.length / 2) return num;
+    }
+    throw new IllegalArgumentException("No majority element");
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 3: Sorting
+
+If a value appears more than `n / 2` times, then after sorting it must occupy the middle position `n / 2`.
+
+```java
+public static int majoritySort(int[] nums) {
+    int[] copy = nums.clone();
+    Arrays.sort(copy);
+    return copy[copy.length / 2];
+}
+```
+
+- **Time Complexity:** O(n log n)
+- **Space Complexity:** O(n) (O(1) if the input may be modified)
+
+### Approach 4: Boyer-Moore Voting (Optimized)
+
+Pair off different elements; since the majority element outnumbers all others combined, it is the one left. The version implemented in the repository.
+
+```java
+public static int majorityElement(int[] nums) {
+    int count = 0;
+    int candidate = nums[0];
+    for (int num : nums) {
+        if (count == 0) candidate = num;
+        count += (num == candidate) ? 1 : -1;
+    }
+    return candidate;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(1)
+
+### Comparison
+
+| # | Approach | Time | Space |
+|---|----------|------|-------|
+| 1 | Brute Force (Count Every Element) | O(n^2) | O(1) |
+| 2 | Hash Map of Counts | O(n) | O(n) |
+| 3 | Sorting | O(n log n) | O(n) (O(1) if the input may be modified) |
+| 4 | Boyer-Moore Voting (Optimized) | O(n) | O(1) |
+
+### Optimized Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+## Source Code
 
 ### MajorityElement.java
 
 ```java
 import java.util.Arrays;
 
-/**
- * Utility class to find the majority element in an array using
- * Boyer-Moore Voting Algorithm.
- *
- * <p><b>Algorithm Strategy (Boyer-Moore Voting):</b>
- * <ol>
- *   <li>Maintain a {@code candidate} element and a {@code count}.</li>
- *   <li>Iterate through the array. When {@code count} reaches 0, choose the
- *       current element as the new candidate.</li>
- *   <li>If the current element matches the candidate, increment {@code count};
- *       otherwise, decrement {@code count}.</li>
- *   <li>Due to the definition of a majority element (appearing &gt; n/2 times),
- *       the true majority element will always survive as the final candidate.</li>
- * </ol>
- *
- * <p><b>Complexity Analysis:</b>
- * <ul>
- *   <li><b>Time Complexity:</b> {@code O(n)} — Single linear pass over the array.</li>
- *   <li><b>Space Complexity:</b> {@code O(1)} — Constant extra space used for pointers and counters.</li>
- * </ul>
- *
- * @author Ranga Reddy
- */
 public class MajorityElement {
 
     public static void main(String[] args) {
         int[] input1 = {3, 2, 3};
-        System.out.println("Input: " + Arrays.toString(input1));
-        System.out.println("Output: " + majorityElement(input1)); // Output: 3
+        System.out.println("Input  : " + Arrays.toString(input1));
+        System.out.println("Output : " + majorityElement(input1)); // Output: 3
 
         System.out.println();
 
         int[] input2 = {2, 2, 1, 2, 1, 1, 2};
-        System.out.println("Input: " + Arrays.toString(input2));
-        System.out.println("Output: " + majorityElement(input2)); // Output: 2
+        System.out.println("Input  : " + Arrays.toString(input2));
+        System.out.println("Output : " + majorityElement(input2)); // Output: 2
     }
 
     /**

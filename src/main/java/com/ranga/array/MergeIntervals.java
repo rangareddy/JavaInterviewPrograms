@@ -8,15 +8,23 @@ import java.util.List;
 /**
  * Utility class to merge overlapping interval ranges.
  *
- * <p><b>Algorithm Strategy:</b>
+ * <p><b>Algorithm Strategy (Sort and Sweep):</b>
  * <ol>
- *   <li>Sort all intervals primarily by their start times in ascending order.</li>
- *   <li>Iterate through the sorted intervals while maintaining a dynamic reference to
- *       the current interval being extended.</li>
- *   <li>If {@code next.start <= current.end}, an overlap exists; merge them by updating
- *       {@code current.end = max(current.end, next.end)}.</li>
- *   <li>Otherwise, add the new non-overlapping interval to the output list and advance the pointer.</li>
+ *   <li>Sort all intervals by their start value in ascending order, so overlapping intervals become neighbors.</li>
+ *   <li>Copy the first interval into the output list and treat it as the {@code current} interval.</li>
+ *   <li>For every following interval, compare its start with the end of {@code current}.</li>
+ *   <li>If {@code next.start <= current.end} they overlap: extend the current interval with {@code current.end = max(current.end, next.end)}.</li>
+ *   <li>Otherwise there is a gap: start a new current interval from {@code next} and add it to the output list.</li>
+ *   <li>After the last interval, the list holds the minimal set of non-overlapping intervals.</li>
  * </ol>
+ *
+ * <p><b>Example walkthrough</b>
+ * <ul>
+ *   <li>For {@code [[1,3],[8,10],[2,6],[15,18]]}:</li>
+ *   <li>Sorted: {@code [[1,3],[2,6],[8,10],[15,18]]}.</li>
+ *   <li>{@code [1,3]} and {@code [2,6]} overlap and become {@code [1,6]}; {@code [8,10]} and {@code [15,18]} start after the previous end.</li>
+ *   <li>Result: {@code [[1,6],[8,10],[15,18]]}.</li>
+ * </ul>
  *
  * <p><b>Complexity Analysis:</b>
  * <ul>

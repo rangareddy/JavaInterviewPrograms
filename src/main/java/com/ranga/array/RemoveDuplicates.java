@@ -6,9 +6,19 @@ import java.util.Arrays;
  * Utility class to remove duplicates from a sorted array in-place.
  *
  * <p><b>Algorithm Strategy (Two-Pointer Technique):</b>
+ * <ol>
+ *   <li>The input is sorted, so equal values are adjacent.</li>
+ *   <li>Use a slow pointer {@code i} that marks the last unique element written so far (initially index 0) and a fast pointer {@code j} that scans from index 1.</li>
+ *   <li>If {@code arr[j] != arr[i]}, a new unique value was found: advance {@code i} and copy {@code arr[j]} into {@code arr[i]}.</li>
+ *   <li>If they are equal, just move {@code j} on and skip the duplicate.</li>
+ *   <li>After the scan the first {@code i + 1} positions hold the unique values; return a trimmed copy using {@code Arrays.copyOf(arr, i + 1)}.</li>
+ * </ol>
+ *
+ * <p><b>Example walkthrough</b>
  * <ul>
- *   <li>{@code i} (Slow pointer): Tracks the boundary of unique elements found so far.</li>
- *   <li>{@code j} (Fast pointer): Scans ahead through the array to find new unique elements.</li>
+ *   <li>For {@code [1, 1, 2, 2, 3]}:</li>
+ *   <li>{@code j = 2}: value 2 differs from 1, so {@code i = 1} and {@code arr[1] = 2}. {@code j = 4}: value 3 differs from 2, so {@code i = 2} and {@code arr[2] = 3}.</li>
+ *   <li>Return the first 3 elements: {@code [1, 2, 3]}.</li>
  * </ul>
  *
  * <p><b>Complexity Analysis:</b>

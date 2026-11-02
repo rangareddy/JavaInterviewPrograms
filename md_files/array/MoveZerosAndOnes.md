@@ -2,42 +2,106 @@
 
 Utility class to sort an array containing 0s, 1s, and 2s using Dijkstra's Dutch National Flag algorithm.
 
-### Algorithm Strategy (Three-Way Partitioning)
+## Algorithm Strategy (Dutch National Flag, Three-Way Partitioning)
 
-- `low`: Boundary for 0s (everything strictly before `low` is 0)
-- `mid`: Current element under evaluation
-- `high`: Boundary for 2s (everything strictly after `high` is 2)
+1. Maintain three pointers: `low` (everything before it is 0), `mid` (the element being examined) and `high` (everything after it is 2). The region between `low` and `mid` holds 1s and `[mid, high]` is still unknown.
+2. Loop while `mid <= high` and look at `arr[mid]`.
+3. If it is 0, swap it with `arr[low]`, then advance both `low` and `mid`.
+4. If it is 1, it is already in the middle region, so just advance `mid`.
+5. If it is 2, swap it with `arr[high]` and decrement `high`. Do not advance `mid`, because the element swapped in from `high` has not been examined yet.
+6. Any other value throws an `IllegalArgumentException`. When `mid` passes `high` the array is sorted in a single pass.
 
-### Complexity Analysis
+## Example walkthrough
+
+- For `[2, 0, 1]`:
+- `mid = 0`: value 2, swap with `high` gives `[1, 0, 2]`, `high = 1`.
+- `mid = 0`: value 1, advance `mid`. `mid = 1`: value 0, swap with `low` gives `[0, 1, 2]`.
+- `mid` passes `high`: sorted.
+
+## Complexity Analysis
 
 - **Time Complexity:** `O(n)` — Single pass linear scan where `n` is the array length.
 - **Space Complexity:** `O(1)` — Operates entirely in-place with zero additional heap memory allocation.
+
+## Approaches
+
+The same problem can be solved in several ways. They are listed from the simplest to the most efficient.
+
+### Approach 1: Library Sort
+
+Simply sort the array. Correct for any values, but ignores the fact that only three distinct values exist.
+
+```java
+public static void sortColorsLibrary(int[] arr) {
+    Arrays.sort(arr);
+}
+```
+
+- **Time Complexity:** O(n log n)
+- **Space Complexity:** O(1) to O(log n)
+
+### Approach 2: Counting Sort (Two Passes)
+
+Pass 1: count how many 0s, 1s and 2s there are. Pass 2: overwrite the array with that many 0s, then 1s, then 2s.
+
+```java
+public static void sortColorsCounting(int[] arr) {
+    int[] count = new int[3];
+    for (int v : arr) count[v]++;
+
+    int index = 0;
+    for (int value = 0; value < 3; value++) {
+        for (int i = 0; i < count[value]; i++) {
+            arr[index++] = value;
+        }
+    }
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(1)
+
+### Approach 3: Dutch National Flag (Optimized, One Pass)
+
+Three pointers partition the array in a single pass using swaps only: 0s go to the front, 2s to the back and 1s stay in the middle. Implemented in the repository.
+
+```java
+public static void sortColors(int[] arr) {
+    int low = 0, mid = 0, high = arr.length - 1;
+    while (mid <= high) {
+        if (arr[mid] == 0) {
+            swap(arr, low++, mid++);
+        } else if (arr[mid] == 1) {
+            mid++;
+        } else {
+            swap(arr, mid, high--);
+        }
+    }
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(1)
+
+### Comparison
+
+| # | Approach | Time | Space |
+|---|----------|------|-------|
+| 1 | Library Sort | O(n log n) | O(1) to O(log n) |
+| 2 | Counting Sort (Two Passes) | O(n) | O(1) |
+| 3 | Dutch National Flag (Optimized, One Pass) | O(n) | O(1) |
+
+### Optimized Solution
+
+The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+
+## Source Code
 
 ### MoveZerosAndOnes.java
 
 ```java
 import java.util.Arrays;
 
-/**
- * Utility class to sort an array containing 0s, 1s, and 2s using Dijkstra's
- * Dutch National Flag algorithm.
- *
- * <p><b>Algorithm Strategy (Three-Way Partitioning):</b>
- * Maintains three pointers:
- * <ul>
- *   <li>{@code low}: Boundary for 0s (everything strictly before {@code low} is 0)</li>
- *   <li>{@code mid}: Current element under evaluation</li>
- *   <li>{@code high}: Boundary for 2s (everything strictly after {@code high} is 2)</li>
- * </ul>
- *
- * <p><b>Complexity Analysis:</b>
- * <ul>
- *   <li><b>Time Complexity:</b> {@code O(n)} — Single pass linear scan where {@code n} is the array length.</li>
- *   <li><b>Space Complexity:</b> {@code O(1)} — Operates entirely in-place with zero additional heap memory allocation.</li>
- * </ul>
- *
- * @author Ranga Reddy
- */
 public class MoveZerosAndOnes {
 
     public static void main(String[] args) {

@@ -2,17 +2,135 @@
 
 Utility class to solve the Two Sum problem using a Hash Map.
 
-### Algorithm Strategy (Single-Pass Hash Map)
+## Algorithm Strategy (Single-Pass Hash Map)
 
-1. Iterate through the array once.
-2. For each element, calculate its complement: `complement = target - nums[i]`.
-3. Check if the complement already exists in the map. If it does, we found our pair.
-4. Otherwise, store the current element and its index in the map and continue.
+1. Create an empty `Map<Integer, Integer>` that maps a value to the index where it was seen.
+2. Iterate through the array once. For the element `nums[i]` compute its complement: `complement = target - nums[i]`.
+3. If the complement is already in the map, the earlier index and `i` form the answer; return them immediately.
+4. Otherwise store `nums[i] -> i` in the map so later elements can find it, and continue.
+5. If the loop finishes without a match, return `{-1, -1}`. Storing the value only after the lookup guarantees the same element is never used twice.
 
-### Complexity Analysis
+## Example walkthrough
+
+- For `nums = [2, 7, 11, 15]` and `target = 9`:
+- `i = 0`: value 2, complement 7 is not in the map, store `2 -> 0`.
+- `i = 1`: value 7, complement 2 is in the map at index 0, return `[0, 1]`.
+
+## Complexity Analysis
 
 - **Time Complexity:** `O(n)` — Single linear pass over the array with `O(1)` average map lookups.
 - **Space Complexity:** `O(n)` — Space required to store up to `n` elements in the hash map.
+
+## Approaches
+
+The same problem can be solved in several ways. They are listed from the simplest to the most efficient.
+
+### Approach 1: Brute Force (Nested Loops)
+
+Check every pair of indices `(i, j)` with `i < j` and return the first pair whose sum equals the target.
+
+```java
+public static int[] twoSumBrute(int[] nums, int target) {
+    for (int i = 0; i < nums.length; i++) {
+        for (int j = i + 1; j < nums.length; j++) {
+            if (nums[i] + nums[j] == target) {
+                return new int[]{i, j};
+            }
+        }
+    }
+    return new int[]{-1, -1};
+}
+```
+
+- **Time Complexity:** O(n^2)
+- **Space Complexity:** O(1)
+
+### Approach 2: Sort + Two Pointers
+
+Sort the indices by value, then move a left and a right pointer towards each other: if the sum is too small move the left pointer, if too large move the right pointer. Sorting loses the original positions, so the indices (not the values) are sorted.
+
+```java
+public static int[] twoSumSorted(int[] nums, int target) {
+    Integer[] idx = new Integer[nums.length];
+    for (int i = 0; i < idx.length; i++) idx[i] = i;
+    Arrays.sort(idx, Comparator.comparingInt(i -> nums[i]));
+
+    int left = 0, right = nums.length - 1;
+    while (left < right) {
+        int sum = nums[idx[left]] + nums[idx[right]];
+        if (sum == target) {
+            return new int[]{Math.min(idx[left], idx[right]), Math.max(idx[left], idx[right])};
+        } else if (sum < target) {
+            left++;
+        } else {
+            right--;
+        }
+    }
+    return new int[]{-1, -1};
+}
+```
+
+- **Time Complexity:** O(n log n)
+- **Space Complexity:** O(n)
+
+### Approach 3: Two-Pass Hash Map
+
+First pass: store every `value -> index` in a map. Second pass: for each element look up its complement and make sure it is not the same element.
+
+```java
+public static int[] twoSumTwoPass(int[] nums, int target) {
+    Map<Integer, Integer> map = new HashMap<>();
+    for (int i = 0; i < nums.length; i++) {
+        map.put(nums[i], i);
+    }
+    for (int i = 0; i < nums.length; i++) {
+        Integer j = map.get(target - nums[i]);
+        if (j != null && j != i) {
+            return new int[]{i, j};
+        }
+    }
+    return new int[]{-1, -1};
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 4: Single-Pass Hash Map (Optimized)
+
+Look up the complement while building the map, so each element is visited once and the same element can never be used twice. This is the version implemented in the repository.
+
+```java
+public static int[] twoSum(int[] nums, int target) {
+    Map<Integer, Integer> valueToIndex = new HashMap<>();
+    for (int i = 0; i < nums.length; i++) {
+        Integer j = valueToIndex.get(target - nums[i]);
+        if (j != null) {
+            return new int[]{j, i};
+        }
+        valueToIndex.put(nums[i], i);
+    }
+    return new int[]{-1, -1};
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Comparison
+
+| # | Approach | Time | Space |
+|---|----------|------|-------|
+| 1 | Brute Force (Nested Loops) | O(n^2) | O(1) |
+| 2 | Sort + Two Pointers | O(n log n) | O(n) |
+| 3 | Two-Pass Hash Map | O(n) | O(n) |
+| 4 | Single-Pass Hash Map (Optimized) | O(n) | O(n) |
+
+### Optimized Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+## Source Code
 
 ### TwoSum.java
 
@@ -21,25 +139,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Utility class to solve the Two Sum problem using a Hash Map.
- *
- * <p><b>Algorithm Strategy (Single-Pass Hash Map):</b>
- * <ol>
- *   <li>Iterate through the array once.</li>
- *   <li>For each element, calculate its complement: {@code complement = target - nums[i]}.</li>
- *   <li>Check if the complement already exists in the map. If it does, we found our pair.</li>
- *   <li>Otherwise, store the current element and its index in the map and continue.</li>
- * </ol>
- *
- * <p><b>Complexity Analysis:</b>
- * <ul>
- *   <li><b>Time Complexity:</b> {@code O(n)} — Single linear pass over the array with {@code O(1)} average map lookups.</li>
- *   <li><b>Space Complexity:</b> {@code O(n)} — Space required to store up to {@code n} elements in the hash map.</li>
- * </ul>
- *
- * @author Ranga Reddy
- */
 public class TwoSum {
 
     public static void main(String[] args) {

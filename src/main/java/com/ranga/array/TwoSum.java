@@ -9,11 +9,19 @@ import java.util.Map;
  *
  * <p><b>Algorithm Strategy (Single-Pass Hash Map):</b>
  * <ol>
- *   <li>Iterate through the array once.</li>
- *   <li>For each element, calculate its complement: {@code complement = target - nums[i]}.</li>
- *   <li>Check if the complement already exists in the map. If it does, we found our pair.</li>
- *   <li>Otherwise, store the current element and its index in the map and continue.</li>
+ *   <li>Create an empty {@code Map<Integer, Integer>} that maps a value to the index where it was seen.</li>
+ *   <li>Iterate through the array once. For the element {@code nums[i]} compute its complement: {@code complement = target - nums[i]}.</li>
+ *   <li>If the complement is already in the map, the earlier index and {@code i} form the answer; return them immediately.</li>
+ *   <li>Otherwise store {@code nums[i] -> i} in the map so later elements can find it, and continue.</li>
+ *   <li>If the loop finishes without a match, return {@code {-1, -1}}. Storing the value only after the lookup guarantees the same element is never used twice.</li>
  * </ol>
+ *
+ * <p><b>Example walkthrough</b>
+ * <ul>
+ *   <li>For {@code nums = [2, 7, 11, 15]} and {@code target = 9}:</li>
+ *   <li>{@code i = 0}: value 2, complement 7 is not in the map, store {@code 2 -> 0}.</li>
+ *   <li>{@code i = 1}: value 7, complement 2 is in the map at index 0, return {@code [0, 1]}.</li>
+ * </ul>
  *
  * <p><b>Complexity Analysis:</b>
  * <ul>
