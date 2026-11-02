@@ -64,16 +64,112 @@ public static int[] mergeSort(int[] arr) {
 - **Time Complexity:** O(n log n)
 - **Space Complexity:** O(n)
 
+### Approach 3: Bottom-Up (Iterative)
+
+Start with sorted runs of length 1 and merge neighbouring runs, doubling the run length each round. No recursion, so no stack usage.
+
+```java
+public static int[] mergeSortBottomUp(int[] arr) {
+    int n = arr.length;
+    int[] src = arr.clone(), dst = new int[n];
+    for (int width = 1; width < n; width *= 2) {
+        for (int lo = 0; lo < n; lo += 2 * width) {
+            int mid = Math.min(lo + width, n), hi = Math.min(lo + 2 * width, n);
+            int i = lo, j = mid, k = lo;
+            while (i < mid && j < hi) dst[k++] = (src[i] <= src[j]) ? src[i++] : src[j++];
+            while (i < mid) dst[k++] = src[i++];
+            while (j < hi) dst[k++] = src[j++];
+        }
+        int[] temp = src; src = dst; dst = temp;
+    }
+    return src;
+}
+```
+
+- **Time Complexity:** O(n log n)
+- **Space Complexity:** O(n)
+
+### Approach 4: Merge Sort with an Insertion-Sort Cutoff
+
+Small ranges are sorted faster by insertion sort than by further recursion. Switching to insertion sort for ranges of at most 16 elements removes most of the recursive calls; libraries such as TimSort use the same idea.
+
+```java
+public static int[] mergeSortCutoff(int[] arr) {
+    int[] result = arr.clone();
+    sortCutoff(result, new int[result.length], 0, result.length - 1);
+    return result;
+}
+
+private static void sortCutoff(int[] a, int[] buffer, int low, int high) {
+    if (high - low < 16) {                            // insertion sort for small ranges
+        for (int i = low + 1; i <= high; i++) {
+            int value = a[i], j = i - 1;
+            while (j >= low && a[j] > value) { a[j + 1] = a[j]; j--; }
+            a[j + 1] = value;
+        }
+        return;
+    }
+    int mid = low + (high - low) / 2;
+    sortCutoff(a, buffer, low, mid);
+    sortCutoff(a, buffer, mid + 1, high);
+    System.arraycopy(a, low, buffer, low, high - low + 1);
+    int i = low, j = mid + 1;
+    for (int k = low; k <= high; k++) {
+        if (i > mid) a[k] = buffer[j++];
+        else if (j > high) a[k] = buffer[i++];
+        else if (buffer[j] < buffer[i]) a[k] = buffer[j++];
+        else a[k] = buffer[i++];
+    }
+}
+```
+
+- **Time Complexity:** O(n log n)
+- **Space Complexity:** O(n)
+
+### Approach 5: Top-Down with One Shared Buffer (Optimized)
+
+Allocate a single auxiliary array once and merge index ranges instead of creating arrays at every level of the recursion. Skipping the merge when the two halves are already in order makes sorted input linear.
+
+```java
+public static int[] mergeSortBuffer(int[] arr) {
+    int[] result = arr.clone();
+    sort(result, new int[result.length], 0, result.length - 1);
+    return result;
+}
+
+private static void sort(int[] a, int[] buffer, int low, int high) {
+    if (low >= high) return;
+    int mid = low + (high - low) / 2;
+    sort(a, buffer, low, mid);
+    sort(a, buffer, mid + 1, high);
+    if (a[mid] <= a[mid + 1]) return;                 // already in order
+    System.arraycopy(a, low, buffer, low, high - low + 1);
+    int i = low, j = mid + 1;
+    for (int k = low; k <= high; k++) {
+        if (i > mid) a[k] = buffer[j++];
+        else if (j > high) a[k] = buffer[i++];
+        else if (buffer[j] < buffer[i]) a[k] = buffer[j++];
+        else a[k] = buffer[i++];
+    }
+}
+```
+
+- **Time Complexity:** O(n log n)
+- **Space Complexity:** O(n) buffer + O(log n) stack
+
 ### Comparison
 
 | # | Approach | Time | Space |
 |---|----------|------|-------|
 | 1 | Library Sort | O(n log n) | O(n) for the copy |
 | 2 | Merge Sort with `Arrays.copyOfRange` | O(n log n) | O(n) |
+| 3 | Bottom-Up (Iterative) | O(n log n) | O(n) |
+| 4 | Merge Sort with an Insertion-Sort Cutoff | O(n log n) | O(n) |
+| 5 | Top-Down with One Shared Buffer (Optimized) | O(n log n) | O(n) buffer + O(log n) stack |
 
 ### Optimized Solution
 
-The optimized variants (one shared buffer, bottom-up iteration) are described on the [Merge Sort](./MergeSort.md) page.
+The optimized solution is Approach 5 above. The version implemented in this repository is Approach 2.
 
 ## Source Code
 

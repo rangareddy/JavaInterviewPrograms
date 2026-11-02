@@ -40,7 +40,76 @@ public static boolean canAttendMeetingsBrute(int[][] intervals) {
 - **Time Complexity:** O(n^2)
 - **Space Complexity:** O(1)
 
-### Approach 2: Sort and Compare Neighbours (Optimized)
+### Approach 2: Online Check with a TreeMap
+
+Insert the meetings one by one into a `TreeMap` keyed by start time. A new meeting conflicts only with the closest earlier meeting (if it ends after the new start) or the closest later meeting (if it starts before the new end). Works when meetings arrive one at a time.
+
+```java
+public static boolean canAttendMeetingsTreeMap(int[][] intervals) {
+    TreeMap<Integer, Integer> booked = new TreeMap<>();      // start -> end
+    for (int[] interval : intervals) {
+        Map.Entry<Integer, Integer> before = booked.floorEntry(interval[0]);
+        Map.Entry<Integer, Integer> after = booked.ceilingEntry(interval[0]);
+        if (before != null && before.getValue() > interval[0]) return false;
+        if (after != null && after.getKey() < interval[1]) return false;
+        booked.put(interval[0], interval[1]);
+    }
+    return true;
+}
+```
+
+- **Time Complexity:** O(n log n)
+- **Space Complexity:** O(n)
+
+### Approach 3: Difference Array over a Bounded Time Range
+
+If the times are small non-negative integers (for example minutes of a day), mark `+1` at every start and `-1` at every end in an array and take prefix sums; a value above 1 means two meetings overlap. Linear time, but needs memory proportional to the largest time.
+
+```java
+public static boolean canAttendMeetingsDifference(int[][] intervals) {
+    int maxTime = 0;
+    for (int[] interval : intervals) maxTime = Math.max(maxTime, interval[1]);
+    int[] diff = new int[maxTime + 2];
+    for (int[] interval : intervals) {
+        diff[interval[0]]++;
+        diff[interval[1]]--;
+    }
+    int running = 0;
+    for (int change : diff) {
+        running += change;
+        if (running > 1) return false;
+    }
+    return true;
+}
+```
+
+- **Time Complexity:** O(n + T) where T is the largest time
+- **Space Complexity:** O(T)
+
+### Approach 4: Sweep Line over Events
+
+Turn every meeting into a +1 event at its start and a -1 event at its end and process the events in time order. If more than one meeting is ever running at the same time, the person cannot attend all of them. Events at the same time are summed first, so a meeting ending when the next one starts is fine.
+
+```java
+public static boolean canAttendMeetingsSweep(int[][] intervals) {
+    TreeMap<Integer, Integer> delta = new TreeMap<>();
+    for (int[] interval : intervals) {
+        delta.merge(interval[0], 1, Integer::sum);
+        delta.merge(interval[1], -1, Integer::sum);
+    }
+    int running = 0;
+    for (int change : delta.values()) {
+        running += change;
+        if (running > 1) return false;
+    }
+    return true;
+}
+```
+
+- **Time Complexity:** O(n log n)
+- **Space Complexity:** O(n)
+
+### Approach 5: Sort and Compare Neighbours (Optimized)
 
 After sorting by start time only neighbouring meetings can overlap. This is the version implemented in the repository.
 
@@ -63,11 +132,14 @@ public static boolean canAttendMeetings(int[][] intervals) {
 | # | Approach | Time | Space |
 |---|----------|------|-------|
 | 1 | Brute Force (Compare Every Pair) | O(n^2) | O(1) |
-| 2 | Sort and Compare Neighbours (Optimized) | O(n log n) | O(1) besides the sort |
+| 2 | Online Check with a TreeMap | O(n log n) | O(n) |
+| 3 | Difference Array over a Bounded Time Range | O(n + T) where T is the largest time | O(T) |
+| 4 | Sweep Line over Events | O(n log n) | O(n) |
+| 5 | Sort and Compare Neighbours (Optimized) | O(n log n) | O(1) besides the sort |
 
 ### Optimized Solution
 
-The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+The optimized solution is Approach 5 above, which is also the version implemented in this repository.
 
 ## Source Code
 

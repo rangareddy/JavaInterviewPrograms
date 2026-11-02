@@ -23,7 +23,49 @@ Words of a new alien language (using the Latin alphabet) are given sorted lexico
 
 The same problem can be solved in several ways. The approach marked (Optimized) is the one to use in practice.
 
-### Approach 1: DFS Topological Sort (Post-order)
+### Approach 1: Brute Force: Try Every Permutation of the Letters
+
+Collect the distinct letters and test every ordering of them: an ordering is valid when it keeps every adjacent pair of words in order (and no word follows its own longer extension). Only practical for a handful of letters.
+
+```java
+public static String alienOrderPermutations(String[] words) {
+    StringBuilder letters = new StringBuilder();
+    for (String word : words) {
+        for (char c : word.toCharArray()) if (letters.indexOf(String.valueOf(c)) < 0) letters.append(c);
+    }
+    return permute(letters.toString().toCharArray(), 0, words);
+}
+
+private static String permute(char[] letters, int index, String[] words) {
+    if (index == letters.length) return isSorted(new String(letters), words) ? new String(letters) : null;
+    for (int i = index; i < letters.length; i++) {
+        char temp = letters[index]; letters[index] = letters[i]; letters[i] = temp;
+        String found = permute(letters, index + 1, words);
+        temp = letters[index]; letters[index] = letters[i]; letters[i] = temp;
+        if (found != null) return found;
+    }
+    return index == 0 ? "" : null;
+}
+
+private static boolean isSorted(String order, String[] words) {
+    for (int i = 0; i + 1 < words.length; i++) {
+        String a = words[i], b = words[i + 1];
+        int j = 0;
+        while (j < Math.min(a.length(), b.length()) && a.charAt(j) == b.charAt(j)) j++;
+        if (j == Math.min(a.length(), b.length())) {
+            if (a.length() > b.length()) return false;
+        } else if (order.indexOf(a.charAt(j)) > order.indexOf(b.charAt(j))) {
+            return false;
+        }
+    }
+    return true;
+}
+```
+
+- **Time Complexity:** O(L! * C) for L distinct letters
+- **Space Complexity:** O(L)
+
+### Approach 2: DFS Topological Sort (Post-order)
 
 Build the letter graph from adjacent words and run a DFS; a letter is appended after all letters that must come after it, so reversing the list gives a valid order. A letter reached while it is still being visited means a cycle.
 
@@ -62,7 +104,94 @@ private static boolean visit(char c, Map<Character, Set<Character>> graph, Map<C
 - **Time Complexity:** O(C)
 - **Space Complexity:** O(1) (at most 26 letters)
 
-### Approach 2: Kahn's Topological Sort (Optimized)
+### Approach 3: Iterative DFS Topological Sort
+
+The same DFS topological sort as above but with an explicit stack instead of recursion. A node is marked "in progress" when first taken from the stack and "done" when taken again after all of its neighbours; reaching an in-progress node again means a cycle.
+
+```java
+public static String alienOrderIterativeDfs(String[] words) {
+    boolean[][] edge = new boolean[26][26];
+    boolean[] present = new boolean[26];
+    for (String word : words) for (char c : word.toCharArray()) present[c - 'a'] = true;
+    for (int i = 0; i + 1 < words.length; i++) {
+        String a = words[i], b = words[i + 1];
+        if (a.length() > b.length() && a.startsWith(b)) return "";
+        for (int j = 0; j < Math.min(a.length(), b.length()); j++) {
+            if (a.charAt(j) != b.charAt(j)) { edge[a.charAt(j) - 'a'][b.charAt(j) - 'a'] = true; break; }
+        }
+    }
+
+    int[] state = new int[26];                      // 0 = new, 1 = in progress, 2 = done
+    StringBuilder order = new StringBuilder();
+    for (int start = 0; start < 26; start++) {
+        if (!present[start] || state[start] != 0) continue;
+        Deque<Integer> stack = new ArrayDeque<>();
+        stack.push(start);
+        while (!stack.isEmpty()) {
+            int c = stack.peek();
+            if (state[c] == 0) {
+                state[c] = 1;
+                for (int next = 0; next < 26; next++) {
+                    if (!edge[c][next]) continue;
+                    if (state[next] == 1) return "";        // back edge: cycle
+                    if (state[next] == 0) stack.push(next);
+                }
+            } else {
+                stack.pop();
+                if (state[c] == 1) { state[c] = 2; order.append((char) ('a' + c)); }
+            }
+        }
+    }
+    return order.reverse().toString();
+}
+```
+
+- **Time Complexity:** O(C + 26^2)
+- **Space Complexity:** O(26^2)
+
+### Approach 4: Adjacency Matrix + Kahn with a Min-Heap
+
+Store the letter graph in a `boolean[26][26]` matrix and run Kahn's algorithm with a priority queue, so among several valid orders the alphabetically smallest is returned. The result is deterministic.
+
+```java
+public static String alienOrderMatrix(String[] words) {
+    boolean[][] edge = new boolean[26][26];
+    boolean[] present = new boolean[26];
+    int[] inDegree = new int[26];
+    for (String word : words) for (char c : word.toCharArray()) present[c - 'a'] = true;
+
+    for (int i = 0; i + 1 < words.length; i++) {
+        String a = words[i], b = words[i + 1];
+        if (a.length() > b.length() && a.startsWith(b)) return "";
+        for (int j = 0; j < Math.min(a.length(), b.length()); j++) {
+            int from = a.charAt(j) - 'a', to = b.charAt(j) - 'a';
+            if (from != to) {
+                if (!edge[from][to]) { edge[from][to] = true; inDegree[to]++; }
+                break;
+            }
+        }
+    }
+    PriorityQueue<Integer> ready = new PriorityQueue<>();
+    int letters = 0;
+    for (int c = 0; c < 26; c++) {
+        if (present[c]) { letters++; if (inDegree[c] == 0) ready.add(c); }
+    }
+    StringBuilder order = new StringBuilder();
+    while (!ready.isEmpty()) {
+        int c = ready.poll();
+        order.append((char) ('a' + c));
+        for (int next = 0; next < 26; next++) {
+            if (edge[c][next] && --inDegree[next] == 0) ready.add(next);
+        }
+    }
+    return order.length() == letters ? order.toString() : "";
+}
+```
+
+- **Time Complexity:** O(C + 26^2 + 26 log 26)
+- **Space Complexity:** O(26^2)
+
+### Approach 5: Kahn's Topological Sort (Optimized)
 
 Repeatedly output letters that no remaining letter has to precede. If some letters are never output, there is a cycle. This is the version implemented in the repository.
 
@@ -102,12 +231,15 @@ public static String alienOrder(String[] words) {
 
 | # | Approach | Time | Space |
 |---|----------|------|-------|
-| 1 | DFS Topological Sort (Post-order) | O(C) | O(1) (at most 26 letters) |
-| 2 | Kahn's Topological Sort (Optimized) | O(C) | O(1) |
+| 1 | Brute Force: Try Every Permutation of the Letters | O(L! * C) for L distinct letters | O(L) |
+| 2 | DFS Topological Sort (Post-order) | O(C) | O(1) (at most 26 letters) |
+| 3 | Iterative DFS Topological Sort | O(C + 26^2) | O(26^2) |
+| 4 | Adjacency Matrix + Kahn with a Min-Heap | O(C + 26^2 + 26 log 26) | O(26^2) |
+| 5 | Kahn's Topological Sort (Optimized) | O(C) | O(1) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+The optimized solution is Approach 5 above, which is also the version implemented in this repository.
 
 ## Source Code
 
