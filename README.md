@@ -14,3 +14,11 @@
 1. [Fibonacci](./md_files/basic/Fibonaci.md)
 1. [SingleLinkedList](./md_files/collection/SingleLinkedListDemo.md)
 1. PrintEvenOddUsingThreads
+1. [Two Sum](./src/main/java/com/ranga/array/TwoSum.java)
+1. [Majority Element](./src/main/java/com/ranga/array/MajorityElement.java)
+1. [Merge Intervals](./src/main/java/com/ranga/array/MergeIntervals.java)
+1. [Move Zeros and Ones (Sort 0s, 1s, 2s)](./src/main/java/com/ranga/array/MoveZerosAndOnes.java)
+1. [Product of Array Except Self](./src/main/java/com/ranga/array/ProductOfArrayExceptSelf.java)
+1. [Remove Duplicates from Sorted Array](./src/main/java/com/ranga/array/RemoveDuplicates.java)
+1. [Rotate an Array](./src/main/java/com/ranga/array/RotateAnArray.java)
+1. [Sort Array using Merge Sort](./src/main/java/com/ranga/array/SortMergeExample.java)
