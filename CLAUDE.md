@@ -6,7 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Java interview programs (clone of github.com/rangareddy/JavaInterviewPrograms, branch `master`). Each program is a standalone class under `src/main/java/com/ranga/<category>/` (`array`, `basic`, `dp`, `search`, `sort`, `string`, `threads`). There is no shared code between classes, no test suite, and no external dependencies.
 
-Some programs also have a write-up in `md_files/<category>/`. `README.md` is the index: programs are grouped by category and link to either the `.md` write-up or the `.java` source. When adding or moving a program, update both the package and the README entry.
+Every program has a class-level Javadoc (summary, `Algorithm Strategy` ordered list, `Complexity Analysis` list, `@author Ranga Reddy`; see `array/ProductOfArrayExceptSelf.java` for the reference style) and a write-up in `md_files/<category>/<ClassName>.md`. A write-up repeats the Javadoc as markdown (strategy, complexity) and embeds the full source without its `package` line, so re-sync the page whenever a class changes. Exceptions: `basic/Fibonacci` is covered by `md_files/basic/Fibonaci.md` (note the spelling), and `Anagram`, `ImmutableClass`, `SingleLinkedListDemo` and `BinarySearchTree` have write-ups only, with no Java in `src`.
+
+`README.md` is the index: programs are grouped by category and link to their `.md` write-up. When adding or moving a program, update the package, its Javadoc, its `md_files` page and the README entry.
 
 ## Build and run
 
