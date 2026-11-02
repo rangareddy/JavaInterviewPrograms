@@ -28,6 +28,7 @@
 
 ### Searching
 
+1. [Linear Search](./md_files/search/LinearSearch.md)
 1. [Binary Search](./md_files/search/BinarySearch.md)
 
 ### Sorting
