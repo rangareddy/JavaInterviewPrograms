@@ -7,10 +7,23 @@ import java.util.Arrays;
  *
  * <p><b>Algorithm Strategy (Halve the Search Range):</b>
  * <ol>
- *   <li>Keep a {@code low} and {@code high} index around the range that can still contain the element.</li>
- *   <li>Compare the middle element with the target: return its index if equal, otherwise discard the half that cannot contain the target.</li>
- *   <li>Stop when {@code low > high}; the element is not present, so return {@code -1}.</li>
+ *   <li><b>Precondition:</b> the array must be sorted in ascending order.</li>
+ *   <li>Keep two indices, {@code low = 0} and {@code high = n - 1}, that bound the range which can still
+ *       contain the element.</li>
+ *   <li>While {@code low <= high}, compute the middle index {@code mid = low + (high - low) / 2}
+ *       (this form avoids integer overflow for very large arrays).</li>
+ *   <li>If {@code arr[mid] == element}, return {@code mid}.</li>
+ *   <li>If {@code arr[mid] < element}, the element can only be on the right, so set {@code low = mid + 1}.</li>
+ *   <li>Otherwise it can only be on the left, so set {@code high = mid - 1}.</li>
+ *   <li>When the range becomes empty ({@code low > high}) the element is not present, return {@code -1}.</li>
  * </ol>
+ *
+ * <p><b>Example walkthrough</b> for finding {@code 9} in {@code [4, 5, 6, 7, 9, 12, 15, 20, 30]}:
+ * <ul>
+ *   <li>low = 0, high = 8, mid = 4, {@code arr[4] = 9} — found at index 4.</li>
+ *   <li>Searching {@code 16}: mid = 4 (9 &lt; 16, low = 5), mid = 6 (15 &lt; 16, low = 7),
+ *       mid = 7 (20 &gt; 16, high = 6), range is empty — not found.</li>
+ * </ul>
  *
  * <p><b>Complexity Analysis:</b>
  * <ul>
@@ -23,40 +36,37 @@ import java.util.Arrays;
  * @author Ranga Reddy
  */
 public class BinarySearch {
-    public static void main(String[] args) {
 
+    public static void main(String[] args) {
         int[] arr = {12, 4, 5, 7, 9, 20, 30, 6, 15};
         Arrays.sort(arr);
-
-        System.out.println("Array elements after sorting ");
-        Arrays.stream(arr).forEach(val -> System.out.print(val + " "));
-        System.out.println();
+        System.out.println("Sorted Array : " + Arrays.toString(arr));
 
         int[] elements = {20, 16, 9, 4, 8};
         for (int element : elements) {
             int index = binarySearch(arr, element);
-            if (index != -1) {
-                System.out.println(element + " found at index " + index);
-            } else {
-                System.out.println(element + " is not found");
-            }
+            System.out.println("Search : " + element + " -> " + (index != -1 ? "found at index " + index : "not found"));
         }
-
     }
 
     /**
      * Searches for an element in a sorted array.
      *
-     * @param arr the array sorted in ascending order
+     * @param arr     the array sorted in ascending order
      * @param element the element to find
      * @return the index of the element, or {@code -1} if it is not present
      */
     public static int binarySearch(int[] arr, int element) {
-        int n = arr.length;
+        // Guard Clause: nothing to search in a null or empty array
+        if (arr == null || arr.length == 0) {
+            return -1;
+        }
+
         int low = 0;
-        int high = n - 1;
+        int high = arr.length - 1;
         while (low <= high) {
-            int mid = (low + high) / 2;
+            // Equivalent to (low + high) / 2 but cannot overflow
+            int mid = low + (high - low) / 2;
             int val = arr[mid];
             if (val == element) {
                 return mid;

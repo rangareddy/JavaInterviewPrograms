@@ -8,14 +8,19 @@ import java.util.Arrays;
  *
  * <p><b>Algorithm Strategy (Boyer-Moore Voting):</b>
  * <ol>
- *   <li>Maintain a {@code candidate} element and a {@code count}.</li>
- *   <li>Iterate through the array. When {@code count} reaches 0, choose the
- *       current element as the new candidate.</li>
- *   <li>If the current element matches the candidate, increment {@code count};
- *       otherwise, decrement {@code count}.</li>
- *   <li>Due to the definition of a majority element (appearing &gt; n/2 times),
- *       the true majority element will always survive as the final candidate.</li>
+ *   <li>A majority element appears more than {@code n / 2} times, so it outnumbers all other elements combined.</li>
+ *   <li>Maintain a {@code candidate} element and a {@code count}, both starting from the first element.</li>
+ *   <li>Iterate through the array. When {@code count} is 0, adopt the current element as the new candidate.</li>
+ *   <li>If the current element equals the candidate, increment {@code count}; otherwise decrement it (a pair of different elements cancels out).</li>
+ *   <li>Because the majority element has more occurrences than all the others together, it cannot be fully cancelled and is the final candidate. (This assumes a majority element exists; otherwise verify with a second counting pass.)</li>
  * </ol>
+ *
+ * <p><b>Example walkthrough</b>
+ * <ul>
+ *   <li>For {@code [2, 2, 1, 2, 1, 1, 2]}:</li>
+ *   <li>candidate/count after each element: 2/1, 2/2, 2/1, 2/2, 2/1, 2/0, then count is 0 so the last element 2 becomes the candidate with count 1.</li>
+ *   <li>Result: {@code 2}.</li>
+ * </ul>
  *
  * <p><b>Complexity Analysis:</b>
  * <ul>
@@ -29,14 +34,14 @@ public class MajorityElement {
 
     public static void main(String[] args) {
         int[] input1 = {3, 2, 3};
-        System.out.println("Input: " + Arrays.toString(input1));
-        System.out.println("Output: " + majorityElement(input1)); // Output: 3
+        System.out.println("Input  : " + Arrays.toString(input1));
+        System.out.println("Output : " + majorityElement(input1)); // Output: 3
 
         System.out.println();
 
         int[] input2 = {2, 2, 1, 2, 1, 1, 2};
-        System.out.println("Input: " + Arrays.toString(input2));
-        System.out.println("Output: " + majorityElement(input2)); // Output: 2
+        System.out.println("Input  : " + Arrays.toString(input2));
+        System.out.println("Output : " + majorityElement(input2)); // Output: 2
     }
 
     /**

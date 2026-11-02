@@ -7,10 +7,18 @@ import java.util.Arrays;
  *
  * <p><b>Algorithm Strategy (Prefix & Suffix Products):</b>
  * <ol>
- *   <li>Create a result array where {@code result[i]} stores the product of all elements to the left of {@code i}.</li>
- *   <li>Iterate backwards from the right, maintaining a running right product, and multiply it with
- *       {@code result[i]} to get the final product of elements to both the left and right of {@code i}.</li>
+ *   <li>Without division, the product of all elements except {@code nums[i]} equals (product of everything to its left) x (product of everything to its right).</li>
+ *   <li>Left pass: keep a running {@code prefix} (starting at 1). For each {@code i}, store {@code answer[i] = prefix}, then multiply {@code prefix} by {@code nums[i]}.</li>
+ *   <li>Right pass: keep a running {@code suffix} (starting at 1). Iterate {@code i} from the end; multiply {@code answer[i]} by {@code suffix}, then multiply {@code suffix} by {@code nums[i]}.</li>
+ *   <li>The output array is reused to hold the prefix products, so no extra arrays are needed; zeros are handled naturally.</li>
  * </ol>
+ *
+ * <p><b>Example walkthrough</b>
+ * <ul>
+ *   <li>For {@code [1, 2, 3, 4]}:</li>
+ *   <li>After the left pass: {@code answer = [1, 1, 2, 6]}.</li>
+ *   <li>Right pass multiplies by suffixes 1, 4, 12, 24 (from the right): {@code [24, 12, 8, 6]}.</li>
+ * </ul>
  *
  * <p><b>Complexity Analysis:</b>
  * <ul>
@@ -25,14 +33,14 @@ public class ProductOfArrayExceptSelf {
 
     public static void main(String[] args) {
         int[] arr1 = {1, 2, 3, 4};
-        System.out.println("Input:  " + Arrays.toString(arr1));
-        System.out.println("Output: " + Arrays.toString(getProductOfArray(arr1)));
+        System.out.println("Input  : " + Arrays.toString(arr1));
+        System.out.println("Output : " + Arrays.toString(getProductOfArray(arr1)));
 
         System.out.println();
 
         int[] arr2 = {1, 2, 3, 4, 0};
-        System.out.println("Input:  " + Arrays.toString(arr2));
-        System.out.println("Output: " + Arrays.toString(getProductOfArray(arr2)));
+        System.out.println("Input  : " + Arrays.toString(arr2));
+        System.out.println("Output : " + Arrays.toString(getProductOfArray(arr2)));
     }
 
     /**

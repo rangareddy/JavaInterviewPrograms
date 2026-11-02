@@ -6,12 +6,22 @@ import java.util.Arrays;
  * Utility class to sort an array containing 0s, 1s, and 2s using Dijkstra's
  * Dutch National Flag algorithm.
  *
- * <p><b>Algorithm Strategy (Three-Way Partitioning):</b>
- * Maintains three pointers:
+ * <p><b>Algorithm Strategy (Dutch National Flag, Three-Way Partitioning):</b>
+ * <ol>
+ *   <li>Maintain three pointers: {@code low} (everything before it is 0), {@code mid} (the element being examined) and {@code high} (everything after it is 2). The region between {@code low} and {@code mid} holds 1s and {@code [mid, high]} is still unknown.</li>
+ *   <li>Loop while {@code mid <= high} and look at {@code arr[mid]}.</li>
+ *   <li>If it is 0, swap it with {@code arr[low]}, then advance both {@code low} and {@code mid}.</li>
+ *   <li>If it is 1, it is already in the middle region, so just advance {@code mid}.</li>
+ *   <li>If it is 2, swap it with {@code arr[high]} and decrement {@code high}. Do not advance {@code mid}, because the element swapped in from {@code high} has not been examined yet.</li>
+ *   <li>Any other value throws an {@code IllegalArgumentException}. When {@code mid} passes {@code high} the array is sorted in a single pass.</li>
+ * </ol>
+ *
+ * <p><b>Example walkthrough</b>
  * <ul>
- *   <li>{@code low}: Boundary for 0s (everything strictly before {@code low} is 0)</li>
- *   <li>{@code mid}: Current element under evaluation</li>
- *   <li>{@code high}: Boundary for 2s (everything strictly after {@code high} is 2)</li>
+ *   <li>For {@code [2, 0, 1]}:</li>
+ *   <li>{@code mid = 0}: value 2, swap with {@code high} gives {@code [1, 0, 2]}, {@code high = 1}.</li>
+ *   <li>{@code mid = 0}: value 1, advance {@code mid}. {@code mid = 1}: value 0, swap with {@code low} gives {@code [0, 1, 2]}.</li>
+ *   <li>{@code mid} passes {@code high}: sorted.</li>
  * </ul>
  *
  * <p><b>Complexity Analysis:</b>

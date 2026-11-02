@@ -7,11 +7,18 @@ import java.util.Arrays;
  *
  * <p><b>Algorithm Strategy (Divide and Conquer):</b>
  * <ol>
- *   <li><b>Divide:</b> Split the array into two halves recursively until base cases
- *       of size 0 or 1 are reached.</li>
- *   <li><b>Conquer:</b> Sort each half recursively.</li>
- *   <li><b>Combine:</b> Merge the two sorted sub-arrays into a single sorted output array.</li>
+ *   <li><b>Base case:</b> an array with 0 or 1 elements is already sorted.</li>
+ *   <li><b>Divide:</b> split the array at the middle into a left and a right half and recursively sort each half.</li>
+ *   <li><b>Combine:</b> merge the two sorted halves by comparing their front elements, copying the smaller one into the output, until both halves are consumed.</li>
+ *   <li>Every element is copied once per recursion level, and there are {@code log n} levels.</li>
  * </ol>
+ *
+ * <p><b>Example walkthrough</b>
+ * <ul>
+ *   <li>For {@code [3, 4, 1, 9]}:</li>
+ *   <li>Divide into {@code [3, 4]} and {@code [1, 9]} (each already sorted after further splitting).</li>
+ *   <li>Merge {@code [3, 4]} and {@code [1, 9]}: take 1, then 3, then 4, then 9, giving {@code [1, 3, 4, 9]}.</li>
+ * </ul>
  *
  * <p><b>Complexity Analysis:</b>
  * <ul>
