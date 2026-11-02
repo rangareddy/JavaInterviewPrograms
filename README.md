@@ -21,6 +21,13 @@
 1. [Remove Duplicates from Sorted Array](./md_files/array/RemoveDuplicates.md)
 1. [Rotate an Array](./md_files/array/RotateAnArray.md)
 
+### Matrix
+
+1. [Set Matrix Zeroes](./md_files/matrix/SetMatrixZeroes.md)
+1. [Spiral Matrix](./md_files/matrix/SpiralMatrix.md)
+1. [Rotate Image](./md_files/matrix/RotateImage.md)
+1. [Word Search](./md_files/matrix/WordSearch.md)
+
 ### String
 
 1. [Longest Substring Without Repeating Characters](./md_files/string/LongestSubString.md)
@@ -53,7 +60,7 @@
 
 ## Blind 75 LeetCode Questions
 
-Solutions for the problems of the [Blind 75 LeetCode Questions](https://www.algotutor.io/assets/img/notes/dsAndAlgo/pdf/Blind%2075%20LeetCode%20Questions.pdf) list, grouped like the PDF. The four Matrix problems (Set Matrix Zeroes, Spiral Matrix, Rotate Image, Word Search) are intentionally left out. Each problem lives in the package and `md_files` folder of its category; problems that were already solved elsewhere in this repository link to the existing write-up.
+Solutions for the problems of the [Blind 75 LeetCode Questions](https://www.algotutor.io/assets/img/notes/dsAndAlgo/pdf/Blind%2075%20LeetCode%20Questions.pdf) list, grouped like the PDF. Each problem lives in the package and `md_files` folder of its category; problems that were already solved elsewhere in this repository link to the existing write-up.
 
 ### Array
 
