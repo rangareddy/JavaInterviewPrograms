@@ -128,7 +128,7 @@ private static long[] fastDoubling(int n) {
 
 The optimized solution is Approach 4 and 5 above. The version implemented in this repository is Approach 3 and 4.
 
-See also the [iterative version and the comparison of all approaches](../basic/Fibonaci.md).
+See also the [iterative version and the comparison of all approaches](../basic/Fibonacci.md).
 
 ## Source Code
 
