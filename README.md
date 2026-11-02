@@ -9,22 +9,22 @@
 1. [Anagram](./md_files/basic/Anagram.md)
 1. [Immutable Class](./md_files/basic/ImmutableClass.md)
 1. [Fibonacci](./md_files/basic/Fibonaci.md)
-1. [Fibonacci (Dynamic Programming)](./src/main/java/com/ranga/dp/Fibonacci.java)
+1. [Fibonacci (Dynamic Programming)](./md_files/dp/Fibonacci.md)
 
 ### Array
 
-1. [Two Sum](./src/main/java/com/ranga/array/TwoSum.java)
-1. [Majority Element](./src/main/java/com/ranga/array/MajorityElement.java)
-1. [Merge Intervals](./src/main/java/com/ranga/array/MergeIntervals.java)
-1. [Move Zeros and Ones (Sort 0s, 1s, 2s)](./src/main/java/com/ranga/array/MoveZerosAndOnes.java)
-1. [Product of Array Except Self](./src/main/java/com/ranga/array/ProductOfArrayExceptSelf.java)
-1. [Remove Duplicates from Sorted Array](./src/main/java/com/ranga/array/RemoveDuplicates.java)
-1. [Rotate an Array](./src/main/java/com/ranga/array/RotateAnArray.java)
+1. [Two Sum](./md_files/array/TwoSum.md)
+1. [Majority Element](./md_files/array/MajorityElement.md)
+1. [Merge Intervals](./md_files/array/MergeIntervals.md)
+1. [Move Zeros and Ones (Sort 0s, 1s, 2s)](./md_files/array/MoveZerosAndOnes.md)
+1. [Product of Array Except Self](./md_files/array/ProductOfArrayExceptSelf.md)
+1. [Remove Duplicates from Sorted Array](./md_files/array/RemoveDuplicates.md)
+1. [Rotate an Array](./md_files/array/RotateAnArray.md)
 
 ### String
 
-1. [Longest Substring Without Repeating Characters](./src/main/java/com/ranga/string/LongestSubString.java)
-1. [Longest Palindrome](./src/main/java/com/ranga/string/LongestPalindrome.java)
+1. [Longest Substring Without Repeating Characters](./md_files/string/LongestSubString.md)
+1. [Longest Palindrome](./md_files/string/LongestPalindrome.md)
 
 ### Searching
 
@@ -35,7 +35,7 @@
 1. [Bubble Sort](./md_files/sort/BubbleSort.md)
 1. [Selection Sort](./md_files/sort/SelectionSort.md)
 1. [Merge Sort](./md_files/sort/MergeSort.md)
-1. [Merge Sort (array example)](./src/main/java/com/ranga/sort/SortMergeExample.java)
+1. [Merge Sort (array example)](./md_files/sort/SortMergeExample.md)
 1. [Quick Sort](./md_files/sort/QuickSort.md)
 
 ### Collection
@@ -48,4 +48,4 @@
 
 ### Threads
 
-1. [Print Even Odd Using Threads](./src/main/java/com/ranga/threads/PrintEvenOddUsingThreads.java)
+1. [Print Even Odd Using Threads](./md_files/threads/PrintEvenOddUsingThreads.md)
