@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Java interview programs (clone of github.com/rangareddy/JavaInterviewPrograms, branch `master`). Each program is a standalone class under `src/main/java/com/ranga/<category>/` (`array`, `basic`, `dp`, `search`, `sort`, `string`, `threads`). There is no shared code between classes, no test suite, and no external dependencies.
+Java interview programs (clone of github.com/rangareddy/JavaInterviewPrograms, branch `master`). Each program is a standalone class under `src/main/java/com/ranga/<category>/` (`array`, `basic`, `collection`, `dp`, `search`, `sort`, `string`, `threads`, `tree`). There is no shared code between classes, no test suite, and no external dependencies.
 
 Every program has a class-level Javadoc (summary, detailed `Algorithm Strategy` ordered list, `Example walkthrough`, `Complexity Analysis`, `@author Ranga Reddy`; see `array/ProductOfArrayExceptSelf.java` for the reference style) and a write-up in `md_files/<category>/<ClassName>.md`. Every `main` prints its sample data the same way as `array/MoveZerosAndOnes.java`: an aligned input line and an output line (`Original Array : ...` / `Sorted Array   : ...` or `Input  : ...` / `Output : ...`).
 
