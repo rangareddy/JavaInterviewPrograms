@@ -42,7 +42,79 @@ public static int maxAreaBrute(int[] height) {
 - **Time Complexity:** O(n^2)
 - **Space Complexity:** O(1)
 
-### Approach 2: Two Pointers (Optimized)
+### Approach 2: Sort the Lines by Height
+
+Process the lines from the tallest to the shortest. When a line is the shorter wall of a container, its best partner is the farthest of all taller-or-equal lines, so only the smallest and the largest index among the lines already processed have to be remembered.
+
+```java
+public static int maxAreaSorted(int[] height) {
+    int n = height.length;
+    Integer[] order = new Integer[n];
+    for (int i = 0; i < n; i++) order[i] = i;
+    Arrays.sort(order, (a, b) -> height[b] - height[a]);        // tallest first
+
+    int minIndex = order[0], maxIndex = order[0], best = 0;
+    for (int k = 1; k < n; k++) {
+        int i = order[k];
+        best = Math.max(best, height[i] * Math.max(Math.abs(i - minIndex), Math.abs(i - maxIndex)));
+        minIndex = Math.min(minIndex, i);
+        maxIndex = Math.max(maxIndex, i);
+    }
+    return best;
+}
+```
+
+- **Time Complexity:** O(n log n)
+- **Space Complexity:** O(n)
+
+### Approach 3: Candidate Walls (Prefix and Suffix Maxima)
+
+A line can only be the optimal left wall if it is taller than every line before it, and the optimal right wall only if it is taller than every line after it (otherwise a line further out is at least as good). Check only the pairs of these candidates.
+
+```java
+public static int maxAreaCandidates(int[] height) {
+    int n = height.length;
+    List<Integer> lefts = new ArrayList<>(), rights = new ArrayList<>();
+    int max = -1;
+    for (int i = 0; i < n; i++) if (height[i] > max) { max = height[i]; lefts.add(i); }
+    max = -1;
+    for (int i = n - 1; i >= 0; i--) if (height[i] > max) { max = height[i]; rights.add(i); }
+
+    int best = 0;
+    for (int l : lefts) {
+        for (int r : rights) {
+            if (r <= l) break;                    // rights are in decreasing index order
+            best = Math.max(best, (r - l) * Math.min(height[l], height[r]));
+        }
+    }
+    return best;
+}
+```
+
+- **Time Complexity:** O(n) typically, O(n^2) in the worst case
+- **Space Complexity:** O(n)
+
+### Approach 4: Two Pointers with Skipping
+
+The same two-pointer sweep, but after evaluating a pair it also skips every following line that is not taller than the shorter wall just used (those lines can only give smaller containers). Fewer area computations on noisy data.
+
+```java
+public static int maxAreaSkipping(int[] height) {
+    int left = 0, right = height.length - 1, best = 0;
+    while (left < right) {
+        int h = Math.min(height[left], height[right]);
+        best = Math.max(best, (right - left) * h);
+        while (left < right && height[left] <= h) left++;
+        while (left < right && height[right] <= h) right--;
+    }
+    return best;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(1)
+
+### Approach 5: Two Pointers (Optimized)
 
 Start with the widest container and always move the pointer at the shorter line inwards, since the taller line can only help with a shorter line replaced. This is the version implemented in the repository.
 
@@ -65,11 +137,14 @@ public static int maxArea(int[] height) {
 | # | Approach | Time | Space |
 |---|----------|------|-------|
 | 1 | Brute Force | O(n^2) | O(1) |
-| 2 | Two Pointers (Optimized) | O(n) | O(1) |
+| 2 | Sort the Lines by Height | O(n log n) | O(n) |
+| 3 | Candidate Walls (Prefix and Suffix Maxima) | O(n) typically, O(n^2) in the worst case | O(n) |
+| 4 | Two Pointers with Skipping | O(n) | O(1) |
+| 5 | Two Pointers (Optimized) | O(n) | O(1) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+The optimized solution is Approach 5 above, which is also the version implemented in this repository.
 
 ## Source Code
 

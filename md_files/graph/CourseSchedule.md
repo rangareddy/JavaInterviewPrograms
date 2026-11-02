@@ -23,7 +23,34 @@ There are `numCourses` courses labeled `0` to `numCourses - 1`. A prerequisite `
 
 The same problem can be solved in several ways. The approach marked (Optimized) is the one to use in practice.
 
-### Approach 1: DFS with Three Colors (Cycle Detection)
+### Approach 1: Repeated Scan (Naive Topological Removal)
+
+Keep taking any course whose prerequisites have all been taken, scanning the whole prerequisite list for each course, until no more courses can be taken. Same idea as Kahn's algorithm without the in-degree bookkeeping, so each round costs a full scan.
+
+```java
+public static boolean canFinishScan(int numCourses, int[][] prerequisites) {
+    boolean[] taken = new boolean[numCourses];
+    int count = 0;
+    boolean progress = true;
+    while (progress) {
+        progress = false;
+        for (int course = 0; course < numCourses; course++) {
+            if (taken[course]) continue;
+            boolean ready = true;
+            for (int[] p : prerequisites) {
+                if (p[0] == course && !taken[p[1]]) { ready = false; break; }
+            }
+            if (ready) { taken[course] = true; count++; progress = true; }
+        }
+    }
+    return count == numCourses;
+}
+```
+
+- **Time Complexity:** O(V * (V + E))
+- **Space Complexity:** O(V)
+
+### Approach 2: DFS with Three Colors (Cycle Detection)
 
 Mark each course as unvisited (0), in progress (1) or done (2). Reaching an in-progress course again means a cycle (the courses wait for each other).
 
@@ -54,7 +81,69 @@ private static boolean hasCycle(List<List<Integer>> graph, int[] state, int cour
 - **Time Complexity:** O(V + E)
 - **Space Complexity:** O(V + E)
 
-### Approach 2: Kahn's Topological Sort (Optimized)
+### Approach 3: Iterative DFS with Colors
+
+The three-color cycle detection with an explicit stack of `(course, next neighbor index)` pairs instead of recursion, which avoids stack overflow on long prerequisite chains.
+
+```java
+public static boolean canFinishIterativeDfs(int numCourses, int[][] prerequisites) {
+    List<List<Integer>> graph = new ArrayList<>();
+    for (int i = 0; i < numCourses; i++) graph.add(new ArrayList<>());
+    for (int[] p : prerequisites) graph.get(p[1]).add(p[0]);
+
+    int[] state = new int[numCourses];                  // 0 = new, 1 = on the current path, 2 = done
+    for (int start = 0; start < numCourses; start++) {
+        if (state[start] != 0) continue;
+        Deque<int[]> stack = new ArrayDeque<>();
+        stack.push(new int[]{start, 0});
+        state[start] = 1;
+        while (!stack.isEmpty()) {
+            int[] top = stack.peek();
+            List<Integer> neighbors = graph.get(top[0]);
+            if (top[1] < neighbors.size()) {
+                int next = neighbors.get(top[1]++);
+                if (state[next] == 1) return false;     // back edge: cycle
+                if (state[next] == 0) { state[next] = 1; stack.push(new int[]{next, 0}); }
+            } else {
+                state[top[0]] = 2;
+                stack.pop();
+            }
+        }
+    }
+    return true;
+}
+```
+
+- **Time Complexity:** O(V + E)
+- **Space Complexity:** O(V + E)
+
+### Approach 4: Transitive Closure (Floyd-Warshall)
+
+Compute which courses are reachable from which with the Floyd-Warshall closure over a boolean matrix; a course that can reach itself lies on a cycle. Cubic, so only sensible for a small number of courses, but it also answers "is course a a (transitive) prerequisite of course b" for free.
+
+```java
+public static boolean canFinishClosure(int numCourses, int[][] prerequisites) {
+    boolean[][] reach = new boolean[numCourses][numCourses];
+    for (int[] p : prerequisites) reach[p[1]][p[0]] = true;
+    for (int k = 0; k < numCourses; k++) {
+        for (int i = 0; i < numCourses; i++) {
+            if (!reach[i][k]) continue;
+            for (int j = 0; j < numCourses; j++) {
+                if (reach[k][j]) reach[i][j] = true;
+            }
+        }
+    }
+    for (int i = 0; i < numCourses; i++) {
+        if (reach[i][i]) return false;
+    }
+    return true;
+}
+```
+
+- **Time Complexity:** O(V^3)
+- **Space Complexity:** O(V^2)
+
+### Approach 5: Kahn's Topological Sort (Optimized)
 
 Repeatedly take a course with no remaining prerequisites; if all courses can be taken there is no cycle. Iterative, so no recursion depth issue. This is the version implemented in the repository.
 
@@ -84,12 +173,15 @@ public static boolean canFinish(int numCourses, int[][] prerequisites) {
 
 | # | Approach | Time | Space |
 |---|----------|------|-------|
-| 1 | DFS with Three Colors (Cycle Detection) | O(V + E) | O(V + E) |
-| 2 | Kahn's Topological Sort (Optimized) | O(V + E) | O(V + E) |
+| 1 | Repeated Scan (Naive Topological Removal) | O(V * (V + E)) | O(V) |
+| 2 | DFS with Three Colors (Cycle Detection) | O(V + E) | O(V + E) |
+| 3 | Iterative DFS with Colors | O(V + E) | O(V + E) |
+| 4 | Transitive Closure (Floyd-Warshall) | O(V^3) | O(V^2) |
+| 5 | Kahn's Topological Sort (Optimized) | O(V + E) | O(V + E) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+The optimized solution is Approach 5 above, which is also the version implemented in this repository.
 
 ## Source Code
 
