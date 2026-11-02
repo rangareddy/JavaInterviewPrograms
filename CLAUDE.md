@@ -12,6 +12,10 @@ A write-up repeats the Javadoc as markdown, then adds an `Approaches` section (b
 
 `README.md` is the index: programs are grouped by category and link to their `.md` write-up. When adding or moving a program, update the package, its Javadoc, its `md_files` page and the README entry.
 
+### Blind 75 (`com.ranga.blind75`)
+
+The 75 problems of the Blind 75 list live in `src/main/java/com/ranga/blind75/<category>/` (`array`, `matrix`, `string`, `linkedlist`, `tree`, `heap`, `graph`, `dp`, `interval`, `bit`) with pages in `md_files/blind75/<category>/`. The six problems that already existed elsewhere (Two Sum, Product of Array Except Self, Merge Intervals, Longest Substring Without Repeating Characters, Longest Palindromic Substring, Valid Anagram) and Merge k Sorted Lists (listed under both Linked List and Heap) are not duplicated; the README links to the existing write-up. Same conventions as above (Javadoc with the problem statement, aligned `Input  :` / `Output :` lines, optimal solution), except that these pages have no `Approaches` section. `linkedlist/ListNode` and `tree/TreeNode` are shared helpers: `of(...)` builds a structure from LeetCode-style data (level order with `null` for trees) and `toString(...)` prints it.
+
 ## Build and run
 
 ```
