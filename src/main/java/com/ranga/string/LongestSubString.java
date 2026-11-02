@@ -4,10 +4,22 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * User: Ranga Reddy
- * Date: 11/22/2019
- * Time: 9:42 AM
- * Description: Finding the longest substring for non-repated characters.
+ * Utility class to find the length of the longest substring without repeating characters.
+ *
+ * <p><b>Algorithm Strategy (Sliding Window with a Set):</b>
+ * <ol>
+ *   <li>Keep a window {@code [i, j)} and a set of the characters inside it.</li>
+ *   <li>If the character at {@code j} is not in the set, add it, grow the window and record it when it is the longest so far.</li>
+ *   <li>Otherwise remove the character at {@code i} and shrink the window from the left until the duplicate is gone.</li>
+ * </ol>
+ *
+ * <p><b>Complexity Analysis:</b>
+ * <ul>
+ *   <li><b>Time Complexity:</b> {@code O(n)} — Each index enters and leaves the window at most once.</li>
+ *   <li><b>Space Complexity:</b> {@code O(min(n, k))} — The set holds at most the distinct characters of the string (k = alphabet size).</li>
+ * </ul>
+ *
+ * @author Ranga Reddy
  */
 public class LongestSubString {
     public static void main(String[] args) {
@@ -19,6 +31,12 @@ public class LongestSubString {
         }
     }
 
+    /**
+     * Finds the length of the longest substring without repeating characters and prints that substring.
+     *
+     * @param str the input string
+     * @return the length of the longest such substring
+     */
     private static int getLongestSubString(String str) {
         int max = 0;
         int i = 0, j = 0;

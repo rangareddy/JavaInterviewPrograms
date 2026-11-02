@@ -9,6 +9,12 @@ random pivot in an array results in an improved time complexity in most of the c
 
 ![Mergesort](https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Quicksort-diagram.svg/400px-Quicksort-diagram.svg.png)
 
+### Algorithm Strategy (Partition Around a Pivot)
+
+1. Choose the rightmost element as the pivot.
+2. Partition the range so that elements `<= pivot` are on its left and larger elements are on its right.
+3. Recursively sort the left and right parts of the pivot.
+
 ### Time Complexity
 
 - Best: O(n*log n)
@@ -24,6 +30,26 @@ random pivot in an array results in an improved time complexity in most of the c
 ```java
 import java.util.Arrays;
 
+/**
+ * Utility class to sort an integer array using Quick Sort (divide and conquer).
+ *
+ * <p><b>Algorithm Strategy (Partition Around a Pivot):</b>
+ * <ol>
+ *   <li>Choose the rightmost element as the pivot.</li>
+ *   <li>Partition the range so that elements {@code <= pivot} are on its left and larger elements are on its right.</li>
+ *   <li>Recursively sort the left and right parts of the pivot.</li>
+ * </ol>
+ *
+ * <p><b>Complexity Analysis:</b>
+ * <ul>
+ *   <li><b>Time Complexity (Best):</b> {@code O(n log n)} — The pivot splits the range into two nearly equal parts.</li>
+ *   <li><b>Time Complexity (Average):</b> {@code O(n log n)} — Random-like input gives balanced partitions.</li>
+ *   <li><b>Time Complexity (Worst):</b> {@code O(n^2)} — Already sorted input with the rightmost pivot gives maximally unbalanced partitions.</li>
+ *   <li><b>Space Complexity:</b> {@code O(log n)} — Recursion stack on average (O(n) in the worst case); sorts in place.</li>
+ * </ul>
+ *
+ * @author Ranga Reddy
+ */
 public class QuickSort {
     public static void main(String[] args) {
         int[] arr = {12, 4, 5, 7, 9, 20, 30, 6, 15};
@@ -34,6 +60,13 @@ public class QuickSort {
         Arrays.stream(arr).forEach(val -> System.out.print(val + " "));
     }
 
+    /**
+     * Sorts {@code arr[low..high]} in place using Quick Sort.
+     *
+     * @param arr the array to sort
+     * @param low the first index of the range
+     * @param high the last index of the range
+     */
     private static void quickSort(int[] arr, int low, int high) {
         if (low < high) {
             // Select the pivot position
@@ -47,6 +80,11 @@ public class QuickSort {
         }
     }
 
+    /**
+     * Partitions {@code arr[low..high]} around the rightmost element.
+     *
+     * @return the final index of the pivot
+     */
     private static int partition(int[] arr, int low, int high) {
         // choose the rightmost element as pivot
         int pivot = arr[high];

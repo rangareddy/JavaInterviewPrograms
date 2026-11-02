@@ -3,10 +3,24 @@ package com.ranga.search;
 import java.util.Arrays;
 
 /**
- * User: Ranga Reddy
- * Date: 11/15/2019
- * Time: 5:00 PM
- * Description:
+ * Utility class to search an element in a sorted array using Binary Search.
+ *
+ * <p><b>Algorithm Strategy (Halve the Search Range):</b>
+ * <ol>
+ *   <li>Keep a {@code low} and {@code high} index around the range that can still contain the element.</li>
+ *   <li>Compare the middle element with the target: return its index if equal, otherwise discard the half that cannot contain the target.</li>
+ *   <li>Stop when {@code low > high}; the element is not present, so return {@code -1}.</li>
+ * </ol>
+ *
+ * <p><b>Complexity Analysis:</b>
+ * <ul>
+ *   <li><b>Time Complexity (Best):</b> {@code O(1)} — The target is the middle element.</li>
+ *   <li><b>Time Complexity (Average):</b> {@code O(log n)} — The range is halved on every step.</li>
+ *   <li><b>Time Complexity (Worst):</b> {@code O(log n)} — The target is absent or found in the last step.</li>
+ *   <li><b>Space Complexity:</b> {@code O(1)} — Iterative implementation with a few index variables.</li>
+ * </ul>
+ *
+ * @author Ranga Reddy
  */
 public class BinarySearch {
     public static void main(String[] args) {
@@ -30,6 +44,13 @@ public class BinarySearch {
 
     }
 
+    /**
+     * Searches for an element in a sorted array.
+     *
+     * @param arr the array sorted in ascending order
+     * @param element the element to find
+     * @return the index of the element, or {@code -1} if it is not present
+     */
     public static int binarySearch(int[] arr, int element) {
         int n = arr.length;
         int low = 0;

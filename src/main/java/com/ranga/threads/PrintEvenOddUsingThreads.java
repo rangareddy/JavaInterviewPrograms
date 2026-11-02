@@ -65,6 +65,24 @@ class Printer {
     }
 }
 
+/**
+ * Utility class to print numbers in order with one thread printing odd and another printing even numbers.
+ *
+ * <p><b>Algorithm Strategy (Inter-thread Communication with wait/notify):</b>
+ * <ol>
+ *   <li>Both threads share a single {@code Printer} whose methods are {@code synchronized}.</li>
+ *   <li>A {@code volatile} flag records whose turn it is; a thread that finds it is not its turn calls {@code wait()}.</li>
+ *   <li>After printing, a thread flips the flag and calls {@code notify()} to wake the other thread.</li>
+ * </ol>
+ *
+ * <p><b>Complexity Analysis:</b>
+ * <ul>
+ *   <li><b>Time Complexity:</b> {@code O(n)} — Each number from 1 to {@code max} is printed exactly once.</li>
+ *   <li><b>Space Complexity:</b> {@code O(1)} — Only the shared flag and the two threads.</li>
+ * </ul>
+ *
+ * @author Ranga Reddy
+ */
 public class PrintEvenOddUsingThreads {
     public static void main(String[] args) {
         Printer printer = new Printer();

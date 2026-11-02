@@ -2,6 +2,26 @@ package com.ranga.sort;
 
 import java.util.Arrays;
 
+/**
+ * Utility class to sort an integer array using Merge Sort (divide and conquer).
+ *
+ * <p><b>Algorithm Strategy (Divide and Merge):</b>
+ * <ol>
+ *   <li>Split the array into two halves until each part has at most one element.</li>
+ *   <li>Recursively sort both halves.</li>
+ *   <li>Merge the two sorted halves into one sorted array by repeatedly taking the smaller front element.</li>
+ * </ol>
+ *
+ * <p><b>Complexity Analysis:</b>
+ * <ul>
+ *   <li><b>Time Complexity (Best):</b> {@code O(n log n)} — The array is always halved and merged in linear time.</li>
+ *   <li><b>Time Complexity (Average):</b> {@code O(n log n)} — Same as best case.</li>
+ *   <li><b>Time Complexity (Worst):</b> {@code O(n log n)} — Same as best case.</li>
+ *   <li><b>Space Complexity:</b> {@code O(n)} — Auxiliary arrays are created for the halves and the merged result.</li>
+ * </ul>
+ *
+ * @author Ranga Reddy
+ */
 public class MergeSort {
     public static void main(String[] args) {
         int[] arr = {12, 4, 5, 7, 9, 20, 30, 6, 15};
@@ -12,6 +32,19 @@ public class MergeSort {
         Arrays.stream(arr).forEach(val -> System.out.print(val + " "));
     }
 
+    /**
+     * Recursively splits the array in halves and merges the sorted halves.
+     *
+     * @param arr the array to sort
+     * @return a new sorted array
+     */
+    /**
+     * Merges two sorted arrays into one sorted array.
+     *
+     * @param left the first sorted array
+     * @param right the second sorted array
+     * @return a sorted array containing all elements of both inputs
+     */
     private static int[] mergeSort(int[] arr) {
         int n = arr.length;
         if (n <= 1) {
