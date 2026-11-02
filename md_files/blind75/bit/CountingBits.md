@@ -19,6 +19,71 @@ Given an integer `n`, return an array `ans` of length `n + 1` where `ans[i]` is 
 - **Time Complexity:** `O(n)` — One constant-time step per number (no per-number bit loop).
 - **Space Complexity:** `O(n)` — The output array.
 
+## Approaches
+
+The same problem can be solved in several ways. The approach marked (Optimized) is the one to use in practice.
+
+### Approach 1: Count the Bits of Every Number
+
+Compute the number of set bits of each `i` independently with Kernighan's trick.
+
+```java
+public static int[] countBitsBrute(int n) {
+    int[] ans = new int[n + 1];
+    for (int i = 0; i <= n; i++) {
+        int count = 0;
+        for (int x = i; x != 0; x &= x - 1) count++;
+        ans[i] = count;
+    }
+    return ans;
+}
+```
+
+- **Time Complexity:** O(n log n)
+- **Space Complexity:** O(n)
+
+### Approach 2: DP on the Shifted Number (Optimized)
+
+`i` has the same bits as `i >> 1` plus its lowest bit, so `ans[i] = ans[i >> 1] + (i & 1)`. This is the version implemented in the repository.
+
+```java
+public static int[] countBits(int n) {
+    int[] ans = new int[n + 1];
+    for (int i = 1; i <= n; i++) ans[i] = ans[i >> 1] + (i & 1);
+    return ans;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 3: DP on the Lowest Set Bit
+
+`i & (i - 1)` is `i` without its lowest set bit, so `ans[i] = ans[i & (i - 1)] + 1`.
+
+```java
+public static int[] countBitsLowestBit(int n) {
+    int[] ans = new int[n + 1];
+    for (int i = 1; i <= n; i++) ans[i] = ans[i & (i - 1)] + 1;
+    return ans;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Comparison
+
+| # | Approach | Time | Space |
+|---|----------|------|-------|
+| 1 | Count the Bits of Every Number | O(n log n) | O(n) |
+| 2 | DP on the Shifted Number (Optimized) | O(n) | O(n) |
+| 3 | DP on the Lowest Set Bit | O(n) | O(n) |
+
+### Optimized Solution
+
+The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+
 ## Source Code
 
 ### CountingBits.java

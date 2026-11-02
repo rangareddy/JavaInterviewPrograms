@@ -19,6 +19,86 @@ Given the roots of two binary trees `root` and `subRoot`, return `true` if some 
 - **Time Complexity:** `O(m * n)` — In the worst case each of the `m` nodes of root starts a comparison of up to `n` nodes.
 - **Space Complexity:** `O(h)` — Recursion depth.
 
+## Approaches
+
+The same problem can be solved in several ways. The approach marked (Optimized) is the one to use in practice.
+
+### Approach 1: Compare Every Node with Same Tree (Optimized)
+
+At every node of `root` test whether the tree rooted there is identical to `subRoot`. This is the version implemented in the repository.
+
+```java
+public static boolean isSubtree(TreeNode root, TreeNode subRoot) {
+    if (subRoot == null) return true;
+    if (root == null) return false;
+    return same(root, subRoot) || isSubtree(root.left, subRoot) || isSubtree(root.right, subRoot);
+}
+
+private static boolean same(TreeNode p, TreeNode q) {
+    if (p == null && q == null) return true;
+    if (p == null || q == null || p.val != q.val) return false;
+    return same(p.left, q.left) && same(p.right, q.right);
+}
+```
+
+- **Time Complexity:** O(m * n)
+- **Space Complexity:** O(h)
+
+### Approach 2: Serialize and Search the String
+
+Serialize both trees in pre-order with null markers (each value wrapped in separators, so 1 does not match 11) and check whether the serialization of `subRoot` is a substring of the one of `root`. With KMP the substring search is linear.
+
+```java
+public static boolean isSubtreeSerialize(TreeNode root, TreeNode subRoot) {
+    return serialize(root).contains(serialize(subRoot));
+}
+
+private static String serialize(TreeNode node) {
+    if (node == null) return ",#";
+    return "," + node.val + serialize(node.left) + serialize(node.right);
+}
+```
+
+- **Time Complexity:** O(m * n) with contains(), O(m + n) with KMP
+- **Space Complexity:** O(m + n)
+
+### Approach 3: Tree Hashing
+
+Give every subtree a canonical id from the triple `(value, left id, right id)` using a map, then `subRoot` is a subtree if its id appears among the ids of the nodes of `root`. Linear time, because the id assignment never compares whole subtrees.
+
+```java
+public static boolean isSubtreeHash(TreeNode root, TreeNode subRoot) {
+    if (subRoot == null) return true;
+    Map<String, Integer> ids = new HashMap<>();
+    Set<Integer> rootIds = new HashSet<>();
+    collect(root, ids, rootIds);
+    return rootIds.contains(collect(subRoot, ids, new HashSet<>()));
+}
+
+private static int collect(TreeNode node, Map<String, Integer> ids, Set<Integer> seen) {
+    if (node == null) return 0;
+    String key = node.val + "," + collect(node.left, ids, seen) + "," + collect(node.right, ids, seen);
+    int id = ids.computeIfAbsent(key, k -> ids.size() + 1);
+    seen.add(id);
+    return id;
+}
+```
+
+- **Time Complexity:** O(m + n)
+- **Space Complexity:** O(m + n)
+
+### Comparison
+
+| # | Approach | Time | Space |
+|---|----------|------|-------|
+| 1 | Compare Every Node with Same Tree (Optimized) | O(m * n) | O(h) |
+| 2 | Serialize and Search the String | O(m * n) with contains(), O(m + n) with KMP | O(m + n) |
+| 3 | Tree Hashing | O(m + n) | O(m + n) |
+
+### Optimized Solution
+
+The optimized solution is Approach 1 above, which is also the version implemented in this repository.
+
 ## Source Code
 
 Uses the shared helper [`TreeNode`](../../../src/main/java/com/ranga/blind75/tree/TreeNode.java) (a small `TreeNode` with `of(...)` and `toString(...)` helpers for building and printing test data).

@@ -19,6 +19,121 @@ Given an array of distinct integers `candidates` and a `target`, return all uniq
 - **Time Complexity:** `O(N^(T/M))` — Backtracking: `N` candidates, target `T`, smallest candidate `M`; the counting variant is `O(T * N)`.
 - **Space Complexity:** `O(T/M)` — Recursion depth (the counting variant uses `O(T)`).
 
+## Approaches
+
+The same problem can be solved in several ways. The approach marked (Optimized) is the one to use in practice.
+
+### Approach 1: Backtracking Without Sorting
+
+Try every candidate at every step, restricted to indexes not smaller than the last chosen one (to avoid permutations of the same combination). It cannot stop early, because without sorting a later candidate may still fit.
+
+```java
+public static List<List<Integer>> combinationSumPlain(int[] candidates, int target) {
+    List<List<Integer>> result = new ArrayList<>();
+    search(candidates, target, 0, new ArrayList<>(), result);
+    return result;
+}
+
+private static void search(int[] candidates, int remaining, int start, List<Integer> current, List<List<Integer>> result) {
+    if (remaining < 0) return;
+    if (remaining == 0) { result.add(new ArrayList<>(current)); return; }
+    for (int i = start; i < candidates.length; i++) {
+        current.add(candidates[i]);
+        search(candidates, remaining - candidates[i], i, current, result);
+        current.remove(current.size() - 1);
+    }
+}
+```
+
+- **Time Complexity:** O(N^(T/M))
+- **Space Complexity:** O(T/M)
+
+### Approach 2: Backtracking with Sorted Candidates and Early Stop (Optimized)
+
+Sort the candidates so the loop can stop at the first candidate larger than the remaining target, which prunes whole branches. This is the version implemented in the repository.
+
+```java
+public static List<List<Integer>> combinationSum(int[] candidates, int target) {
+    List<List<Integer>> result = new ArrayList<>();
+    int[] sorted = candidates.clone();
+    Arrays.sort(sorted);
+    backtrack(sorted, target, 0, new ArrayList<>(), result);
+    return result;
+}
+
+private static void backtrack(int[] candidates, int remaining, int start, List<Integer> current, List<List<Integer>> result) {
+    if (remaining == 0) { result.add(new ArrayList<>(current)); return; }
+    for (int i = start; i < candidates.length && candidates[i] <= remaining; i++) {
+        current.add(candidates[i]);
+        backtrack(candidates, remaining - candidates[i], i, current, result);
+        current.remove(current.size() - 1);
+    }
+}
+```
+
+- **Time Complexity:** O(N^(T/M)) with pruning
+- **Space Complexity:** O(T/M)
+
+### Approach 3: Dynamic Programming over Targets (All Combinations)
+
+For every sum `t`, store the combinations that reach it. Processing the candidates in the outer loop keeps each combination in non-decreasing order, so there are no duplicates. Easy to extend, but it stores many intermediate lists.
+
+```java
+public static List<List<Integer>> combinationSumDp(int[] candidates, int target) {
+    List<List<List<Integer>>> dp = new ArrayList<>();
+    for (int t = 0; t <= target; t++) dp.add(new ArrayList<>());
+    dp.get(0).add(new ArrayList<>());
+    int[] sorted = candidates.clone();
+    Arrays.sort(sorted);
+    for (int candidate : sorted) {
+        for (int t = candidate; t <= target; t++) {
+            for (List<Integer> combination : dp.get(t - candidate)) {
+                List<Integer> extended = new ArrayList<>(combination);
+                extended.add(candidate);
+                dp.get(t).add(extended);
+            }
+        }
+    }
+    return dp.get(target);
+}
+```
+
+- **Time Complexity:** O(N * T * C) where C is the number of combinations
+- **Space Complexity:** O(T * C)
+
+### Approach 4: Counting Variant: Ordered Sequences (DP)
+
+The Blind 75 PDF prints the counting version of the problem (different orders count separately): `ways[t] = sum(ways[t - c])`. This is `combinationSum4` in the repository class.
+
+```java
+public static int combinationSum4(int[] nums, int target) {
+    int[] ways = new int[target + 1];
+    ways[0] = 1;
+    for (int t = 1; t <= target; t++) {
+        for (int num : nums) {
+            if (num <= t) ways[t] += ways[t - num];
+        }
+    }
+    return ways[target];
+}
+```
+
+- **Time Complexity:** O(T * N)
+- **Space Complexity:** O(T)
+
+### Comparison
+
+| # | Approach | Time | Space |
+|---|----------|------|-------|
+| 1 | Backtracking Without Sorting | O(N^(T/M)) | O(T/M) |
+| 2 | Backtracking with Sorted Candidates and Early Stop (Optimized) | O(N^(T/M)) with pruning | O(T/M) |
+| 3 | Dynamic Programming over Targets (All Combinations) | O(N * T * C) where C is the number of combinations | O(T * C) |
+| 4 | Counting Variant: Ordered Sequences (DP) | O(T * N) | O(T) |
+
+### Optimized Solution
+
+The optimized solution is Approach 2 above. The version implemented in this repository is Approach 2 and 4.
+
 ## Source Code
 
 ### CombinationSum.java

@@ -19,6 +19,91 @@ Given an unsorted array of integers, return the length of the longest sequence o
 - **Time Complexity:** `O(n)` — Each number is counted only from the start of its sequence.
 - **Space Complexity:** `O(n)` — The hash set.
 
+## Approaches
+
+The same problem can be solved in several ways. The approach marked (Optimized) is the one to use in practice.
+
+### Approach 1: Sorting
+
+Sort the numbers and count the length of each run of consecutive values (equal values are skipped).
+
+```java
+public static int longestConsecutiveSort(int[] nums) {
+    if (nums.length == 0) return 0;
+    int[] sorted = nums.clone();
+    Arrays.sort(sorted);
+    int best = 1, current = 1;
+    for (int i = 1; i < sorted.length; i++) {
+        if (sorted[i] == sorted[i - 1]) continue;
+        current = (sorted[i] == sorted[i - 1] + 1) ? current + 1 : 1;
+        best = Math.max(best, current);
+    }
+    return best;
+}
+```
+
+- **Time Complexity:** O(n log n)
+- **Space Complexity:** O(n)
+
+### Approach 2: Hash Set and Sequence Starts (Optimized)
+
+Only start counting at numbers whose predecessor is absent, so every number is walked over once in total. This is the version implemented in the repository.
+
+```java
+public static int longestConsecutive(int[] nums) {
+    Set<Integer> set = new HashSet<>();
+    for (int num : nums) set.add(num);
+    int best = 0;
+    for (int num : set) {
+        if (!set.contains(num - 1)) {
+            int length = 1;
+            while (set.contains(num + length)) length++;
+            best = Math.max(best, length);
+        }
+    }
+    return best;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 3: Map of Sequence Lengths at the Boundaries
+
+Store for the two ends of every sequence its length. A new number joins the sequences on its left and right: its length is `left + right + 1`, and that value is written to the two new ends. Needs a single pass and no repeated walking.
+
+```java
+public static int longestConsecutiveMap(int[] nums) {
+    Map<Integer, Integer> length = new HashMap<>();
+    int best = 0;
+    for (int num : nums) {
+        if (length.containsKey(num)) continue;
+        int left = length.getOrDefault(num - 1, 0), right = length.getOrDefault(num + 1, 0);
+        int total = left + right + 1;
+        length.put(num, total);
+        length.put(num - left, total);
+        length.put(num + right, total);
+        best = Math.max(best, total);
+    }
+    return best;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Comparison
+
+| # | Approach | Time | Space |
+|---|----------|------|-------|
+| 1 | Sorting | O(n log n) | O(n) |
+| 2 | Hash Set and Sequence Starts (Optimized) | O(n) | O(n) |
+| 3 | Map of Sequence Lengths at the Boundaries | O(n) | O(n) |
+
+### Optimized Solution
+
+The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+
 ## Source Code
 
 ### LongestConsecutiveSequence.java

@@ -19,6 +19,105 @@ Given an `m x n` grid of characters and a `word`, return `true` if the word can 
 - **Time Complexity:** `O(m * n * 3^L)` — Each of the `m * n` start cells explores up to 3 directions per letter (`L` = word length).
 - **Space Complexity:** `O(L)` — Recursion depth equals the word length.
 
+## Approaches
+
+The same problem can be solved in several ways. The approach marked (Optimized) is the one to use in practice.
+
+### Approach 1: DFS with a Visited Matrix
+
+Backtracking DFS from every cell that tracks the used cells in a separate boolean matrix.
+
+```java
+public static boolean existVisited(char[][] board, String word) {
+    boolean[][] visited = new boolean[board.length][board[0].length];
+    for (int i = 0; i < board.length; i++) {
+        for (int j = 0; j < board[0].length; j++) {
+            if (dfsVisited(board, word, i, j, 0, visited)) return true;
+        }
+    }
+    return false;
+}
+
+private static boolean dfsVisited(char[][] board, String word, int i, int j, int index, boolean[][] visited) {
+    if (index == word.length()) return true;
+    if (i < 0 || j < 0 || i >= board.length || j >= board[0].length
+            || visited[i][j] || board[i][j] != word.charAt(index)) return false;
+    visited[i][j] = true;
+    boolean found = dfsVisited(board, word, i + 1, j, index + 1, visited)
+            || dfsVisited(board, word, i - 1, j, index + 1, visited)
+            || dfsVisited(board, word, i, j + 1, index + 1, visited)
+            || dfsVisited(board, word, i, j - 1, index + 1, visited);
+    visited[i][j] = false;
+    return found;
+}
+```
+
+- **Time Complexity:** O(m * n * 3^L)
+- **Space Complexity:** O(m * n + L)
+
+### Approach 2: In-Place DFS (Optimized)
+
+Mark the current cell by temporarily overwriting its letter, so no extra visited matrix is required. This is the version implemented in the repository.
+
+```java
+public static boolean exist(char[][] board, String word) {
+    for (int i = 0; i < board.length; i++) {
+        for (int j = 0; j < board[0].length; j++) {
+            if (dfs(board, word, i, j, 0)) return true;
+        }
+    }
+    return false;
+}
+
+private static boolean dfs(char[][] board, String word, int i, int j, int index) {
+    if (i < 0 || j < 0 || i >= board.length || j >= board[0].length || board[i][j] != word.charAt(index)) return false;
+    if (index == word.length() - 1) return true;
+    char original = board[i][j];
+    board[i][j] = '#';
+    boolean found = dfs(board, word, i + 1, j, index + 1) || dfs(board, word, i - 1, j, index + 1)
+            || dfs(board, word, i, j + 1, index + 1) || dfs(board, word, i, j - 1, index + 1);
+    board[i][j] = original;
+    return found;
+}
+```
+
+- **Time Complexity:** O(m * n * 3^L)
+- **Space Complexity:** O(L)
+
+### Approach 3: In-Place DFS with Pruning
+
+Before searching, reject the word if the board does not have enough of each letter, and search the reversed word when its first letter is more frequent than its last one (fewer starting points, earlier failures).
+
+```java
+public static boolean existPruned(char[][] board, String word) {
+    int[] counts = new int[128];
+    for (char[] row : board) for (char c : row) counts[c]++;
+    int[] needed = new int[128];
+    for (char c : word.toCharArray()) {
+        if (++needed[c] > counts[c]) return false;
+    }
+    if (counts[word.charAt(0)] > counts[word.charAt(word.length() - 1)]) {
+        word = new StringBuilder(word).reverse().toString();
+    }
+    return exist(board, word);
+}
+```
+
+- **Time Complexity:** O(m * n * 3^L) worst case, much faster in practice
+- **Space Complexity:** O(L)
+
+### Comparison
+
+| # | Approach | Time | Space |
+|---|----------|------|-------|
+| 1 | DFS with a Visited Matrix | O(m * n * 3^L) | O(m * n + L) |
+| 2 | In-Place DFS (Optimized) | O(m * n * 3^L) | O(L) |
+| 3 | In-Place DFS with Pruning | O(m * n * 3^L) worst case, much faster in practice | O(L) |
+
+### Optimized Solution
+
+The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+
 ## Source Code
 
 ### WordSearch.java

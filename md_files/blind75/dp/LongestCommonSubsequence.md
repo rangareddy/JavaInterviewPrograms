@@ -19,6 +19,109 @@ Given two strings `text1` and `text2`, return the length of their longest common
 - **Time Complexity:** `O(m * n)` — Every table cell is computed once.
 - **Space Complexity:** `O(m * n)` — The table.
 
+## Approaches
+
+The same problem can be solved in several ways. The approach marked (Optimized) is the one to use in practice.
+
+### Approach 1: Plain Recursion
+
+If the last characters match they are part of the subsequence; otherwise drop the last character of either string and take the better result. Exponential.
+
+```java
+public static int lcsRecursive(String a, String b) {
+    return solve(a, b, a.length(), b.length());
+}
+
+private static int solve(String a, String b, int i, int j) {
+    if (i == 0 || j == 0) return 0;
+    if (a.charAt(i - 1) == b.charAt(j - 1)) return 1 + solve(a, b, i - 1, j - 1);
+    return Math.max(solve(a, b, i - 1, j), solve(a, b, i, j - 1));
+}
+```
+
+- **Time Complexity:** O(2^(m + n))
+- **Space Complexity:** O(m + n)
+
+### Approach 2: Memoization (Top-Down DP)
+
+The same recursion with a table of already solved `(i, j)` pairs.
+
+```java
+public static int lcsMemo(String a, String b) {
+    int[][] memo = new int[a.length() + 1][b.length() + 1];
+    for (int[] row : memo) Arrays.fill(row, -1);
+    return solve(a, b, a.length(), b.length(), memo);
+}
+
+private static int solve(String a, String b, int i, int j, int[][] memo) {
+    if (i == 0 || j == 0) return 0;
+    if (memo[i][j] != -1) return memo[i][j];
+    if (a.charAt(i - 1) == b.charAt(j - 1)) memo[i][j] = 1 + solve(a, b, i - 1, j - 1, memo);
+    else memo[i][j] = Math.max(solve(a, b, i - 1, j, memo), solve(a, b, i, j - 1, memo));
+    return memo[i][j];
+}
+```
+
+- **Time Complexity:** O(m * n)
+- **Space Complexity:** O(m * n)
+
+### Approach 3: Bottom-Up DP Table
+
+`dp[i][j]` is the LCS of the first `i` and `j` characters. This is the version implemented in the repository.
+
+```java
+public static int longestCommonSubsequence(String text1, String text2) {
+    int m = text1.length(), n = text2.length();
+    int[][] dp = new int[m + 1][n + 1];
+    for (int i = 1; i <= m; i++) {
+        for (int j = 1; j <= n; j++) {
+            if (text1.charAt(i - 1) == text2.charAt(j - 1)) dp[i][j] = dp[i - 1][j - 1] + 1;
+            else dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+        }
+    }
+    return dp[m][n];
+}
+```
+
+- **Time Complexity:** O(m * n)
+- **Space Complexity:** O(m * n)
+
+### Approach 4: Two Rolling Rows (Optimized)
+
+A row of the table only depends on the previous row, so keep just two rows of the shorter string's length. The LCS length is unchanged and the memory drops to `O(min(m, n))`.
+
+```java
+public static int lcsTwoRows(String text1, String text2) {
+    if (text1.length() < text2.length()) { String t = text1; text1 = text2; text2 = t; }   // columns = shorter string
+    int n = text2.length();
+    int[] previous = new int[n + 1], current = new int[n + 1];
+    for (int i = 1; i <= text1.length(); i++) {
+        for (int j = 1; j <= n; j++) {
+            if (text1.charAt(i - 1) == text2.charAt(j - 1)) current[j] = previous[j - 1] + 1;
+            else current[j] = Math.max(previous[j], current[j - 1]);
+        }
+        int[] temp = previous; previous = current; current = temp;
+    }
+    return previous[n];
+}
+```
+
+- **Time Complexity:** O(m * n)
+- **Space Complexity:** O(min(m, n))
+
+### Comparison
+
+| # | Approach | Time | Space |
+|---|----------|------|-------|
+| 1 | Plain Recursion | O(2^(m + n)) | O(m + n) |
+| 2 | Memoization (Top-Down DP) | O(m * n) | O(m * n) |
+| 3 | Bottom-Up DP Table | O(m * n) | O(m * n) |
+| 4 | Two Rolling Rows (Optimized) | O(m * n) | O(min(m, n)) |
+
+### Optimized Solution
+
+The optimized solution is Approach 4 above. The version implemented in this repository is Approach 3.
+
 ## Source Code
 
 ### LongestCommonSubsequence.java

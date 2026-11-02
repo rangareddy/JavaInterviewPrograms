@@ -18,6 +18,57 @@ Given an array of meeting time intervals `[start, end]`, determine whether a per
 - **Time Complexity:** `O(n log n)` — Dominated by sorting.
 - **Space Complexity:** `O(1)` — Besides the sort.
 
+## Approaches
+
+The same problem can be solved in several ways. The approach marked (Optimized) is the one to use in practice.
+
+### Approach 1: Brute Force (Compare Every Pair)
+
+Two meetings conflict if each starts before the other ends. Check all pairs.
+
+```java
+public static boolean canAttendMeetingsBrute(int[][] intervals) {
+    for (int i = 0; i < intervals.length; i++) {
+        for (int j = i + 1; j < intervals.length; j++) {
+            if (intervals[i][0] < intervals[j][1] && intervals[j][0] < intervals[i][1]) return false;
+        }
+    }
+    return true;
+}
+```
+
+- **Time Complexity:** O(n^2)
+- **Space Complexity:** O(1)
+
+### Approach 2: Sort and Compare Neighbours (Optimized)
+
+After sorting by start time only neighbouring meetings can overlap. This is the version implemented in the repository.
+
+```java
+public static boolean canAttendMeetings(int[][] intervals) {
+    int[][] sorted = intervals.clone();
+    Arrays.sort(sorted, Comparator.comparingInt((int[] a) -> a[0]));
+    for (int i = 1; i < sorted.length; i++) {
+        if (sorted[i][0] < sorted[i - 1][1]) return false;
+    }
+    return true;
+}
+```
+
+- **Time Complexity:** O(n log n)
+- **Space Complexity:** O(1) besides the sort
+
+### Comparison
+
+| # | Approach | Time | Space |
+|---|----------|------|-------|
+| 1 | Brute Force (Compare Every Pair) | O(n^2) | O(1) |
+| 2 | Sort and Compare Neighbours (Optimized) | O(n log n) | O(1) besides the sort |
+
+### Optimized Solution
+
+The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+
 ## Source Code
 
 ### MeetingRooms.java

@@ -19,6 +19,110 @@ Given an array of meeting time intervals `[start, end]`, find the minimum number
 - **Time Complexity:** `O(n log n)` — Dominated by sorting.
 - **Space Complexity:** `O(n)` — The two sorted arrays.
 
+## Approaches
+
+The same problem can be solved in several ways. The approach marked (Optimized) is the one to use in practice.
+
+### Approach 1: Brute Force (Count Overlaps at Every Start)
+
+The number of rooms needed is the largest number of meetings running at the same moment, and that maximum is reached at some meeting start. For each start time count the meetings that are running.
+
+```java
+public static int minMeetingRoomsBrute(int[][] intervals) {
+    int rooms = 0;
+    for (int[] a : intervals) {
+        int running = 0;
+        for (int[] b : intervals) {
+            if (b[0] <= a[0] && a[0] < b[1]) running++;
+        }
+        rooms = Math.max(rooms, running);
+    }
+    return rooms;
+}
+```
+
+- **Time Complexity:** O(n^2)
+- **Space Complexity:** O(1)
+
+### Approach 2: Min-Heap of End Times
+
+Sort by start time and keep the end times of the meetings in progress in a min-heap. Before adding a meeting, free the room of the earliest finishing meeting if it has already ended; the heap size at the end of the process is the number of rooms.
+
+```java
+public static int minMeetingRoomsHeap(int[][] intervals) {
+    int[][] sorted = intervals.clone();
+    Arrays.sort(sorted, Comparator.comparingInt((int[] a) -> a[0]));
+    PriorityQueue<Integer> ends = new PriorityQueue<>();
+    for (int[] interval : sorted) {
+        if (!ends.isEmpty() && ends.peek() <= interval[0]) ends.poll();    // reuse that room
+        ends.add(interval[1]);
+    }
+    return ends.size();
+}
+```
+
+- **Time Complexity:** O(n log n)
+- **Space Complexity:** O(n)
+
+### Approach 3: Sorted Starts and Ends with Two Pointers (Optimized)
+
+Sort start times and end times independently and sweep: a start before the earliest unfinished end needs a new room, otherwise a room is reused. This is the version implemented in the repository.
+
+```java
+public static int minMeetingRooms(int[][] intervals) {
+    int n = intervals.length;
+    int[] starts = new int[n], ends = new int[n];
+    for (int i = 0; i < n; i++) { starts[i] = intervals[i][0]; ends[i] = intervals[i][1]; }
+    Arrays.sort(starts);
+    Arrays.sort(ends);
+    int rooms = 0, end = 0;
+    for (int start : starts) {
+        if (start < ends[end]) rooms++;
+        else end++;
+    }
+    return rooms;
+}
+```
+
+- **Time Complexity:** O(n log n)
+- **Space Complexity:** O(n)
+
+### Approach 4: Sweep Line over Events
+
+Turn every meeting into a +1 event at its start and a -1 event at its end, process the events in time order (ends before starts at the same time) and track the maximum running total.
+
+```java
+public static int minMeetingRoomsSweep(int[][] intervals) {
+    TreeMap<Integer, Integer> delta = new TreeMap<>();
+    for (int[] interval : intervals) {
+        delta.merge(interval[0], 1, Integer::sum);
+        delta.merge(interval[1], -1, Integer::sum);
+    }
+    int running = 0, best = 0;
+    for (int change : delta.values()) {
+        running += change;
+        best = Math.max(best, running);
+    }
+    return best;
+}
+```
+
+- **Time Complexity:** O(n log n)
+- **Space Complexity:** O(n)
+
+### Comparison
+
+| # | Approach | Time | Space |
+|---|----------|------|-------|
+| 1 | Brute Force (Count Overlaps at Every Start) | O(n^2) | O(1) |
+| 2 | Min-Heap of End Times | O(n log n) | O(n) |
+| 3 | Sorted Starts and Ends with Two Pointers (Optimized) | O(n log n) | O(n) |
+| 4 | Sweep Line over Events | O(n log n) | O(n) |
+
+### Optimized Solution
+
+The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+
 ## Source Code
 
 ### MeetingRoomsII.java

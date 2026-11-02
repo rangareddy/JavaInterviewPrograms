@@ -19,6 +19,96 @@ Words of a new alien language (using the Latin alphabet) are given sorted lexico
 - **Time Complexity:** `O(C)` — `C` is the total number of characters in all words.
 - **Space Complexity:** `O(1)` — At most 26 letters and their edges (plus the output).
 
+## Approaches
+
+The same problem can be solved in several ways. The approach marked (Optimized) is the one to use in practice.
+
+### Approach 1: DFS Topological Sort (Post-order)
+
+Build the letter graph from adjacent words and run a DFS; a letter is appended after all letters that must come after it, so reversing the list gives a valid order. A letter reached while it is still being visited means a cycle.
+
+```java
+public static String alienOrderDfs(String[] words) {
+    Map<Character, Set<Character>> graph = new LinkedHashMap<>();
+    for (String word : words) for (char c : word.toCharArray()) graph.putIfAbsent(c, new LinkedHashSet<>());
+    for (int i = 0; i + 1 < words.length; i++) {
+        String a = words[i], b = words[i + 1];
+        if (a.length() > b.length() && a.startsWith(b)) return "";
+        for (int j = 0; j < Math.min(a.length(), b.length()); j++) {
+            if (a.charAt(j) != b.charAt(j)) { graph.get(a.charAt(j)).add(b.charAt(j)); break; }
+        }
+    }
+    Map<Character, Integer> state = new HashMap<>();       // 1 = visiting, 2 = done
+    StringBuilder order = new StringBuilder();
+    for (char c : graph.keySet()) {
+        if (!visit(c, graph, state, order)) return "";
+    }
+    return order.reverse().toString();
+}
+
+private static boolean visit(char c, Map<Character, Set<Character>> graph, Map<Character, Integer> state, StringBuilder order) {
+    Integer s = state.get(c);
+    if (s != null) return s == 2;
+    state.put(c, 1);
+    for (char next : graph.get(c)) {
+        if (!visit(next, graph, state, order)) return false;
+    }
+    state.put(c, 2);
+    order.append(c);
+    return true;
+}
+```
+
+- **Time Complexity:** O(C)
+- **Space Complexity:** O(1) (at most 26 letters)
+
+### Approach 2: Kahn's Topological Sort (Optimized)
+
+Repeatedly output letters that no remaining letter has to precede. If some letters are never output, there is a cycle. This is the version implemented in the repository.
+
+```java
+public static String alienOrder(String[] words) {
+    Map<Character, Set<Character>> graph = new LinkedHashMap<>();
+    Map<Character, Integer> inDegree = new LinkedHashMap<>();
+    for (String word : words) {
+        for (char c : word.toCharArray()) { graph.putIfAbsent(c, new LinkedHashSet<>()); inDegree.putIfAbsent(c, 0); }
+    }
+    for (int i = 0; i + 1 < words.length; i++) {
+        String a = words[i], b = words[i + 1];
+        if (a.length() > b.length() && a.startsWith(b)) return "";
+        for (int j = 0; j < Math.min(a.length(), b.length()); j++) {
+            if (a.charAt(j) != b.charAt(j)) {
+                if (graph.get(a.charAt(j)).add(b.charAt(j))) inDegree.merge(b.charAt(j), 1, Integer::sum);
+                break;
+            }
+        }
+    }
+    Deque<Character> queue = new ArrayDeque<>();
+    for (Map.Entry<Character, Integer> e : inDegree.entrySet()) if (e.getValue() == 0) queue.add(e.getKey());
+    StringBuilder order = new StringBuilder();
+    while (!queue.isEmpty()) {
+        char c = queue.poll();
+        order.append(c);
+        for (char next : graph.get(c)) if (inDegree.merge(next, -1, Integer::sum) == 0) queue.add(next);
+    }
+    return order.length() == graph.size() ? order.toString() : "";
+}
+```
+
+- **Time Complexity:** O(C)
+- **Space Complexity:** O(1)
+
+### Comparison
+
+| # | Approach | Time | Space |
+|---|----------|------|-------|
+| 1 | DFS Topological Sort (Post-order) | O(C) | O(1) (at most 26 letters) |
+| 2 | Kahn's Topological Sort (Optimized) | O(C) | O(1) |
+
+### Optimized Solution
+
+The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+
 ## Source Code
 
 ### AlienDictionary.java

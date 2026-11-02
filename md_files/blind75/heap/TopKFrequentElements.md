@@ -19,6 +19,90 @@ Given an integer array `nums` and an integer `k`, return the `k` most frequent e
 - **Time Complexity:** `O(n)` — Counting plus one pass over the buckets.
 - **Space Complexity:** `O(n)` — The map and the buckets.
 
+## Approaches
+
+The same problem can be solved in several ways. The approach marked (Optimized) is the one to use in practice.
+
+### Approach 1: Sort by Frequency
+
+Count the frequencies, sort the distinct numbers by frequency and take the first `k`.
+
+```java
+public static int[] topKFrequentSort(int[] nums, int k) {
+    Map<Integer, Integer> frequency = new HashMap<>();
+    for (int num : nums) frequency.merge(num, 1, Integer::sum);
+    List<Integer> keys = new ArrayList<>(frequency.keySet());
+    keys.sort((a, b) -> frequency.get(b) - frequency.get(a));
+    int[] result = new int[k];
+    for (int i = 0; i < k; i++) result[i] = keys.get(i);
+    return result;
+}
+```
+
+- **Time Complexity:** O(n log n)
+- **Space Complexity:** O(n)
+
+### Approach 2: Min-Heap of Size k
+
+Keep only the `k` most frequent numbers in a min-heap ordered by frequency: push every number and drop the least frequent one whenever the heap grows beyond `k`.
+
+```java
+public static int[] topKFrequentHeap(int[] nums, int k) {
+    Map<Integer, Integer> frequency = new HashMap<>();
+    for (int num : nums) frequency.merge(num, 1, Integer::sum);
+    PriorityQueue<Integer> heap = new PriorityQueue<>((a, b) -> frequency.get(a) - frequency.get(b));
+    for (int num : frequency.keySet()) {
+        heap.add(num);
+        if (heap.size() > k) heap.poll();
+    }
+    int[] result = new int[k];
+    for (int i = k - 1; i >= 0; i--) result[i] = heap.poll();
+    return result;
+}
+```
+
+- **Time Complexity:** O(n log k)
+- **Space Complexity:** O(n)
+
+### Approach 3: Bucket Sort by Frequency (Optimized)
+
+A frequency is at most `n`, so group the numbers into `n + 1` buckets indexed by frequency and read the buckets from the highest to the lowest. This is the version implemented in the repository.
+
+```java
+public static int[] topKFrequent(int[] nums, int k) {
+    Map<Integer, Integer> frequency = new HashMap<>();
+    for (int num : nums) frequency.merge(num, 1, Integer::sum);
+    @SuppressWarnings("unchecked")
+    List<Integer>[] buckets = new List[nums.length + 1];
+    for (Map.Entry<Integer, Integer> e : frequency.entrySet()) {
+        if (buckets[e.getValue()] == null) buckets[e.getValue()] = new ArrayList<>();
+        buckets[e.getValue()].add(e.getKey());
+    }
+    int[] result = new int[k];
+    int index = 0;
+    for (int count = buckets.length - 1; count >= 0 && index < k; count--) {
+        if (buckets[count] == null) continue;
+        for (int num : buckets[count]) { if (index == k) break; result[index++] = num; }
+    }
+    return result;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Comparison
+
+| # | Approach | Time | Space |
+|---|----------|------|-------|
+| 1 | Sort by Frequency | O(n log n) | O(n) |
+| 2 | Min-Heap of Size k | O(n log k) | O(n) |
+| 3 | Bucket Sort by Frequency (Optimized) | O(n) | O(n) |
+
+### Optimized Solution
+
+The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+
 ## Source Code
 
 ### TopKFrequentElements.java

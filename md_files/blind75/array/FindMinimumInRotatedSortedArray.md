@@ -19,6 +19,72 @@ A sorted array of unique elements was rotated an unknown number of times. Return
 - **Time Complexity:** `O(log n)` — The range is halved each step.
 - **Space Complexity:** `O(1)` — Index variables only.
 
+## Approaches
+
+The same problem can be solved in several ways. The approach marked (Optimized) is the one to use in practice.
+
+### Approach 1: Linear Scan
+
+Look at every element and keep the smallest. Ignores the sorted structure.
+
+```java
+public static int findMinLinear(int[] nums) {
+    int min = nums[0];
+    for (int num : nums) min = Math.min(min, num);
+    return min;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(1)
+
+### Approach 2: Find the Rotation Point
+
+The minimum is the only element smaller than its predecessor. Scan for the place where the order drops (still linear).
+
+```java
+public static int findMinPivot(int[] nums) {
+    for (int i = 1; i < nums.length; i++) {
+        if (nums[i] < nums[i - 1]) return nums[i];
+    }
+    return nums[0];             // not rotated
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(1)
+
+### Approach 3: Binary Search (Optimized)
+
+Compare the middle element with the last one to decide which half contains the rotation point. This is the version implemented in the repository.
+
+```java
+public static int findMin(int[] nums) {
+    int low = 0, high = nums.length - 1;
+    while (low < high) {
+        int mid = low + (high - low) / 2;
+        if (nums[mid] > nums[high]) low = mid + 1;
+        else high = mid;
+    }
+    return nums[low];
+}
+```
+
+- **Time Complexity:** O(log n)
+- **Space Complexity:** O(1)
+
+### Comparison
+
+| # | Approach | Time | Space |
+|---|----------|------|-------|
+| 1 | Linear Scan | O(n) | O(1) |
+| 2 | Find the Rotation Point | O(n) | O(1) |
+| 3 | Binary Search (Optimized) | O(log n) | O(1) |
+
+### Optimized Solution
+
+The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+
 ## Source Code
 
 ### FindMinimumInRotatedSortedArray.java

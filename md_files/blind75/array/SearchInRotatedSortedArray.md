@@ -19,6 +19,87 @@ Given a sorted array of unique values that was rotated at an unknown pivot and a
 - **Time Complexity:** `O(log n)` — The search range halves each step.
 - **Space Complexity:** `O(1)` — Index variables only.
 
+## Approaches
+
+The same problem can be solved in several ways. The approach marked (Optimized) is the one to use in practice.
+
+### Approach 1: Linear Scan
+
+Check every element. Correct but ignores the sorted structure.
+
+```java
+public static int searchLinear(int[] nums, int target) {
+    for (int i = 0; i < nums.length; i++) {
+        if (nums[i] == target) return i;
+    }
+    return -1;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(1)
+
+### Approach 2: Find the Pivot, Then Binary Search
+
+First binary-search the index of the minimum (the rotation point). Then run an ordinary binary search on the half that can contain the target.
+
+```java
+public static int searchTwoPass(int[] nums, int target) {
+    int n = nums.length, low = 0, high = n - 1;
+    while (low < high) {                           // find the index of the minimum
+        int mid = low + (high - low) / 2;
+        if (nums[mid] > nums[high]) low = mid + 1; else high = mid;
+    }
+    int pivot = low;
+    low = 0; high = n - 1;
+    if (target >= nums[pivot] && target <= nums[n - 1]) low = pivot; else high = pivot - 1;
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        if (nums[mid] == target) return mid;
+        if (nums[mid] < target) low = mid + 1; else high = mid - 1;
+    }
+    return -1;
+}
+```
+
+- **Time Complexity:** O(log n)
+- **Space Complexity:** O(1)
+
+### Approach 3: One-Pass Binary Search (Optimized)
+
+At every step one half is sorted; test whether the target lies inside it to decide which half to keep. This is the version implemented in the repository.
+
+```java
+public static int search(int[] nums, int target) {
+    int low = 0, high = nums.length - 1;
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        if (nums[mid] == target) return mid;
+        if (nums[low] <= nums[mid]) {
+            if (nums[low] <= target && target < nums[mid]) high = mid - 1; else low = mid + 1;
+        } else {
+            if (nums[mid] < target && target <= nums[high]) low = mid + 1; else high = mid - 1;
+        }
+    }
+    return -1;
+}
+```
+
+- **Time Complexity:** O(log n)
+- **Space Complexity:** O(1)
+
+### Comparison
+
+| # | Approach | Time | Space |
+|---|----------|------|-------|
+| 1 | Linear Scan | O(n) | O(1) |
+| 2 | Find the Pivot, Then Binary Search | O(log n) | O(1) |
+| 3 | One-Pass Binary Search (Optimized) | O(log n) | O(1) |
+
+### Optimized Solution
+
+The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+
 ## Source Code
 
 ### SearchInRotatedSortedArray.java

@@ -19,6 +19,131 @@ In a grid of heights, rain water flows from a cell to a neighboring cell (north,
 - **Time Complexity:** `O(m * n)` — Each cell is visited at most once per ocean.
 - **Space Complexity:** `O(m * n)` — Two visited matrices and the recursion stack.
 
+## Approaches
+
+The same problem can be solved in several ways. The approach marked (Optimized) is the one to use in practice.
+
+### Approach 1: Brute Force (DFS from Every Cell)
+
+For every cell, follow the water downhill (to neighbors that are not higher) and check whether both oceans are reached. Cells are explored again and again.
+
+```java
+public static List<List<Integer>> pacificAtlanticBrute(int[][] heights) {
+    List<List<Integer>> result = new ArrayList<>();
+    int rows = heights.length, cols = heights[0].length;
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            boolean[] reached = new boolean[2];          // [pacific, atlantic]
+            flow(heights, i, j, new boolean[rows][cols], reached);
+            if (reached[0] && reached[1]) result.add(Arrays.asList(i, j));
+        }
+    }
+    return result;
+}
+
+private static void flow(int[][] h, int i, int j, boolean[][] visited, boolean[] reached) {
+    visited[i][j] = true;
+    if (i == 0 || j == 0) reached[0] = true;
+    if (i == h.length - 1 || j == h[0].length - 1) reached[1] = true;
+    int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+    for (int[] d : directions) {
+        int x = i + d[0], y = j + d[1];
+        if (x >= 0 && y >= 0 && x < h.length && y < h[0].length && !visited[x][y] && h[x][y] <= h[i][j]) {
+            flow(h, x, y, visited, reached);
+        }
+    }
+}
+```
+
+- **Time Complexity:** O((m * n)^2)
+- **Space Complexity:** O(m * n)
+
+### Approach 2: Reverse DFS from Both Oceans (Optimized)
+
+Search backwards from the ocean borders to cells that are at least as high; the answer is the intersection of the two reachable sets. This is the version implemented in the repository.
+
+```java
+public static List<List<Integer>> pacificAtlantic(int[][] heights) {
+    int rows = heights.length, cols = heights[0].length;
+    boolean[][] pacific = new boolean[rows][cols], atlantic = new boolean[rows][cols];
+    for (int i = 0; i < rows; i++) { dfs(heights, pacific, i, 0); dfs(heights, atlantic, i, cols - 1); }
+    for (int j = 0; j < cols; j++) { dfs(heights, pacific, 0, j); dfs(heights, atlantic, rows - 1, j); }
+    List<List<Integer>> result = new ArrayList<>();
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) if (pacific[i][j] && atlantic[i][j]) result.add(Arrays.asList(i, j));
+    }
+    return result;
+}
+
+private static void dfs(int[][] h, boolean[][] reachable, int i, int j) {
+    reachable[i][j] = true;
+    int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+    for (int[] d : directions) {
+        int x = i + d[0], y = j + d[1];
+        if (x >= 0 && y >= 0 && x < h.length && y < h[0].length && !reachable[x][y] && h[x][y] >= h[i][j]) dfs(h, reachable, x, y);
+    }
+}
+```
+
+- **Time Complexity:** O(m * n)
+- **Space Complexity:** O(m * n)
+
+### Approach 3: Reverse BFS from Both Oceans
+
+The same reverse search with a queue, which avoids deep recursion on large grids.
+
+```java
+public static List<List<Integer>> pacificAtlanticBfs(int[][] heights) {
+    int rows = heights.length, cols = heights[0].length;
+    Queue<int[]> pacificQueue = new LinkedList<>(), atlanticQueue = new LinkedList<>();
+    boolean[][] pacific = new boolean[rows][cols], atlantic = new boolean[rows][cols];
+    for (int i = 0; i < rows; i++) {
+        pacificQueue.add(new int[]{i, 0}); pacific[i][0] = true;
+        atlanticQueue.add(new int[]{i, cols - 1}); atlantic[i][cols - 1] = true;
+    }
+    for (int j = 0; j < cols; j++) {
+        if (!pacific[0][j]) { pacificQueue.add(new int[]{0, j}); pacific[0][j] = true; }
+        if (!atlantic[rows - 1][j]) { atlanticQueue.add(new int[]{rows - 1, j}); atlantic[rows - 1][j] = true; }
+    }
+    bfs(heights, pacificQueue, pacific);
+    bfs(heights, atlanticQueue, atlantic);
+    List<List<Integer>> result = new ArrayList<>();
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) if (pacific[i][j] && atlantic[i][j]) result.add(Arrays.asList(i, j));
+    }
+    return result;
+}
+
+private static void bfs(int[][] h, Queue<int[]> queue, boolean[][] reachable) {
+    int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+    while (!queue.isEmpty()) {
+        int[] cell = queue.poll();
+        for (int[] d : directions) {
+            int x = cell[0] + d[0], y = cell[1] + d[1];
+            if (x >= 0 && y >= 0 && x < h.length && y < h[0].length && !reachable[x][y] && h[x][y] >= h[cell[0]][cell[1]]) {
+                reachable[x][y] = true;
+                queue.add(new int[]{x, y});
+            }
+        }
+    }
+}
+```
+
+- **Time Complexity:** O(m * n)
+- **Space Complexity:** O(m * n)
+
+### Comparison
+
+| # | Approach | Time | Space |
+|---|----------|------|-------|
+| 1 | Brute Force (DFS from Every Cell) | O((m * n)^2) | O(m * n) |
+| 2 | Reverse DFS from Both Oceans (Optimized) | O(m * n) | O(m * n) |
+| 3 | Reverse BFS from Both Oceans | O(m * n) | O(m * n) |
+
+### Optimized Solution
+
+The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+
 ## Source Code
 
 ### PacificAtlanticWaterFlow.java

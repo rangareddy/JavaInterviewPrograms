@@ -19,6 +19,95 @@ Given a string `s` of uppercase letters and an integer `k`, you may change at mo
 - **Time Complexity:** `O(n)` — Each index enters the window once and leaves at most once.
 - **Space Complexity:** `O(1)` — A fixed array of 26 counters.
 
+## Approaches
+
+The same problem can be solved in several ways. The approach marked (Optimized) is the one to use in practice.
+
+### Approach 1: Brute Force
+
+For every start index extend the substring while the characters that must be replaced (`length - highest frequency`) stay within `k`.
+
+```java
+public static int characterReplacementBrute(String s, int k) {
+    int best = 0;
+    for (int i = 0; i < s.length(); i++) {
+        int[] count = new int[26];
+        int maxCount = 0;
+        for (int j = i; j < s.length(); j++) {
+            maxCount = Math.max(maxCount, ++count[s.charAt(j) - 'A']);
+            if ((j - i + 1) - maxCount > k) break;
+            best = Math.max(best, j - i + 1);
+        }
+    }
+    return best;
+}
+```
+
+- **Time Complexity:** O(n^2)
+- **Space Complexity:** O(1)
+
+### Approach 2: Sliding Window, Recomputing the Maximum
+
+Grow a window and shrink it from the left while it needs more than `k` replacements. The highest frequency is recomputed over the 26 counters each time.
+
+```java
+public static int characterReplacementWindow(String s, int k) {
+    int[] count = new int[26];
+    int left = 0, best = 0;
+    for (int right = 0; right < s.length(); right++) {
+        count[s.charAt(right) - 'A']++;
+        while ((right - left + 1) - maxOf(count) > k) {
+            count[s.charAt(left++) - 'A']--;
+        }
+        best = Math.max(best, right - left + 1);
+    }
+    return best;
+}
+
+private static int maxOf(int[] count) {
+    int max = 0;
+    for (int c : count) max = Math.max(max, c);
+    return max;
+}
+```
+
+- **Time Complexity:** O(26 * n)
+- **Space Complexity:** O(1)
+
+### Approach 3: Sliding Window with a Non-Shrinking Window (Optimized)
+
+The window never needs to shrink below the best size found, so the highest frequency only has to be updated when it grows, and the window slides by one step instead of a `while` loop. This is the version implemented in the repository.
+
+```java
+public static int characterReplacement(String s, int k) {
+    int[] count = new int[26];
+    int left = 0, maxCount = 0, best = 0;
+    for (int right = 0; right < s.length(); right++) {
+        maxCount = Math.max(maxCount, ++count[s.charAt(right) - 'A']);
+        if ((right - left + 1) - maxCount > k) {
+            count[s.charAt(left++) - 'A']--;
+        }
+        best = Math.max(best, right - left + 1);
+    }
+    return best;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(1)
+
+### Comparison
+
+| # | Approach | Time | Space |
+|---|----------|------|-------|
+| 1 | Brute Force | O(n^2) | O(1) |
+| 2 | Sliding Window, Recomputing the Maximum | O(26 * n) | O(1) |
+| 3 | Sliding Window with a Non-Shrinking Window (Optimized) | O(n) | O(1) |
+
+### Optimized Solution
+
+The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+
 ## Source Code
 
 ### LongestRepeatingCharacterReplacement.java

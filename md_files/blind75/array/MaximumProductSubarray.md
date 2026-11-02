@@ -19,6 +19,82 @@ Given an integer array `nums`, find the contiguous subarray with the largest pro
 - **Time Complexity:** `O(n)` — A single pass.
 - **Space Complexity:** `O(1)` — Three variables.
 
+## Approaches
+
+The same problem can be solved in several ways. The approach marked (Optimized) is the one to use in practice.
+
+### Approach 1: Brute Force
+
+Multiply every subarray with a running product for each start index.
+
+```java
+public static int maxProductBrute(int[] nums) {
+    int best = Integer.MIN_VALUE;
+    for (int i = 0; i < nums.length; i++) {
+        int product = 1;
+        for (int j = i; j < nums.length; j++) {
+            product *= nums[j];
+            best = Math.max(best, product);
+        }
+    }
+    return best;
+}
+```
+
+- **Time Complexity:** O(n^2)
+- **Space Complexity:** O(1)
+
+### Approach 2: Prefix and Suffix Products
+
+In any subarray with an even number of negatives the best product is a prefix or a suffix of the zero-free segment. Scan from both ends at once, restarting the product after a zero.
+
+```java
+public static int maxProductPrefixSuffix(int[] nums) {
+    int n = nums.length, best = nums[0], prefix = 1, suffix = 1;
+    for (int i = 0; i < n; i++) {
+        prefix = (prefix == 0 ? 1 : prefix) * nums[i];
+        suffix = (suffix == 0 ? 1 : suffix) * nums[n - 1 - i];
+        best = Math.max(best, Math.max(prefix, suffix));
+    }
+    return best;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(1)
+
+### Approach 3: Track Maximum and Minimum (Optimized)
+
+A negative number turns the smallest product into the largest, so keep both the maximum and the minimum product ending at each index. This is the version implemented in the repository.
+
+```java
+public static int maxProduct(int[] nums) {
+    int max = nums[0], min = nums[0], result = nums[0];
+    for (int i = 1; i < nums.length; i++) {
+        int a = max * nums[i], b = min * nums[i];
+        max = Math.max(nums[i], Math.max(a, b));
+        min = Math.min(nums[i], Math.min(a, b));
+        result = Math.max(result, max);
+    }
+    return result;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(1)
+
+### Comparison
+
+| # | Approach | Time | Space |
+|---|----------|------|-------|
+| 1 | Brute Force | O(n^2) | O(1) |
+| 2 | Prefix and Suffix Products | O(n) | O(1) |
+| 3 | Track Maximum and Minimum (Optimized) | O(n) | O(1) |
+
+### Optimized Solution
+
+The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+
 ## Source Code
 
 ### MaximumProductSubarray.java

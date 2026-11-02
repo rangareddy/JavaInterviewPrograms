@@ -19,6 +19,152 @@ Given an `m x n` board of characters and a list of words, return all words that 
 - **Time Complexity:** `O(m * n * 3^L)` — Each cell starts a DFS of depth at most the longest word length `L`, pruned by the trie.
 - **Space Complexity:** `O(W * L)` — The trie of `W` words.
 
+## Approaches
+
+The same problem can be solved in several ways. The approach marked (Optimized) is the one to use in practice.
+
+### Approach 1: Word Search I for Every Word
+
+Run the single-word board search once per word. Correct, but the board is traversed once per word.
+
+```java
+public static List<String> findWordsEach(char[][] board, String[] words) {
+    List<String> result = new ArrayList<>();
+    for (String word : words) {
+        if (exists(board, word)) result.add(word);
+    }
+    Collections.sort(result);
+    return result;
+}
+
+private static boolean exists(char[][] board, String word) {
+    for (int i = 0; i < board.length; i++) {
+        for (int j = 0; j < board[0].length; j++) {
+            if (dfs(board, word, i, j, 0)) return true;
+        }
+    }
+    return false;
+}
+
+private static boolean dfs(char[][] board, String word, int i, int j, int index) {
+    if (i < 0 || j < 0 || i >= board.length || j >= board[0].length || board[i][j] != word.charAt(index)) return false;
+    if (index == word.length() - 1) return true;
+    char original = board[i][j];
+    board[i][j] = '#';
+    boolean found = dfs(board, word, i + 1, j, index + 1) || dfs(board, word, i - 1, j, index + 1)
+            || dfs(board, word, i, j + 1, index + 1) || dfs(board, word, i, j - 1, index + 1);
+    board[i][j] = original;
+    return found;
+}
+```
+
+- **Time Complexity:** O(W * m * n * 3^L)
+- **Space Complexity:** O(L)
+
+### Approach 2: Trie + Backtracking (Optimized)
+
+Put all words in a trie and search the board once: a path is abandoned as soon as no word starts with it, and every word is found while walking. This is the version implemented in the repository.
+
+```java
+private static class TrieNode { TrieNode[] children = new TrieNode[26]; String word; }
+
+public static List<String> findWords(char[][] board, String[] words) {
+    TrieNode root = new TrieNode();
+    for (String word : words) {
+        TrieNode node = root;
+        for (char c : word.toCharArray()) {
+            if (node.children[c - 'a'] == null) node.children[c - 'a'] = new TrieNode();
+            node = node.children[c - 'a'];
+        }
+        node.word = word;
+    }
+    List<String> result = new ArrayList<>();
+    for (int i = 0; i < board.length; i++) {
+        for (int j = 0; j < board[0].length; j++) search(board, i, j, root, result);
+    }
+    Collections.sort(result);
+    return result;
+}
+
+private static void search(char[][] board, int i, int j, TrieNode parent, List<String> result) {
+    if (i < 0 || j < 0 || i >= board.length || j >= board[0].length) return;
+    char c = board[i][j];
+    if (c == '#' || parent.children[c - 'a'] == null) return;
+    TrieNode node = parent.children[c - 'a'];
+    if (node.word != null) { result.add(node.word); node.word = null; }
+    board[i][j] = '#';
+    search(board, i + 1, j, node, result);
+    search(board, i - 1, j, node, result);
+    search(board, i, j + 1, node, result);
+    search(board, i, j - 1, node, result);
+    board[i][j] = c;
+}
+```
+
+- **Time Complexity:** O(m * n * 3^L)
+- **Space Complexity:** O(W * L)
+
+### Approach 3: Trie with Pruning of Exhausted Branches
+
+Same as above, but after a word has been found, delete the trie branches that no longer lead to any remaining word. Later searches then skip those branches entirely, which is a large saving on boards with many matches.
+
+```java
+private static class PruneNode { PruneNode[] children = new PruneNode[26]; String word; }
+
+public static List<String> findWordsPruned(char[][] board, String[] words) {
+    PruneNode root = new PruneNode();
+    for (String word : words) {
+        PruneNode node = root;
+        for (char c : word.toCharArray()) {
+            if (node.children[c - 'a'] == null) node.children[c - 'a'] = new PruneNode();
+            node = node.children[c - 'a'];
+        }
+        node.word = word;
+    }
+    List<String> result = new ArrayList<>();
+    for (int i = 0; i < board.length; i++) {
+        for (int j = 0; j < board[0].length; j++) searchPruned(board, i, j, root, result);
+    }
+    Collections.sort(result);
+    return result;
+}
+
+private static void searchPruned(char[][] board, int i, int j, PruneNode parent, List<String> result) {
+    if (i < 0 || j < 0 || i >= board.length || j >= board[0].length) return;
+    char c = board[i][j];
+    PruneNode node = c == '#' ? null : parent.children[c - 'a'];
+    if (node == null) return;
+    if (node.word != null) {
+        result.add(node.word);
+        node.word = null;
+    }
+    board[i][j] = '#';
+    searchPruned(board, i + 1, j, node, result);
+    searchPruned(board, i - 1, j, node, result);
+    searchPruned(board, i, j + 1, node, result);
+    searchPruned(board, i, j - 1, node, result);
+    board[i][j] = c;
+    boolean exhausted = node.word == null;
+    for (PruneNode child : node.children) if (child != null) exhausted = false;
+    if (exhausted) parent.children[c - 'a'] = null;     // nothing left below this letter
+}
+```
+
+- **Time Complexity:** O(m * n * 3^L), much faster in practice
+- **Space Complexity:** O(W * L)
+
+### Comparison
+
+| # | Approach | Time | Space |
+|---|----------|------|-------|
+| 1 | Word Search I for Every Word | O(W * m * n * 3^L) | O(L) |
+| 2 | Trie + Backtracking (Optimized) | O(m * n * 3^L) | O(W * L) |
+| 3 | Trie with Pruning of Exhausted Branches | O(m * n * 3^L), much faster in practice | O(W * L) |
+
+### Optimized Solution
+
+The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+
 ## Source Code
 
 ### WordSearchII.java

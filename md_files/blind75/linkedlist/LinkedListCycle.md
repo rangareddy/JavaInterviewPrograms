@@ -19,6 +19,57 @@ Given the head of a linked list, determine whether the list has a cycle, i.e. so
 - **Time Complexity:** `O(n)` — The pointers meet within at most the list length plus the cycle length steps.
 - **Space Complexity:** `O(1)` — Two pointers.
 
+## Approaches
+
+The same problem can be solved in several ways. The approach marked (Optimized) is the one to use in practice.
+
+### Approach 1: Hash Set of Visited Nodes
+
+Remember every visited node in a set; reaching a node twice means there is a cycle.
+
+```java
+public static boolean hasCycleSet(ListNode head) {
+    Set<ListNode> visited = new HashSet<>();
+    for (ListNode curr = head; curr != null; curr = curr.next) {
+        if (!visited.add(curr)) return true;
+    }
+    return false;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 2: Floyd's Tortoise and Hare (Optimized)
+
+A slow pointer (one step) and a fast pointer (two steps) meet inside the cycle if there is one. No extra memory. This is the version implemented in the repository.
+
+```java
+public static boolean hasCycle(ListNode head) {
+    ListNode slow = head, fast = head;
+    while (fast != null && fast.next != null) {
+        slow = slow.next;
+        fast = fast.next.next;
+        if (slow == fast) return true;
+    }
+    return false;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(1)
+
+### Comparison
+
+| # | Approach | Time | Space |
+|---|----------|------|-------|
+| 1 | Hash Set of Visited Nodes | O(n) | O(n) |
+| 2 | Floyd's Tortoise and Hare (Optimized) | O(n) | O(1) |
+
+### Optimized Solution
+
+The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+
 ## Source Code
 
 Uses the shared helper [`ListNode`](../../../src/main/java/com/ranga/blind75/linkedlist/ListNode.java) (a small `ListNode` with `of(...)` and `toString(...)` helpers for building and printing test data).

@@ -19,6 +19,88 @@ A path in a binary tree is a sequence of nodes where each pair of adjacent nodes
 - **Time Complexity:** `O(n)` — Every node is visited once.
 - **Space Complexity:** `O(h)` — Recursion depth equals the tree height.
 
+## Approaches
+
+The same problem can be solved in several ways. The approach marked (Optimized) is the one to use in practice.
+
+### Approach 1: Brute Force (Best Path Through Every Node)
+
+For every node compute the best downward path in each subtree separately, so the same subtrees are recomputed many times.
+
+```java
+public static int maxPathSumBrute(TreeNode root) {
+    if (root == null) return Integer.MIN_VALUE;
+    int through = root.val + Math.max(0, down(root.left)) + Math.max(0, down(root.right));
+    return Math.max(through, Math.max(maxPathSumBrute(root.left), maxPathSumBrute(root.right)));
+}
+
+private static int down(TreeNode node) {
+    if (node == null) return 0;
+    return node.val + Math.max(0, Math.max(down(node.left), down(node.right)));
+}
+```
+
+- **Time Complexity:** O(n^2) for a skewed tree (O(n log n) balanced)
+- **Space Complexity:** O(h)
+
+### Approach 2: Post-order DFS with a Global Maximum (Optimized)
+
+Compute each node's one-sided gain once, bottom-up, and update the best bent path at the same time. This is the version implemented in the repository.
+
+```java
+private static int best;
+
+public static int maxPathSum(TreeNode root) {
+    best = Integer.MIN_VALUE;
+    gain(root);
+    return best;
+}
+
+private static int gain(TreeNode node) {
+    if (node == null) return 0;
+    int leftGain = Math.max(0, gain(node.left)), rightGain = Math.max(0, gain(node.right));
+    best = Math.max(best, node.val + leftGain + rightGain);
+    return node.val + Math.max(leftGain, rightGain);
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(h)
+
+### Approach 3: Post-order DFS Returning Both Values (No Global State)
+
+Return a pair `{best path inside the subtree, best downward gain}` from each call, so the method needs no static field and is thread-safe.
+
+```java
+public static int maxPathSumPair(TreeNode root) {
+    return pair(root)[0];
+}
+
+// returns {bestPathInside, bestDownwardGain}
+private static int[] pair(TreeNode node) {
+    if (node == null) return new int[]{Integer.MIN_VALUE, 0};
+    int[] left = pair(node.left), right = pair(node.right);
+    int leftGain = Math.max(0, left[1]), rightGain = Math.max(0, right[1]);
+    int through = node.val + leftGain + rightGain;
+    return new int[]{Math.max(through, Math.max(left[0], right[0])), node.val + Math.max(leftGain, rightGain)};
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(h)
+
+### Comparison
+
+| # | Approach | Time | Space |
+|---|----------|------|-------|
+| 1 | Brute Force (Best Path Through Every Node) | O(n^2) for a skewed tree (O(n log n) balanced) | O(h) |
+| 2 | Post-order DFS with a Global Maximum (Optimized) | O(n) | O(h) |
+| 3 | Post-order DFS Returning Both Values (No Global State) | O(n) | O(h) |
+
+### Optimized Solution
+
+The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+
 ## Source Code
 
 Uses the shared helper [`TreeNode`](../../../src/main/java/com/ranga/blind75/tree/TreeNode.java) (a small `TreeNode` with `of(...)` and `toString(...)` helpers for building and printing test data).

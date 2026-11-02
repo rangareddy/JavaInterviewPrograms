@@ -19,6 +19,105 @@ Given a reference to a node of a connected undirected graph, return a deep copy 
 - **Time Complexity:** `O(V + E)` — Each node is created once and each edge is traversed twice.
 - **Space Complexity:** `O(V)` — The map and the recursion stack.
 
+## Approaches
+
+The same problem can be solved in several ways. The approach marked (Optimized) is the one to use in practice.
+
+### Approach 1: Recursive DFS with a Map (Optimized)
+
+Map every original node to its clone; the map is also the visited set. Clone a node, register it, then clone the neighbors. This is the version implemented in the repository.
+
+```java
+static class Node {
+    public int val;
+    public List<Node> neighbors = new ArrayList<>();
+    public Node(int val) { this.val = val; }
+}
+
+public static Node cloneGraph(Node node) {
+    return node == null ? null : clone(node, new HashMap<>());
+}
+
+private static Node clone(Node node, Map<Node, Node> clones) {
+    if (clones.containsKey(node)) return clones.get(node);
+    Node copy = new Node(node.val);
+    clones.put(node, copy);
+    for (Node neighbor : node.neighbors) copy.neighbors.add(clone(neighbor, clones));
+    return copy;
+}
+```
+
+- **Time Complexity:** O(V + E)
+- **Space Complexity:** O(V)
+
+### Approach 2: Iterative BFS with a Map
+
+Create the clone of the start node, then process a queue: for every node, create missing clones of its neighbors and connect them. No recursion, so no stack overflow on large graphs.
+
+```java
+public static Node cloneGraphBfs(Node start) {
+    if (start == null) return null;
+    Map<Node, Node> clones = new HashMap<>();
+    clones.put(start, new Node(start.val));
+    Queue<Node> queue = new LinkedList<>();
+    queue.add(start);
+    while (!queue.isEmpty()) {
+        Node node = queue.poll();
+        for (Node neighbor : node.neighbors) {
+            if (!clones.containsKey(neighbor)) {
+                clones.put(neighbor, new Node(neighbor.val));
+                queue.add(neighbor);
+            }
+            clones.get(node).neighbors.add(clones.get(neighbor));
+        }
+    }
+    return clones.get(start);
+}
+```
+
+- **Time Complexity:** O(V + E)
+- **Space Complexity:** O(V)
+
+### Approach 3: Iterative DFS with a Stack
+
+The same as the BFS version with a stack instead of a queue.
+
+```java
+public static Node cloneGraphStack(Node start) {
+    if (start == null) return null;
+    Map<Node, Node> clones = new HashMap<>();
+    clones.put(start, new Node(start.val));
+    Deque<Node> stack = new ArrayDeque<>();
+    stack.push(start);
+    while (!stack.isEmpty()) {
+        Node node = stack.pop();
+        for (Node neighbor : node.neighbors) {
+            if (!clones.containsKey(neighbor)) {
+                clones.put(neighbor, new Node(neighbor.val));
+                stack.push(neighbor);
+            }
+            clones.get(node).neighbors.add(clones.get(neighbor));
+        }
+    }
+    return clones.get(start);
+}
+```
+
+- **Time Complexity:** O(V + E)
+- **Space Complexity:** O(V)
+
+### Comparison
+
+| # | Approach | Time | Space |
+|---|----------|------|-------|
+| 1 | Recursive DFS with a Map (Optimized) | O(V + E) | O(V) |
+| 2 | Iterative BFS with a Map | O(V + E) | O(V) |
+| 3 | Iterative DFS with a Stack | O(V + E) | O(V) |
+
+### Optimized Solution
+
+The optimized solution is Approach 1 above, which is also the version implemented in this repository.
+
 ## Source Code
 
 ### CloneGraph.java

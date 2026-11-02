@@ -18,6 +18,87 @@ Given the root of a binary tree, return its maximum depth: the number of nodes a
 - **Time Complexity:** `O(n)` — Every node is visited once.
 - **Space Complexity:** `O(h)` — Recursion depth equals the height `h` of the tree (`O(n)` for a skewed tree).
 
+## Approaches
+
+The same problem can be solved in several ways. The approach marked (Optimized) is the one to use in practice.
+
+### Approach 1: Recursive DFS (Optimized)
+
+The depth of a tree is one more than the depth of its deeper subtree. This is the version implemented in the repository.
+
+```java
+public static int maxDepth(TreeNode root) {
+    if (root == null) return 0;
+    return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(h)
+
+### Approach 2: Iterative DFS with a Stack
+
+Push each node together with its depth on an explicit stack and remember the largest depth seen. Avoids stack overflow on very deep (skewed) trees.
+
+```java
+public static int maxDepthStack(TreeNode root) {
+    if (root == null) return 0;
+    Deque<TreeNode> nodes = new ArrayDeque<>();
+    Deque<Integer> depths = new ArrayDeque<>();
+    nodes.push(root);
+    depths.push(1);
+    int best = 0;
+    while (!nodes.isEmpty()) {
+        TreeNode node = nodes.pop();
+        int depth = depths.pop();
+        best = Math.max(best, depth);
+        if (node.left != null) { nodes.push(node.left); depths.push(depth + 1); }
+        if (node.right != null) { nodes.push(node.right); depths.push(depth + 1); }
+    }
+    return best;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(h)
+
+### Approach 3: Level-Order BFS
+
+Process the tree level by level with a queue and count the levels.
+
+```java
+public static int maxDepthBfs(TreeNode root) {
+    if (root == null) return 0;
+    Queue<TreeNode> queue = new LinkedList<>();
+    queue.add(root);
+    int depth = 0;
+    while (!queue.isEmpty()) {
+        depth++;
+        for (int i = queue.size(); i > 0; i--) {
+            TreeNode node = queue.poll();
+            if (node.left != null) queue.add(node.left);
+            if (node.right != null) queue.add(node.right);
+        }
+    }
+    return depth;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(w) (maximum width)
+
+### Comparison
+
+| # | Approach | Time | Space |
+|---|----------|------|-------|
+| 1 | Recursive DFS (Optimized) | O(n) | O(h) |
+| 2 | Iterative DFS with a Stack | O(n) | O(h) |
+| 3 | Level-Order BFS | O(n) | O(w) (maximum width) |
+
+### Optimized Solution
+
+The optimized solution is Approach 1 above, which is also the version implemented in this repository.
+
 ## Source Code
 
 Uses the shared helper [`TreeNode`](../../../src/main/java/com/ranga/blind75/tree/TreeNode.java) (a small `TreeNode` with `of(...)` and `toString(...)` helpers for building and printing test data).

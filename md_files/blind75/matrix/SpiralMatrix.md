@@ -20,6 +20,80 @@ Given an `m x n` matrix, return all of its elements in spiral order (clockwise, 
 - **Time Complexity:** `O(m * n)` — Every cell is visited once.
 - **Space Complexity:** `O(1)` — Excluding the output list.
 
+## Approaches
+
+The same problem can be solved in several ways. The approach marked (Optimized) is the one to use in practice.
+
+### Approach 1: Simulation with Direction Vectors and a Visited Matrix
+
+Walk through the matrix, turning right whenever the next cell is outside the matrix or already visited.
+
+```java
+public static List<Integer> spiralOrderVisited(int[][] matrix) {
+    List<Integer> result = new ArrayList<>();
+    int rows = matrix.length, cols = matrix[0].length;
+    boolean[][] visited = new boolean[rows][cols];
+    int[] dr = {0, 1, 0, -1}, dc = {1, 0, -1, 0};
+    int r = 0, c = 0, d = 0;
+    for (int i = 0; i < rows * cols; i++) {
+        result.add(matrix[r][c]);
+        visited[r][c] = true;
+        int nr = r + dr[d], nc = c + dc[d];
+        if (nr < 0 || nr >= rows || nc < 0 || nc >= cols || visited[nr][nc]) {
+            d = (d + 1) % 4;
+            nr = r + dr[d];
+            nc = c + dc[d];
+        }
+        r = nr;
+        c = nc;
+    }
+    return result;
+}
+```
+
+- **Time Complexity:** O(m * n)
+- **Space Complexity:** O(m * n)
+
+### Approach 2: Shrinking Boundaries (Optimized)
+
+Keep the top, bottom, left and right boundaries and peel one layer at a time; no visited matrix is needed. This is the version implemented in the repository.
+
+```java
+public static List<Integer> spiralOrder(int[][] matrix) {
+    List<Integer> result = new ArrayList<>();
+    int top = 0, bottom = matrix.length - 1, left = 0, right = matrix[0].length - 1;
+    while (top <= bottom && left <= right) {
+        for (int j = left; j <= right; j++) result.add(matrix[top][j]);
+        top++;
+        for (int i = top; i <= bottom; i++) result.add(matrix[i][right]);
+        right--;
+        if (top <= bottom) {
+            for (int j = right; j >= left; j--) result.add(matrix[bottom][j]);
+            bottom--;
+        }
+        if (left <= right) {
+            for (int i = bottom; i >= top; i--) result.add(matrix[i][left]);
+            left++;
+        }
+    }
+    return result;
+}
+```
+
+- **Time Complexity:** O(m * n)
+- **Space Complexity:** O(1) auxiliary
+
+### Comparison
+
+| # | Approach | Time | Space |
+|---|----------|------|-------|
+| 1 | Simulation with Direction Vectors and a Visited Matrix | O(m * n) | O(m * n) |
+| 2 | Shrinking Boundaries (Optimized) | O(m * n) | O(1) auxiliary |
+
+### Optimized Solution
+
+The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+
 ## Source Code
 
 ### SpiralMatrix.java
