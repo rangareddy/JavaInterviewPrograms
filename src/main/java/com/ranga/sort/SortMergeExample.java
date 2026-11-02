@@ -1,4 +1,4 @@
-package com.ranga.array;
+package com.ranga.sort;
 
 import java.util.Arrays;
 
