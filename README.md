@@ -70,12 +70,9 @@
 1. [Merge Sort (array example)](./md_files/sort/SortMergeExample.md)
 1. [Quick Sort](./md_files/sort/QuickSort.md)
 
-### Collection
-
-1. [Single Linked List](./md_files/collection/SingleLinkedListDemo.md)
-
 #### Linked List
 
+1. [Single Linked List](./md_files/collection/SingleLinkedListDemo.md)
 1. [Reverse Linked List](./md_files/linkedlist/ReverseLinkedList.md)
 1. [Linked List Cycle](./md_files/linkedlist/LinkedListCycle.md)
 1. [Merge Two Sorted Lists](./md_files/linkedlist/MergeTwoSortedLists.md)
