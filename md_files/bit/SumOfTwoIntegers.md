@@ -43,7 +43,93 @@ public static int getSumBitByBit(int a, int b) {
 - **Time Complexity:** O(32) = O(1)
 - **Space Complexity:** O(1)
 
-### Approach 2: XOR and Shifted AND in a Loop (Optimized)
+### Approach 2: Recursive XOR and Carry
+
+The same idea written recursively: the sum of `a` and `b` is the sum of `a ^ b` and the carry `(a & b) << 1`.
+
+```java
+public static int getSumRecursive(int a, int b) {
+    return b == 0 ? a : getSumRecursive(a ^ b, (a & b) << 1);
+}
+```
+
+- **Time Complexity:** O(1)
+- **Space Complexity:** O(1) (at most 32 calls)
+
+### Approach 3: Repeated Increment or Decrement
+
+Add `b` to `a` by incrementing `a` exactly `b` times (or decrementing `|b|` times for a negative `b`), where increment and decrement are implemented with bit operations only. Correct but linear in the size of `b`, so only for small values.
+
+```java
+public static int getSumIncrement(int a, int b) {
+    boolean negative = b < 0;
+    int steps = negative ? increment(~b) : b;                 // |b| without using '-'
+    for (int i = 0; i < steps; i++) a = negative ? decrement(a) : increment(a);
+    return a;
+}
+
+private static int increment(int x) {
+    int mask = 1;
+    while ((x & mask) != 0) { x ^= mask; mask <<= 1; }        // flip the trailing ones
+    return x ^ mask;
+}
+
+private static int decrement(int x) {
+    int mask = 1;
+    while (mask != 0 && (x & mask) == 0) { x ^= mask; mask <<= 1; }   // flip the trailing zeros
+    return x ^ mask;
+}
+```
+
+- **Time Complexity:** O(|b|)
+- **Space Complexity:** O(1)
+
+### Approach 4: Library Call: Integer.sum
+
+The JDK already contains the operation (`Integer.sum`, which the compiler turns into the CPU's add instruction). Not an answer to the puzzle, but what production code should do.
+
+```java
+public static int getSumLibrary(int a, int b) {
+    return Integer.sum(a, b);
+}
+```
+
+- **Time Complexity:** O(1)
+- **Space Complexity:** O(1)
+
+### Approach 5: Array Length Trick (Educational, Non-Negative Only)
+
+The length of the concatenation of two arrays of sizes `a` and `b` is `a + b`, computed by the runtime rather than by our code. It needs memory proportional to the result and works only for non-negative numbers.
+
+```java
+public static int getSumLength(int a, int b) {
+    return new StringBuilder().append(new char[a]).append(new char[b]).length();
+}
+```
+
+- **Time Complexity:** O(a + b)
+- **Space Complexity:** O(a + b)
+
+### Approach 6: Parallel-Prefix (Carry-Lookahead) Adder
+
+Compute all carries at once like a hardware adder instead of waiting for them to ripple: generate (`a & b`) and propagate (`a ^ b`) bits are combined with doubling shift distances 1, 2, 4, 8, 16 (a Kogge-Stone adder), then the sum is `(a ^ b) ^ (carries << 1)`. Five fixed steps instead of up to 32 loop iterations.
+
+```java
+public static int getSumPrefix(int a, int b) {
+    int x = a ^ b;                       // sum without carries
+    int generate = a & b, propagate = x;
+    for (int shift = 1; shift < 32; shift <<= 1) {
+        generate |= propagate & (generate << shift);
+        propagate &= propagate << shift;
+    }
+    return x ^ (generate << 1);
+}
+```
+
+- **Time Complexity:** O(1) (5 steps)
+- **Space Complexity:** O(1)
+
+### Approach 7: XOR and Shifted AND in a Loop (Optimized)
 
 XOR gives the sum without carries and `(a & b) << 1` gives the carries; repeat until no carry is left. This is the version implemented in the repository.
 
@@ -61,30 +147,21 @@ public static int getSum(int a, int b) {
 - **Time Complexity:** O(1)
 - **Space Complexity:** O(1)
 
-### Approach 3: Recursive XOR and Carry
-
-The same idea written recursively: the sum of `a` and `b` is the sum of `a ^ b` and the carry `(a & b) << 1`.
-
-```java
-public static int getSumRecursive(int a, int b) {
-    return b == 0 ? a : getSumRecursive(a ^ b, (a & b) << 1);
-}
-```
-
-- **Time Complexity:** O(1)
-- **Space Complexity:** O(1) (at most 32 calls)
-
 ### Comparison
 
 | # | Approach | Time | Space |
 |---|----------|------|-------|
 | 1 | Bit-by-Bit Full Adder | O(32) = O(1) | O(1) |
-| 2 | XOR and Shifted AND in a Loop (Optimized) | O(1) | O(1) |
-| 3 | Recursive XOR and Carry | O(1) | O(1) (at most 32 calls) |
+| 2 | Recursive XOR and Carry | O(1) | O(1) (at most 32 calls) |
+| 3 | Repeated Increment or Decrement | O(|b|) | O(1) |
+| 4 | Library Call: Integer.sum | O(1) | O(1) |
+| 5 | Array Length Trick (Educational, Non-Negative Only) | O(a + b) | O(a + b) |
+| 6 | Parallel-Prefix (Carry-Lookahead) Adder | O(1) (5 steps) | O(1) |
+| 7 | XOR and Shifted AND in a Loop (Optimized) | O(1) | O(1) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
 ## Source Code
 

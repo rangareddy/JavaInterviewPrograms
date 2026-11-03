@@ -55,7 +55,158 @@ private static boolean dfsVisited(char[][] board, String word, int i, int j, int
 - **Time Complexity:** O(m * n * 3^L)
 - **Space Complexity:** O(m * n + L)
 
-### Approach 2: In-Place DFS (Optimized)
+### Approach 2: In-Place DFS with Pruning
+
+Before searching, reject the word if the board does not have enough of each letter, and search the reversed word when its first letter is more frequent than its last one (fewer starting points, earlier failures).
+
+```java
+public static boolean existPruned(char[][] board, String word) {
+    int[] counts = new int[128];
+    for (char[] row : board) for (char c : row) counts[c]++;
+    int[] needed = new int[128];
+    for (char c : word.toCharArray()) {
+        if (++needed[c] > counts[c]) return false;
+    }
+    if (counts[word.charAt(0)] > counts[word.charAt(word.length() - 1)]) {
+        word = new StringBuilder(word).reverse().toString();
+    }
+    return exist(board, word);
+}
+```
+
+- **Time Complexity:** O(m * n * 3^L) worst case, much faster in practice
+- **Space Complexity:** O(L)
+
+### Approach 3: Bit-Mask Visited Set (Small Boards)
+
+If the board has at most 64 cells, the set of used cells fits into one `long`; marking and unmarking a cell is a single bit operation and no matrix needs to be allocated or modified.
+
+```java
+public static boolean existMask(char[][] board, String word) {
+    if (board.length * board[0].length > 64) throw new IllegalArgumentException("board too large for a long mask");
+    for (int i = 0; i < board.length; i++) {
+        for (int j = 0; j < board[0].length; j++) {
+            if (searchMask(board, word, i, j, 0, 0L)) return true;
+        }
+    }
+    return false;
+}
+
+private static boolean searchMask(char[][] board, String word, int i, int j, int index, long used) {
+    int cols = board[0].length;
+    if (i < 0 || j < 0 || i >= board.length || j >= cols || board[i][j] != word.charAt(index)) return false;
+    long bit = 1L << (i * cols + j);
+    if ((used & bit) != 0) return false;
+    if (index == word.length() - 1) return true;
+    used |= bit;
+    return searchMask(board, word, i + 1, j, index + 1, used) || searchMask(board, word, i - 1, j, index + 1, used)
+            || searchMask(board, word, i, j + 1, index + 1, used) || searchMask(board, word, i, j - 1, index + 1, used);
+}
+```
+
+- **Time Complexity:** O(m * n * 3^L)
+- **Space Complexity:** O(L)
+
+### Approach 4: Iterative DFS with an Explicit Stack
+
+Replace the recursion by a stack of frames `(row, col, matched letters, next direction to try)`. When all four directions of a frame are exhausted the cell is released and the frame is popped (the iterative form of backtracking).
+
+```java
+public static boolean existIterative(char[][] board, String word) {
+    int rows = board.length, cols = board[0].length;
+    int[] dr = {1, -1, 0, 0}, dc = {0, 0, 1, -1};
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            if (board[i][j] != word.charAt(0)) continue;
+            boolean[][] visited = new boolean[rows][cols];
+            Deque<int[]> stack = new ArrayDeque<>();
+            stack.push(new int[]{i, j, 0, 0});
+            visited[i][j] = true;
+            while (!stack.isEmpty()) {
+                int[] frame = stack.peek();
+                if (frame[2] == word.length() - 1) return true;
+                if (frame[3] == 4) {                              // all directions tried: backtrack
+                    visited[frame[0]][frame[1]] = false;
+                    stack.pop();
+                    continue;
+                }
+                int d = frame[3]++;
+                int x = frame[0] + dr[d], y = frame[1] + dc[d];
+                if (x >= 0 && y >= 0 && x < rows && y < cols && !visited[x][y] && board[x][y] == word.charAt(frame[2] + 1)) {
+                    visited[x][y] = true;
+                    stack.push(new int[]{x, y, frame[2] + 1, 0});
+                }
+            }
+        }
+    }
+    return false;
+}
+```
+
+- **Time Complexity:** O(m * n * 3^L)
+- **Space Complexity:** O(m * n + L)
+
+### Approach 5: Start Only from the Cells of the First Letter
+
+Collect the positions of the cells that contain the first letter of the word and run the in-place backtracking only from those cells, instead of probing every cell of the board.
+
+```java
+public static boolean existStarts(char[][] board, String word) {
+    List<int[]> starts = new ArrayList<>();
+    for (int i = 0; i < board.length; i++)
+        for (int j = 0; j < board[0].length; j++) if (board[i][j] == word.charAt(0)) starts.add(new int[]{i, j});
+    for (int[] start : starts) {
+        if (backtrack(board, word, start[0], start[1], 0)) return true;
+    }
+    return false;
+}
+
+private static boolean backtrack(char[][] board, String word, int i, int j, int index) {
+    if (i < 0 || j < 0 || i >= board.length || j >= board[0].length || board[i][j] != word.charAt(index)) return false;
+    if (index == word.length() - 1) return true;
+    char original = board[i][j];
+    board[i][j] = '#';
+    boolean found = backtrack(board, word, i + 1, j, index + 1) || backtrack(board, word, i - 1, j, index + 1)
+            || backtrack(board, word, i, j + 1, index + 1) || backtrack(board, word, i, j - 1, index + 1);
+    board[i][j] = original;
+    return found;
+}
+```
+
+- **Time Complexity:** O(m * n + k * 3^L) where k is the number of start cells
+- **Space Complexity:** O(k + L)
+
+### Approach 6: DFS with the Current Path in a HashSet
+
+Keep the cells of the current path in a `HashSet` of encoded positions instead of marking the board or using a boolean matrix. The board stays untouched and the set only grows to the path length.
+
+```java
+public static boolean existPathSet(char[][] board, String word) {
+    for (int i = 0; i < board.length; i++) {
+        for (int j = 0; j < board[0].length; j++) {
+            if (extend(board, word, i, j, 0, new HashSet<>())) return true;
+        }
+    }
+    return false;
+}
+
+private static boolean extend(char[][] board, String word, int i, int j, int index, Set<Integer> path) {
+    if (i < 0 || j < 0 || i >= board.length || j >= board[0].length || board[i][j] != word.charAt(index)) return false;
+    int cell = i * board[0].length + j;
+    if (path.contains(cell)) return false;
+    if (index == word.length() - 1) return true;
+    path.add(cell);
+    boolean found = extend(board, word, i + 1, j, index + 1, path) || extend(board, word, i - 1, j, index + 1, path)
+            || extend(board, word, i, j + 1, index + 1, path) || extend(board, word, i, j - 1, index + 1, path);
+    path.remove(cell);
+    return found;
+}
+```
+
+- **Time Complexity:** O(m * n * 3^L)
+- **Space Complexity:** O(L)
+
+### Approach 7: In-Place DFS (Optimized)
 
 Mark the current cell by temporarily overwriting its letter, so no extra visited matrix is required. This is the version implemented in the repository.
 
@@ -84,39 +235,21 @@ private static boolean dfs(char[][] board, String word, int i, int j, int index)
 - **Time Complexity:** O(m * n * 3^L)
 - **Space Complexity:** O(L)
 
-### Approach 3: In-Place DFS with Pruning
-
-Before searching, reject the word if the board does not have enough of each letter, and search the reversed word when its first letter is more frequent than its last one (fewer starting points, earlier failures).
-
-```java
-public static boolean existPruned(char[][] board, String word) {
-    int[] counts = new int[128];
-    for (char[] row : board) for (char c : row) counts[c]++;
-    int[] needed = new int[128];
-    for (char c : word.toCharArray()) {
-        if (++needed[c] > counts[c]) return false;
-    }
-    if (counts[word.charAt(0)] > counts[word.charAt(word.length() - 1)]) {
-        word = new StringBuilder(word).reverse().toString();
-    }
-    return exist(board, word);
-}
-```
-
-- **Time Complexity:** O(m * n * 3^L) worst case, much faster in practice
-- **Space Complexity:** O(L)
-
 ### Comparison
 
 | # | Approach | Time | Space |
 |---|----------|------|-------|
 | 1 | DFS with a Visited Matrix | O(m * n * 3^L) | O(m * n + L) |
-| 2 | In-Place DFS (Optimized) | O(m * n * 3^L) | O(L) |
-| 3 | In-Place DFS with Pruning | O(m * n * 3^L) worst case, much faster in practice | O(L) |
+| 2 | In-Place DFS with Pruning | O(m * n * 3^L) worst case, much faster in practice | O(L) |
+| 3 | Bit-Mask Visited Set (Small Boards) | O(m * n * 3^L) | O(L) |
+| 4 | Iterative DFS with an Explicit Stack | O(m * n * 3^L) | O(m * n + L) |
+| 5 | Start Only from the Cells of the First Letter | O(m * n + k * 3^L) where k is the number of start cells | O(k + L) |
+| 6 | DFS with the Current Path in a HashSet | O(m * n * 3^L) | O(L) |
+| 7 | In-Place DFS (Optimized) | O(m * n * 3^L) | O(L) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
 ## Source Code
 

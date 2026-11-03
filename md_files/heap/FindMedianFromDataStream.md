@@ -68,7 +68,148 @@ static class MedianSortedList {
 - **Time Complexity:** addNum O(n), findMedian O(1)
 - **Space Complexity:** O(n)
 
-### Approach 3: Two Heaps (Optimized)
+### Approach 3: Sorted Array with System.arraycopy
+
+Keep a plain `int[]` that grows when full. A new number is inserted at its binary-searched position by shifting the larger numbers with `System.arraycopy`, so the median is just the middle element. No boxing and no list overhead.
+
+```java
+static class MedianArray {
+    private int[] data = new int[16];
+    private int size;
+
+    public void addNum(int num) {
+        if (size == data.length) data = Arrays.copyOf(data, size * 2);
+        int position = Arrays.binarySearch(data, 0, size, num);
+        if (position < 0) position = -position - 1;
+        System.arraycopy(data, position, data, position + 1, size - position);
+        data[position] = num;
+        size++;
+    }
+
+    public double findMedian() {
+        return size % 2 == 1 ? data[size / 2] : (data[size / 2 - 1] + data[size / 2]) / 2.0;
+    }
+}
+```
+
+- **Time Complexity:** addNum O(n) (fast memmove), findMedian O(1)
+- **Space Complexity:** O(n)
+
+### Approach 4: Counting Buckets for a Bounded Range
+
+If the numbers are limited to a small range (for example `0..100` like test scores), count how often each value occurs and find the median by walking the cumulative counts. Insertion is `O(1)`, a query costs `O(range)`, independent of how many numbers arrived.
+
+```java
+static class MedianBuckets {
+    private final int offset;
+    private final int[] counts;
+    private int total;
+
+    MedianBuckets(int min, int max) { offset = -min; counts = new int[max - min + 1]; }
+
+    public void addNum(int num) { counts[num + offset]++; total++; }
+
+    public double findMedian() {
+        int low = kth((total + 1) / 2), high = kth(total / 2 + 1);
+        return (low + high) / 2.0;
+    }
+
+    private int kth(int k) {                       // k-th smallest, 1-based
+        int seen = 0;
+        for (int v = 0; v < counts.length; v++) {
+            seen += counts[v];
+            if (seen >= k) return v - offset;
+        }
+        throw new IllegalStateException();
+    }
+}
+```
+
+- **Time Complexity:** addNum O(1), findMedian O(R)
+- **Space Complexity:** O(R)
+
+### Approach 5: Quickselect on Every Query
+
+Store the numbers unsorted and compute the median on demand with quickselect, which finds the k-th smallest element in expected linear time without sorting everything.
+
+```java
+static class MedianQuickselect {
+    private final List<Integer> nums = new ArrayList<>();
+    private final Random random = new Random(1);
+
+    public void addNum(int num) { nums.add(num); }
+
+    public double findMedian() {
+        int n = nums.size();
+        int[] copy = new int[n];
+        for (int i = 0; i < n; i++) copy[i] = nums.get(i);
+        if (n % 2 == 1) return select(copy, n / 2);
+        return (select(copy, n / 2 - 1) + select(copy, n / 2)) / 2.0;
+    }
+
+    private int select(int[] a, int k) {            // k-th smallest, 0-based
+        int low = 0, high = a.length - 1;
+        while (low < high) {
+            int pivot = a[low + random.nextInt(high - low + 1)];
+            int i = low, j = high;
+            while (i <= j) {
+                while (a[i] < pivot) i++;
+                while (a[j] > pivot) j--;
+                if (i <= j) { int t = a[i]; a[i] = a[j]; a[j] = t; i++; j--; }
+            }
+            if (k <= j) high = j; else if (k >= i) low = i; else return a[k];
+        }
+        return a[k];
+    }
+}
+```
+
+- **Time Complexity:** addNum O(1), findMedian O(n) expected
+- **Space Complexity:** O(n)
+
+### Approach 6: Fenwick Tree over a Bounded Range
+
+Keep the counts of the values in a Fenwick (binary indexed) tree. Both an insertion and the search for the k-th smallest value (by walking down the tree) cost `O(log R)`, so queries stay fast even for a huge number of numbers.
+
+```java
+static class MedianFenwick {
+    private final int offset;
+    private final int[] tree;
+    private int total;
+    private final int highestPower;
+
+    MedianFenwick(int min, int max) {
+        offset = 1 - min;
+        tree = new int[max - min + 2];
+        highestPower = Integer.highestOneBit(tree.length - 1);
+    }
+
+    public void addNum(int num) {
+        for (int i = num + offset; i < tree.length; i += i & -i) tree[i]++;
+        total++;
+    }
+
+    public double findMedian() {
+        return (kth((total + 1) / 2) + kth(total / 2 + 1)) / 2.0;
+    }
+
+    private int kth(int k) {                       // k-th smallest, 1-based
+        int position = 0;
+        for (int step = highestPower; step > 0; step >>= 1) {
+            if (position + step < tree.length && tree[position + step] < k) {
+                position += step;
+                k -= tree[position];
+            }
+        }
+        return position + 1 - offset;
+    }
+}
+```
+
+- **Time Complexity:** addNum O(log R), findMedian O(log R)
+- **Space Complexity:** O(R)
+
+### Approach 7: Two Heaps (Optimized)
 
 A max-heap holds the smaller half and a min-heap the larger half, kept balanced; the median is read from the heap tops. This is the version implemented in the repository.
 
@@ -98,11 +239,15 @@ static class MedianTwoHeaps {
 |---|----------|------|-------|
 | 1 | Sort on Every Query | addNum O(1), findMedian O(n log n) | O(n) |
 | 2 | Keep a Sorted List (Binary Insertion) | addNum O(n), findMedian O(1) | O(n) |
-| 3 | Two Heaps (Optimized) | addNum O(log n), findMedian O(1) | O(n) |
+| 3 | Sorted Array with System.arraycopy | addNum O(n) (fast memmove), findMedian O(1) | O(n) |
+| 4 | Counting Buckets for a Bounded Range | addNum O(1), findMedian O(R) | O(R) |
+| 5 | Quickselect on Every Query | addNum O(1), findMedian O(n) expected | O(n) |
+| 6 | Fenwick Tree over a Bounded Range | addNum O(log R), findMedian O(log R) | O(R) |
+| 7 | Two Heaps (Optimized) | addNum O(log n), findMedian O(1) | O(n) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
 ## Source Code
 

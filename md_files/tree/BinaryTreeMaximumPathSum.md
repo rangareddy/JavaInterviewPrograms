@@ -43,7 +43,145 @@ private static int down(TreeNode node) {
 - **Time Complexity:** O(n^2) for a skewed tree (O(n log n) balanced)
 - **Space Complexity:** O(h)
 
-### Approach 2: Post-order DFS with a Global Maximum (Optimized)
+### Approach 2: Post-order DFS Returning Both Values (No Global State)
+
+Return a pair `{best path inside the subtree, best downward gain}` from each call, so the method needs no static field and is thread-safe.
+
+```java
+public static int maxPathSumPair(TreeNode root) {
+    return pair(root)[0];
+}
+
+// returns {bestPathInside, bestDownwardGain}
+private static int[] pair(TreeNode node) {
+    if (node == null) return new int[]{Integer.MIN_VALUE, 0};
+    int[] left = pair(node.left), right = pair(node.right);
+    int leftGain = Math.max(0, left[1]), rightGain = Math.max(0, right[1]);
+    int through = node.val + leftGain + rightGain;
+    return new int[]{Math.max(through, Math.max(left[0], right[0])), node.val + Math.max(leftGain, rightGain)};
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(h)
+
+### Approach 3: Brute Force with a Memoized Downward Gain
+
+The brute-force idea (compute the best bent path through every node) with the downward gains cached in a map, so each subtree is evaluated once instead of repeatedly.
+
+```java
+public static int maxPathSumMemo(TreeNode root) {
+    Map<TreeNode, Integer> gains = new IdentityHashMap<>();
+    int[] best = {Integer.MIN_VALUE};
+    visit(root, gains, best);
+    return best[0];
+}
+
+private static void visit(TreeNode node, Map<TreeNode, Integer> gains, int[] best) {
+    if (node == null) return;
+    visit(node.left, gains, best);
+    visit(node.right, gains, best);
+    best[0] = Math.max(best[0], node.val + Math.max(0, gain(node.left, gains)) + Math.max(0, gain(node.right, gains)));
+}
+
+private static int gain(TreeNode node, Map<TreeNode, Integer> gains) {
+    if (node == null) return 0;
+    Integer cached = gains.get(node);
+    if (cached != null) return cached;
+    int value = node.val + Math.max(0, Math.max(gain(node.left, gains), gain(node.right, gains)));
+    gains.put(node, value);
+    return value;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 4: Iterative Post-order with an IdentityHashMap
+
+Visit the nodes in post-order with an explicit stack (children before parents) and store every node's downward gain in a map. Avoids recursion, so very deep trees cannot overflow the stack.
+
+```java
+public static int maxPathSumIterative(TreeNode root) {
+    Map<TreeNode, Integer> gain = new IdentityHashMap<>();
+    Deque<TreeNode> stack = new ArrayDeque<>();
+    TreeNode curr = root, lastVisited = null;
+    int best = Integer.MIN_VALUE;
+    while (curr != null || !stack.isEmpty()) {
+        while (curr != null) { stack.push(curr); curr = curr.left; }
+        TreeNode top = stack.peek();
+        if (top.right != null && lastVisited != top.right) {
+            curr = top.right;
+        } else {
+            stack.pop();
+            int left = Math.max(0, top.left == null ? 0 : gain.get(top.left));
+            int right = Math.max(0, top.right == null ? 0 : gain.get(top.right));
+            best = Math.max(best, top.val + left + right);
+            gain.put(top, top.val + Math.max(left, right));
+            lastVisited = top;
+        }
+    }
+    return best;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 5: Process Nodes in Reverse Level Order
+
+Collect the nodes level by level with a BFS and then handle them in reverse order, so that every node is processed after both of its children. Each node reads its children's gains from a map and updates the answer. No recursion at all.
+
+```java
+public static int maxPathSumReverseLevels(TreeNode root) {
+    List<TreeNode> order = new ArrayList<>();
+    Queue<TreeNode> queue = new LinkedList<>();
+    queue.add(root);
+    while (!queue.isEmpty()) {
+        TreeNode node = queue.poll();
+        order.add(node);
+        if (node.left != null) queue.add(node.left);
+        if (node.right != null) queue.add(node.right);
+    }
+    Map<TreeNode, Integer> gain = new IdentityHashMap<>();
+    int best = Integer.MIN_VALUE;
+    for (int i = order.size() - 1; i >= 0; i--) {
+        TreeNode node = order.get(i);
+        int left = Math.max(0, node.left == null ? 0 : gain.get(node.left));
+        int right = Math.max(0, node.right == null ? 0 : gain.get(node.right));
+        best = Math.max(best, node.val + left + right);
+        gain.put(node, node.val + Math.max(left, right));
+    }
+    return best;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 6: Recursion with a Single-Element Holder
+
+The global-maximum solution without a static field: the running maximum lives in a one-element array that is passed down, so the method is re-entrant and thread-safe.
+
+```java
+public static int maxPathSumHolder(TreeNode root) {
+    int[] best = {Integer.MIN_VALUE};
+    gainOf(root, best);
+    return best[0];
+}
+
+private static int gainOf(TreeNode node, int[] best) {
+    if (node == null) return 0;
+    int left = Math.max(0, gainOf(node.left, best)), right = Math.max(0, gainOf(node.right, best));
+    best[0] = Math.max(best[0], node.val + left + right);
+    return node.val + Math.max(left, right);
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(h)
+
+### Approach 7: Post-order DFS with a Global Maximum (Optimized)
 
 Compute each node's one-sided gain once, bottom-up, and update the best bent path at the same time. This is the version implemented in the repository.
 
@@ -67,39 +205,21 @@ private static int gain(TreeNode node) {
 - **Time Complexity:** O(n)
 - **Space Complexity:** O(h)
 
-### Approach 3: Post-order DFS Returning Both Values (No Global State)
-
-Return a pair `{best path inside the subtree, best downward gain}` from each call, so the method needs no static field and is thread-safe.
-
-```java
-public static int maxPathSumPair(TreeNode root) {
-    return pair(root)[0];
-}
-
-// returns {bestPathInside, bestDownwardGain}
-private static int[] pair(TreeNode node) {
-    if (node == null) return new int[]{Integer.MIN_VALUE, 0};
-    int[] left = pair(node.left), right = pair(node.right);
-    int leftGain = Math.max(0, left[1]), rightGain = Math.max(0, right[1]);
-    int through = node.val + leftGain + rightGain;
-    return new int[]{Math.max(through, Math.max(left[0], right[0])), node.val + Math.max(leftGain, rightGain)};
-}
-```
-
-- **Time Complexity:** O(n)
-- **Space Complexity:** O(h)
-
 ### Comparison
 
 | # | Approach | Time | Space |
 |---|----------|------|-------|
 | 1 | Brute Force (Best Path Through Every Node) | O(n^2) for a skewed tree (O(n log n) balanced) | O(h) |
-| 2 | Post-order DFS with a Global Maximum (Optimized) | O(n) | O(h) |
-| 3 | Post-order DFS Returning Both Values (No Global State) | O(n) | O(h) |
+| 2 | Post-order DFS Returning Both Values (No Global State) | O(n) | O(h) |
+| 3 | Brute Force with a Memoized Downward Gain | O(n) | O(n) |
+| 4 | Iterative Post-order with an IdentityHashMap | O(n) | O(n) |
+| 5 | Process Nodes in Reverse Level Order | O(n) | O(n) |
+| 6 | Recursion with a Single-Element Holder | O(n) | O(h) |
+| 7 | Post-order DFS with a Global Maximum (Optimized) | O(n) | O(h) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
 ## Source Code
 

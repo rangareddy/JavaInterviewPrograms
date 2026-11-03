@@ -42,22 +42,7 @@ public static int[] countBitsBrute(int n) {
 - **Time Complexity:** O(n log n)
 - **Space Complexity:** O(n)
 
-### Approach 2: DP on the Shifted Number (Optimized)
-
-`i` has the same bits as `i >> 1` plus its lowest bit, so `ans[i] = ans[i >> 1] + (i & 1)`. This is the version implemented in the repository.
-
-```java
-public static int[] countBits(int n) {
-    int[] ans = new int[n + 1];
-    for (int i = 1; i <= n; i++) ans[i] = ans[i >> 1] + (i & 1);
-    return ans;
-}
-```
-
-- **Time Complexity:** O(n)
-- **Space Complexity:** O(n)
-
-### Approach 3: DP on the Lowest Set Bit
+### Approach 2: DP on the Lowest Set Bit
 
 `i & (i - 1)` is `i` without its lowest set bit, so `ans[i] = ans[i & (i - 1)] + 1`.
 
@@ -72,17 +57,113 @@ public static int[] countBitsLowestBit(int n) {
 - **Time Complexity:** O(n)
 - **Space Complexity:** O(n)
 
+### Approach 3: Integer.bitCount for Every Number
+
+Call the JDK intrinsic for each number. Simple and fast per call, but it does not reuse earlier results.
+
+```java
+public static int[] countBitsLibrary(int n) {
+    int[] ans = new int[n + 1];
+    for (int i = 0; i <= n; i++) ans[i] = Integer.bitCount(i);
+    return ans;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 4: Offset by the Highest Power of Two
+
+Numbers `offset .. 2 * offset - 1` are the numbers `0 .. offset - 1` with one extra leading 1 bit, where `offset` is the highest power of two not above `i`. So `ans[i] = ans[i - offset] + 1`.
+
+```java
+public static int[] countBitsOffset(int n) {
+    int[] ans = new int[n + 1];
+    int offset = 1;
+    for (int i = 1; i <= n; i++) {
+        if (offset * 2 == i) offset *= 2;
+        ans[i] = ans[i - offset] + 1;
+    }
+    return ans;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 5: Nibble Lookup Table
+
+Precompute the bit counts of the 16 values of a 4-bit nibble and add up the table entries of the eight nibbles of every number.
+
+```java
+public static int[] countBitsNibble(int n) {
+    int[] table = {0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4};
+    int[] ans = new int[n + 1];
+    for (int i = 0; i <= n; i++) {
+        int count = 0;
+        for (int x = i; x != 0; x >>>= 4) count += table[x & 15];
+        ans[i] = count;
+    }
+    return ans;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 6: Memoized Recursion
+
+`bits(x) = bits(x >> 1) + (x & 1)` written as a recursive function with a cache, the top-down version of the DP.
+
+```java
+public static int[] countBitsMemo(int n) {
+    int[] memo = new int[n + 1];
+    Arrays.fill(memo, -1);
+    int[] ans = new int[n + 1];
+    for (int i = 0; i <= n; i++) ans[i] = bits(i, memo);
+    return ans;
+}
+
+private static int bits(int x, int[] memo) {
+    if (x == 0) return 0;
+    if (memo[x] != -1) return memo[x];
+    return memo[x] = bits(x >> 1, memo) + (x & 1);
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 7: DP on the Shifted Number (Optimized)
+
+`i` has the same bits as `i >> 1` plus its lowest bit, so `ans[i] = ans[i >> 1] + (i & 1)`. This is the version implemented in the repository.
+
+```java
+public static int[] countBits(int n) {
+    int[] ans = new int[n + 1];
+    for (int i = 1; i <= n; i++) ans[i] = ans[i >> 1] + (i & 1);
+    return ans;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
 ### Comparison
 
 | # | Approach | Time | Space |
 |---|----------|------|-------|
 | 1 | Count the Bits of Every Number | O(n log n) | O(n) |
-| 2 | DP on the Shifted Number (Optimized) | O(n) | O(n) |
-| 3 | DP on the Lowest Set Bit | O(n) | O(n) |
+| 2 | DP on the Lowest Set Bit | O(n) | O(n) |
+| 3 | Integer.bitCount for Every Number | O(n) | O(n) |
+| 4 | Offset by the Highest Power of Two | O(n) | O(n) |
+| 5 | Nibble Lookup Table | O(n) | O(n) |
+| 6 | Memoized Recursion | O(n) | O(n) |
+| 7 | DP on the Shifted Number (Optimized) | O(n) | O(n) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
 ## Source Code
 

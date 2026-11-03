@@ -70,7 +70,97 @@ public static void setZeroesFlags(int[][] matrix) {
 - **Time Complexity:** O(m * n)
 - **Space Complexity:** O(m + n)
 
-### Approach 3: First Row and Column as Markers (Optimized)
+### Approach 3: Sentinel Marking
+
+First pass: for every original zero, overwrite the non-zero cells of its row and column with a sentinel value that cannot occur in the input. Second pass: turn every sentinel into 0. Constant extra space, but it requires a value that is guaranteed to be absent (here `Integer.MIN_VALUE`).
+
+```java
+public static void setZeroesSentinel(int[][] matrix) {
+    int rows = matrix.length, cols = matrix[0].length;
+    final int MARK = Integer.MIN_VALUE;
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            if (matrix[i][j] != 0) continue;
+            for (int k = 0; k < cols; k++) if (matrix[i][k] != 0) matrix[i][k] = MARK;
+            for (int k = 0; k < rows; k++) if (matrix[k][j] != 0) matrix[k][j] = MARK;
+        }
+    }
+    for (int i = 0; i < rows; i++)
+        for (int j = 0; j < cols; j++) if (matrix[i][j] == MARK) matrix[i][j] = 0;
+}
+```
+
+- **Time Complexity:** O(m * n * (m + n))
+- **Space Complexity:** O(1)
+
+### Approach 4: BitSet Flags
+
+Record the rows and columns that contain a zero in two `BitSet`s (one bit per row or column) and clear those rows and columns afterwards. Same as the boolean flags but eight times smaller.
+
+```java
+public static void setZeroesBitSet(int[][] matrix) {
+    int rows = matrix.length, cols = matrix[0].length;
+    BitSet zeroRows = new BitSet(rows), zeroCols = new BitSet(cols);
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            if (matrix[i][j] == 0) { zeroRows.set(i); zeroCols.set(j); }
+        }
+    }
+    for (int i = 0; i < rows; i++)
+        for (int j = 0; j < cols; j++) if (zeroRows.get(i) || zeroCols.get(j)) matrix[i][j] = 0;
+}
+```
+
+- **Time Complexity:** O(m * n)
+- **Space Complexity:** O((m + n) / 8) bytes
+
+### Approach 5: Sets of Rows and Columns
+
+Collect the indexes of the rows and columns that contain a zero in two `HashSet`s. Clear exactly those rows and columns, which is efficient when only a few of them contain zeros.
+
+```java
+public static void setZeroesSets(int[][] matrix) {
+    Set<Integer> rowsToClear = new HashSet<>(), colsToClear = new HashSet<>();
+    for (int i = 0; i < matrix.length; i++) {
+        for (int j = 0; j < matrix[0].length; j++) {
+            if (matrix[i][j] == 0) { rowsToClear.add(i); colsToClear.add(j); }
+        }
+    }
+    for (int row : rowsToClear) Arrays.fill(matrix[row], 0);
+    for (int col : colsToClear) for (int[] row : matrix) row[col] = 0;
+}
+```
+
+- **Time Complexity:** O(m * n)
+- **Space Complexity:** O(m + n) worst case
+
+### Approach 6: Constant Space with matrix[0][0] as a Shared Marker
+
+The classic compact version: the first row and first column store the flags of the other rows and columns; `matrix[0][0]` serves as the flag of row 0 and one extra boolean as the flag of column 0. The cells are processed from the bottom-right to the top-left so the markers are not destroyed too early.
+
+```java
+public static void setZeroesCompact(int[][] matrix) {
+    int rows = matrix.length, cols = matrix[0].length;
+    boolean firstColumnZero = false;
+    for (int i = 0; i < rows; i++) {
+        if (matrix[i][0] == 0) firstColumnZero = true;
+        for (int j = 1; j < cols; j++) {
+            if (matrix[i][j] == 0) { matrix[i][0] = 0; matrix[0][j] = 0; }
+        }
+    }
+    for (int i = rows - 1; i >= 0; i--) {
+        for (int j = cols - 1; j >= 1; j--) {
+            if (matrix[i][0] == 0 || matrix[0][j] == 0) matrix[i][j] = 0;
+        }
+        if (firstColumnZero) matrix[i][0] = 0;
+    }
+}
+```
+
+- **Time Complexity:** O(m * n)
+- **Space Complexity:** O(1)
+
+### Approach 7: First Row and Column as Markers (Optimized)
 
 Use the first row and the first column of the matrix itself as the flag arrays (after remembering whether they originally contained a zero). This is the version implemented in the repository.
 
@@ -105,11 +195,15 @@ public static void setZeroes(int[][] matrix) {
 |---|----------|------|-------|
 | 1 | Copy of the Matrix | O(m * n * (m + n)) | O(m * n) |
 | 2 | Row and Column Flags | O(m * n) | O(m + n) |
-| 3 | First Row and Column as Markers (Optimized) | O(m * n) | O(1) |
+| 3 | Sentinel Marking | O(m * n * (m + n)) | O(1) |
+| 4 | BitSet Flags | O(m * n) | O((m + n) / 8) bytes |
+| 5 | Sets of Rows and Columns | O(m * n) | O(m + n) worst case |
+| 6 | Constant Space with matrix[0][0] as a Shared Marker | O(m * n) | O(1) |
+| 7 | First Row and Column as Markers (Optimized) | O(m * n) | O(1) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
 ## Source Code
 

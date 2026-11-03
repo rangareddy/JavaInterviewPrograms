@@ -74,7 +74,126 @@ public static List<List<Integer>> threeSumHash(int[] nums) {
 - **Time Complexity:** O(n^2)
 - **Space Complexity:** O(n)
 
-### Approach 3: Sort + Two Pointers (Optimized)
+### Approach 3: Sort + Binary Search for the Third Number
+
+Sort the array, fix every pair `(i, j)` and binary-search the third value `-(a[i] + a[j])` in the part after `j`. A set removes duplicate triplets.
+
+```java
+public static List<List<Integer>> threeSumBinary(int[] nums) {
+    int[] sorted = nums.clone();
+    Arrays.sort(sorted);
+    Set<List<Integer>> result = new LinkedHashSet<>();
+    for (int i = 0; i < sorted.length; i++) {
+        for (int j = i + 1; j < sorted.length; j++) {
+            int third = -sorted[i] - sorted[j];
+            if (third < sorted[j]) break;                       // thirds only get smaller from here on
+            if (Arrays.binarySearch(sorted, j + 1, sorted.length, third) >= 0) {
+                result.add(Arrays.asList(sorted[i], sorted[j], third));
+            }
+        }
+    }
+    return new ArrayList<>(result);
+}
+```
+
+- **Time Complexity:** O(n^2 log n)
+- **Space Complexity:** O(n) for the set
+
+### Approach 4: Value-Count Map over Distinct Values
+
+Count how often each value occurs. Enumerate pairs of distinct values `a <= b`, compute `c = -(a + b)` and accept the triplet when `c >= b` exists often enough (two equal values need a count of at least 2, three equal values at least 3). Duplicates are impossible by construction.
+
+```java
+public static List<List<Integer>> threeSumCounts(int[] nums) {
+    TreeMap<Integer, Integer> count = new TreeMap<>();
+    for (int num : nums) count.merge(num, 1, Integer::sum);
+    List<Integer> values = new ArrayList<>(count.keySet());
+    List<List<Integer>> result = new ArrayList<>();
+    for (int i = 0; i < values.size(); i++) {
+        for (int j = i; j < values.size(); j++) {
+            int a = values.get(i), b = values.get(j), c = -a - b;
+            if (c < b) break;
+            Integer available = count.get(c);
+            if (available == null) continue;
+            boolean ok = (a == b && b == c) ? available >= 3 : (a == b) ? count.get(a) >= 2 : (b == c) ? available >= 2 : true;
+            if (ok) result.add(Arrays.asList(a, b, c));
+        }
+    }
+    return result;
+}
+```
+
+- **Time Complexity:** O(n^2)
+- **Space Complexity:** O(n)
+
+### Approach 5: Generic k-Sum Recursion
+
+Solve `kSum` by fixing the first number and recursing on `(k - 1)`-Sum until the base case 2-Sum (two pointers). Skipping equal numbers on every level avoids duplicates, and the same code handles 4Sum, 5Sum and so on.
+
+```java
+public static List<List<Integer>> threeSumKSum(int[] nums) {
+    int[] sorted = nums.clone();
+    Arrays.sort(sorted);
+    return kSum(sorted, 0, 3, 0);
+}
+
+private static List<List<Integer>> kSum(int[] a, long target, int k, int start) {
+    List<List<Integer>> result = new ArrayList<>();
+    if (start >= a.length) return result;
+    if (k == 2) {
+        int left = start, right = a.length - 1;
+        while (left < right) {
+            long sum = (long) a[left] + a[right];
+            if (sum < target) left++;
+            else if (sum > target) right--;
+            else {
+                result.add(new ArrayList<>(Arrays.asList(a[left], a[right])));
+                left++; right--;
+                while (left < right && a[left] == a[left - 1]) left++;
+            }
+        }
+        return result;
+    }
+    for (int i = start; i < a.length - k + 1; i++) {
+        if (i > start && a[i] == a[i - 1]) continue;
+        for (List<Integer> tail : kSum(a, target - a[i], k - 1, i + 1)) {
+            tail.add(0, a[i]);
+            result.add(tail);
+        }
+    }
+    return result;
+}
+```
+
+- **Time Complexity:** O(n^(k-1))
+- **Space Complexity:** O(k) recursion stack
+
+### Approach 6: Two Pointers with a Set Instead of Skipping
+
+The classic two-pointer scan, but duplicate triplets are removed by collecting results in a `LinkedHashSet` rather than by skipping equal numbers. Shorter code, a bit more work and memory.
+
+```java
+public static List<List<Integer>> threeSumTwoPointersSet(int[] nums) {
+    int[] sorted = nums.clone();
+    Arrays.sort(sorted);
+    Set<List<Integer>> result = new LinkedHashSet<>();
+    for (int i = 0; i < sorted.length - 2; i++) {
+        int left = i + 1, right = sorted.length - 1;
+        while (left < right) {
+            int sum = sorted[i] + sorted[left] + sorted[right];
+            if (sum == 0) { result.add(Arrays.asList(sorted[i], sorted[left], sorted[right])); left++; right--; }
+            else if (sum < 0) left++;
+            else right--;
+        }
+    }
+    return new ArrayList<>(result);
+}
+```
+
+- **Time Complexity:** O(n^2)
+- **Space Complexity:** O(n) for the set
+
+### Approach 7: Sort + Two Pointers (Optimized)
 
 Sort once, fix the first number and sweep two pointers; skipping equal values avoids duplicates without a set. This is the version implemented in the repository.
 
@@ -111,11 +230,15 @@ public static List<List<Integer>> threeSum(int[] nums) {
 |---|----------|------|-------|
 | 1 | Brute Force | O(n^3) | O(n) for the set |
 | 2 | Hash Set for the Third Number | O(n^2) | O(n) |
-| 3 | Sort + Two Pointers (Optimized) | O(n^2) | O(1) auxiliary |
+| 3 | Sort + Binary Search for the Third Number | O(n^2 log n) | O(n) for the set |
+| 4 | Value-Count Map over Distinct Values | O(n^2) | O(n) |
+| 5 | Generic k-Sum Recursion | O(n^(k-1)) | O(k) recursion stack |
+| 6 | Two Pointers with a Set Instead of Skipping | O(n^2) | O(n) for the set |
+| 7 | Sort + Two Pointers (Optimized) | O(n^2) | O(1) auxiliary |
 
 ### Optimized Solution
 
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
 ## Source Code
 

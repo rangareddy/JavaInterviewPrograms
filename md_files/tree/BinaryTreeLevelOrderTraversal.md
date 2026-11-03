@@ -46,34 +46,7 @@ private static void fill(TreeNode node, int depth, List<List<Integer>> levels) {
 - **Time Complexity:** O(n)
 - **Space Complexity:** O(h)
 
-### Approach 2: BFS with a Queue and Level Size (Optimized)
-
-Take `queue.size()` nodes per round so each round is exactly one level. This is the version implemented in the repository.
-
-```java
-public static List<List<Integer>> levelOrder(TreeNode root) {
-    List<List<Integer>> levels = new ArrayList<>();
-    if (root == null) return levels;
-    Queue<TreeNode> queue = new LinkedList<>();
-    queue.add(root);
-    while (!queue.isEmpty()) {
-        List<Integer> level = new ArrayList<>();
-        for (int i = queue.size(); i > 0; i--) {
-            TreeNode node = queue.poll();
-            level.add(node.val);
-            if (node.left != null) queue.add(node.left);
-            if (node.right != null) queue.add(node.right);
-        }
-        levels.add(level);
-    }
-    return levels;
-}
-```
-
-- **Time Complexity:** O(n)
-- **Space Complexity:** O(w)
-
-### Approach 3: BFS with Two Lists
+### Approach 2: BFS with Two Lists
 
 Keep the nodes of the current level in one list and build the next level in another, without a queue.
 
@@ -100,17 +73,162 @@ public static List<List<Integer>> levelOrderTwoLists(TreeNode root) {
 - **Time Complexity:** O(n)
 - **Space Complexity:** O(w)
 
+### Approach 3: BFS with a Null Level Marker
+
+Put a `null` marker in the queue after each level. Meeting the marker means the current level is complete: store it, and re-insert the marker if more nodes follow.
+
+```java
+public static List<List<Integer>> levelOrderMarker(TreeNode root) {
+    List<List<Integer>> levels = new ArrayList<>();
+    if (root == null) return levels;
+    Queue<TreeNode> queue = new LinkedList<>();
+    queue.add(root);
+    queue.add(null);
+    List<Integer> level = new ArrayList<>();
+    while (!queue.isEmpty()) {
+        TreeNode node = queue.poll();
+        if (node == null) {
+            levels.add(level);
+            level = new ArrayList<>();
+            if (!queue.isEmpty()) queue.add(null);
+        } else {
+            level.add(node.val);
+            if (node.left != null) queue.add(node.left);
+            if (node.right != null) queue.add(node.right);
+        }
+    }
+    return levels;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(w)
+
+### Approach 4: BFS with Depth Stored Next to Each Node
+
+Queue `(node, depth)` pairs and add every node to the list of its depth. No level-size bookkeeping is necessary.
+
+```java
+public static List<List<Integer>> levelOrderPairs(TreeNode root) {
+    List<List<Integer>> levels = new ArrayList<>();
+    if (root == null) return levels;
+    Queue<Object[]> queue = new LinkedList<>();
+    queue.add(new Object[]{root, 0});
+    while (!queue.isEmpty()) {
+        Object[] entry = queue.poll();
+        TreeNode node = (TreeNode) entry[0];
+        int depth = (Integer) entry[1];
+        if (depth == levels.size()) levels.add(new ArrayList<>());
+        levels.get(depth).add(node.val);
+        if (node.left != null) queue.add(new Object[]{node.left, depth + 1});
+        if (node.right != null) queue.add(new Object[]{node.right, depth + 1});
+    }
+    return levels;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(w)
+
+### Approach 5: Iterative DFS with a Stack of (node, depth)
+
+A pre-order traversal with an explicit stack that remembers each node's depth. Pushing the right child first makes the left child come out first, so every level list is filled left to right.
+
+```java
+public static List<List<Integer>> levelOrderStack(TreeNode root) {
+    List<List<Integer>> levels = new ArrayList<>();
+    if (root == null) return levels;
+    Deque<Object[]> stack = new ArrayDeque<>();
+    stack.push(new Object[]{root, 0});
+    while (!stack.isEmpty()) {
+        Object[] entry = stack.pop();
+        TreeNode node = (TreeNode) entry[0];
+        int depth = (Integer) entry[1];
+        if (depth == levels.size()) levels.add(new ArrayList<>());
+        levels.get(depth).add(node.val);
+        if (node.right != null) stack.push(new Object[]{node.right, depth + 1});
+        if (node.left != null) stack.push(new Object[]{node.left, depth + 1});
+    }
+    return levels;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(h)
+
+### Approach 6: Collect Each Level by Depth (Brute Force)
+
+Compute the height of the tree and, for every level from 0 to the height, run a recursive traversal that collects only the nodes at that depth. Easy to reason about, but the tree is traversed once per level.
+
+```java
+public static List<List<Integer>> levelOrderPerLevel(TreeNode root) {
+    List<List<Integer>> levels = new ArrayList<>();
+    int height = height(root);
+    for (int depth = 0; depth < height; depth++) {
+        List<Integer> level = new ArrayList<>();
+        collect(root, depth, level);
+        levels.add(level);
+    }
+    return levels;
+}
+
+private static int height(TreeNode node) {
+    return node == null ? 0 : 1 + Math.max(height(node.left), height(node.right));
+}
+
+private static void collect(TreeNode node, int depth, List<Integer> level) {
+    if (node == null) return;
+    if (depth == 0) { level.add(node.val); return; }
+    collect(node.left, depth - 1, level);
+    collect(node.right, depth - 1, level);
+}
+```
+
+- **Time Complexity:** O(n * h)
+- **Space Complexity:** O(h)
+
+### Approach 7: BFS with a Queue and Level Size (Optimized)
+
+Take `queue.size()` nodes per round so each round is exactly one level. This is the version implemented in the repository.
+
+```java
+public static List<List<Integer>> levelOrder(TreeNode root) {
+    List<List<Integer>> levels = new ArrayList<>();
+    if (root == null) return levels;
+    Queue<TreeNode> queue = new LinkedList<>();
+    queue.add(root);
+    while (!queue.isEmpty()) {
+        List<Integer> level = new ArrayList<>();
+        for (int i = queue.size(); i > 0; i--) {
+            TreeNode node = queue.poll();
+            level.add(node.val);
+            if (node.left != null) queue.add(node.left);
+            if (node.right != null) queue.add(node.right);
+        }
+        levels.add(level);
+    }
+    return levels;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(w)
+
 ### Comparison
 
 | # | Approach | Time | Space |
 |---|----------|------|-------|
 | 1 | Recursive DFS by Depth | O(n) | O(h) |
-| 2 | BFS with a Queue and Level Size (Optimized) | O(n) | O(w) |
-| 3 | BFS with Two Lists | O(n) | O(w) |
+| 2 | BFS with Two Lists | O(n) | O(w) |
+| 3 | BFS with a Null Level Marker | O(n) | O(w) |
+| 4 | BFS with Depth Stored Next to Each Node | O(n) | O(w) |
+| 5 | Iterative DFS with a Stack of (node, depth) | O(n) | O(h) |
+| 6 | Collect Each Level by Depth (Brute Force) | O(n * h) | O(h) |
+| 7 | BFS with a Queue and Level Size (Optimized) | O(n) | O(w) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
 ## Source Code
 

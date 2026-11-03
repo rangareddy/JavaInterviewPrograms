@@ -65,7 +65,103 @@ public static int searchTwoPass(int[] nums, int target) {
 - **Time Complexity:** O(log n)
 - **Space Complexity:** O(1)
 
-### Approach 3: One-Pass Binary Search (Optimized)
+### Approach 3: Recursive Binary Search
+
+The same decision as the iterative version written recursively: one half around `mid` is sorted, so check whether the target lies in it and recurse into the right half.
+
+```java
+public static int searchRecursive(int[] nums, int target) {
+    return solve(nums, target, 0, nums.length - 1);
+}
+
+private static int solve(int[] nums, int target, int low, int high) {
+    if (low > high) return -1;
+    int mid = low + (high - low) / 2;
+    if (nums[mid] == target) return mid;
+    if (nums[low] <= nums[mid]) {
+        if (nums[low] <= target && target < nums[mid]) return solve(nums, target, low, mid - 1);
+        return solve(nums, target, mid + 1, high);
+    }
+    if (nums[mid] < target && target <= nums[high]) return solve(nums, target, mid + 1, high);
+    return solve(nums, target, low, mid - 1);
+}
+```
+
+- **Time Complexity:** O(log n)
+- **Space Complexity:** O(log n)
+
+### Approach 4: Binary Search over a Virtual Shift
+
+Find the rotation point first, then binary-search the whole array as if it were sorted by mapping every virtual index `i` to the real index `(i + pivot) % n`.
+
+```java
+public static int searchVirtual(int[] nums, int target) {
+    int n = nums.length, low = 0, high = n - 1;
+    while (low < high) {                                  // index of the minimum = rotation point
+        int mid = low + (high - low) / 2;
+        if (nums[mid] > nums[high]) low = mid + 1; else high = mid;
+    }
+    int pivot = low;
+    low = 0;
+    high = n - 1;
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        int real = (mid + pivot) % n;
+        if (nums[real] == target) return real;
+        if (nums[real] < target) low = mid + 1; else high = mid - 1;
+    }
+    return -1;
+}
+```
+
+- **Time Complexity:** O(log n)
+- **Space Complexity:** O(1)
+
+### Approach 5: Pivot, Then Arrays.binarySearch on the Two Sorted Parts
+
+After finding the rotation point the array consists of two sorted ranges; the JDK's `Arrays.binarySearch` can search each of them.
+
+```java
+public static int searchLibrary(int[] nums, int target) {
+    int n = nums.length, low = 0, high = n - 1;
+    while (low < high) {
+        int mid = low + (high - low) / 2;
+        if (nums[mid] > nums[high]) low = mid + 1; else high = mid;
+    }
+    int pivot = low;
+    int index = Arrays.binarySearch(nums, 0, pivot, target);
+    if (index >= 0 && pivot > 0) return index;
+    index = Arrays.binarySearch(nums, pivot, n, target);
+    return index >= 0 ? index : -1;
+}
+```
+
+- **Time Complexity:** O(log n)
+- **Space Complexity:** O(1)
+
+### Approach 6: The "Infinity" Trick
+
+Compare every middle element as if the array were sorted: if `nums[mid]` and the target are in the same sorted part (relative to `nums[0]`) use `nums[mid]`; otherwise replace it with minus or plus infinity so the ordinary binary search moves in the right direction.
+
+```java
+public static int searchInfinity(int[] nums, int target) {
+    int low = 0, high = nums.length - 1;
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        int value;
+        if ((nums[mid] < nums[0]) == (target < nums[0])) value = nums[mid];
+        else value = target < nums[0] ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+        if (value == target) return mid;
+        if (value < target) low = mid + 1; else high = mid - 1;
+    }
+    return -1;
+}
+```
+
+- **Time Complexity:** O(log n)
+- **Space Complexity:** O(1)
+
+### Approach 7: One-Pass Binary Search (Optimized)
 
 At every step one half is sorted; test whether the target lies inside it to decide which half to keep. This is the version implemented in the repository.
 
@@ -94,11 +190,15 @@ public static int search(int[] nums, int target) {
 |---|----------|------|-------|
 | 1 | Linear Scan | O(n) | O(1) |
 | 2 | Find the Pivot, Then Binary Search | O(log n) | O(1) |
-| 3 | One-Pass Binary Search (Optimized) | O(log n) | O(1) |
+| 3 | Recursive Binary Search | O(log n) | O(log n) |
+| 4 | Binary Search over a Virtual Shift | O(log n) | O(1) |
+| 5 | Pivot, Then Arrays.binarySearch on the Two Sorted Parts | O(log n) | O(1) |
+| 6 | The "Infinity" Trick | O(log n) | O(1) |
+| 7 | One-Pass Binary Search (Optimized) | O(log n) | O(1) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
 ## Source Code
 

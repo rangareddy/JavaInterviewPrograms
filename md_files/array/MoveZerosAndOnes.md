@@ -61,7 +61,81 @@ public static void sortColorsCounting(int[] arr) {
 - **Time Complexity:** O(n)
 - **Space Complexity:** O(1)
 
-### Approach 3: Dutch National Flag (Optimized, One Pass)
+### Approach 3: Two Partition Passes
+
+Sorting 0s, 1s and 2s is two two-way partitions: first move all 0s to the front, then move all 1s to the front of the remaining part. Each pass is a single scan with swaps.
+
+```java
+public static void sortColorsTwoPasses(int[] arr) {
+    int boundary = 0;
+    for (int i = 0; i < arr.length; i++) {
+        if (arr[i] == 0) swap(arr, i, boundary++);
+    }
+    for (int i = boundary; i < arr.length; i++) {
+        if (arr[i] == 1) swap(arr, i, boundary++);
+    }
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(1)
+
+### Approach 4: Counting and Arrays.fill
+
+Count the 0s, 1s and 2s, then overwrite the array with three `Arrays.fill` calls.
+
+```java
+public static void sortColorsFill(int[] arr) {
+    int zeros = 0, ones = 0;
+    for (int value : arr) {
+        if (value == 0) zeros++; else if (value == 1) ones++;
+    }
+    Arrays.fill(arr, 0, zeros, 0);
+    Arrays.fill(arr, zeros, zeros + ones, 1);
+    Arrays.fill(arr, zeros + ones, arr.length, 2);
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(1)
+
+### Approach 5: Insertion Sort
+
+A simple stable quadratic sort that needs no knowledge of the three values; fine for tiny arrays.
+
+```java
+public static void sortColorsInsertion(int[] arr) {
+    for (int i = 1; i < arr.length; i++) {
+        int value = arr[i], j = i - 1;
+        while (j >= 0 && arr[j] > value) { arr[j + 1] = arr[j]; j--; }
+        arr[j + 1] = value;
+    }
+}
+```
+
+- **Time Complexity:** O(n^2)
+- **Space Complexity:** O(1)
+
+### Approach 6: Three Buckets
+
+Distribute the values into three lists and write them back one after the other. Simple and stable but needs extra memory.
+
+```java
+public static void sortColorsBuckets(int[] arr) {
+    List<List<Integer>> buckets = new ArrayList<>();
+    for (int i = 0; i < 3; i++) buckets.add(new ArrayList<>());
+    for (int value : arr) buckets.get(value).add(value);
+    int index = 0;
+    for (List<Integer> bucket : buckets) {
+        for (int value : bucket) arr[index++] = value;
+    }
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 7: Dutch National Flag (Optimized, One Pass)
 
 Three pointers partition the array in a single pass using swaps only: 0s go to the front, 2s to the back and 1s stay in the middle. Implemented in the repository.
 
@@ -89,11 +163,15 @@ public static void sortColors(int[] arr) {
 |---|----------|------|-------|
 | 1 | Library Sort | O(n log n) | O(1) to O(log n) |
 | 2 | Counting Sort (Two Passes) | O(n) | O(1) |
-| 3 | Dutch National Flag (Optimized, One Pass) | O(n) | O(1) |
+| 3 | Two Partition Passes | O(n) | O(1) |
+| 4 | Counting and Arrays.fill | O(n) | O(1) |
+| 5 | Insertion Sort | O(n^2) | O(1) |
+| 6 | Three Buckets | O(n) | O(n) |
+| 7 | Dutch National Flag (Optimized, One Pass) | O(n) | O(1) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
 ## Source Code
 

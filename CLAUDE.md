@@ -27,4 +27,4 @@ Compiler level is set via `maven.compiler.source`/`target` (8) in `pom.xml`; kee
 
 ## Workflow
 
-Changes go through a feature branch and PR against `master` (merged with merge commits), not direct pushes.
+Work happens on a local feature branch with local commits. Claude never pushes, opens or merges pull requests, or deletes remote branches (see the global `~/.claude/CLAUDE.md`); the user does that themselves (merge commits into `master`, feature branches deleted afterwards).

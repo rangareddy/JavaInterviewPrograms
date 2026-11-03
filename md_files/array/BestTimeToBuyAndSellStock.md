@@ -60,7 +60,90 @@ public static int maxProfitKadane(int[] prices) {
 - **Time Complexity:** O(n)
 - **Space Complexity:** O(1)
 
-### Approach 3: Track the Minimum So Far (Optimized)
+### Approach 3: Divide and Conquer
+
+Split the days in two halves. The best trade is inside the left half, inside the right half, or buys in the left half and sells in the right half (the highest right price minus the lowest left price). Each call returns `{min, max, best}` of its range.
+
+```java
+public static int maxProfitDivide(int[] prices) {
+    if (prices.length < 2) return 0;
+    return divide(prices, 0, prices.length - 1)[2];
+}
+
+// returns {minPrice, maxPrice, bestProfit}
+private static int[] divide(int[] p, int lo, int hi) {
+    if (lo == hi) return new int[]{p[lo], p[lo], 0};
+    int mid = (lo + hi) / 2;
+    int[] left = divide(p, lo, mid), right = divide(p, mid + 1, hi);
+    return new int[]{Math.min(left[0], right[0]), Math.max(left[1], right[1]),
+            Math.max(Math.max(left[2], right[2]), right[1] - left[0])};
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(log n)
+
+### Approach 4: Prefix Minimum and Suffix Maximum Arrays
+
+Precompute the cheapest price up to each day and the highest price from each day on; the best profit is the largest difference between the two at the same day.
+
+```java
+public static int maxProfitArrays(int[] prices) {
+    int n = prices.length;
+    if (n < 2) return 0;
+    int[] minLeft = new int[n], maxRight = new int[n];
+    minLeft[0] = prices[0];
+    for (int i = 1; i < n; i++) minLeft[i] = Math.min(minLeft[i - 1], prices[i]);
+    maxRight[n - 1] = prices[n - 1];
+    for (int i = n - 2; i >= 0; i--) maxRight[i] = Math.max(maxRight[i + 1], prices[i]);
+    int best = 0;
+    for (int i = 0; i < n; i++) best = Math.max(best, maxRight[i] - minLeft[i]);
+    return best;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 5: State-Machine DP (Hold / Sold)
+
+Model the single transaction as two states: `hold` is the best balance while holding the stock (we paid the price) and `sold` the best balance after selling. Update both for every price.
+
+```java
+public static int maxProfitStates(int[] prices) {
+    int hold = Integer.MIN_VALUE, sold = 0;
+    for (int price : prices) {
+        hold = Math.max(hold, -price);          // buy today (only one transaction allowed)
+        sold = Math.max(sold, hold + price);    // sell today
+    }
+    return sold;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(1)
+
+### Approach 6: Monotonic Stack
+
+Keep a stack of prices in increasing order by popping every price that is not lower than the new one. The bottom of the stack is always the lowest price so far, so the profit of selling today is today's price minus the bottom.
+
+```java
+public static int maxProfitStack(int[] prices) {
+    Deque<Integer> stack = new ArrayDeque<>();
+    int best = 0;
+    for (int price : prices) {
+        while (!stack.isEmpty() && stack.peekLast() >= price) stack.pollLast();
+        stack.addLast(price);
+        best = Math.max(best, price - stack.peekFirst());
+    }
+    return best;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 7: Track the Minimum So Far (Optimized)
 
 Remember the cheapest price seen so far and, for every day, the profit of selling today. This is the version implemented in the repository.
 
@@ -85,11 +168,15 @@ public static int maxProfit(int[] prices) {
 |---|----------|------|-------|
 | 1 | Brute Force | O(n^2) | O(1) |
 | 2 | Kadane on Daily Differences | O(n) | O(1) |
-| 3 | Track the Minimum So Far (Optimized) | O(n) | O(1) |
+| 3 | Divide and Conquer | O(n) | O(log n) |
+| 4 | Prefix Minimum and Suffix Maximum Arrays | O(n) | O(n) |
+| 5 | State-Machine DP (Hold / Sold) | O(n) | O(1) |
+| 6 | Monotonic Stack | O(n) | O(n) |
+| 7 | Track the Minimum So Far (Optimized) | O(n) | O(1) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
 ## Source Code
 

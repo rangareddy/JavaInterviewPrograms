@@ -62,7 +62,97 @@ public static void rotateCycles(int[][] matrix) {
 - **Time Complexity:** O(n^2)
 - **Space Complexity:** O(1)
 
-### Approach 3: Transpose, Then Reverse Each Row (Optimized)
+### Approach 3: Flip Vertically, Then Transpose
+
+Reverse the order of the rows (flip upside down) and then transpose. Same two simple steps as "transpose then reverse each row", in the other order.
+
+```java
+public static void rotateFlipTranspose(int[][] matrix) {
+    int n = matrix.length;
+    for (int i = 0; i < n / 2; i++) {
+        int[] temp = matrix[i];
+        matrix[i] = matrix[n - 1 - i];
+        matrix[n - 1 - i] = temp;
+    }
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            int temp = matrix[i][j]; matrix[i][j] = matrix[j][i]; matrix[j][i] = temp;
+        }
+    }
+}
+```
+
+- **Time Complexity:** O(n^2)
+- **Space Complexity:** O(1)
+
+### Approach 4: Reflect over the Anti-Diagonal, Then Flip Vertically
+
+Reflecting over the anti-diagonal sends `(i, j)` to `(n - 1 - j, n - 1 - i)`; reversing the order of the rows afterwards lands every element on its clockwise-rotated position `(j, n - 1 - i)`.
+
+```java
+public static void rotateAntiTranspose(int[][] matrix) {
+    int n = matrix.length;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n - 1 - i; j++) {
+            int temp = matrix[i][j];
+            matrix[i][j] = matrix[n - 1 - j][n - 1 - i];
+            matrix[n - 1 - j][n - 1 - i] = temp;
+        }
+    }
+    for (int i = 0; i < n / 2; i++) {
+        int[] temp = matrix[i];
+        matrix[i] = matrix[n - 1 - i];
+        matrix[n - 1 - i] = temp;
+    }
+}
+```
+
+- **Time Complexity:** O(n^2)
+- **Space Complexity:** O(1)
+
+### Approach 5: Recursive Layer Rotation
+
+Rotate the outer layer with four-way swaps, then recurse on the inner `(n - 2) x (n - 2)` matrix. The cycle-swap method written recursively.
+
+```java
+public static void rotateRecursive(int[][] matrix) {
+    rotateLayer(matrix, 0, matrix.length - 1);
+}
+
+private static void rotateLayer(int[][] m, int first, int last) {
+    if (first >= last) return;
+    for (int k = 0; k < last - first; k++) {
+        int temp = m[first][first + k];
+        m[first][first + k] = m[last - k][first];
+        m[last - k][first] = m[last][last - k];
+        m[last][last - k] = m[first + k][last];
+        m[first + k][last] = temp;
+    }
+    rotateLayer(m, first + 1, last - 1);
+}
+```
+
+- **Time Complexity:** O(n^2)
+- **Space Complexity:** O(n) recursion stack
+
+### Approach 6: Streams: Read Each Column Bottom to Top
+
+The first row of the rotated image is the first column read from bottom to top, the second row the second column, and so on. Build the rows with streams and copy them back.
+
+```java
+public static void rotateStreams(int[][] matrix) {
+    int n = matrix.length;
+    int[][] rotated = IntStream.range(0, n)
+            .mapToObj(column -> IntStream.range(0, n).map(row -> matrix[n - 1 - row][column]).toArray())
+            .toArray(int[][]::new);
+    for (int i = 0; i < n; i++) matrix[i] = rotated[i];
+}
+```
+
+- **Time Complexity:** O(n^2)
+- **Space Complexity:** O(n^2)
+
+### Approach 7: Transpose, Then Reverse Each Row (Optimized)
 
 A 90-degree clockwise rotation equals a transpose followed by a horizontal flip; both steps are simple in-place loops. This is the version implemented in the repository.
 
@@ -91,11 +181,15 @@ public static void rotate(int[][] matrix) {
 |---|----------|------|-------|
 | 1 | Extra Matrix | O(n^2) | O(n^2) |
 | 2 | Four-Way Cyclic Swap | O(n^2) | O(1) |
-| 3 | Transpose, Then Reverse Each Row (Optimized) | O(n^2) | O(1) |
+| 3 | Flip Vertically, Then Transpose | O(n^2) | O(1) |
+| 4 | Reflect over the Anti-Diagonal, Then Flip Vertically | O(n^2) | O(1) |
+| 5 | Recursive Layer Rotation | O(n^2) | O(n) recursion stack |
+| 6 | Streams: Read Each Column Bottom to Top | O(n^2) | O(n^2) |
+| 7 | Transpose, Then Reverse Each Row (Optimized) | O(n^2) | O(1) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
 ## Source Code
 

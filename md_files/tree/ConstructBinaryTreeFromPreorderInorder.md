@@ -47,31 +47,7 @@ private static TreeNode buildSearch(int[] pre, int preStart, int preEnd, int[] i
 - **Time Complexity:** O(n^2)
 - **Space Complexity:** O(h)
 
-### Approach 2: Hash Map of In-order Indexes (Optimized)
-
-Precompute the position of every value in the in-order array so each root is located in `O(1)`. This is the version implemented in the repository.
-
-```java
-public static TreeNode buildTree(int[] preorder, int[] inorder) {
-    Map<Integer, Integer> index = new HashMap<>();
-    for (int i = 0; i < inorder.length; i++) index.put(inorder[i], i);
-    return build(preorder, 0, preorder.length - 1, 0, index);
-}
-
-private static TreeNode build(int[] pre, int preStart, int preEnd, int inStart, Map<Integer, Integer> index) {
-    if (preStart > preEnd) return null;
-    TreeNode root = new TreeNode(pre[preStart]);
-    int rootIndex = index.get(root.val), leftSize = rootIndex - inStart;
-    root.left = build(pre, preStart + 1, preStart + leftSize, inStart, index);
-    root.right = build(pre, preStart + leftSize + 1, preEnd, rootIndex + 1, index);
-    return root;
-}
-```
-
-- **Time Complexity:** O(n)
-- **Space Complexity:** O(n)
-
-### Approach 3: Single Pass with a Stack and Limits
+### Approach 2: Single Pass with a Stack and Limits
 
 Without any map: pass the in-order array as a stream and use a "stop value" to know when the current subtree ends, advancing two global indexes. Shorter recursion, no extra array.
 
@@ -98,17 +74,147 @@ private static TreeNode buildStop(int[] pre, int[] in, int stop, boolean hasStop
 - **Time Complexity:** O(n)
 - **Space Complexity:** O(h)
 
+### Approach 3: Iterative with a Stack
+
+Walk through the pre-order array and the in-order array together. Every new pre-order value becomes the left child of the stack top until the top equals the current in-order value; then pop to find the node whose right child the next value becomes.
+
+```java
+public static TreeNode buildTreeStack(int[] preorder, int[] inorder) {
+    if (preorder.length == 0) return null;
+    TreeNode root = new TreeNode(preorder[0]);
+    Deque<TreeNode> stack = new ArrayDeque<>();
+    stack.push(root);
+    int inIndex = 0;
+    for (int i = 1; i < preorder.length; i++) {
+        TreeNode node = stack.peek();
+        if (node.val != inorder[inIndex]) {
+            node.left = new TreeNode(preorder[i]);
+            stack.push(node.left);
+        } else {
+            while (!stack.isEmpty() && stack.peek().val == inorder[inIndex]) {
+                node = stack.pop();
+                inIndex++;
+            }
+            node.right = new TreeNode(preorder[i]);
+            stack.push(node.right);
+        }
+    }
+    return root;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(h)
+
+### Approach 4: Recursion on Array Copies
+
+Split both arrays with `Arrays.copyOfRange` at the position of the root in the in-order array and recurse on the left and right parts. Very readable; the copies make it slower and memory hungry.
+
+```java
+public static TreeNode buildTreeCopies(int[] preorder, int[] inorder) {
+    if (preorder.length == 0) return null;
+    TreeNode root = new TreeNode(preorder[0]);
+    int rootIndex = 0;
+    while (inorder[rootIndex] != root.val) rootIndex++;
+    root.left = buildTreeCopies(Arrays.copyOfRange(preorder, 1, rootIndex + 1), Arrays.copyOfRange(inorder, 0, rootIndex));
+    root.right = buildTreeCopies(Arrays.copyOfRange(preorder, rootIndex + 1, preorder.length), Arrays.copyOfRange(inorder, rootIndex + 1, inorder.length));
+    return root;
+}
+```
+
+- **Time Complexity:** O(n^2)
+- **Space Complexity:** O(n^2)
+
+### Approach 5: Pre-order Queue and an In-order Index Map
+
+Consume the pre-order values one at a time from a queue; the recursion only needs the in-order bounds `[low, high]` of the current subtree, found through a map. No pre-order range arithmetic.
+
+```java
+public static TreeNode buildTreeQueue(int[] preorder, int[] inorder) {
+    Map<Integer, Integer> position = new HashMap<>();
+    for (int i = 0; i < inorder.length; i++) position.put(inorder[i], i);
+    Queue<Integer> queue = new LinkedList<>();
+    for (int value : preorder) queue.add(value);
+    return build(queue, position, 0, inorder.length - 1);
+}
+
+private static TreeNode build(Queue<Integer> queue, Map<Integer, Integer> position, int low, int high) {
+    if (low > high) return null;
+    TreeNode root = new TreeNode(queue.poll());
+    int mid = position.get(root.val);
+    root.left = build(queue, position, low, mid - 1);
+    root.right = build(queue, position, mid + 1, high);
+    return root;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 6: Recursion on List Sublists
+
+Use `List.subList` views instead of copying: the recursion splits the pre-order and in-order lists at the root. The views share memory with the original lists, but searching for the root is still linear per call.
+
+```java
+public static TreeNode buildTreeSublists(int[] preorder, int[] inorder) {
+    List<Integer> pre = new ArrayList<>(), in = new ArrayList<>();
+    for (int v : preorder) pre.add(v);
+    for (int v : inorder) in.add(v);
+    return build(pre, in);
+}
+
+private static TreeNode build(List<Integer> pre, List<Integer> in) {
+    if (pre.isEmpty()) return null;
+    TreeNode root = new TreeNode(pre.get(0));
+    int rootIndex = in.indexOf(pre.get(0));
+    root.left = build(pre.subList(1, rootIndex + 1), in.subList(0, rootIndex));
+    root.right = build(pre.subList(rootIndex + 1, pre.size()), in.subList(rootIndex + 1, in.size()));
+    return root;
+}
+```
+
+- **Time Complexity:** O(n^2)
+- **Space Complexity:** O(h)
+
+### Approach 7: Hash Map of In-order Indexes (Optimized)
+
+Precompute the position of every value in the in-order array so each root is located in `O(1)`. This is the version implemented in the repository.
+
+```java
+public static TreeNode buildTree(int[] preorder, int[] inorder) {
+    Map<Integer, Integer> index = new HashMap<>();
+    for (int i = 0; i < inorder.length; i++) index.put(inorder[i], i);
+    return build(preorder, 0, preorder.length - 1, 0, index);
+}
+
+private static TreeNode build(int[] pre, int preStart, int preEnd, int inStart, Map<Integer, Integer> index) {
+    if (preStart > preEnd) return null;
+    TreeNode root = new TreeNode(pre[preStart]);
+    int rootIndex = index.get(root.val), leftSize = rootIndex - inStart;
+    root.left = build(pre, preStart + 1, preStart + leftSize, inStart, index);
+    root.right = build(pre, preStart + leftSize + 1, preEnd, rootIndex + 1, index);
+    return root;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
 ### Comparison
 
 | # | Approach | Time | Space |
 |---|----------|------|-------|
 | 1 | Linear Search in the In-order Array | O(n^2) | O(h) |
-| 2 | Hash Map of In-order Indexes (Optimized) | O(n) | O(n) |
-| 3 | Single Pass with a Stack and Limits | O(n) | O(h) |
+| 2 | Single Pass with a Stack and Limits | O(n) | O(h) |
+| 3 | Iterative with a Stack | O(n) | O(h) |
+| 4 | Recursion on Array Copies | O(n^2) | O(n^2) |
+| 5 | Pre-order Queue and an In-order Index Map | O(n) | O(n) |
+| 6 | Recursion on List Sublists | O(n^2) | O(h) |
+| 7 | Hash Map of In-order Indexes (Optimized) | O(n) | O(n) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
 ## Source Code
 
