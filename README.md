@@ -20,6 +20,17 @@
 1. [Product of Array Except Self](./md_files/array/ProductOfArrayExceptSelf.md)
 1. [Remove Duplicates from Sorted Array](./md_files/array/RemoveDuplicates.md)
 1. [Rotate an Array](./md_files/array/RotateAnArray.md)
+1. [Best Time to Buy and Sell Stock](./md_files/array/BestTimeToBuyAndSellStock.md)
+1. [Contains Duplicate](./md_files/array/ContainsDuplicate.md)
+1. [Maximum Subarray](./md_files/array/MaximumSubarray.md)
+1. [Maximum Product Subarray](./md_files/array/MaximumProductSubarray.md)
+1. [Find Minimum in Rotated Sorted Array](./md_files/array/FindMinimumInRotatedSortedArray.md)
+1. [Search in Rotated Sorted Array](./md_files/array/SearchInRotatedSortedArray.md)
+1. [3Sum](./md_files/array/ThreeSum.md)
+1. [Container With Most Water](./md_files/array/ContainerWithMostWater.md)
+1. [Two Sum II - Input Array Is Sorted](./md_files/array/TwoSumII.md)
+1. [Trapping Rain Water](./md_files/array/TrappingRainWater.md)
+1. [Sliding Window Maximum](./md_files/array/SlidingWindowMaximum.md)
 
 ### Matrix
 
@@ -27,16 +38,30 @@
 1. [Spiral Matrix](./md_files/matrix/SpiralMatrix.md)
 1. [Rotate Image](./md_files/matrix/RotateImage.md)
 1. [Word Search](./md_files/matrix/WordSearch.md)
+1. [Valid Sudoku](./md_files/matrix/ValidSudoku.md)
 
 ### String
 
 1. [Longest Substring Without Repeating Characters](./md_files/string/LongestSubString.md)
 1. [Longest Palindrome](./md_files/string/LongestPalindrome.md)
+1. [Longest Repeating Character Replacement](./md_files/string/LongestRepeatingCharacterReplacement.md)
+1. [Minimum Window Substring](./md_files/string/MinimumWindowSubstring.md)
+1. [Valid Anagram](./md_files/basic/Anagram.md)
+1. [Group Anagrams](./md_files/string/GroupAnagrams.md)
+1. [Valid Parentheses](./md_files/string/ValidParentheses.md)
+1. [Palindromic Substrings](./md_files/string/PalindromicSubstrings.md)
+1. [Encode and Decode Strings](./md_files/string/EncodeAndDecodeStrings.md)
+1. [Valid Palindrome](./md_files/string/ValidPalindrome.md)
+1. [Permutation in String](./md_files/string/PermutationInString.md)
 
 ### Searching
 
 1. [Linear Search](./md_files/search/LinearSearch.md)
 1. [Binary Search](./md_files/search/BinarySearch.md)
+1. [Search a 2D Matrix](./md_files/search/SearchA2DMatrix.md)
+1. [Koko Eating Bananas](./md_files/search/KokoEatingBananas.md)
+1. [Time Based Key-Value Store](./md_files/search/TimeBasedKeyValueStore.md)
+1. [Median of Two Sorted Arrays](./md_files/search/MedianOfTwoSortedArrays.md)
 
 ### Sorting
 
@@ -53,51 +78,6 @@
 ### Tree
 
 1. [Binary Search Tree](./md_files/tree/BinarySearchTree.md)
-
-### Threads
-
-1. [Print Even Odd Using Threads](./md_files/threads/PrintEvenOddUsingThreads.md)
-
-## Blind 75 LeetCode Questions
-
-Solutions for the problems of the [Blind 75 LeetCode Questions](https://www.algotutor.io/assets/img/notes/dsAndAlgo/pdf/Blind%2075%20LeetCode%20Questions.pdf) list, grouped like the PDF. Each problem lives in the package and `md_files` folder of its category; problems that were already solved elsewhere in this repository link to the existing write-up.
-
-### Array
-
-1. [Two Sum](./md_files/array/TwoSum.md)
-1. [Best Time to Buy and Sell Stock](./md_files/array/BestTimeToBuyAndSellStock.md)
-1. [Contains Duplicate](./md_files/array/ContainsDuplicate.md)
-1. [Product of Array Except Self](./md_files/array/ProductOfArrayExceptSelf.md)
-1. [Maximum Subarray](./md_files/array/MaximumSubarray.md)
-1. [Maximum Product Subarray](./md_files/array/MaximumProductSubarray.md)
-1. [Find Minimum in Rotated Sorted Array](./md_files/array/FindMinimumInRotatedSortedArray.md)
-1. [Search in Rotated Sorted Array](./md_files/array/SearchInRotatedSortedArray.md)
-1. [3Sum](./md_files/array/ThreeSum.md)
-1. [Container With Most Water](./md_files/array/ContainerWithMostWater.md)
-
-### String
-
-1. [Longest Substring Without Repeating Characters](./md_files/string/LongestSubString.md)
-1. [Longest Repeating Character Replacement](./md_files/string/LongestRepeatingCharacterReplacement.md)
-1. [Minimum Window Substring](./md_files/string/MinimumWindowSubstring.md)
-1. [Valid Anagram](./md_files/basic/Anagram.md)
-1. [Group Anagrams](./md_files/string/GroupAnagrams.md)
-1. [Valid Parentheses](./md_files/string/ValidParentheses.md)
-1. [Longest Palindromic Substring](./md_files/string/LongestPalindrome.md)
-1. [Palindromic Substrings](./md_files/string/PalindromicSubstrings.md)
-1. [Encode and Decode Strings](./md_files/string/EncodeAndDecodeStrings.md)
-
-### Linked List
-
-1. [Reverse Linked List](./md_files/linkedlist/ReverseLinkedList.md)
-1. [Linked List Cycle](./md_files/linkedlist/LinkedListCycle.md)
-1. [Merge Two Sorted Lists](./md_files/linkedlist/MergeTwoSortedLists.md)
-1. [Merge k Sorted Lists](./md_files/linkedlist/MergeKSortedLists.md)
-1. [Remove Nth Node From End of List](./md_files/linkedlist/RemoveNthNodeFromEnd.md)
-1. [Reorder List](./md_files/linkedlist/ReorderList.md)
-
-### Tree
-
 1. [Maximum Depth of Binary Tree](./md_files/tree/MaximumDepthOfBinaryTree.md)
 1. [Same Tree](./md_files/tree/SameTree.md)
 1. [Invert Binary Tree](./md_files/tree/InvertBinaryTree.md)
@@ -112,12 +92,40 @@ Solutions for the problems of the [Blind 75 LeetCode Questions](https://www.algo
 1. [Implement Trie (Prefix Tree)](./md_files/tree/ImplementTrie.md)
 1. [Design Add and Search Words Data Structure](./md_files/tree/DesignAddAndSearchWords.md)
 1. [Word Search II](./md_files/tree/WordSearchII.md)
+1. [Diameter of Binary Tree](./md_files/tree/DiameterOfBinaryTree.md)
+1. [Balanced Binary Tree](./md_files/tree/BalancedBinaryTree.md)
+1. [Binary Tree Right Side View](./md_files/tree/BinaryTreeRightSideView.md)
+1. [Count Good Nodes in Binary Tree](./md_files/tree/CountGoodNodesInBinaryTree.md)
+
+### Threads
+
+1. [Print Even Odd Using Threads](./md_files/threads/PrintEvenOddUsingThreads.md)
+
+### Linked List
+
+1. [Reverse Linked List](./md_files/linkedlist/ReverseLinkedList.md)
+1. [Linked List Cycle](./md_files/linkedlist/LinkedListCycle.md)
+1. [Merge Two Sorted Lists](./md_files/linkedlist/MergeTwoSortedLists.md)
+1. [Merge k Sorted Lists](./md_files/linkedlist/MergeKSortedLists.md)
+1. [Remove Nth Node From End of List](./md_files/linkedlist/RemoveNthNodeFromEnd.md)
+1. [Reorder List](./md_files/linkedlist/ReorderList.md)
+1. [Copy List with Random Pointer](./md_files/linkedlist/CopyListWithRandomPointer.md)
+1. [Add Two Numbers](./md_files/linkedlist/AddTwoNumbers.md)
+1. [Find the Duplicate Number](./md_files/linkedlist/FindTheDuplicateNumber.md)
+1. [LRU Cache](./md_files/linkedlist/LRUCache.md)
+1. [Reverse Nodes in k-Group](./md_files/linkedlist/ReverseNodesInKGroup.md)
 
 ### Heap
 
 1. [Merge k Sorted Lists](./md_files/linkedlist/MergeKSortedLists.md)
 1. [Top K Frequent Elements](./md_files/heap/TopKFrequentElements.md)
 1. [Find Median from Data Stream](./md_files/heap/FindMedianFromDataStream.md)
+1. [Kth Largest Element in a Stream](./md_files/heap/KthLargestElementInAStream.md)
+1. [Last Stone Weight](./md_files/heap/LastStoneWeight.md)
+1. [K Closest Points to Origin](./md_files/heap/KClosestPointsToOrigin.md)
+1. [Kth Largest Element in an Array](./md_files/heap/KthLargestElementInAnArray.md)
+1. [Task Scheduler](./md_files/heap/TaskScheduler.md)
+1. [Design Twitter](./md_files/heap/DesignTwitter.md)
 
 ### Graph
 
@@ -129,108 +137,6 @@ Solutions for the problems of the [Blind 75 LeetCode Questions](https://www.algo
 1. [Alien Dictionary](./md_files/graph/AlienDictionary.md)
 1. [Graph Valid Tree](./md_files/graph/GraphValidTree.md)
 1. [Number of Connected Components in an Undirected Graph](./md_files/graph/NumberOfConnectedComponents.md)
-
-### Dynamic Programming
-
-1. [Climbing Stairs](./md_files/dp/ClimbingStairs.md)
-1. [Coin Change](./md_files/dp/CoinChange.md)
-1. [Longest Increasing Subsequence](./md_files/dp/LongestIncreasingSubsequence.md)
-1. [Longest Common Subsequence](./md_files/dp/LongestCommonSubsequence.md)
-1. [Word Break](./md_files/dp/WordBreak.md)
-1. [Combination Sum](./md_files/dp/CombinationSum.md)
-1. [House Robber](./md_files/dp/HouseRobber.md)
-1. [House Robber II](./md_files/dp/HouseRobberII.md)
-1. [Decode Ways](./md_files/dp/DecodeWays.md)
-1. [Unique Paths](./md_files/dp/UniquePaths.md)
-1. [Jump Game](./md_files/dp/JumpGame.md)
-
-### Interval
-
-1. [Insert Interval](./md_files/interval/InsertInterval.md)
-1. [Merge Intervals](./md_files/array/MergeIntervals.md)
-1. [Non-overlapping Intervals](./md_files/interval/NonOverlappingIntervals.md)
-1. [Meeting Rooms](./md_files/interval/MeetingRooms.md)
-1. [Meeting Rooms II](./md_files/interval/MeetingRoomsII.md)
-
-### Bit Manipulation
-
-1. [Sum of Two Integers](./md_files/bit/SumOfTwoIntegers.md)
-1. [Number of 1 Bits](./md_files/bit/NumberOf1Bits.md)
-1. [Counting Bits](./md_files/bit/CountingBits.md)
-1. [Missing Number](./md_files/bit/MissingNumber.md)
-1. [Reverse Bits](./md_files/bit/ReverseBits.md)
-
-## NeetCode 150
-
-Solutions for the problems of the [NeetCode 150](https://neetcode.io/practice) list that are not part of the sections above or of the Blind 75 list (those already have a write-up in this repository). Each problem lives in the package and `md_files` folder of its category and follows the same conventions: class Javadoc, aligned `Input  :` / `Output :` lines and an `Approaches` section from brute force to the optimized solution.
-
-### Arrays & Hashing, Two Pointers, Sliding Window
-
-1. [Two Sum II - Input Array Is Sorted](./md_files/array/TwoSumII.md)
-1. [Trapping Rain Water](./md_files/array/TrappingRainWater.md)
-1. [Sliding Window Maximum](./md_files/array/SlidingWindowMaximum.md)
-
-### Strings
-
-1. [Valid Palindrome](./md_files/string/ValidPalindrome.md)
-1. [Permutation in String](./md_files/string/PermutationInString.md)
-
-### Matrix
-
-1. [Valid Sudoku](./md_files/matrix/ValidSudoku.md)
-
-### Stack
-
-1. [Min Stack](./md_files/stack/MinStack.md)
-1. [Evaluate Reverse Polish Notation](./md_files/stack/EvaluateReversePolishNotation.md)
-1. [Generate Parentheses](./md_files/stack/GenerateParentheses.md)
-1. [Daily Temperatures](./md_files/stack/DailyTemperatures.md)
-1. [Car Fleet](./md_files/stack/CarFleet.md)
-1. [Largest Rectangle in Histogram](./md_files/stack/LargestRectangleInHistogram.md)
-
-### Binary Search
-
-1. [Search a 2D Matrix](./md_files/search/SearchA2DMatrix.md)
-1. [Koko Eating Bananas](./md_files/search/KokoEatingBananas.md)
-1. [Time Based Key-Value Store](./md_files/search/TimeBasedKeyValueStore.md)
-1. [Median of Two Sorted Arrays](./md_files/search/MedianOfTwoSortedArrays.md)
-
-### Linked List
-
-1. [Copy List with Random Pointer](./md_files/linkedlist/CopyListWithRandomPointer.md)
-1. [Add Two Numbers](./md_files/linkedlist/AddTwoNumbers.md)
-1. [Find the Duplicate Number](./md_files/linkedlist/FindTheDuplicateNumber.md)
-1. [LRU Cache](./md_files/linkedlist/LRUCache.md)
-1. [Reverse Nodes in k-Group](./md_files/linkedlist/ReverseNodesInKGroup.md)
-
-### Tree
-
-1. [Diameter of Binary Tree](./md_files/tree/DiameterOfBinaryTree.md)
-1. [Balanced Binary Tree](./md_files/tree/BalancedBinaryTree.md)
-1. [Binary Tree Right Side View](./md_files/tree/BinaryTreeRightSideView.md)
-1. [Count Good Nodes in Binary Tree](./md_files/tree/CountGoodNodesInBinaryTree.md)
-
-### Heap / Priority Queue
-
-1. [Kth Largest Element in a Stream](./md_files/heap/KthLargestElementInAStream.md)
-1. [Last Stone Weight](./md_files/heap/LastStoneWeight.md)
-1. [K Closest Points to Origin](./md_files/heap/KClosestPointsToOrigin.md)
-1. [Kth Largest Element in an Array](./md_files/heap/KthLargestElementInAnArray.md)
-1. [Task Scheduler](./md_files/heap/TaskScheduler.md)
-1. [Design Twitter](./md_files/heap/DesignTwitter.md)
-
-### Backtracking
-
-1. [Subsets](./md_files/backtracking/Subsets.md)
-1. [Permutations](./md_files/backtracking/Permutations.md)
-1. [Subsets II](./md_files/backtracking/SubsetsII.md)
-1. [Combination Sum II](./md_files/backtracking/CombinationSumII.md)
-1. [Palindrome Partitioning](./md_files/backtracking/PalindromePartitioning.md)
-1. [Letter Combinations of a Phone Number](./md_files/backtracking/LetterCombinationsOfAPhoneNumber.md)
-1. [N-Queens](./md_files/backtracking/NQueens.md)
-
-### Graph
-
 1. [Max Area of Island](./md_files/graph/MaxAreaOfIsland.md)
 1. [Walls and Gates](./md_files/graph/WallsAndGates.md)
 1. [Rotting Oranges](./md_files/graph/RottingOranges.md)
@@ -246,6 +152,17 @@ Solutions for the problems of the [NeetCode 150](https://neetcode.io/practice) l
 
 ### Dynamic Programming
 
+1. [Climbing Stairs](./md_files/dp/ClimbingStairs.md)
+1. [Coin Change](./md_files/dp/CoinChange.md)
+1. [Longest Increasing Subsequence](./md_files/dp/LongestIncreasingSubsequence.md)
+1. [Longest Common Subsequence](./md_files/dp/LongestCommonSubsequence.md)
+1. [Word Break](./md_files/dp/WordBreak.md)
+1. [Combination Sum](./md_files/dp/CombinationSum.md)
+1. [House Robber](./md_files/dp/HouseRobber.md)
+1. [House Robber II](./md_files/dp/HouseRobberII.md)
+1. [Decode Ways](./md_files/dp/DecodeWays.md)
+1. [Unique Paths](./md_files/dp/UniquePaths.md)
+1. [Jump Game](./md_files/dp/JumpGame.md)
 1. [Min Cost Climbing Stairs](./md_files/dp/MinCostClimbingStairs.md)
 1. [Partition Equal Subset Sum](./md_files/dp/PartitionEqualSubsetSum.md)
 1. [Best Time to Buy and Sell Stock with Cooldown](./md_files/dp/BestTimeToBuyAndSellStockWithCooldown.md)
@@ -258,6 +175,44 @@ Solutions for the problems of the [NeetCode 150](https://neetcode.io/practice) l
 1. [Burst Balloons](./md_files/dp/BurstBalloons.md)
 1. [Regular Expression Matching](./md_files/dp/RegularExpressionMatching.md)
 
+### Interval
+
+1. [Insert Interval](./md_files/interval/InsertInterval.md)
+1. [Merge Intervals](./md_files/array/MergeIntervals.md)
+1. [Non-overlapping Intervals](./md_files/interval/NonOverlappingIntervals.md)
+1. [Meeting Rooms](./md_files/interval/MeetingRooms.md)
+1. [Meeting Rooms II](./md_files/interval/MeetingRoomsII.md)
+1. [Minimum Interval to Include Each Query](./md_files/interval/MinimumIntervalToIncludeEachQuery.md)
+
+### Bit Manipulation
+
+1. [Sum of Two Integers](./md_files/bit/SumOfTwoIntegers.md)
+1. [Number of 1 Bits](./md_files/bit/NumberOf1Bits.md)
+1. [Counting Bits](./md_files/bit/CountingBits.md)
+1. [Missing Number](./md_files/bit/MissingNumber.md)
+1. [Reverse Bits](./md_files/bit/ReverseBits.md)
+1. [Single Number](./md_files/bit/SingleNumber.md)
+1. [Reverse Integer](./md_files/bit/ReverseInteger.md)
+
+### Stack
+
+1. [Min Stack](./md_files/stack/MinStack.md)
+1. [Evaluate Reverse Polish Notation](./md_files/stack/EvaluateReversePolishNotation.md)
+1. [Generate Parentheses](./md_files/stack/GenerateParentheses.md)
+1. [Daily Temperatures](./md_files/stack/DailyTemperatures.md)
+1. [Car Fleet](./md_files/stack/CarFleet.md)
+1. [Largest Rectangle in Histogram](./md_files/stack/LargestRectangleInHistogram.md)
+
+### Backtracking
+
+1. [Subsets](./md_files/backtracking/Subsets.md)
+1. [Permutations](./md_files/backtracking/Permutations.md)
+1. [Subsets II](./md_files/backtracking/SubsetsII.md)
+1. [Combination Sum II](./md_files/backtracking/CombinationSumII.md)
+1. [Palindrome Partitioning](./md_files/backtracking/PalindromePartitioning.md)
+1. [Letter Combinations of a Phone Number](./md_files/backtracking/LetterCombinationsOfAPhoneNumber.md)
+1. [N-Queens](./md_files/backtracking/NQueens.md)
+
 ### Greedy
 
 1. [Jump Game II](./md_files/greedy/JumpGameII.md)
@@ -267,19 +222,10 @@ Solutions for the problems of the [NeetCode 150](https://neetcode.io/practice) l
 1. [Partition Labels](./md_files/greedy/PartitionLabels.md)
 1. [Valid Parenthesis String](./md_files/greedy/ValidParenthesisString.md)
 
-### Intervals
-
-1. [Minimum Interval to Include Each Query](./md_files/interval/MinimumIntervalToIncludeEachQuery.md)
-
-### Math & Geometry
+### Math
 
 1. [Happy Number](./md_files/math/HappyNumber.md)
 1. [Plus One](./md_files/math/PlusOne.md)
 1. [Pow(x, n)](./md_files/math/PowXN.md)
 1. [Multiply Strings](./md_files/math/MultiplyStrings.md)
 1. [Detect Squares](./md_files/math/DetectSquares.md)
-
-### Bit Manipulation
-
-1. [Single Number](./md_files/bit/SingleNumber.md)
-1. [Reverse Integer](./md_files/bit/ReverseInteger.md)
