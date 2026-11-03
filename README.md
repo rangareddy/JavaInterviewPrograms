@@ -9,6 +9,16 @@
 1. [Anagram](./md_files/basic/Anagram.md)
 1. [Immutable Class](./md_files/basic/ImmutableClassDemo.md)
 1. [Fibonacci](./md_files/basic/Fibonacci.md)
+1. [Palindrome Check (String and Number)](./md_files/basic/PalindromeCheck.md)
+1. [Prime Numbers](./md_files/basic/PrimeNumbers.md)
+1. [FizzBuzz](./md_files/basic/FizzBuzz.md)
+1. [Factorial](./md_files/basic/Factorial.md)
+1. [GCD and LCM](./md_files/basic/GcdAndLcm.md)
+1. [Reverse a String](./md_files/basic/ReverseString.md)
+1. [First Non-Repeating Character](./md_files/basic/FirstNonRepeatingCharacter.md)
+1. [Armstrong Number](./md_files/basic/ArmstrongNumber.md)
+1. [Swap Two Numbers Without a Temporary Variable](./md_files/basic/SwapTwoNumbers.md)
+1. [Singleton Pattern](./md_files/basic/SingletonPattern.md)
 
 ### Array
 
@@ -30,6 +40,11 @@
 1. [Two Sum II - Input Array Is Sorted](./md_files/array/TwoSumII.md)
 1. [Trapping Rain Water](./md_files/array/TrappingRainWater.md)
 1. [Sliding Window Maximum](./md_files/array/SlidingWindowMaximum.md)
+1. [Second Largest Element in an Array](./md_files/array/SecondLargestElement.md)
+1. [Next Permutation](./md_files/array/NextPermutation.md)
+1. [Merge Sorted Array](./md_files/array/MergeSortedArray.md)
+1. [Intersection of Two Arrays](./md_files/array/IntersectionOfTwoArrays.md)
+1. [Find Peak Element](./md_files/array/FindPeakElement.md)
 
 ### Matrix
 
@@ -52,6 +67,11 @@
 1. [Encode and Decode Strings](./md_files/string/EncodeAndDecodeStrings.md)
 1. [Valid Palindrome](./md_files/string/ValidPalindrome.md)
 1. [Permutation in String](./md_files/string/PermutationInString.md)
+1. [Roman to Integer](./md_files/string/RomanToInteger.md)
+1. [Longest Common Prefix](./md_files/string/LongestCommonPrefix.md)
+1. [String Compression](./md_files/string/StringCompression.md)
+1. [Isomorphic Strings](./md_files/string/IsomorphicStrings.md)
+1. [String to Integer (atoi)](./md_files/string/StringToIntegerAtoi.md)
 
 ### Searching
 
@@ -61,6 +81,8 @@
 1. [Koko Eating Bananas](./md_files/search/KokoEatingBananas.md)
 1. [Time Based Key-Value Store](./md_files/search/TimeBasedKeyValueStore.md)
 1. [Median of Two Sorted Arrays](./md_files/search/MedianOfTwoSortedArrays.md)
+1. [Search Insert Position](./md_files/search/SearchInsertPosition.md)
+1. [Find First and Last Position of Element in Sorted Array](./md_files/search/FirstAndLastPosition.md)
 
 ### Sorting
 
@@ -69,6 +91,13 @@
 1. [Merge Sort](./md_files/sort/MergeSort.md)
 1. [Merge Sort (array example)](./md_files/sort/SortMergeExample.md)
 1. [Quick Sort](./md_files/sort/QuickSort.md)
+1. [Insertion Sort](./md_files/sort/InsertionSort.md)
+1. [Heap Sort](./md_files/sort/HeapSort.md)
+
+### Collection
+
+1. [Design a HashMap](./md_files/collection/CustomHashMap.md)
+1. [Java 8 Streams Interview Questions](./md_files/collection/StreamsInterviewQuestions.md)
 
 ### Linked List
 
@@ -84,6 +113,9 @@
 1. [Find the Duplicate Number](./md_files/linkedlist/FindTheDuplicateNumber.md)
 1. [LRU Cache](./md_files/linkedlist/LRUCache.md)
 1. [Reverse Nodes in k-Group](./md_files/linkedlist/ReverseNodesInKGroup.md)
+1. [Palindrome Linked List](./md_files/linkedlist/PalindromeLinkedList.md)
+1. [Intersection of Two Linked Lists](./md_files/linkedlist/IntersectionOfTwoLinkedLists.md)
+1. [Linked List Cycle II](./md_files/linkedlist/LinkedListCycleII.md)
 
 ### Stack
 
@@ -127,10 +159,16 @@
 1. [Balanced Binary Tree](./md_files/tree/BalancedBinaryTree.md)
 1. [Binary Tree Right Side View](./md_files/tree/BinaryTreeRightSideView.md)
 1. [Count Good Nodes in Binary Tree](./md_files/tree/CountGoodNodesInBinaryTree.md)
+1. [Binary Tree Traversals (Inorder, Preorder, Postorder)](./md_files/tree/TreeTraversals.md)
+1. [Binary Tree Zigzag Level Order Traversal](./md_files/tree/BinaryTreeZigzagLevelOrder.md)
+1. [Lowest Common Ancestor of a Binary Tree](./md_files/tree/LowestCommonAncestorOfBinaryTree.md)
 
 ### Threads
 
 1. [Print Even Odd Using Threads](./md_files/threads/PrintEvenOddUsingThreads.md)
+1. [Producer Consumer](./md_files/threads/ProducerConsumer.md)
+1. [Deadlock and How to Avoid It](./md_files/threads/DeadlockDemo.md)
+1. [Print Numbers in Sequence with Three Threads](./md_files/threads/PrintNumbersWithThreeThreads.md)
 
 ### Graph
 
@@ -154,6 +192,9 @@
 1. [Network Delay Time](./md_files/graph/NetworkDelayTime.md)
 1. [Swim in Rising Water](./md_files/graph/SwimInRisingWater.md)
 1. [Cheapest Flights Within K Stops](./md_files/graph/CheapestFlightsWithinKStops.md)
+1. [Graph Traversals (BFS and DFS)](./md_files/graph/GraphTraversals.md)
+1. [Topological Sort](./md_files/graph/TopologicalSort.md)
+1. [Dijkstra's Shortest Path](./md_files/graph/DijkstraShortestPath.md)
 
 ### Dynamic Programming
 
@@ -180,6 +221,8 @@
 1. [Edit Distance](./md_files/dp/EditDistance.md)
 1. [Burst Balloons](./md_files/dp/BurstBalloons.md)
 1. [Regular Expression Matching](./md_files/dp/RegularExpressionMatching.md)
+1. [0/1 Knapsack](./md_files/dp/Knapsack01.md)
+1. [Longest Palindromic Subsequence](./md_files/dp/LongestPalindromicSubsequence.md)
 
 ### Interval
 
