@@ -20,6 +20,10 @@ The Blind 75 problems are ordinary members of the category packages and folders 
 
 The NeetCode 150 problems that are not in the Blind 75 list or elsewhere in the repository (75 of them) are also ordinary members of the category packages, for example `src/main/java/com/ranga/stack/MinStack.java` and `md_files/backtracking/NQueens.md`; this added the packages `stack`, `backtracking`, `greedy` and `math`. The README lists them under their category like every other program (it has no separate Blind 75 or NeetCode sections). Same conventions as the Blind 75 problems (Javadoc with the problem statement, aligned `Input  :` / `Output :` lines, `Approaches` section whose snippets are compiled and compared with the repository class before committing). Problems that were already in the repository are not duplicated.
 
+### Classic interview questions
+
+Beyond the Blind 75 and NeetCode 150 problems the repository holds 40 classic interview programs that are not on those lists: Java core questions in `basic` (palindrome, primes, FizzBuzz, factorial, GCD/LCM, string reversal, first unique character, Armstrong numbers, swapping, Singleton), `string`, `array`, `collection` (a custom hash map, Java 8 streams), `threads` (producer-consumer, deadlock, three-thread printing) and data-structure/algorithm classics in `sort`, `search`, `linkedlist`, `tree`, `graph` and `dp`. They follow the same conventions as above (Javadoc, aligned `Input  :` / `Output :` lines, verified `Approaches` section). When adding to this set check the README first so that a question is not covered twice.
+
 ## Build and run
 
 ```
