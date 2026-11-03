@@ -10,7 +10,7 @@ import java.util.Date;
  * {@code String} and the wrapper classes ({@code Integer}, {@code Boolean}, ...) are immutable.
  * Advantages: thread-safe without synchronization and safely cacheable. Disadvantage: more objects are created.
  *
- * <p><b>Steps to make a class immutable:</b>
+ * <p><b>Algorithm Strategy (Steps to Make a Class Immutable):</b>
  * <ol>
  *   <li>Declare the class {@code final} so it cannot be extended (a subclass could otherwise add mutable state).</li>
  *   <li>Make all fields {@code private} and {@code final} so they are assigned exactly once.</li>
@@ -19,6 +19,12 @@ import java.util.Date;
  *       copy, so later changes to the caller's object do not affect this one.</li>
  *   <li>In getters of mutable fields return a copy, never the internal reference.</li>
  * </ol>
+ *
+ * <p><b>Example walkthrough</b>
+ * <ul>
+ *   <li>Creating {@code ImmutablePerson(123, "Ranga", dob)} stores a copy of {@code dob}.</li>
+ *   <li>Calling {@code person.getDob().setTime(...)} changes only the copy returned by the getter, and {@code dob.setTime(...)} changes only the caller's object, so printing the person afterwards shows the original date.</li>
+ * </ul>
  *
  * <p><b>Complexity Analysis:</b>
  * <ul>

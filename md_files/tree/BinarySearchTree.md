@@ -12,6 +12,11 @@ Demonstrates a Binary Search Tree (BST) of integers with common interview operat
 6. **isBST:** pass the allowed `(min, max)` range down the recursion and fail when a value falls outside it.
 7. **levelOrderTraversal:** breadth-first search with a queue, processing the tree one level at a time.
 
+## Example walkthrough
+
+- Adding `20, 30, -3, 25, 40` gives root `20` with children `-3` and `30`, and `30` has children `25` and `40`.
+- In-order display prints `-3 20 25 30 40` (sorted); after `mirror()` it prints `40 30 25 20 -3`. The level-order traversal prints `20`, then `-3 30`, then `25 40`; `size` is `5`, the minimum is `-3`, the maximum is `40` and `isBST` is `true`.
+
 ## Complexity Analysis
 
 - **Time Complexity:** `O(h)` for add, minValue and maxValue where `h` is the tree height (`O(log n)` for a balanced tree, `O(n)` for a skewed one); `O(n)` for display, mirror, size, isBST and levelOrderTraversal.

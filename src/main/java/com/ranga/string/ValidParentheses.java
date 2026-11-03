@@ -1,6 +1,7 @@
 package com.ranga.string;
 
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 /**
  * Given a string containing only the characters {@code ( ) { } [ ]}, determine whether it is valid: every open bracket is closed by the same type of bracket, in the correct order.
@@ -43,22 +44,18 @@ public class ValidParentheses {
             return false;
         }
 
-        Stack<Character> stack = new Stack<>();
-
-        // Loop through each character in the string
+        Deque<Character> stack = new ArrayDeque<>();
         for (char c : s.toCharArray()) {
-            if (c == '(' || c == '{' || c == '[') {
-                stack.push(c);
-            } else {
-                if (stack.isEmpty()) return false;
-                char open = stack.pop();
-                if (c == ')' && open != '(') return false;
-                if (c == '}' && open != '{') return false;
-                if (c == ']' && open != '[') return false;
+            if (c == '(') {
+                stack.push(')');
+            } else if (c == '{') {
+                stack.push('}');
+            } else if (c == '[') {
+                stack.push(']');
+            } else if (stack.isEmpty() || stack.pop() != c) {
+                return false;
             }
         }
-
-        // If the stack is empty, all brackets were properly matched
         return stack.isEmpty();
     }
 }

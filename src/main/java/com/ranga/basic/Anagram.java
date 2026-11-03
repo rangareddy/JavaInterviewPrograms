@@ -23,6 +23,12 @@ import java.util.Map;
  * it also gives {@code 0} for strings such as {@code "aa"} and {@code "bb"} (any two characters repeated an even
  * number of times cancel out), so the XOR check reports false positives and must not be used.
  *
+ * <p><b>Example walkthrough</b>
+ * <ul>
+ *   <li>For {@code "listen"} and {@code "silent"} the counts after the first pass are {@code l=1, i=1, s=1, t=1, e=1, n=1}; decrementing for every character of {@code "silent"} brings every count to {@code 0}: anagram.</li>
+ *   <li>For {@code "aa"} and {@code "bb"} the first {@code b} is not in the map, so the check fails immediately: not an anagram (XOR would have wrongly said yes).</li>
+ * </ul>
+ *
  * <p><b>Complexity Analysis:</b>
  * <ul>
  *   <li><b>Time Complexity:</b> {@code O(n)} — One pass over each string with {@code O(1)} average map operations.</li>

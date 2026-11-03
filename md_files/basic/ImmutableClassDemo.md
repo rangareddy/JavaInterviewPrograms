@@ -12,13 +12,18 @@ In Java, String class and all the wrapper classes (like Integer, Boolean, Byte, 
 **Dis-Advantages:**
 1. Consumes more memory
 
-## Notes While Creating Immutable class:
-1. Declare the class as final so it can’t be extended.
-2. Make all fields private so that direct access is not allowed.
-3. Don’t provide setter methods for variables
-4. Make all mutable fields final so that it’s value can be assigned only once.
-5. Initialize all the fields via a constructor performing deep copy.
-6. Perform cloning of objects in the getter methods to return a copy rather than returning the actual object reference.
+## Algorithm Strategy (Steps to Make a Class Immutable)
+
+1. Declare the class `final` so it cannot be extended (a subclass could otherwise add mutable state).
+2. Make all fields `private` and `final` so they are assigned exactly once.
+3. Do not provide setter methods.
+4. Initialize all fields in the constructor; for mutable fields (such as `Date`) store a defensive copy, so later changes to the caller's object do not affect this one.
+5. In getters of mutable fields return a copy, never the internal reference.
+
+## Example walkthrough
+
+- Creating `ImmutablePerson(123, "Ranga", dob)` stores a copy of `dob`.
+- Calling `person.getDob().setTime(...)` changes only the copy returned by the getter, and `dob.setTime(...)` changes only the caller's object, so printing the person afterwards shows the original date.
 
 ## Complexity Analysis
 

@@ -23,6 +23,12 @@ import java.util.Queue;
  *   <li><b>levelOrderTraversal:</b> breadth-first search with a queue, processing the tree one level at a time.</li>
  * </ol>
  *
+ * <p><b>Example walkthrough</b>
+ * <ul>
+ *   <li>Adding {@code 20, 30, -3, 25, 40} gives root {@code 20} with children {@code -3} and {@code 30}, and {@code 30} has children {@code 25} and {@code 40}.</li>
+ *   <li>In-order display prints {@code -3 20 25 30 40} (sorted); after {@code mirror()} it prints {@code 40 30 25 20 -3}. The level-order traversal prints {@code 20}, then {@code -3 30}, then {@code 25 40}; {@code size} is {@code 5}, the minimum is {@code -3}, the maximum is {@code 40} and {@code isBST} is {@code true}.</li>
+ * </ul>
+ *
  * <p><b>Complexity Analysis:</b>
  * <ul>
  *   <li><b>Time Complexity:</b> {@code O(h)} for add, minValue and maxValue where {@code h} is the tree height
