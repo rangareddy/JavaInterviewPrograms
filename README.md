@@ -9,7 +9,6 @@
 1. [Anagram](./md_files/basic/Anagram.md)
 1. [Immutable Class](./md_files/basic/ImmutableClassDemo.md)
 1. [Fibonacci](./md_files/basic/Fibonacci.md)
-1. [Fibonacci (Dynamic Programming)](./md_files/dp/Fibonacci.md)
 
 ### Array
 
@@ -75,6 +74,41 @@
 
 1. [Single Linked List](./md_files/collection/SingleLinkedListDemo.md)
 
+#### Linked List
+
+1. [Reverse Linked List](./md_files/linkedlist/ReverseLinkedList.md)
+1. [Linked List Cycle](./md_files/linkedlist/LinkedListCycle.md)
+1. [Merge Two Sorted Lists](./md_files/linkedlist/MergeTwoSortedLists.md)
+1. [Merge k Sorted Lists](./md_files/linkedlist/MergeKSortedLists.md)
+1. [Remove Nth Node From End of List](./md_files/linkedlist/RemoveNthNodeFromEnd.md)
+1. [Reorder List](./md_files/linkedlist/ReorderList.md)
+1. [Copy List with Random Pointer](./md_files/linkedlist/CopyListWithRandomPointer.md)
+1. [Add Two Numbers](./md_files/linkedlist/AddTwoNumbers.md)
+1. [Find the Duplicate Number](./md_files/linkedlist/FindTheDuplicateNumber.md)
+1. [LRU Cache](./md_files/linkedlist/LRUCache.md)
+1. [Reverse Nodes in k-Group](./md_files/linkedlist/ReverseNodesInKGroup.md)
+
+#### Stack
+
+1. [Min Stack](./md_files/stack/MinStack.md)
+1. [Evaluate Reverse Polish Notation](./md_files/stack/EvaluateReversePolishNotation.md)
+1. [Generate Parentheses](./md_files/stack/GenerateParentheses.md)
+1. [Daily Temperatures](./md_files/stack/DailyTemperatures.md)
+1. [Car Fleet](./md_files/stack/CarFleet.md)
+1. [Largest Rectangle in Histogram](./md_files/stack/LargestRectangleInHistogram.md)
+
+#### Heap
+
+1. [Merge k Sorted Lists](./md_files/linkedlist/MergeKSortedLists.md)
+1. [Top K Frequent Elements](./md_files/heap/TopKFrequentElements.md)
+1. [Find Median from Data Stream](./md_files/heap/FindMedianFromDataStream.md)
+1. [Kth Largest Element in a Stream](./md_files/heap/KthLargestElementInAStream.md)
+1. [Last Stone Weight](./md_files/heap/LastStoneWeight.md)
+1. [K Closest Points to Origin](./md_files/heap/KClosestPointsToOrigin.md)
+1. [Kth Largest Element in an Array](./md_files/heap/KthLargestElementInAnArray.md)
+1. [Task Scheduler](./md_files/heap/TaskScheduler.md)
+1. [Design Twitter](./md_files/heap/DesignTwitter.md)
+
 ### Tree
 
 1. [Binary Search Tree](./md_files/tree/BinarySearchTree.md)
@@ -101,32 +135,6 @@
 
 1. [Print Even Odd Using Threads](./md_files/threads/PrintEvenOddUsingThreads.md)
 
-### Linked List
-
-1. [Reverse Linked List](./md_files/linkedlist/ReverseLinkedList.md)
-1. [Linked List Cycle](./md_files/linkedlist/LinkedListCycle.md)
-1. [Merge Two Sorted Lists](./md_files/linkedlist/MergeTwoSortedLists.md)
-1. [Merge k Sorted Lists](./md_files/linkedlist/MergeKSortedLists.md)
-1. [Remove Nth Node From End of List](./md_files/linkedlist/RemoveNthNodeFromEnd.md)
-1. [Reorder List](./md_files/linkedlist/ReorderList.md)
-1. [Copy List with Random Pointer](./md_files/linkedlist/CopyListWithRandomPointer.md)
-1. [Add Two Numbers](./md_files/linkedlist/AddTwoNumbers.md)
-1. [Find the Duplicate Number](./md_files/linkedlist/FindTheDuplicateNumber.md)
-1. [LRU Cache](./md_files/linkedlist/LRUCache.md)
-1. [Reverse Nodes in k-Group](./md_files/linkedlist/ReverseNodesInKGroup.md)
-
-### Heap
-
-1. [Merge k Sorted Lists](./md_files/linkedlist/MergeKSortedLists.md)
-1. [Top K Frequent Elements](./md_files/heap/TopKFrequentElements.md)
-1. [Find Median from Data Stream](./md_files/heap/FindMedianFromDataStream.md)
-1. [Kth Largest Element in a Stream](./md_files/heap/KthLargestElementInAStream.md)
-1. [Last Stone Weight](./md_files/heap/LastStoneWeight.md)
-1. [K Closest Points to Origin](./md_files/heap/KClosestPointsToOrigin.md)
-1. [Kth Largest Element in an Array](./md_files/heap/KthLargestElementInAnArray.md)
-1. [Task Scheduler](./md_files/heap/TaskScheduler.md)
-1. [Design Twitter](./md_files/heap/DesignTwitter.md)
-
 ### Graph
 
 1. [Clone Graph](./md_files/graph/CloneGraph.md)
@@ -152,6 +160,7 @@
 
 ### Dynamic Programming
 
+1. [Fibonacci (Dynamic Programming)](./md_files/dp/Fibonacci.md)
 1. [Climbing Stairs](./md_files/dp/ClimbingStairs.md)
 1. [Coin Change](./md_files/dp/CoinChange.md)
 1. [Longest Increasing Subsequence](./md_files/dp/LongestIncreasingSubsequence.md)
@@ -183,25 +192,6 @@
 1. [Meeting Rooms](./md_files/interval/MeetingRooms.md)
 1. [Meeting Rooms II](./md_files/interval/MeetingRoomsII.md)
 1. [Minimum Interval to Include Each Query](./md_files/interval/MinimumIntervalToIncludeEachQuery.md)
-
-### Bit Manipulation
-
-1. [Sum of Two Integers](./md_files/bit/SumOfTwoIntegers.md)
-1. [Number of 1 Bits](./md_files/bit/NumberOf1Bits.md)
-1. [Counting Bits](./md_files/bit/CountingBits.md)
-1. [Missing Number](./md_files/bit/MissingNumber.md)
-1. [Reverse Bits](./md_files/bit/ReverseBits.md)
-1. [Single Number](./md_files/bit/SingleNumber.md)
-1. [Reverse Integer](./md_files/bit/ReverseInteger.md)
-
-### Stack
-
-1. [Min Stack](./md_files/stack/MinStack.md)
-1. [Evaluate Reverse Polish Notation](./md_files/stack/EvaluateReversePolishNotation.md)
-1. [Generate Parentheses](./md_files/stack/GenerateParentheses.md)
-1. [Daily Temperatures](./md_files/stack/DailyTemperatures.md)
-1. [Car Fleet](./md_files/stack/CarFleet.md)
-1. [Largest Rectangle in Histogram](./md_files/stack/LargestRectangleInHistogram.md)
 
 ### Backtracking
 
