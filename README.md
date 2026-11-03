@@ -70,7 +70,7 @@
 1. [Merge Sort (array example)](./md_files/sort/SortMergeExample.md)
 1. [Quick Sort](./md_files/sort/QuickSort.md)
 
-#### Linked List
+### Linked List
 
 1. [Single Linked List](./md_files/collection/SingleLinkedListDemo.md)
 1. [Reverse Linked List](./md_files/linkedlist/ReverseLinkedList.md)
@@ -85,7 +85,7 @@
 1. [LRU Cache](./md_files/linkedlist/LRUCache.md)
 1. [Reverse Nodes in k-Group](./md_files/linkedlist/ReverseNodesInKGroup.md)
 
-#### Stack
+### Stack
 
 1. [Min Stack](./md_files/stack/MinStack.md)
 1. [Evaluate Reverse Polish Notation](./md_files/stack/EvaluateReversePolishNotation.md)
@@ -94,7 +94,7 @@
 1. [Car Fleet](./md_files/stack/CarFleet.md)
 1. [Largest Rectangle in Histogram](./md_files/stack/LargestRectangleInHistogram.md)
 
-#### Heap
+### Heap
 
 1. [Merge k Sorted Lists](./md_files/linkedlist/MergeKSortedLists.md)
 1. [Top K Frequent Elements](./md_files/heap/TopKFrequentElements.md)
@@ -208,11 +208,3 @@
 1. [Merge Triplets to Form Target Triplet](./md_files/greedy/MergeTripletsToFormTargetTriplet.md)
 1. [Partition Labels](./md_files/greedy/PartitionLabels.md)
 1. [Valid Parenthesis String](./md_files/greedy/ValidParenthesisString.md)
-
-### Math
-
-1. [Happy Number](./md_files/math/HappyNumber.md)
-1. [Plus One](./md_files/math/PlusOne.md)
-1. [Pow(x, n)](./md_files/math/PowXN.md)
-1. [Multiply Strings](./md_files/math/MultiplyStrings.md)
-1. [Detect Squares](./md_files/math/DetectSquares.md)
