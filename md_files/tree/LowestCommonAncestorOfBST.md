@@ -64,7 +64,120 @@ public static TreeNode lcaRecursive(TreeNode root, TreeNode p, TreeNode q) {
 - **Time Complexity:** O(h)
 - **Space Complexity:** O(h)
 
-### Approach 3: Iterative Walk Down (Optimized)
+### Approach 3: Parent Map and Ancestor Set
+
+Walk the tree once to record the parent of every node, collect all ancestors of `p` in a set, and then climb from `q` until the first node that is in that set. Works for any binary tree, not only BSTs.
+
+```java
+public static TreeNode lcaParents(TreeNode root, TreeNode p, TreeNode q) {
+    Map<Integer, TreeNode> parent = new HashMap<>();
+    Map<Integer, TreeNode> byValue = new HashMap<>();
+    Deque<TreeNode> stack = new ArrayDeque<>();
+    stack.push(root);
+    parent.put(root.val, null);
+    while (!stack.isEmpty()) {
+        TreeNode node = stack.pop();
+        byValue.put(node.val, node);
+        for (TreeNode child : new TreeNode[]{node.left, node.right}) {
+            if (child != null) { parent.put(child.val, node); stack.push(child); }
+        }
+    }
+    Set<Integer> ancestors = new HashSet<>();
+    for (TreeNode node = byValue.get(p.val); node != null; node = parent.get(node.val)) ancestors.add(node.val);
+    for (TreeNode node = byValue.get(q.val); node != null; node = parent.get(node.val)) {
+        if (ancestors.contains(node.val)) return node;
+    }
+    return null;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 4: General Binary-Tree Recursion (Post-order)
+
+The solution that ignores the BST ordering: return a node when it is `p` or `q`, and the lowest common ancestor is the first node that receives a hit from both subtrees (or is a hit itself with a hit below).
+
+```java
+public static TreeNode lcaGeneral(TreeNode root, TreeNode p, TreeNode q) {
+    if (root == null || root.val == p.val || root.val == q.val) return root;
+    TreeNode left = lcaGeneral(root.left, p, q), right = lcaGeneral(root.right, p, q);
+    if (left != null && right != null) return root;
+    return left != null ? left : right;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(h)
+
+### Approach 5: Climb Using Depths
+
+Record the depth and parent of every node. Move the deeper of the two nodes up until both are at the same depth, then move both up together until they meet.
+
+```java
+public static TreeNode lcaDepths(TreeNode root, TreeNode p, TreeNode q) {
+    Map<Integer, TreeNode> parent = new HashMap<>(), byValue = new HashMap<>();
+    Map<Integer, Integer> depth = new HashMap<>();
+    Deque<TreeNode> stack = new ArrayDeque<>();
+    stack.push(root);
+    depth.put(root.val, 0);
+    while (!stack.isEmpty()) {
+        TreeNode node = stack.pop();
+        byValue.put(node.val, node);
+        for (TreeNode child : new TreeNode[]{node.left, node.right}) {
+            if (child != null) { parent.put(child.val, node); depth.put(child.val, depth.get(node.val) + 1); stack.push(child); }
+        }
+    }
+    TreeNode a = byValue.get(p.val), b = byValue.get(q.val);
+    while (depth.get(a.val) > depth.get(b.val)) a = parent.get(a.val);
+    while (depth.get(b.val) > depth.get(a.val)) b = parent.get(b.val);
+    while (a != b) { a = parent.get(a.val); b = parent.get(b.val); }
+    return a;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 6: Euler Tour and Range-Minimum Query
+
+Write down the nodes of an Euler tour (every node each time it is entered or returned to) together with their depths. The LCA of two nodes is the shallowest node between their first occurrences in the tour. With a sparse table the minimum is found in `O(1)` after `O(n log n)` preprocessing, which pays off for many queries.
+
+```java
+public static TreeNode lcaEuler(TreeNode root, TreeNode p, TreeNode q) {
+    List<TreeNode> tour = new ArrayList<>();
+    List<Integer> depths = new ArrayList<>();
+    Map<Integer, Integer> first = new HashMap<>();
+    walk(root, 0, tour, depths, first);
+    int left = Math.min(first.get(p.val), first.get(q.val)), right = Math.max(first.get(p.val), first.get(q.val));
+    int m = tour.size(), levels = 1;
+    while ((1 << levels) <= m) levels++;
+    int[][] sparse = new int[levels][m];                       // index of the shallowest tour entry
+    for (int i = 0; i < m; i++) sparse[0][i] = i;
+    for (int j = 1; j < levels; j++) {
+        for (int i = 0; i + (1 << j) <= m; i++) {
+            int a = sparse[j - 1][i], b = sparse[j - 1][i + (1 << (j - 1))];
+            sparse[j][i] = depths.get(a) <= depths.get(b) ? a : b;
+        }
+    }
+    int j = 31 - Integer.numberOfLeadingZeros(right - left + 1);
+    int a = sparse[j][left], b = sparse[j][right - (1 << j) + 1];
+    return tour.get(depths.get(a) <= depths.get(b) ? a : b);
+}
+
+private static void walk(TreeNode node, int depth, List<TreeNode> tour, List<Integer> depths, Map<Integer, Integer> first) {
+    first.putIfAbsent(node.val, tour.size());
+    tour.add(node); depths.add(depth);
+    for (TreeNode child : new TreeNode[]{node.left, node.right}) {
+        if (child != null) { walk(child, depth + 1, tour, depths, first); tour.add(node); depths.add(depth); }
+    }
+}
+```
+
+- **Time Complexity:** O(n log n) preprocessing, O(1) per query
+- **Space Complexity:** O(n log n)
+
+### Approach 7: Iterative Walk Down (Optimized)
 
 The same decision in a loop: no recursion and `O(1)` space. This is the version implemented in the repository.
 
@@ -89,11 +202,15 @@ public static TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode 
 |---|----------|------|-------|
 | 1 | Root-to-Node Paths | O(n) | O(h) |
 | 2 | Recursion on the BST Property | O(h) | O(h) |
-| 3 | Iterative Walk Down (Optimized) | O(h) | O(1) |
+| 3 | Parent Map and Ancestor Set | O(n) | O(n) |
+| 4 | General Binary-Tree Recursion (Post-order) | O(n) | O(h) |
+| 5 | Climb Using Depths | O(n) | O(n) |
+| 6 | Euler Tour and Range-Minimum Query | O(n log n) preprocessing, O(1) per query | O(n log n) |
+| 7 | Iterative Walk Down (Optimized) | O(h) | O(1) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
 ## Source Code
 

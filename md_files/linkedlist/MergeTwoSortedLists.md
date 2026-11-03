@@ -62,7 +62,110 @@ public static ListNode mergeTwoListsRecursive(ListNode list1, ListNode list2) {
 - **Time Complexity:** O(n + m)
 - **Space Complexity:** O(n + m) recursion stack
 
-### Approach 3: Iterative with a Dummy Head (Optimized)
+### Approach 3: Priority Queue of the Two Heads
+
+Put the two heads into a min-heap and repeatedly take the smallest node, pushing its successor. This is the two-list special case of the k-way heap merge and generalizes to any number of lists.
+
+```java
+public static ListNode mergeTwoListsHeap(ListNode list1, ListNode list2) {
+    PriorityQueue<ListNode> heap = new PriorityQueue<>(Comparator.comparingInt((ListNode n) -> n.val));
+    if (list1 != null) heap.add(list1);
+    if (list2 != null) heap.add(list2);
+    ListNode dummy = new ListNode(0), tail = dummy;
+    while (!heap.isEmpty()) {
+        ListNode node = heap.poll();
+        tail.next = node;
+        tail = node;
+        if (node.next != null) heap.add(node.next);
+    }
+    return dummy.next;
+}
+```
+
+- **Time Complexity:** O((n + m) log 2) = O(n + m)
+- **Space Complexity:** O(1)
+
+### Approach 4: Insert the Nodes of One List into the Other
+
+Take the nodes of the second list one at a time and insert each at its sorted position in the first list. Simple, but quadratic because every insertion walks the first list.
+
+```java
+public static ListNode mergeTwoListsInsert(ListNode list1, ListNode list2) {
+    if (list1 == null) return list2;
+    ListNode head = list1;
+    while (list2 != null) {
+        ListNode next = list2.next;
+        list2.next = null;
+        head = insert(head, list2);
+        list2 = next;
+    }
+    return head;
+}
+
+private static ListNode insert(ListNode head, ListNode node) {
+    if (node.val < head.val) { node.next = head; return node; }
+    ListNode curr = head;
+    while (curr.next != null && curr.next.val <= node.val) curr = curr.next;
+    node.next = curr.next;
+    curr.next = node;
+    return head;
+}
+```
+
+- **Time Complexity:** O(n * m)
+- **Space Complexity:** O(1)
+
+### Approach 5: Merge Arrays, Then Rebuild the List
+
+Copy both lists into arrays, merge the arrays with two indexes and build a new list from the merged array. Works with any list implementation, but creates new nodes.
+
+```java
+public static ListNode mergeTwoListsArrays(ListNode list1, ListNode list2) {
+    List<Integer> a = new ArrayList<>(), b = new ArrayList<>();
+    for (ListNode c = list1; c != null; c = c.next) a.add(c.val);
+    for (ListNode c = list2; c != null; c = c.next) b.add(c.val);
+    ListNode dummy = new ListNode(0), tail = dummy;
+    int i = 0, j = 0;
+    while (i < a.size() || j < b.size()) {
+        int value = (j == b.size() || (i < a.size() && a.get(i) <= b.get(j))) ? a.get(i++) : b.get(j++);
+        tail.next = new ListNode(value);
+        tail = tail.next;
+    }
+    return dummy.next;
+}
+```
+
+- **Time Complexity:** O(n + m)
+- **Space Complexity:** O(n + m)
+
+### Approach 6: Merge from the Tail
+
+Reverse both lists so that they are in descending order, then repeatedly take the larger head and put it in front of the result. Because each node is prepended, the finished list is ascending.
+
+```java
+public static ListNode mergeTwoListsFromTail(ListNode list1, ListNode list2) {
+    ListNode a = reverse(list1), b = reverse(list2), result = null;
+    while (a != null || b != null) {
+        ListNode take;
+        if (b == null || (a != null && a.val >= b.val)) { take = a; a = a.next; }
+        else { take = b; b = b.next; }
+        take.next = result;                     // prepend the larger value
+        result = take;
+    }
+    return result;
+}
+
+private static ListNode reverse(ListNode head) {
+    ListNode prev = null;
+    while (head != null) { ListNode next = head.next; head.next = prev; prev = head; head = next; }
+    return prev;
+}
+```
+
+- **Time Complexity:** O(n + m)
+- **Space Complexity:** O(1)
+
+### Approach 7: Iterative with a Dummy Head (Optimized)
 
 Splice the nodes of both lists in order after a dummy node. This is the version implemented in the repository.
 
@@ -88,11 +191,15 @@ public static ListNode mergeTwoLists(ListNode list1, ListNode list2) {
 |---|----------|------|-------|
 | 1 | Collect, Sort and Rebuild | O((n + m) log(n + m)) | O(n + m) |
 | 2 | Recursion | O(n + m) | O(n + m) recursion stack |
-| 3 | Iterative with a Dummy Head (Optimized) | O(n + m) | O(1) |
+| 3 | Priority Queue of the Two Heads | O((n + m) log 2) = O(n + m) | O(1) |
+| 4 | Insert the Nodes of One List into the Other | O(n * m) | O(1) |
+| 5 | Merge Arrays, Then Rebuild the List | O(n + m) | O(n + m) |
+| 6 | Merge from the Tail | O(n + m) | O(1) |
+| 7 | Iterative with a Dummy Head (Optimized) | O(n + m) | O(1) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
 ## Source Code
 

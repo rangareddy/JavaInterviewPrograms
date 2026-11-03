@@ -70,7 +70,125 @@ public static List<String> decodeEscape(String s) {
 - **Time Complexity:** O(n)
 - **Space Complexity:** O(n)
 
-### Approach 3: Length Prefix (Optimized)
+### Approach 3: Fixed-Width Length Header
+
+Prefix every string with its length written in exactly four digits, so decoding needs no separator search: read four characters, then that many characters of content. Limited to strings shorter than 10,000 characters.
+
+```java
+public static String encodeFixed(List<String> strs) {
+    StringBuilder sb = new StringBuilder();
+    for (String str : strs) sb.append(String.format("%04d", str.length())).append(str);
+    return sb.toString();
+}
+
+public static List<String> decodeFixed(String s) {
+    List<String> result = new ArrayList<>();
+    int i = 0;
+    while (i < s.length()) {
+        int length = Integer.parseInt(s.substring(i, i + 4));
+        result.add(s.substring(i + 4, i + 4 + length));
+        i += 4 + length;
+    }
+    return result;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 4: Base64 per String, Joined with a Delimiter
+
+Base64 output never contains a comma, so each string can be Base64-encoded and terminated with `,`. Decoding splits on the comma and decodes each part. Safe for arbitrary characters, but the output is about a third longer.
+
+```java
+public static String encodeBase64(List<String> strs) {
+    StringBuilder sb = new StringBuilder();
+    for (String str : strs) {
+        sb.append(Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8))).append(',');
+    }
+    return sb.toString();
+}
+
+public static List<String> decodeBase64(String s) {
+    List<String> result = new ArrayList<>();
+    String[] parts = s.split(",", -1);
+    for (int i = 0; i < parts.length - 1; i++) {                 // the last part is empty (trailing comma)
+        result.add(new String(Base64.getDecoder().decode(parts[i]), StandardCharsets.UTF_8));
+    }
+    return result;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 5: URL (Percent) Encoding per String
+
+`URLEncoder` escapes every character that could be confused with a delimiter (including `&` and `%`), so strings can be joined with `&` and split again; the same mechanism web browsers use for form data.
+
+```java
+public static String encodeUrl(List<String> strs) {
+    try {
+        StringBuilder sb = new StringBuilder();
+        for (String str : strs) sb.append(URLEncoder.encode(str, "UTF-8")).append('&');
+        return sb.toString();
+    } catch (UnsupportedEncodingException e) {
+        throw new IllegalStateException(e);
+    }
+}
+
+public static List<String> decodeUrl(String s) {
+    try {
+        List<String> result = new ArrayList<>();
+        String[] parts = s.split("&", -1);
+        for (int i = 0; i < parts.length - 1; i++) result.add(URLDecoder.decode(parts[i], "UTF-8"));
+        return result;
+    } catch (UnsupportedEncodingException e) {
+        throw new IllegalStateException(e);
+    }
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 6: JSON-Style Quoting
+
+Write every string in double quotes, escape backslashes and quotes inside it, and separate the strings with commas. The result is a readable JSON-like array body; decoding is a small state machine that knows when it is inside a quoted string.
+
+```java
+public static String encodeQuoted(List<String> strs) {
+    StringBuilder sb = new StringBuilder();
+    for (String str : strs) {
+        sb.append('"').append(str.replace("\\", "\\\\").replace("\"", "\\\"")).append('"').append(',');
+    }
+    return sb.toString();
+}
+
+public static List<String> decodeQuoted(String s) {
+    List<String> result = new ArrayList<>();
+    StringBuilder current = null;
+    for (int i = 0; i < s.length(); i++) {
+        char c = s.charAt(i);
+        if (current == null) {
+            if (c == '"') current = new StringBuilder();         // a string starts (commas between strings are skipped)
+        } else if (c == '\\') {
+            current.append(s.charAt(++i));                       // escaped character
+        } else if (c == '"') {
+            result.add(current.toString());
+            current = null;
+        } else {
+            current.append(c);
+        }
+    }
+    return result;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 7: Length Prefix (Optimized)
 
 Write `length#string` for every string and decode by reading exactly that many characters; no escaping is needed, and decoding never scans the content of a string. This is the version implemented in the repository.
 
@@ -103,11 +221,15 @@ public static List<String> decode(String s) {
 |---|----------|------|-------|
 | 1 | Join with a Delimiter (Fragile) | O(n) | O(n) |
 | 2 | Escape the Delimiter | O(n) | O(n) |
-| 3 | Length Prefix (Optimized) | O(n) | O(n) |
+| 3 | Fixed-Width Length Header | O(n) | O(n) |
+| 4 | Base64 per String, Joined with a Delimiter | O(n) | O(n) |
+| 5 | URL (Percent) Encoding per String | O(n) | O(n) |
+| 6 | JSON-Style Quoting | O(n) | O(n) |
+| 7 | Length Prefix (Optimized) | O(n) | O(n) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
 ## Source Code
 

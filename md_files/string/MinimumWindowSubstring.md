@@ -84,7 +84,140 @@ public static String minWindowMaps(String s, String t) {
 - **Time Complexity:** O(|s| + |t|)
 - **Space Complexity:** O(|s| + |t|)
 
-### Approach 3: Sliding Window with a Missing Counter (Optimized)
+### Approach 3: Window over the Filtered Positions
+
+Only the characters that occur in `t` matter. Build the list of their positions and slide the window over this (usually much shorter) list; the window length in the original string is the difference of the first and last position. Fast when `t` uses rare characters.
+
+```java
+public static String minWindowFiltered(String s, String t) {
+    if (t.isEmpty()) return "";
+    int[] need = new int[128];
+    for (char c : t.toCharArray()) need[c]++;
+    List<Integer> positions = new ArrayList<>();
+    for (int i = 0; i < s.length(); i++) if (need[s.charAt(i)] > 0) positions.add(i);
+
+    int[] window = new int[128];
+    int formed = 0, required = 0, left = 0, bestStart = 0, bestLength = Integer.MAX_VALUE;
+    for (int c : need) if (c > 0) required++;
+    for (int right = 0; right < positions.size(); right++) {
+        char c = s.charAt(positions.get(right));
+        if (++window[c] == need[c]) formed++;
+        while (formed == required) {
+            int length = positions.get(right) - positions.get(left) + 1;
+            if (length < bestLength) { bestLength = length; bestStart = positions.get(left); }
+            char out = s.charAt(positions.get(left++));
+            if (window[out]-- == need[out]) formed--;
+        }
+    }
+    return bestLength == Integer.MAX_VALUE ? "" : s.substring(bestStart, bestStart + bestLength);
+}
+```
+
+- **Time Complexity:** O(|s| + |t|)
+- **Space Complexity:** O(|s|)
+
+### Approach 4: Binary Search on the Window Length
+
+If a window of length `L` contains `t`, every longer length has such a window too, so the minimum length can be found by binary search. Checking one length is a single pass with a fixed-size window.
+
+```java
+public static String minWindowBinary(String s, String t) {
+    if (t.isEmpty() || s.length() < t.length()) return "";
+    int low = t.length(), high = s.length();
+    if (find(s, t, high) < 0) return "";
+    while (low < high) {
+        int mid = (low + high) / 2;
+        if (find(s, t, mid) >= 0) high = mid; else low = mid + 1;
+    }
+    int start = find(s, t, low);
+    return s.substring(start, start + low);
+}
+
+// start index of the first window of the given length that contains t, or -1
+private static int find(String s, String t, int length) {
+    int[] need = new int[128];
+    for (char c : t.toCharArray()) need[c]++;
+    int missing = t.length();
+    for (int i = 0; i < s.length(); i++) {
+        if (need[s.charAt(i)]-- > 0) missing--;
+        if (i >= length && ++need[s.charAt(i - length)] > 0) missing++;
+        if (i >= length - 1 && missing == 0) return i - length + 1;
+    }
+    return -1;
+}
+```
+
+- **Time Complexity:** O((|s| + |t|) log |s|)
+- **Space Complexity:** O(1)
+
+### Approach 5: Sliding Window with a Counter of Satisfied Letters
+
+Count, for every distinct letter of `t`, whether the window already contains enough of it, and keep one counter `formed` of the letters that are satisfied. The window is valid when `formed` equals the number of distinct letters.
+
+```java
+public static String minWindowFormed(String s, String t) {
+    if (t.isEmpty()) return "";
+    int[] need = new int[128], window = new int[128];
+    int required = 0;
+    for (char c : t.toCharArray()) if (need[c]++ == 0) required++;
+    int formed = 0, left = 0, bestStart = 0, bestLength = Integer.MAX_VALUE;
+    for (int right = 0; right < s.length(); right++) {
+        char c = s.charAt(right);
+        if (++window[c] == need[c] && need[c] > 0) formed++;
+        while (formed == required) {
+            if (right - left + 1 < bestLength) { bestLength = right - left + 1; bestStart = left; }
+            char out = s.charAt(left++);
+            if (window[out]-- == need[out] && need[out] > 0) formed--;
+        }
+    }
+    return bestLength == Integer.MAX_VALUE ? "" : s.substring(bestStart, bestStart + bestLength);
+}
+```
+
+- **Time Complexity:** O(|s| + |t|)
+- **Space Complexity:** O(1)
+
+### Approach 6: Prefix Counts and Binary Search for the End
+
+Precompute prefix counts for the letters of `t`. For each start index, the smallest end that contains `t` is found by binary search because containing `t` is monotone in the end index.
+
+```java
+public static String minWindowPrefix(String s, String t) {
+    if (t.isEmpty()) return "";
+    int n = s.length();
+    int[] need = new int[128];
+    for (char c : t.toCharArray()) need[c]++;
+    int[][] prefix = new int[128][];
+    for (int c = 0; c < 128; c++) if (need[c] > 0) prefix[c] = new int[n + 1];
+    for (int i = 0; i < n; i++) {
+        for (int c = 0; c < 128; c++) if (prefix[c] != null) prefix[c][i + 1] = prefix[c][i];
+        if (prefix[s.charAt(i)] != null) prefix[s.charAt(i)][i + 1]++;
+    }
+    int bestStart = 0, bestLength = Integer.MAX_VALUE;
+    for (int start = 0; start < n; start++) {
+        int low = start, high = n - 1;                   // smallest end that contains t
+        if (!contains(prefix, need, start, high)) break;
+        while (low < high) {
+            int mid = (low + high) / 2;
+            if (contains(prefix, need, start, mid)) high = mid; else low = mid + 1;
+        }
+        if (low - start + 1 < bestLength) { bestLength = low - start + 1; bestStart = start; }
+    }
+    return bestLength == Integer.MAX_VALUE ? "" : s.substring(bestStart, bestStart + bestLength);
+}
+
+private static boolean contains(int[][] prefix, int[] need, int start, int end) {
+    for (int c = 0; c < 128; c++) {
+        if (need[c] > 0 && prefix[c][end + 1] - prefix[c][start] < need[c]) return false;
+    }
+    return true;
+}
+```
+
+- **Time Complexity:** O(|s| log |s| * |alphabet|)
+- **Space Complexity:** O(|s| * |t|)
+
+### Approach 7: Sliding Window with a Missing Counter (Optimized)
 
 One array of counters (decremented when a letter enters the window) and a single counter of missing characters replace the two maps. This is the version implemented in the repository.
 
@@ -114,11 +247,15 @@ public static String minWindow(String s, String t) {
 |---|----------|------|-------|
 | 1 | Brute Force | O(n^2) | O(1) |
 | 2 | Sliding Window with a HashMap | O(|s| + |t|) | O(|s| + |t|) |
-| 3 | Sliding Window with a Missing Counter (Optimized) | O(|s| + |t|) | O(1) |
+| 3 | Window over the Filtered Positions | O(|s| + |t|) | O(|s|) |
+| 4 | Binary Search on the Window Length | O((|s| + |t|) log |s|) | O(1) |
+| 5 | Sliding Window with a Counter of Satisfied Letters | O(|s| + |t|) | O(1) |
+| 6 | Prefix Counts and Binary Search for the End | O(|s| log |s| * |alphabet|) | O(|s| * |t|) |
+| 7 | Sliding Window with a Missing Counter (Optimized) | O(|s| + |t|) | O(1) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
 ## Source Code
 

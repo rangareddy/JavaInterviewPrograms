@@ -64,7 +64,104 @@ public static int[] topKFrequentHeap(int[] nums, int k) {
 - **Time Complexity:** O(n log k)
 - **Space Complexity:** O(n)
 
-### Approach 3: Bucket Sort by Frequency (Optimized)
+### Approach 3: Quickselect on the Frequencies
+
+Put the distinct numbers in an array and partition it by frequency (quickselect) until the `k` most frequent numbers occupy the first `k` positions. Expected linear time without sorting or a heap.
+
+```java
+public static int[] topKFrequentQuickselect(int[] nums, int k) {
+    Map<Integer, Integer> frequency = new HashMap<>();
+    for (int num : nums) frequency.merge(num, 1, Integer::sum);
+    int[] unique = new int[frequency.size()];
+    int index = 0;
+    for (int key : frequency.keySet()) unique[index++] = key;
+    int low = 0, high = unique.length - 1, target = k - 1;
+    Random random = new Random(1);
+    while (low < high) {
+        int pivotIndex = low + random.nextInt(high - low + 1);
+        int pivot = frequency.get(unique[pivotIndex]);
+        swap(unique, pivotIndex, high);
+        int store = low;
+        for (int i = low; i < high; i++) {
+            if (frequency.get(unique[i]) > pivot) swap(unique, i, store++);     // more frequent first
+        }
+        swap(unique, store, high);
+        if (store == target) break;
+        if (store < target) low = store + 1; else high = store - 1;
+    }
+    return Arrays.copyOf(unique, k);
+}
+
+private static void swap(int[] a, int i, int j) { int t = a[i]; a[i] = a[j]; a[j] = t; }
+```
+
+- **Time Complexity:** O(n) expected
+- **Space Complexity:** O(n)
+
+### Approach 4: TreeMap from Frequency to Numbers
+
+Group the numbers by frequency in a `TreeMap` (sorted by frequency) and read it from the highest frequency down until `k` numbers are collected.
+
+```java
+public static int[] topKFrequentTreeMap(int[] nums, int k) {
+    Map<Integer, Integer> frequency = new HashMap<>();
+    for (int num : nums) frequency.merge(num, 1, Integer::sum);
+    TreeMap<Integer, List<Integer>> byFrequency = new TreeMap<>(Comparator.reverseOrder());
+    for (Map.Entry<Integer, Integer> e : frequency.entrySet()) {
+        byFrequency.computeIfAbsent(e.getValue(), f -> new ArrayList<>()).add(e.getKey());
+    }
+    int[] result = new int[k];
+    int index = 0;
+    for (List<Integer> group : byFrequency.values()) {
+        for (int num : group) { if (index == k) break; result[index++] = num; }
+        if (index == k) break;
+    }
+    return result;
+}
+```
+
+- **Time Complexity:** O(n + d log d) where d is the number of distinct frequencies
+- **Space Complexity:** O(n)
+
+### Approach 5: Streams
+
+Group and count with `Collectors.groupingBy`, sort the entries by count in descending order, and take the first `k` keys. Short and declarative.
+
+```java
+public static int[] topKFrequentStream(int[] nums, int k) {
+    Map<Integer, Long> counts = Arrays.stream(nums).boxed()
+            .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+    return counts.entrySet().stream()
+            .sorted(Map.Entry.<Integer, Long>comparingByValue().reversed())
+            .limit(k)
+            .mapToInt(Map.Entry::getKey)
+            .toArray();
+}
+```
+
+- **Time Complexity:** O(n + m log m) where m is the number of distinct numbers
+- **Space Complexity:** O(n)
+
+### Approach 6: Max-Heap of All Entries
+
+Push every `(number, frequency)` pair into a max-heap ordered by frequency and remove the top `k` times. Easy to read; building the heap is linear, each removal `O(log m)`.
+
+```java
+public static int[] topKFrequentMaxHeap(int[] nums, int k) {
+    Map<Integer, Integer> frequency = new HashMap<>();
+    for (int num : nums) frequency.merge(num, 1, Integer::sum);
+    PriorityQueue<Map.Entry<Integer, Integer>> heap = new PriorityQueue<>((a, b) -> b.getValue() - a.getValue());
+    heap.addAll(frequency.entrySet());
+    int[] result = new int[k];
+    for (int i = 0; i < k; i++) result[i] = heap.poll().getKey();
+    return result;
+}
+```
+
+- **Time Complexity:** O(n + k log m)
+- **Space Complexity:** O(n)
+
+### Approach 7: Bucket Sort by Frequency (Optimized)
 
 A frequency is at most `n`, so group the numbers into `n + 1` buckets indexed by frequency and read the buckets from the highest to the lowest. This is the version implemented in the repository.
 
@@ -97,11 +194,15 @@ public static int[] topKFrequent(int[] nums, int k) {
 |---|----------|------|-------|
 | 1 | Sort by Frequency | O(n log n) | O(n) |
 | 2 | Min-Heap of Size k | O(n log k) | O(n) |
-| 3 | Bucket Sort by Frequency (Optimized) | O(n) | O(n) |
+| 3 | Quickselect on the Frequencies | O(n) expected | O(n) |
+| 4 | TreeMap from Frequency to Numbers | O(n + d log d) where d is the number of distinct frequencies | O(n) |
+| 5 | Streams | O(n + m log m) where m is the number of distinct numbers | O(n) |
+| 6 | Max-Heap of All Entries | O(n + k log m) | O(n) |
+| 7 | Bucket Sort by Frequency (Optimized) | O(n) | O(n) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
 ## Source Code
 

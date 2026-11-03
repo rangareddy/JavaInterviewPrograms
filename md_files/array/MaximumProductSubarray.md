@@ -63,7 +63,111 @@ public static int maxProductPrefixSuffix(int[] nums) {
 - **Time Complexity:** O(n)
 - **Space Complexity:** O(1)
 
-### Approach 3: Track Maximum and Minimum (Optimized)
+### Approach 3: DP Arrays for the Maximum and Minimum
+
+The same idea as the two-variable version but with full arrays: `maxDp[i]` and `minDp[i]` are the largest and smallest products of a subarray ending at `i`.
+
+```java
+public static int maxProductArrays(int[] nums) {
+    int n = nums.length;
+    int[] maxDp = new int[n], minDp = new int[n];
+    maxDp[0] = minDp[0] = nums[0];
+    int best = nums[0];
+    for (int i = 1; i < n; i++) {
+        int a = maxDp[i - 1] * nums[i], b = minDp[i - 1] * nums[i];
+        maxDp[i] = Math.max(nums[i], Math.max(a, b));
+        minDp[i] = Math.min(nums[i], Math.min(a, b));
+        best = Math.max(best, maxDp[i]);
+    }
+    return best;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 4: Split at Zeros, Drop a Negative Prefix or Suffix
+
+A zero splits the array into independent zero-free segments. In a segment with an even number of negatives the whole segment is best; with an odd number, remove either the prefix up to the first negative or the suffix from the last negative, whichever leaves the larger product.
+
+```java
+public static int maxProductSegments(int[] nums) {
+    int best = Integer.MIN_VALUE, start = 0;
+    for (int i = 0; i <= nums.length; i++) {
+        if (i == nums.length || nums[i] == 0) {
+            if (i < nums.length) best = Math.max(best, 0);
+            if (i > start) best = Math.max(best, segmentBest(nums, start, i - 1));
+            start = i + 1;
+        }
+    }
+    return best;
+}
+
+private static int segmentBest(int[] nums, int l, int r) {
+    if (l == r) return nums[l];
+    int product = 1;
+    for (int k = l; k <= r; k++) product *= nums[k];
+    if (product > 0) return product;
+    int prefix = 1;
+    for (int k = l; k <= r; k++) { prefix *= nums[k]; if (nums[k] < 0) break; }
+    int suffix = 1;
+    for (int k = r; k >= l; k--) { suffix *= nums[k]; if (nums[k] < 0) break; }
+    return Math.max(product / prefix, product / suffix);
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(1)
+
+### Approach 5: Divide and Conquer
+
+For each range return the best product, the largest/smallest prefix and suffix products and the total product; merging two ranges only needs these six numbers (the best product crossing the middle is the best of the four suffix x prefix combinations).
+
+```java
+public static int maxProductDivide(int[] nums) {
+    return solve(nums, 0, nums.length - 1)[0];
+}
+
+// {best, maxPrefix, minPrefix, maxSuffix, minSuffix, total}
+private static int[] solve(int[] a, int lo, int hi) {
+    if (lo == hi) return new int[]{a[lo], a[lo], a[lo], a[lo], a[lo], a[lo]};
+    int mid = (lo + hi) / 2;
+    int[] l = solve(a, lo, mid), r = solve(a, mid + 1, hi);
+    int cross = Math.max(Math.max(l[3] * r[1], l[3] * r[2]), Math.max(l[4] * r[1], l[4] * r[2]));
+    return new int[]{
+            Math.max(Math.max(l[0], r[0]), cross),
+            Math.max(l[1], Math.max(l[5] * r[1], l[5] * r[2])),
+            Math.min(l[2], Math.min(l[5] * r[1], l[5] * r[2])),
+            Math.max(r[3], Math.max(r[5] * l[3], r[5] * l[4])),
+            Math.min(r[4], Math.min(r[5] * l[3], r[5] * l[4])),
+            l[5] * r[5]};
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(log n)
+
+### Approach 6: Swap the Maximum and Minimum on a Negative Number
+
+A common shortcut of the max/min method: multiplying by a negative number exchanges the roles of the maximum and the minimum, so swap them first and then update both with the same formula.
+
+```java
+public static int maxProductSwap(int[] nums) {
+    int max = nums[0], min = nums[0], best = nums[0];
+    for (int i = 1; i < nums.length; i++) {
+        if (nums[i] < 0) { int temp = max; max = min; min = temp; }
+        max = Math.max(nums[i], max * nums[i]);
+        min = Math.min(nums[i], min * nums[i]);
+        best = Math.max(best, max);
+    }
+    return best;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(1)
+
+### Approach 7: Track Maximum and Minimum (Optimized)
 
 A negative number turns the smallest product into the largest, so keep both the maximum and the minimum product ending at each index. This is the version implemented in the repository.
 
@@ -89,11 +193,15 @@ public static int maxProduct(int[] nums) {
 |---|----------|------|-------|
 | 1 | Brute Force | O(n^2) | O(1) |
 | 2 | Prefix and Suffix Products | O(n) | O(1) |
-| 3 | Track Maximum and Minimum (Optimized) | O(n) | O(1) |
+| 3 | DP Arrays for the Maximum and Minimum | O(n) | O(n) |
+| 4 | Split at Zeros, Drop a Negative Prefix or Suffix | O(n) | O(1) |
+| 5 | Divide and Conquer | O(n) | O(log n) |
+| 6 | Swap the Maximum and Minimum on a Negative Number | O(n) | O(1) |
+| 7 | Track Maximum and Minimum (Optimized) | O(n) | O(1) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
 ## Source Code
 

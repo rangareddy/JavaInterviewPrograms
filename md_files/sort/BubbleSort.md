@@ -69,7 +69,96 @@ public static void bubbleSortEarlyExit(int[] arr) {
 - **Time Complexity:** Best O(n), average and worst O(n^2)
 - **Space Complexity:** O(1)
 
-### Approach 3: Remember the Last Swap Position (Optimized)
+### Approach 3: Cocktail Shaker Sort
+
+Bubble sort in both directions: a forward pass pushes the largest element to the end, a backward pass pushes the smallest to the front, and the range shrinks from both sides. It moves small elements near the end much faster than plain bubble sort.
+
+```java
+public static void cocktailShakerSort(int[] arr) {
+    int start = 0, end = arr.length - 1;
+    boolean swapped = true;
+    while (swapped && start < end) {
+        swapped = false;
+        for (int i = start; i < end; i++) {
+            if (arr[i] > arr[i + 1]) { swap(arr, i, i + 1); swapped = true; }
+        }
+        end--;
+        for (int i = end; i > start; i--) {
+            if (arr[i - 1] > arr[i]) { swap(arr, i - 1, i); swapped = true; }
+        }
+        start++;
+    }
+}
+```
+
+- **Time Complexity:** Best O(n), average and worst O(n^2)
+- **Space Complexity:** O(1)
+
+### Approach 4: Recursive Bubble Sort
+
+One pass of adjacent swaps puts the largest element at the end; then the same sort is applied recursively to the first `n - 1` elements.
+
+```java
+public static void bubbleSortRecursive(int[] arr) {
+    sort(arr, arr.length);
+}
+
+private static void sort(int[] arr, int n) {
+    if (n <= 1) return;
+    boolean swapped = false;
+    for (int i = 0; i < n - 1; i++) {
+        if (arr[i] > arr[i + 1]) { swap(arr, i, i + 1); swapped = true; }
+    }
+    if (swapped) sort(arr, n - 1);
+}
+```
+
+- **Time Complexity:** Best O(n), worst O(n^2)
+- **Space Complexity:** O(n) recursion stack
+
+### Approach 5: Odd-Even Transposition Sort
+
+Alternate between comparing the pairs `(0,1), (2,3), ...` and the pairs `(1,2), (3,4), ...`. The comparisons inside one phase are independent, so a parallel machine can perform each phase in a single step.
+
+```java
+public static void oddEvenSort(int[] arr) {
+    boolean sorted = false;
+    while (!sorted) {
+        sorted = true;
+        for (int phase = 0; phase < 2; phase++) {
+            for (int i = phase; i + 1 < arr.length; i += 2) {
+                if (arr[i] > arr[i + 1]) { swap(arr, i, i + 1); sorted = false; }
+            }
+        }
+    }
+}
+```
+
+- **Time Complexity:** Best O(n), worst O(n^2)
+- **Space Complexity:** O(1)
+
+### Approach 6: Comb Sort (Bubble Sort with a Gap)
+
+Compare elements that are `gap` apart and shrink the gap by a factor of about 1.3 each round until it is 1. Moving small elements from the end of the array early removes the "turtles" that make bubble sort slow, giving about `O(n log n)` on average.
+
+```java
+public static void combSort(int[] arr) {
+    int gap = arr.length;
+    boolean swapped = true;
+    while (gap > 1 || swapped) {
+        gap = Math.max(1, (int) (gap / 1.3));
+        swapped = false;
+        for (int i = 0; i + gap < arr.length; i++) {
+            if (arr[i] > arr[i + gap]) { swap(arr, i, i + gap); swapped = true; }
+        }
+    }
+}
+```
+
+- **Time Complexity:** Average about O(n log n), worst O(n^2)
+- **Space Complexity:** O(1)
+
+### Approach 7: Remember the Last Swap Position (Optimized)
 
 Everything after the last swap of a pass is already in its final place, so the next pass only needs to go up to that position. It also exits early when no swap happens, and it skips long sorted tails.
 
@@ -98,11 +187,15 @@ public static void bubbleSortOptimized(int[] arr) {
 |---|----------|------|-------|
 | 1 | Basic Bubble Sort | O(n^2) in every case | O(1) |
 | 2 | Early Exit with a `swapped` Flag | Best O(n), average and worst O(n^2) | O(1) |
-| 3 | Remember the Last Swap Position (Optimized) | Best O(n), average and worst O(n^2) | O(1) |
+| 3 | Cocktail Shaker Sort | Best O(n), average and worst O(n^2) | O(1) |
+| 4 | Recursive Bubble Sort | Best O(n), worst O(n^2) | O(n) recursion stack |
+| 5 | Odd-Even Transposition Sort | Best O(n), worst O(n^2) | O(1) |
+| 6 | Comb Sort (Bubble Sort with a Gap) | Average about O(n log n), worst O(n^2) | O(1) |
+| 7 | Remember the Last Swap Position (Optimized) | Best O(n), average and worst O(n^2) | O(1) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 3 above. The version implemented in this repository is Approach 1.
+The optimized solution is Approach 7 above. The version implemented in this repository is Approach 1.
 
 ## Source Code
 

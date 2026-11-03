@@ -75,7 +75,99 @@ public static void selectionSortStable(int[] arr) {
 - **Time Complexity:** O(n^2)
 - **Space Complexity:** O(1)
 
-### Approach 3: Double Selection: Min and Max per Pass (Optimized)
+### Approach 3: Recursive Selection Sort
+
+Find the minimum of the unsorted part, swap it to the front and sort the rest recursively.
+
+```java
+public static void selectionSortRecursive(int[] arr) {
+    sort(arr, 0);
+}
+
+private static void sort(int[] arr, int start) {
+    if (start >= arr.length - 1) return;
+    int min = start;
+    for (int j = start + 1; j < arr.length; j++) if (arr[j] < arr[min]) min = j;
+    swap(arr, start, min);
+    sort(arr, start + 1);
+}
+```
+
+- **Time Complexity:** O(n^2)
+- **Space Complexity:** O(n) recursion stack
+
+### Approach 4: Select the Maximum and Fill from the End
+
+The mirror image: find the maximum of the unsorted prefix and swap it to the end of that prefix. The sorted part grows from the right.
+
+```java
+public static void selectionSortMax(int[] arr) {
+    for (int end = arr.length - 1; end > 0; end--) {
+        int max = 0;
+        for (int j = 1; j <= end; j++) if (arr[j] >= arr[max]) max = j;
+        swap(arr, max, end);
+    }
+}
+```
+
+- **Time Complexity:** O(n^2)
+- **Space Complexity:** O(1)
+
+### Approach 5: Heap Sort (Selection with a Heap)
+
+Heap sort is selection sort that finds the maximum of the unsorted part in `O(log n)` instead of `O(n)`: build a max-heap in the array, then repeatedly swap the root with the last element and restore the heap.
+
+```java
+public static void heapSort(int[] arr) {
+    int n = arr.length;
+    for (int i = n / 2 - 1; i >= 0; i--) siftDown(arr, i, n);        // build the max-heap
+    for (int end = n - 1; end > 0; end--) {
+        swap(arr, 0, end);                                            // the maximum goes to its final place
+        siftDown(arr, 0, end);
+    }
+}
+
+private static void siftDown(int[] a, int i, int size) {
+    while (true) {
+        int largest = i, left = 2 * i + 1, right = left + 1;
+        if (left < size && a[left] > a[largest]) largest = left;
+        if (right < size && a[right] > a[largest]) largest = right;
+        if (largest == i) return;
+        swap(a, i, largest);
+        i = largest;
+    }
+}
+```
+
+- **Time Complexity:** O(n log n)
+- **Space Complexity:** O(1)
+
+### Approach 6: Bingo Sort
+
+A selection sort variant for arrays with many duplicates: in every pass, find the next smallest value ("bingo") and move *all* of its occurrences to the front at once, so each distinct value costs only one pass.
+
+```java
+public static void bingoSort(int[] arr) {
+    int n = arr.length;
+    if (n < 2) return;
+    int bingo = arr[0], largest = arr[0];
+    for (int value : arr) { bingo = Math.min(bingo, value); largest = Math.max(largest, value); }
+    int nextPos = 0;
+    while (bingo < largest) {
+        int nextBingo = largest, startPos = nextPos;
+        for (int i = startPos; i < n; i++) {
+            if (arr[i] == bingo) swap(arr, i, nextPos++);
+            else if (arr[i] < nextBingo) nextBingo = arr[i];
+        }
+        bingo = nextBingo;
+    }
+}
+```
+
+- **Time Complexity:** O(n * d) where d is the number of distinct values
+- **Space Complexity:** O(1)
+
+### Approach 7: Double Selection: Min and Max per Pass (Optimized)
 
 Find both the minimum and the maximum in each pass and place them at the two ends, so the number of passes is halved. It is still `O(n^2)` comparisons, but with about half the passes and swaps. If you need better than quadratic time, use Merge Sort, Quick Sort or Heap Sort.
 
@@ -107,11 +199,15 @@ public static void selectionSortDouble(int[] arr) {
 |---|----------|------|-------|
 | 1 | Basic Selection Sort | O(n^2) in every case | O(1) |
 | 2 | Stable Selection Sort | O(n^2) | O(1) |
-| 3 | Double Selection: Min and Max per Pass (Optimized) | O(n^2) | O(1) |
+| 3 | Recursive Selection Sort | O(n^2) | O(n) recursion stack |
+| 4 | Select the Maximum and Fill from the End | O(n^2) | O(1) |
+| 5 | Heap Sort (Selection with a Heap) | O(n log n) | O(1) |
+| 6 | Bingo Sort | O(n * d) where d is the number of distinct values | O(1) |
+| 7 | Double Selection: Min and Max per Pass (Optimized) | O(n^2) | O(1) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 3 above. The version implemented in this repository is Approach 1.
+The optimized solution is Approach 7 above. The version implemented in this repository is Approach 1.
 
 ## Source Code
 

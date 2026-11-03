@@ -70,7 +70,109 @@ public static void reorderListDeque(ListNode head) {
 - **Time Complexity:** O(n)
 - **Space Complexity:** O(n)
 
-### Approach 3: Find the Middle, Reverse the Second Half, Interleave (Optimized)
+### Approach 3: Recursion Matching Head and Tail While Unwinding
+
+Recurse inwards two nodes at a time; on the way back out, each call has the matching node from the tail end available and links it right after its own node. No extra data structure, but the recursion depth is half the list length.
+
+```java
+public static void reorderListRecursive(ListNode head) {
+    int length = 0;
+    for (ListNode curr = head; curr != null; curr = curr.next) length++;
+    if (length > 2) helper(head, length);
+}
+
+// reorders the 'length' nodes starting at 'front' and returns the node that follows them in the original list
+private static ListNode helper(ListNode front, int length) {
+    if (length == 1) { ListNode tail = front.next; front.next = null; return tail; }
+    if (length == 2) { ListNode tail = front.next.next; front.next.next = null; return tail; }
+    ListNode tail = helper(front.next, length - 2);
+    ListNode second = front.next;
+    front.next = tail;
+    ListNode afterTail = tail.next;
+    tail.next = second;
+    return afterTail;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n) recursion stack
+
+### Approach 4: Stack for the Second Half
+
+Find the middle, push the nodes of the second half on a stack (so they come out in reverse order) and weave them between the nodes of the first half.
+
+```java
+public static void reorderListStack(ListNode head) {
+    if (head == null || head.next == null) return;
+    ListNode slow = head, fast = head;
+    while (fast.next != null && fast.next.next != null) { slow = slow.next; fast = fast.next.next; }
+    Deque<ListNode> stack = new ArrayDeque<>();
+    for (ListNode curr = slow.next; curr != null; curr = curr.next) stack.push(curr);
+    slow.next = null;
+    ListNode curr = head;
+    while (!stack.isEmpty()) {
+        ListNode next = curr.next;
+        curr.next = stack.pop();
+        curr.next.next = next;
+        curr = next;
+    }
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 5: Move the Last Node Repeatedly (Brute Force)
+
+Walk to the last node, cut it off and insert it behind the current node; then move two nodes ahead and repeat. Only pointers are changed, but finding the last node every time makes it quadratic.
+
+```java
+public static void reorderListMoveLast(ListNode head) {
+    ListNode curr = head;
+    while (curr != null && curr.next != null && curr.next.next != null) {
+        ListNode prev = curr;
+        while (prev.next.next != null) prev = prev.next;       // second-to-last node
+        ListNode last = prev.next;
+        prev.next = null;                                       // cut the last node off
+        last.next = curr.next;
+        curr.next = last;
+        curr = last.next;
+    }
+}
+```
+
+- **Time Complexity:** O(n^2)
+- **Space Complexity:** O(1)
+
+### Approach 6: Reverse the Second Half, Then Merge Recursively
+
+The same split-and-reverse idea as the optimized version, but the two halves are woven together with a small recursive function instead of a loop.
+
+```java
+public static void reorderListRecursiveMerge(ListNode head) {
+    if (head == null || head.next == null) return;
+    ListNode slow = head, fast = head;
+    while (fast.next != null && fast.next.next != null) { slow = slow.next; fast = fast.next.next; }
+    ListNode second = slow.next;
+    slow.next = null;
+    ListNode prev = null;
+    while (second != null) { ListNode next = second.next; second.next = prev; prev = second; second = next; }
+    weave(head, prev);
+}
+
+private static void weave(ListNode a, ListNode b) {
+    if (a == null || b == null) return;
+    ListNode aNext = a.next, bNext = b.next;
+    a.next = b;
+    b.next = aNext;
+    weave(aNext, bNext);
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n) recursion stack
+
+### Approach 7: Find the Middle, Reverse the Second Half, Interleave (Optimized)
 
 Split the list in the middle, reverse the second half in place and merge the two halves alternately. This is the version implemented in the repository.
 
@@ -104,11 +206,15 @@ public static void reorderList(ListNode head) {
 |---|----------|------|-------|
 | 1 | Store the Nodes in a List | O(n) | O(n) |
 | 2 | Deque of Nodes | O(n) | O(n) |
-| 3 | Find the Middle, Reverse the Second Half, Interleave (Optimized) | O(n) | O(1) |
+| 3 | Recursion Matching Head and Tail While Unwinding | O(n) | O(n) recursion stack |
+| 4 | Stack for the Second Half | O(n) | O(n) |
+| 5 | Move the Last Node Repeatedly (Brute Force) | O(n^2) | O(1) |
+| 6 | Reverse the Second Half, Then Merge Recursively | O(n) | O(n) recursion stack |
+| 7 | Find the Middle, Reverse the Second Half, Interleave (Optimized) | O(n) | O(1) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
 ## Source Code
 

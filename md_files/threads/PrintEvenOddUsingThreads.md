@@ -99,7 +99,123 @@ private static void printWithLock(ReentrantLock lock, Condition turn, boolean[] 
 - **Time Complexity:** O(n)
 - **Space Complexity:** O(1)
 
-### Approach 3: Two Semaphores (Optimized)
+### Approach 3: BlockingQueue Token Passing
+
+Give each thread its own `BlockingQueue` and let a single token travel between them: a thread blocks on `take()` of its queue, prints its number, and hands the token to the other thread with `put()`. The queues do all the waiting and signalling.
+
+```java
+public static String blockingQueues(int max) throws InterruptedException {
+    out.setLength(0);
+    BlockingQueue<Integer> oddTurn = new ArrayBlockingQueue<>(1), evenTurn = new ArrayBlockingQueue<>(1);
+    Thread odd = new Thread(() -> {
+        try {
+            for (int i = 1; i <= max; i += 2) {
+                oddTurn.take();
+                out.append(i).append(' ');
+                evenTurn.put(1);
+            }
+        } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+    });
+    Thread even = new Thread(() -> {
+        try {
+            for (int i = 2; i <= max; i += 2) {
+                evenTurn.take();
+                out.append(i).append(' ');
+                oddTurn.put(1);
+            }
+        } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+    });
+    oddTurn.put(1);                              // the odd thread starts
+    odd.start(); even.start(); odd.join(); even.join();
+    return out.toString().trim();
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(1)
+
+### Approach 4: Volatile Turn Flag with Spinning
+
+Both threads watch a `volatile` variable that holds the next number to print and busy-wait (yielding the CPU) until it is their turn. No locks at all, but the waiting thread burns CPU, so it only suits very short waits.
+
+```java
+private static volatile int next;
+
+public static String spinning(int max) throws InterruptedException {
+    out.setLength(0);
+    next = 1;
+    Thread odd = new Thread(() -> printWhenTurn(1, max));
+    Thread even = new Thread(() -> printWhenTurn(2, max));
+    odd.start(); even.start(); odd.join(); even.join();
+    return out.toString().trim();
+}
+
+private static void printWhenTurn(int first, int max) {
+    for (int i = first; i <= max; i += 2) {
+        while (next != i) Thread.yield();           // busy-wait until it is this number's turn
+        out.append(i).append(' ');
+        next = i + 1;
+    }
+}
+```
+
+- **Time Complexity:** O(n) (plus busy waiting)
+- **Space Complexity:** O(1)
+
+### Approach 5: LockSupport park / unpark
+
+Each thread parks itself (`LockSupport.park`) while it is not its turn and unparks the other thread after printing. This is the low-level building block under locks and conditions; the loop around `park` guards against spurious wake-ups.
+
+```java
+private static volatile int turnNumber;
+private static Thread oddThread, evenThread;
+
+public static String parking(int max) throws InterruptedException {
+    out.setLength(0);
+    turnNumber = 1;
+    oddThread = new Thread(() -> parkedPrint(1, max, true));
+    evenThread = new Thread(() -> parkedPrint(2, max, false));
+    oddThread.start(); evenThread.start(); oddThread.join(); evenThread.join();
+    return out.toString().trim();
+}
+
+private static void parkedPrint(int first, int max, boolean isOdd) {
+    for (int i = first; i <= max; i += 2) {
+        while (turnNumber != i) LockSupport.park();
+        out.append(i).append(' ');
+        turnNumber = i + 1;
+        LockSupport.unpark(isOdd ? evenThread : oddThread);
+    }
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(1)
+
+### Approach 6: CompletableFuture Chain on Two Single-Thread Executors
+
+Describe the whole run as a chain of tasks: task `i` runs after task `i - 1` and is executed by the odd or the even single-thread executor. The ordering is guaranteed by the chain itself, so no thread ever waits on a lock or a flag.
+
+```java
+public static String futures(int max) {
+    out.setLength(0);
+    ExecutorService odd = Executors.newSingleThreadExecutor(), even = Executors.newSingleThreadExecutor();
+    CompletableFuture<Void> chain = CompletableFuture.completedFuture(null);
+    for (int i = 1; i <= max; i++) {
+        final int number = i;
+        chain = chain.thenRunAsync(() -> out.append(number).append(' '), number % 2 == 1 ? odd : even);
+    }
+    chain.join();
+    odd.shutdown();
+    even.shutdown();
+    return out.toString().trim();
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n) for the chained futures
+
+### Approach 7: Two Semaphores (Optimized)
 
 Each thread owns a permit: the odd thread starts with one permit, the even thread with none. A thread acquires its own semaphore, prints and releases the other one. There is no shared flag, no `while` loop and no spurious-wakeup handling, so it is the simplest and least error-prone version.
 
@@ -137,11 +253,15 @@ public static String semaphores(int max) throws InterruptedException {
 |---|----------|------|-------|
 | 1 | wait() / notify() with a Shared Monitor | O(n) | O(1) |
 | 2 | ReentrantLock + Condition | O(n) | O(1) |
-| 3 | Two Semaphores (Optimized) | O(n) | O(1) |
+| 3 | BlockingQueue Token Passing | O(n) | O(1) |
+| 4 | Volatile Turn Flag with Spinning | O(n) (plus busy waiting) | O(1) |
+| 5 | LockSupport park / unpark | O(n) | O(1) |
+| 6 | CompletableFuture Chain on Two Single-Thread Executors | O(n) | O(n) for the chained futures |
+| 7 | Two Semaphores (Optimized) | O(n) | O(1) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 3 above. The version implemented in this repository is Approach 1.
+The optimized solution is Approach 7 above. The version implemented in this repository is Approach 1.
 
 ## Source Code
 

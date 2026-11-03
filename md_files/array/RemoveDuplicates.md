@@ -63,7 +63,81 @@ public static int[] removeDuplicatesTemp(int[] arr) {
 - **Time Complexity:** O(n)
 - **Space Complexity:** O(n)
 
-### Approach 3: Two Pointers, In Place (Optimized)
+### Approach 3: Streams distinct
+
+Let the stream API drop the repeated values: `Arrays.stream(arr).distinct().toArray()`. Concise; works for unsorted input too.
+
+```java
+public static int[] removeDuplicatesStream(int[] arr) {
+    return Arrays.stream(arr).distinct().toArray();
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 4: Shift the Tail Left (Naive In-Place)
+
+Whenever an element equals its predecessor, shift everything after it one position to the left and shrink the logical length. Needs no extra memory but is quadratic with many duplicates.
+
+```java
+public static int[] removeDuplicatesShift(int[] arr) {
+    int[] work = arr.clone();
+    int length = work.length;
+    for (int i = 1; i < length; ) {
+        if (work[i] == work[i - 1]) {
+            for (int j = i; j < length - 1; j++) work[j] = work[j + 1];
+            length--;
+        } else {
+            i++;
+        }
+    }
+    return Arrays.copyOf(work, length);
+}
+```
+
+- **Time Complexity:** O(n^2)
+- **Space Complexity:** O(1) auxiliary
+
+### Approach 5: Count the Unique Values, Then Copy
+
+First pass: count how many values differ from their predecessor. Allocate a result of exactly that size and fill it in a second pass, so no trimming copy is needed.
+
+```java
+public static int[] removeDuplicatesCount(int[] arr) {
+    if (arr.length == 0) return arr;
+    int unique = 1;
+    for (int i = 1; i < arr.length; i++) if (arr[i] != arr[i - 1]) unique++;
+    int[] result = new int[unique];
+    result[0] = arr[0];
+    int index = 1;
+    for (int i = 1; i < arr.length; i++) if (arr[i] != arr[i - 1]) result[index++] = arr[i];
+    return result;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(k) for the result
+
+### Approach 6: TreeSet
+
+A sorted set stores each value once and iterates in ascending order. It also works when the input is not sorted, at the price of `O(n log n)`.
+
+```java
+public static int[] removeDuplicatesTreeSet(int[] arr) {
+    TreeSet<Integer> set = new TreeSet<>();
+    for (int value : arr) set.add(value);
+    int[] result = new int[set.size()];
+    int index = 0;
+    for (int value : set) result[index++] = value;
+    return result;
+}
+```
+
+- **Time Complexity:** O(n log n)
+- **Space Complexity:** O(n)
+
+### Approach 7: Two Pointers, In Place (Optimized)
 
 A slow pointer marks the last unique element and a fast pointer scans ahead; unique values are written forward over the duplicates. Only the final trim allocates, and the in-place part needs no extra memory. Implemented in the repository.
 
@@ -90,11 +164,15 @@ public static int[] removeDuplicates(int[] arr) {
 |---|----------|------|-------|
 | 1 | LinkedHashSet / Streams | O(n) | O(n) |
 | 2 | Temporary Array | O(n) | O(n) |
-| 3 | Two Pointers, In Place (Optimized) | O(n) | O(1) auxiliary |
+| 3 | Streams distinct | O(n) | O(n) |
+| 4 | Shift the Tail Left (Naive In-Place) | O(n^2) | O(1) auxiliary |
+| 5 | Count the Unique Values, Then Copy | O(n) | O(k) for the result |
+| 6 | TreeSet | O(n log n) | O(n) |
+| 7 | Two Pointers, In Place (Optimized) | O(n) | O(1) auxiliary |
 
 ### Optimized Solution
 
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
 ## Source Code
 

@@ -63,7 +63,94 @@ public static ListNode removeNthFromEndStack(ListNode head, int n) {
 - **Time Complexity:** O(L)
 - **Space Complexity:** O(L)
 
-### Approach 3: One Pass with Two Pointers (Optimized)
+### Approach 3: Recursion with a Counter on Unwinding
+
+Recurse to the end of the list; while returning, each call knows its position counted from the end. The call at position `n + 1` is the predecessor of the node to delete, so it unlinks it.
+
+```java
+public static ListNode removeNthRecursive(ListNode head, int n) {
+    ListNode dummy = new ListNode(0);
+    dummy.next = head;
+    unwind(dummy, n);
+    return dummy.next;
+}
+
+// returns the position of 'node' counted from the end of the list (the last node has position 1)
+private static int unwind(ListNode node, int n) {
+    if (node == null) return 0;
+    int position = unwind(node.next, n) + 1;
+    if (position == n + 1) node.next = node.next.next;
+    return position;
+}
+```
+
+- **Time Complexity:** O(L)
+- **Space Complexity:** O(L) recursion stack
+
+### Approach 4: ArrayList of Nodes
+
+Put all nodes into an `ArrayList`, which gives random access: the node to delete is at index `size - n`, so its predecessor is at `size - n - 1`.
+
+```java
+public static ListNode removeNthArray(ListNode head, int n) {
+    List<ListNode> nodes = new ArrayList<>();
+    for (ListNode curr = head; curr != null; curr = curr.next) nodes.add(curr);
+    int index = nodes.size() - n;
+    if (index == 0) return head.next;
+    nodes.get(index - 1).next = nodes.get(index).next;
+    return head;
+}
+```
+
+- **Time Complexity:** O(L)
+- **Space Complexity:** O(L)
+
+### Approach 5: Reverse, Remove from the Front, Reverse Back
+
+Reverse the list so the node to delete is the n-th from the start, unlink it with a simple walk, and reverse the list again.
+
+```java
+public static ListNode removeNthReverse(ListNode head, int n) {
+    ListNode reversed = reverse(head);
+    ListNode dummy = new ListNode(0);
+    dummy.next = reversed;
+    ListNode prev = dummy;
+    for (int i = 1; i < n; i++) prev = prev.next;
+    prev.next = prev.next.next;
+    return reverse(dummy.next);
+}
+
+private static ListNode reverse(ListNode head) {
+    ListNode prev = null;
+    while (head != null) { ListNode next = head.next; head.next = prev; prev = head; head = next; }
+    return prev;
+}
+```
+
+- **Time Complexity:** O(L)
+- **Space Complexity:** O(1)
+
+### Approach 6: Circular Buffer of the Last n + 1 Nodes
+
+Walk the list once, storing every visited node (starting with a dummy head) in a circular buffer of size `n + 1`. At the end the buffer holds the last `n + 1` nodes, and the oldest of them is the predecessor of the node to delete.
+
+```java
+public static ListNode removeNthBuffer(ListNode head, int n) {
+    ListNode dummy = new ListNode(0);
+    dummy.next = head;
+    ListNode[] window = new ListNode[n + 1];
+    int count = 0;
+    for (ListNode curr = dummy; curr != null; curr = curr.next) window[count++ % (n + 1)] = curr;
+    ListNode predecessor = window[(count - n - 1) % (n + 1)];
+    predecessor.next = predecessor.next.next;
+    return dummy.next;
+}
+```
+
+- **Time Complexity:** O(L)
+- **Space Complexity:** O(n)
+
+### Approach 7: One Pass with Two Pointers (Optimized)
 
 Advance a fast pointer `n + 1` steps ahead, then move both pointers until the fast one falls off the list; the slow pointer is then just before the node to delete. This is the version implemented in the repository.
 
@@ -88,11 +175,15 @@ public static ListNode removeNthFromEnd(ListNode head, int n) {
 |---|----------|------|-------|
 | 1 | Two Passes (Compute the Length) | O(L) | O(1) |
 | 2 | Stack of Nodes | O(L) | O(L) |
-| 3 | One Pass with Two Pointers (Optimized) | O(L) | O(1) |
+| 3 | Recursion with a Counter on Unwinding | O(L) | O(L) recursion stack |
+| 4 | ArrayList of Nodes | O(L) | O(L) |
+| 5 | Reverse, Remove from the Front, Reverse Back | O(L) | O(1) |
+| 6 | Circular Buffer of the Last n + 1 Nodes | O(L) | O(n) |
+| 7 | One Pass with Two Pointers (Optimized) | O(L) | O(1) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
 ## Source Code
 

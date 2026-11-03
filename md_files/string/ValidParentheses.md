@@ -64,7 +64,113 @@ public static boolean isValidMap(String s) {
 - **Time Complexity:** O(n)
 - **Space Complexity:** O(n)
 
-### Approach 3: Stack of Expected Closing Brackets (Optimized)
+### Approach 3: char[] Array as the Stack
+
+The same expected-closer stack implemented with a plain `char[]` and an index, which avoids boxing and the `Deque` overhead.
+
+```java
+public static boolean isValidArray(String s) {
+    char[] stack = new char[s.length()];
+    int top = 0;
+    for (int i = 0; i < s.length(); i++) {
+        char c = s.charAt(i);
+        if (c == '(') stack[top++] = ')';
+        else if (c == '{') stack[top++] = '}';
+        else if (c == '[') stack[top++] = ']';
+        else if (top == 0 || stack[--top] != c) return false;
+    }
+    return top == 0;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 4: Recursive Descent Parser
+
+View the string as a grammar: a sequence of bracket pairs, each containing a sequence. A recursive function parses a sequence until it meets the closing bracket it expects. The recursion replaces the explicit stack.
+
+```java
+public static boolean isValidRecursive(String s) {
+    int[] position = {0};
+    return parse(s, position, '\0') && position[0] == s.length();
+}
+
+// parses a sequence of balanced groups; consumes the 'expectedCloser' (if any) and returns true when it is found
+private static boolean parse(String s, int[] position, char expectedCloser) {
+    while (position[0] < s.length()) {
+        char c = s.charAt(position[0]);
+        char closer = c == '(' ? ')' : c == '{' ? '}' : c == '[' ? ']' : '\0';
+        if (closer != '\0') {
+            position[0]++;
+            if (!parse(s, position, closer)) return false;
+        } else if (c == expectedCloser) {
+            position[0]++;
+            return true;
+        } else {
+            return false;
+        }
+    }
+    return expectedCloser == '\0';
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n) recursion stack
+
+### Approach 5: Interval Dynamic Programming
+
+`valid[i][j]` says whether the substring `s[i..j)` is balanced: it is empty, or its first character is opened and closed by a matching bracket at some position `k` such that the inside `s[i+1..k)` and the rest `s[k+1..j)` are both balanced. Cubic, but it shows the recursive structure of the language.
+
+```java
+public static boolean isValidDp(String s) {
+    int n = s.length();
+    if (n % 2 != 0) return false;
+    boolean[][] valid = new boolean[n + 1][n + 1];
+    for (int i = 0; i <= n; i++) valid[i][i] = true;
+    for (int length = 2; length <= n; length += 2) {
+        for (int i = 0; i + length <= n; i++) {
+            int j = i + length;
+            for (int k = i + 1; k < j; k += 2) {
+                if (matches(s.charAt(i), s.charAt(k)) && valid[i + 1][k] && valid[k + 1][j]) { valid[i][j] = true; break; }
+            }
+        }
+    }
+    return valid[0][n];
+}
+
+private static boolean matches(char open, char close) {
+    return (open == '(' && close == ')') || (open == '{' && close == '}') || (open == '[' && close == ']');
+}
+```
+
+- **Time Complexity:** O(n^3)
+- **Space Complexity:** O(n^2)
+
+### Approach 6: StringBuilder as the Stack
+
+Use a `StringBuilder` as the stack: append the expected closer on an opening bracket, compare with and delete the last character on a closing bracket.
+
+```java
+public static boolean isValidBuilder(String s) {
+    StringBuilder stack = new StringBuilder();
+    for (char c : s.toCharArray()) {
+        if (c == '(') stack.append(')');
+        else if (c == '{') stack.append('}');
+        else if (c == '[') stack.append(']');
+        else {
+            if (stack.length() == 0 || stack.charAt(stack.length() - 1) != c) return false;
+            stack.setLength(stack.length() - 1);
+        }
+    }
+    return stack.length() == 0;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 7: Stack of Expected Closing Brackets (Optimized)
 
 Push the closing bracket that is expected for every opening bracket, so a closing bracket is checked with one comparison and no map. An odd length can be rejected immediately. This is the version implemented in the repository.
 
@@ -91,11 +197,15 @@ public static boolean isValid(String s) {
 |---|----------|------|-------|
 | 1 | Repeated Replacement | O(n^2) | O(n) |
 | 2 | Stack with a Matching Map | O(n) | O(n) |
-| 3 | Stack of Expected Closing Brackets (Optimized) | O(n) | O(n) |
+| 3 | char[] Array as the Stack | O(n) | O(n) |
+| 4 | Recursive Descent Parser | O(n) | O(n) recursion stack |
+| 5 | Interval Dynamic Programming | O(n^3) | O(n^2) |
+| 6 | StringBuilder as the Stack | O(n) | O(n) |
+| 7 | Stack of Expected Closing Brackets (Optimized) | O(n) | O(n) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
 ## Source Code
 

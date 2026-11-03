@@ -63,7 +63,104 @@ private static int robRangeTable(int[] nums, int from, int to) {
 - **Time Complexity:** O(n)
 - **Space Complexity:** O(n)
 
-### Approach 3: Two Linear Runs with Two Variables (Optimized)
+### Approach 3: Memoized Recursion on Both Ranges
+
+Top-down DP for the two linear sub-problems (without the last house, without the first house) with a cache per run.
+
+```java
+public static int robMemo(int[] nums) {
+    int n = nums.length;
+    if (n == 1) return nums[0];
+    return Math.max(solve(nums, 0, n - 2, new int[n]), solve(nums, 1, n - 1, new int[n]));
+}
+
+private static int solve(int[] nums, int i, int last, int[] memo) {
+    if (i > last) return 0;
+    if (memo[i] != 0) return memo[i];
+    return memo[i] = Math.max(nums[i] + solve(nums, i + 2, last, memo), solve(nums, i + 1, last, memo));
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 4: State DP with a "First House Robbed" Flag
+
+Run one DP whose state remembers whether the first house was robbed. If it was, the last house is forbidden; if it was not, the first house is simply skipped. The answer is the better of the two final states.
+
+```java
+public static int robStates(int[] nums) {
+    int n = nums.length;
+    if (n == 1) return nums[0];
+    // first house robbed: rob nums[0], then houses 2..n-2 are free
+    int prev2 = nums[0], prev1 = nums[0];            // best up to house 0 and up to house 1 (house 1 is forbidden)
+    for (int i = 2; i <= n - 2; i++) {
+        int best = Math.max(prev1, prev2 + nums[i]);
+        prev2 = prev1;
+        prev1 = best;
+    }
+    int robbedFirst = prev1;
+    // first house skipped: houses 1..n-1 are free
+    prev2 = 0;
+    prev1 = 0;
+    for (int i = 1; i <= n - 1; i++) {
+        int best = Math.max(prev1, prev2 + nums[i]);
+        prev2 = prev1;
+        prev1 = best;
+    }
+    return Math.max(robbedFirst, prev1);
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(1)
+
+### Approach 5: Both Ranges in a Single Loop
+
+Instead of two passes, advance the two linear runs together in one loop over the houses.
+
+```java
+public static int robSingleLoop(int[] nums) {
+    int n = nums.length;
+    if (n == 1) return nums[0];
+    int a2 = 0, a1 = 0;      // run over houses 0 .. n-2
+    int b2 = 0, b1 = 0;      // run over houses 1 .. n-1
+    for (int i = 0; i < n; i++) {
+        if (i < n - 1) { int best = Math.max(a1, a2 + nums[i]); a2 = a1; a1 = best; }
+        if (i > 0) { int best = Math.max(b1, b2 + nums[i]); b2 = b1; b1 = best; }
+    }
+    return Math.max(a1, b1);
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(1)
+
+### Approach 6: Reuse the Linear House Robber on Array Copies
+
+Cut out the two sub-arrays with `Arrays.copyOfRange` and call the plain House Robber solution on each of them. Clear and reusable, at the cost of two copies.
+
+```java
+public static int robCopies(int[] nums) {
+    if (nums.length == 1) return nums[0];
+    return Math.max(robLinear(Arrays.copyOfRange(nums, 0, nums.length - 1)), robLinear(Arrays.copyOfRange(nums, 1, nums.length)));
+}
+
+private static int robLinear(int[] nums) {
+    int prev2 = 0, prev1 = 0;
+    for (int money : nums) {
+        int best = Math.max(prev1, prev2 + money);
+        prev2 = prev1;
+        prev1 = best;
+    }
+    return prev1;
+}
+```
+
+- **Time Complexity:** O(n)
+- **Space Complexity:** O(n)
+
+### Approach 7: Two Linear Runs with Two Variables (Optimized)
 
 The same two ranges, each solved with two rolling variables. This is the version implemented in the repository.
 
@@ -93,11 +190,15 @@ private static int robRange(int[] nums, int from, int to) {
 |---|----------|------|-------|
 | 1 | Brute Force (Try Excluding Each End with Recursion) | O(2^n) | O(n) |
 | 2 | Two Linear Runs with a DP Table | O(n) | O(n) |
-| 3 | Two Linear Runs with Two Variables (Optimized) | O(n) | O(1) |
+| 3 | Memoized Recursion on Both Ranges | O(n) | O(n) |
+| 4 | State DP with a "First House Robbed" Flag | O(n) | O(1) |
+| 5 | Both Ranges in a Single Loop | O(n) | O(1) |
+| 6 | Reuse the Linear House Robber on Array Copies | O(n) | O(n) |
+| 7 | Two Linear Runs with Two Variables (Optimized) | O(n) | O(1) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
 ## Source Code
 

@@ -86,7 +86,124 @@ public static int[][] mergeStack(int[][] intervals) {
 - **Time Complexity:** O(n log n)
 - **Space Complexity:** O(n)
 
-### Approach 3: Sort + Single Sweep (Optimized)
+### Approach 3: Separately Sorted Starts and Ends
+
+Sort all starts and all ends independently and sweep through them: a start (taken first on ties, so touching intervals merge) opens an interval, an end closes one, and whenever the number of open intervals drops to zero a merged interval is complete.
+
+```java
+public static int[][] mergeIntervalsStartsEnds(int[][] intervals) {
+    int n = intervals.length;
+    int[] starts = new int[n], ends = new int[n];
+    for (int i = 0; i < n; i++) { starts[i] = intervals[i][0]; ends[i] = intervals[i][1]; }
+    Arrays.sort(starts);
+    Arrays.sort(ends);
+    List<int[]> result = new ArrayList<>();
+    int i = 0, j = 0, open = 0, begin = 0;
+    while (j < n) {
+        if (i < n && starts[i] <= ends[j]) {
+            if (open == 0) begin = starts[i];
+            open++;
+            i++;
+        } else {
+            open--;
+            if (open == 0) result.add(new int[]{begin, ends[j]});
+            j++;
+        }
+    }
+    return result.toArray(new int[0][]);
+}
+```
+
+- **Time Complexity:** O(n log n)
+- **Space Complexity:** O(n)
+
+### Approach 4: Sweep Line with a TreeMap
+
+Record `+1` at every start and `-1` at every end in a `TreeMap` and walk through the keys in order. A merged interval starts when the running count leaves 0 and ends when it returns to 0.
+
+```java
+public static int[][] mergeIntervalsTreeMap(int[][] intervals) {
+    TreeMap<Integer, Integer> delta = new TreeMap<>();
+    for (int[] interval : intervals) {
+        delta.merge(interval[0], 1, Integer::sum);
+        delta.merge(interval[1], -1, Integer::sum);
+    }
+    List<int[]> result = new ArrayList<>();
+    int running = 0, begin = 0;
+    for (Map.Entry<Integer, Integer> e : delta.entrySet()) {
+        if (running == 0) begin = e.getKey();
+        running += e.getValue();
+        if (running == 0) result.add(new int[]{begin, e.getKey()});
+    }
+    return result.toArray(new int[0][]);
+}
+```
+
+- **Time Complexity:** O(n log n)
+- **Space Complexity:** O(n)
+
+### Approach 5: Difference Array over Bounded Coordinates
+
+When the coordinates are small non-negative integers, mark the coverage in an array and read the merged intervals as runs of covered cells. Coordinates are doubled so that `[1, 2]` and `[3, 4]` (a gap between 2 and 3) are not merged.
+
+```java
+public static int[][] mergeIntervalsDifference(int[][] intervals) {
+    int max = 0;
+    for (int[] interval : intervals) max = Math.max(max, interval[1]);
+    int[] diff = new int[2 * max + 3];
+    for (int[] interval : intervals) { diff[2 * interval[0]]++; diff[2 * interval[1] + 1]--; }
+    List<int[]> result = new ArrayList<>();
+    int cover = 0, begin = 0;
+    for (int p = 0; p < diff.length; p++) {
+        int before = cover;
+        cover += diff[p];
+        if (before == 0 && cover > 0) begin = p / 2;
+        if (before > 0 && cover == 0) result.add(new int[]{begin, (p - 1) / 2});
+    }
+    return result.toArray(new int[0][]);
+}
+```
+
+- **Time Complexity:** O(n + M) where M is the largest coordinate
+- **Space Complexity:** O(M)
+
+### Approach 6: Overlap Graph and Connected Components
+
+Connect every two overlapping intervals and take the connected components: each component merges into one interval from its smallest start to its largest end. Quadratic, but a good illustration of what "merge" means.
+
+```java
+public static int[][] mergeIntervalsGraph(int[][] intervals) {
+    int n = intervals.length;
+    boolean[] visited = new boolean[n];
+    List<int[]> result = new ArrayList<>();
+    for (int s = 0; s < n; s++) {
+        if (visited[s]) continue;
+        int start = intervals[s][0], end = intervals[s][1];
+        Deque<Integer> stack = new ArrayDeque<>();
+        stack.push(s);
+        visited[s] = true;
+        while (!stack.isEmpty()) {
+            int a = stack.pop();
+            start = Math.min(start, intervals[a][0]);
+            end = Math.max(end, intervals[a][1]);
+            for (int b = 0; b < n; b++) {
+                if (!visited[b] && intervals[a][0] <= intervals[b][1] && intervals[b][0] <= intervals[a][1]) {
+                    visited[b] = true;
+                    stack.push(b);
+                }
+            }
+        }
+        result.add(new int[]{start, end});
+    }
+    result.sort(Comparator.comparingInt((int[] x) -> x[0]));
+    return result.toArray(new int[0][]);
+}
+```
+
+- **Time Complexity:** O(n^2)
+- **Space Complexity:** O(n)
+
+### Approach 7: Sort + Single Sweep (Optimized)
 
 Sort by start time and sweep once, extending the last interval of the output list while intervals overlap. Same complexity as the stack version without the stack; implemented in the repository.
 
@@ -120,11 +237,15 @@ public static int[][] mergeIntervals(int[][] intervals) {
 |---|----------|------|-------|
 | 1 | Brute Force (Repeated Merging) | O(n^3) in the worst case | O(n) |
 | 2 | Sort + Stack | O(n log n) | O(n) |
-| 3 | Sort + Single Sweep (Optimized) | O(n log n) | O(n) (output) plus sort space |
+| 3 | Separately Sorted Starts and Ends | O(n log n) | O(n) |
+| 4 | Sweep Line with a TreeMap | O(n log n) | O(n) |
+| 5 | Difference Array over Bounded Coordinates | O(n + M) where M is the largest coordinate | O(M) |
+| 6 | Overlap Graph and Connected Components | O(n^2) | O(n) |
+| 7 | Sort + Single Sweep (Optimized) | O(n log n) | O(n) (output) plus sort space |
 
 ### Optimized Solution
 
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
 ## Source Code
 

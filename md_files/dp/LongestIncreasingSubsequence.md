@@ -66,7 +66,106 @@ public static int lengthOfLISDp(int[] nums) {
 - **Time Complexity:** O(n^2)
 - **Space Complexity:** O(n)
 
-### Approach 3: Patience Sorting with Binary Search (Optimized)
+### Approach 3: Memoized Recursion on (index, previous)
+
+The take-or-skip recursion with a cache indexed by the current index and the index of the previously taken element.
+
+```java
+public static int lengthOfLISMemo(int[] nums) {
+    int[][] memo = new int[nums.length][nums.length + 1];
+    for (int[] row : memo) Arrays.fill(row, -1);
+    return solve(nums, 0, -1, memo);
+}
+
+private static int solve(int[] nums, int index, int previous, int[][] memo) {
+    if (index == nums.length) return 0;
+    if (memo[index][previous + 1] != -1) return memo[index][previous + 1];
+    int best = solve(nums, index + 1, previous, memo);                    // skip
+    if (previous == -1 || nums[index] > nums[previous]) {
+        best = Math.max(best, 1 + solve(nums, index + 1, index, memo));   // take
+    }
+    return memo[index][previous + 1] = best;
+}
+```
+
+- **Time Complexity:** O(n^2)
+- **Space Complexity:** O(n^2)
+
+### Approach 4: LCS with the Sorted Distinct Array
+
+An increasing subsequence is a common subsequence of the array and its sorted copy without duplicates, so the answer is the longest common subsequence of the two.
+
+```java
+public static int lengthOfLISLcs(int[] nums) {
+    int[] sorted = Arrays.stream(nums).distinct().sorted().toArray();
+    int n = nums.length, m = sorted.length;
+    int[][] dp = new int[n + 1][m + 1];
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            dp[i][j] = nums[i - 1] == sorted[j - 1] ? dp[i - 1][j - 1] + 1 : Math.max(dp[i - 1][j], dp[i][j - 1]);
+        }
+    }
+    return dp[n][m];
+}
+```
+
+- **Time Complexity:** O(n^2)
+- **Space Complexity:** O(n^2)
+
+### Approach 5: Patience Sorting with Arrays.binarySearch
+
+The tails-array algorithm with the JDK's binary search: a negative result encodes the insertion point as `-(point) - 1`.
+
+```java
+public static int lengthOfLISLibrary(int[] nums) {
+    int[] tails = new int[nums.length];
+    int size = 0;
+    for (int num : nums) {
+        int position = Arrays.binarySearch(tails, 0, size, num);
+        if (position < 0) position = -position - 1;
+        tails[position] = num;
+        if (position == size) size++;
+    }
+    return size;
+}
+```
+
+- **Time Complexity:** O(n log n)
+- **Space Complexity:** O(n)
+
+### Approach 6: Fenwick Tree over Compressed Values
+
+Compress the values to ranks `1..m` and keep a Fenwick tree that stores, for every rank, the longest subsequence ending in a value of at most that rank. For each number, query the best strictly smaller rank, add one and update the tree.
+
+```java
+public static int lengthOfLISFenwick(int[] nums) {
+    int[] sorted = Arrays.stream(nums).distinct().sorted().toArray();
+    int[] tree = new int[sorted.length + 2];
+    int best = 0;
+    for (int num : nums) {
+        int rank = Arrays.binarySearch(sorted, num) + 1;            // 1-based rank
+        int length = 1 + query(tree, rank - 1);
+        update(tree, rank, length);
+        best = Math.max(best, length);
+    }
+    return best;
+}
+
+private static int query(int[] tree, int i) {          // maximum over ranks 1..i
+    int max = 0;
+    for (; i > 0; i -= i & -i) max = Math.max(max, tree[i]);
+    return max;
+}
+
+private static void update(int[] tree, int i, int value) {
+    for (; i < tree.length; i += i & -i) tree[i] = Math.max(tree[i], value);
+}
+```
+
+- **Time Complexity:** O(n log n)
+- **Space Complexity:** O(n)
+
+### Approach 7: Patience Sorting with Binary Search (Optimized)
 
 Keep, for every length, the smallest possible tail value; binary-search where each number belongs. This is the version implemented in the repository.
 
@@ -96,11 +195,15 @@ public static int lengthOfLIS(int[] nums) {
 |---|----------|------|-------|
 | 1 | Plain Recursion | O(2^n) | O(n) |
 | 2 | Dynamic Programming | O(n^2) | O(n) |
-| 3 | Patience Sorting with Binary Search (Optimized) | O(n log n) | O(n) |
+| 3 | Memoized Recursion on (index, previous) | O(n^2) | O(n^2) |
+| 4 | LCS with the Sorted Distinct Array | O(n^2) | O(n^2) |
+| 5 | Patience Sorting with Arrays.binarySearch | O(n log n) | O(n) |
+| 6 | Fenwick Tree over Compressed Values | O(n log n) | O(n) |
+| 7 | Patience Sorting with Binary Search (Optimized) | O(n log n) | O(n) |
 
 ### Optimized Solution
 
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
 ## Source Code
 
