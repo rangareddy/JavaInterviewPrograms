@@ -11,6 +11,11 @@ Demonstrates a generic singly linked list with common interview operations.
 5. **middle element:** either advance `size / 2` steps, or use two pointers where `fast` moves two nodes per step and `slow` one; when `fast` reaches the end, `slow` is in the middle (single pass).
 6. **even/odd size:** either count the nodes, or jump two nodes at a time and check where the pointer ends (`null` means even, the last node means odd).
 
+## Example walkthrough
+
+- The demo adds `List1 ... List12`; `remove(0)` deletes `List1` by moving `head` to `List2`, leaving 11 nodes (an odd size).
+- With 11 nodes, counting, slow/fast pointers and `get(size() / 2)` all report the middle element `List7`; `reverse()` then prints `List12 ... List2`.
+
 ## Complexity Analysis
 
 - **Time Complexity:** `O(n)` for add, remove, get, reverse and middle; `O(1)` for size and isEmpty.

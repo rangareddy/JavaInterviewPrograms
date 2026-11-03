@@ -12,6 +12,11 @@ typically using all the original letters exactly once.
 3. Walk through the second string and decrement the count of every character. If a character is missing or its count is already `0`, the second string has a character the first one does not have, return `false`.
 4. Because both strings have the same length and no count went negative, every count is back to `0`, so the strings are anagrams.
 
+## Example walkthrough
+
+- For `"listen"` and `"silent"` the counts after the first pass are `l=1, i=1, s=1, t=1, e=1, n=1`; decrementing for every character of `"silent"` brings every count to `0`: anagram.
+- For `"aa"` and `"bb"` the first `b` is not in the map, so the check fails immediately: not an anagram (XOR would have wrongly said yes).
+
 ## Complexity Analysis
 
 - **Time Complexity:** `O(n)` — One pass over each string with `O(1)` average map operations.

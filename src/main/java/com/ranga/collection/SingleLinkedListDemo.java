@@ -17,6 +17,12 @@ package com.ranga.collection;
  *       ({@code null} means even, the last node means odd).</li>
  * </ol>
  *
+ * <p><b>Example walkthrough</b>
+ * <ul>
+ *   <li>The demo adds {@code List1 ... List12}; {@code remove(0)} deletes {@code List1} by moving {@code head} to {@code List2}, leaving 11 nodes (an odd size).</li>
+ *   <li>With 11 nodes, counting, slow/fast pointers and {@code get(size() / 2)} all report the middle element {@code List7}; {@code reverse()} then prints {@code List12 ... List2}.</li>
+ * </ul>
+ *
  * <p><b>Complexity Analysis:</b>
  * <ul>
  *   <li><b>Time Complexity:</b> {@code O(n)} for add, remove, get, reverse and middle; {@code O(1)} for size and isEmpty.</li>
