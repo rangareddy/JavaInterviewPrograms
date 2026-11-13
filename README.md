@@ -2,11 +2,11 @@
 
 !["Java Interview Programs"](./images/Java_Interview_Programs.png)
 
-## 200 Coding Interview Questions (Roadmap)
+## Coding Interview Questions by Topic
 
-The 200 questions below follow a MAANG-style preparation roadmap, grouped into 14 topics. Inside a topic the problems are listed in the recommended study order and numbered 1 to 200 across the whole list. Each page walks through the strategy, several approaches from brute force to optimized, the complexity, and the Java source.
+Interview problems grouped by topic, in a recommended study order. Each page explains the strategy, shows several approaches from brute force to optimized, states the time and space complexity, and includes the Java source.
 
-Eight questions are listed twice in the roadmap, under two topics: Maximum Product Subarray (6, 149), Palindromic Substrings (39, 151), Missing Number (9, 183), Top K Frequent Elements (15, 108), Merge K Sorted Lists (61, 111), Kth Largest Element (86, 107), Meeting Rooms II (114, 169) and LFU Cache (186, 197). Both numbers link to the same page, so the 200 entries are 192 distinct programs.
+A few problems are listed under two topics; both entries link to the same page.
 
 | # | Topic | Questions |
 |---|-------|-----------|
@@ -24,6 +24,7 @@ Eight questions are listed twice in the roadmap, under two topics: Maximum Produ
 | 12 | [Greedy Algorithms and Intervals](#12-greedy-algorithms-and-intervals) | 10 |
 | 13 | [Tries, Bit Manipulation and Advanced Data Structures](#13-tries-bit-manipulation-and-advanced-data-structures) | 12 |
 | 14 | [Advanced Coding and Implementation Problems](#14-advanced-coding-and-implementation-problems) | 14 |
+| 15 | [Java Concurrency, Multithreading and Core Design](#15-java-concurrency-multithreading-and-core-design) | 10 |
 
 ### 1. Arrays and Hashing
 
@@ -295,320 +296,17 @@ Eight questions are listed twice in the roadmap, under two topics: Maximum Produ
 | 199 | [Implement Dijkstra from Scratch](./md_files/graph/DijkstraShortestPath.md) | Graph + PriorityQueue |
 | 200 | [Implement Union-Find from Scratch](./md_files/design/UnionFind.md) | Path compression + Union by Rank |
 
-## List of Java Interview Programs (by Package)
+### 15. Java Concurrency, Multithreading and Core Design
 
-### Basic
-
-1. [Anagram](./md_files/basic/Anagram.md)
-1. [Immutable Class](./md_files/basic/ImmutableClassDemo.md)
-1. [Fibonacci](./md_files/basic/Fibonacci.md)
-1. [Palindrome Check (String and Number)](./md_files/basic/PalindromeCheck.md)
-1. [Prime Numbers](./md_files/basic/PrimeNumbers.md)
-1. [FizzBuzz](./md_files/basic/FizzBuzz.md)
-1. [Factorial](./md_files/basic/Factorial.md)
-1. [GCD and LCM](./md_files/basic/GcdAndLcm.md)
-1. [Reverse a String](./md_files/basic/ReverseString.md)
-1. [First Non-Repeating Character](./md_files/basic/FirstNonRepeatingCharacter.md)
-1. [Armstrong Number](./md_files/basic/ArmstrongNumber.md)
-1. [Swap Two Numbers Without a Temporary Variable](./md_files/basic/SwapTwoNumbers.md)
-1. [Singleton Pattern](./md_files/basic/SingletonPattern.md)
-
-### Array
-
-1. [Two Sum](./md_files/array/TwoSum.md)
-1. [Majority Element](./md_files/array/MajorityElement.md)
-1. [Merge Intervals](./md_files/array/MergeIntervals.md)
-1. [Move Zeros and Ones (Sort 0s, 1s, 2s)](./md_files/array/MoveZerosAndOnes.md)
-1. [Product of Array Except Self](./md_files/array/ProductOfArrayExceptSelf.md)
-1. [Remove Duplicates from Sorted Array](./md_files/array/RemoveDuplicates.md)
-1. [Rotate an Array](./md_files/array/RotateAnArray.md)
-1. [Best Time to Buy and Sell Stock](./md_files/array/BestTimeToBuyAndSellStock.md)
-1. [Contains Duplicate](./md_files/array/ContainsDuplicate.md)
-1. [Maximum Subarray](./md_files/array/MaximumSubarray.md)
-1. [Maximum Product Subarray](./md_files/array/MaximumProductSubarray.md)
-1. [Find Minimum in Rotated Sorted Array](./md_files/array/FindMinimumInRotatedSortedArray.md)
-1. [Search in Rotated Sorted Array](./md_files/array/SearchInRotatedSortedArray.md)
-1. [3Sum](./md_files/array/ThreeSum.md)
-1. [Container With Most Water](./md_files/array/ContainerWithMostWater.md)
-1. [Two Sum II - Input Array Is Sorted](./md_files/array/TwoSumII.md)
-1. [Trapping Rain Water](./md_files/array/TrappingRainWater.md)
-1. [Sliding Window Maximum](./md_files/array/SlidingWindowMaximum.md)
-1. [Second Largest Element in an Array](./md_files/array/SecondLargestElement.md)
-1. [Next Permutation](./md_files/array/NextPermutation.md)
-1. [Merge Sorted Array](./md_files/array/MergeSortedArray.md)
-1. [Intersection of Two Arrays](./md_files/array/IntersectionOfTwoArrays.md)
-1. [Find Peak Element](./md_files/array/FindPeakElement.md)
-1. [Missing Number](./md_files/array/MissingNumber.md)
-1. [Find All Numbers Disappeared in an Array](./md_files/array/FindAllNumbersDisappeared.md)
-1. [First Missing Positive](./md_files/array/FirstMissingPositive.md)
-1. [Subarray Sum Equals K](./md_files/array/SubarraySumEqualsK.md)
-1. [Move Zeroes](./md_files/array/MoveZeroes.md)
-1. [4Sum](./md_files/array/FourSum.md)
-1. [Sort Colors](./md_files/array/MoveZerosAndOnes.md)
-1. [Majority Element II](./md_files/array/MajorityElementII.md)
-
-### Matrix
-
-1. [Set Matrix Zeroes](./md_files/matrix/SetMatrixZeroes.md)
-1. [Spiral Matrix](./md_files/matrix/SpiralMatrix.md)
-1. [Rotate Image](./md_files/matrix/RotateImage.md)
-1. [Word Search](./md_files/matrix/WordSearch.md)
-1. [Valid Sudoku](./md_files/matrix/ValidSudoku.md)
-
-### String
-
-1. [Longest Substring Without Repeating Characters](./md_files/string/LongestSubString.md)
-1. [Longest Palindrome](./md_files/string/LongestPalindrome.md)
-1. [Longest Repeating Character Replacement](./md_files/string/LongestRepeatingCharacterReplacement.md)
-1. [Minimum Window Substring](./md_files/string/MinimumWindowSubstring.md)
-1. [Valid Anagram](./md_files/basic/Anagram.md)
-1. [Group Anagrams](./md_files/string/GroupAnagrams.md)
-1. [Valid Parentheses](./md_files/string/ValidParentheses.md)
-1. [Palindromic Substrings](./md_files/string/PalindromicSubstrings.md)
-1. [Encode and Decode Strings](./md_files/string/EncodeAndDecodeStrings.md)
-1. [Valid Palindrome](./md_files/string/ValidPalindrome.md)
-1. [Permutation in String](./md_files/string/PermutationInString.md)
-1. [Roman to Integer](./md_files/string/RomanToInteger.md)
-1. [Longest Common Prefix](./md_files/string/LongestCommonPrefix.md)
-1. [String Compression](./md_files/string/StringCompression.md)
-1. [Isomorphic Strings](./md_files/string/IsomorphicStrings.md)
-1. [String to Integer (atoi)](./md_files/string/StringToIntegerAtoi.md)
-1. [Find All Anagrams in a String](./md_files/string/FindAllAnagramsInAString.md)
-1. [Integer to Roman](./md_files/string/IntegerToRoman.md)
-1. [Multiply Strings](./md_files/string/MultiplyStrings.md)
-1. [Decode String](./md_files/string/DecodeString.md)
-1. [Longest Valid Parentheses](./md_files/string/LongestValidParentheses.md)
-1. [Minimum Remove to Make Valid Parentheses](./md_files/string/MinimumRemoveToMakeValidParentheses.md)
-1. [Valid Palindrome II](./md_files/string/ValidPalindromeII.md)
-
-### Searching
-
-1. [Linear Search](./md_files/search/LinearSearch.md)
-1. [Binary Search](./md_files/search/BinarySearch.md)
-1. [Search a 2D Matrix](./md_files/search/SearchA2DMatrix.md)
-1. [Koko Eating Bananas](./md_files/search/KokoEatingBananas.md)
-1. [Time Based Key-Value Store](./md_files/search/TimeBasedKeyValueStore.md)
-1. [Median of Two Sorted Arrays](./md_files/search/MedianOfTwoSortedArrays.md)
-1. [Search Insert Position](./md_files/search/SearchInsertPosition.md)
-1. [Find First and Last Position of Element in Sorted Array](./md_files/search/FirstAndLastPosition.md)
-1. [Capacity to Ship Packages Within D Days](./md_files/search/CapacityToShipPackages.md)
-
-### Sorting
-
-1. [Bubble Sort](./md_files/sort/BubbleSort.md)
-1. [Selection Sort](./md_files/sort/SelectionSort.md)
-1. [Merge Sort](./md_files/sort/MergeSort.md)
-1. [Merge Sort (array example)](./md_files/sort/SortMergeExample.md)
-1. [Quick Sort](./md_files/sort/QuickSort.md)
-1. [Insertion Sort](./md_files/sort/InsertionSort.md)
-1. [Heap Sort](./md_files/sort/HeapSort.md)
-1. [Sort an Array](./md_files/sort/SortAnArray.md)
-
-### Collection
-
-1. [Design a HashMap](./md_files/collection/CustomHashMap.md)
-1. [Java 8 Streams Interview Questions](./md_files/collection/StreamsInterviewQuestions.md)
-
-### Linked List
-
-1. [Single Linked List](./md_files/collection/SingleLinkedListDemo.md)
-1. [Reverse Linked List](./md_files/linkedlist/ReverseLinkedList.md)
-1. [Linked List Cycle](./md_files/linkedlist/LinkedListCycle.md)
-1. [Merge Two Sorted Lists](./md_files/linkedlist/MergeTwoSortedLists.md)
-1. [Merge k Sorted Lists](./md_files/linkedlist/MergeKSortedLists.md)
-1. [Remove Nth Node From End of List](./md_files/linkedlist/RemoveNthNodeFromEnd.md)
-1. [Reorder List](./md_files/linkedlist/ReorderList.md)
-1. [Copy List with Random Pointer](./md_files/linkedlist/CopyListWithRandomPointer.md)
-1. [Add Two Numbers](./md_files/linkedlist/AddTwoNumbers.md)
-1. [Find the Duplicate Number](./md_files/linkedlist/FindTheDuplicateNumber.md)
-1. [LRU Cache](./md_files/linkedlist/LRUCache.md)
-1. [Reverse Nodes in k-Group](./md_files/linkedlist/ReverseNodesInKGroup.md)
-1. [Palindrome Linked List](./md_files/linkedlist/PalindromeLinkedList.md)
-1. [Intersection of Two Linked Lists](./md_files/linkedlist/IntersectionOfTwoLinkedLists.md)
-1. [Linked List Cycle II](./md_files/linkedlist/LinkedListCycleII.md)
-1. [Middle of the Linked List](./md_files/linkedlist/MiddleOfTheLinkedList.md)
-1. [Sort List](./md_files/linkedlist/SortList.md)
-1. [Reverse Linked List II](./md_files/linkedlist/ReverseLinkedListII.md)
-
-### Stack
-
-1. [Min Stack](./md_files/stack/MinStack.md)
-1. [Evaluate Reverse Polish Notation](./md_files/stack/EvaluateReversePolishNotation.md)
-1. [Generate Parentheses](./md_files/stack/GenerateParentheses.md)
-1. [Daily Temperatures](./md_files/stack/DailyTemperatures.md)
-1. [Car Fleet](./md_files/stack/CarFleet.md)
-1. [Largest Rectangle in Histogram](./md_files/stack/LargestRectangleInHistogram.md)
-1. [Implement Queue Using Stacks](./md_files/stack/ImplementQueueUsingStacks.md)
-1. [Implement Stack Using Queues](./md_files/stack/ImplementStackUsingQueues.md)
-1. [Next Greater Element I](./md_files/stack/NextGreaterElementI.md)
-1. [Next Greater Element II](./md_files/stack/NextGreaterElementII.md)
-1. [Asteroid Collision](./md_files/stack/AsteroidCollision.md)
-1. [Online Stock Span](./md_files/stack/OnlineStockSpan.md)
-1. [Basic Calculator](./md_files/stack/BasicCalculator.md)
-
-### Heap
-
-1. [Merge k Sorted Lists](./md_files/linkedlist/MergeKSortedLists.md)
-1. [Top K Frequent Elements](./md_files/heap/TopKFrequentElements.md)
-1. [Find Median from Data Stream](./md_files/heap/FindMedianFromDataStream.md)
-1. [Kth Largest Element in a Stream](./md_files/heap/KthLargestElementInAStream.md)
-1. [Last Stone Weight](./md_files/heap/LastStoneWeight.md)
-1. [K Closest Points to Origin](./md_files/heap/KClosestPointsToOrigin.md)
-1. [Kth Largest Element in an Array](./md_files/heap/KthLargestElementInAnArray.md)
-1. [Task Scheduler](./md_files/heap/TaskScheduler.md)
-1. [Design Twitter](./md_files/heap/DesignTwitter.md)
-1. [Reorganize String](./md_files/heap/ReorganizeString.md)
-1. [Smallest Range Covering Elements from K Lists](./md_files/heap/SmallestRangeCoveringKLists.md)
-1. [Find K Pairs with Smallest Sums](./md_files/heap/FindKPairsWithSmallestSums.md)
-
-### Tree
-
-1. [Binary Search Tree](./md_files/tree/BinarySearchTree.md)
-1. [Maximum Depth of Binary Tree](./md_files/tree/MaximumDepthOfBinaryTree.md)
-1. [Same Tree](./md_files/tree/SameTree.md)
-1. [Invert Binary Tree](./md_files/tree/InvertBinaryTree.md)
-1. [Binary Tree Maximum Path Sum](./md_files/tree/BinaryTreeMaximumPathSum.md)
-1. [Binary Tree Level Order Traversal](./md_files/tree/BinaryTreeLevelOrderTraversal.md)
-1. [Serialize and Deserialize Binary Tree](./md_files/tree/SerializeDeserializeBinaryTree.md)
-1. [Subtree of Another Tree](./md_files/tree/SubtreeOfAnotherTree.md)
-1. [Construct Binary Tree from Preorder and Inorder Traversal](./md_files/tree/ConstructBinaryTreeFromPreorderInorder.md)
-1. [Validate Binary Search Tree](./md_files/tree/ValidateBinarySearchTree.md)
-1. [Kth Smallest Element in a BST](./md_files/tree/KthSmallestElementInBST.md)
-1. [Lowest Common Ancestor of a Binary Search Tree](./md_files/tree/LowestCommonAncestorOfBST.md)
-1. [Implement Trie (Prefix Tree)](./md_files/tree/ImplementTrie.md)
-1. [Design Add and Search Words Data Structure](./md_files/tree/DesignAddAndSearchWords.md)
-1. [Word Search II](./md_files/tree/WordSearchII.md)
-1. [Diameter of Binary Tree](./md_files/tree/DiameterOfBinaryTree.md)
-1. [Balanced Binary Tree](./md_files/tree/BalancedBinaryTree.md)
-1. [Binary Tree Right Side View](./md_files/tree/BinaryTreeRightSideView.md)
-1. [Count Good Nodes in Binary Tree](./md_files/tree/CountGoodNodesInBinaryTree.md)
-1. [Binary Tree Traversals (Inorder, Preorder, Postorder)](./md_files/tree/TreeTraversals.md)
-1. [Binary Tree Zigzag Level Order Traversal](./md_files/tree/BinaryTreeZigzagLevelOrder.md)
-1. [Lowest Common Ancestor of a Binary Tree](./md_files/tree/LowestCommonAncestorOfBinaryTree.md)
-1. [Minimum Depth of Binary Tree](./md_files/tree/MinimumDepthOfBinaryTree.md)
-1. [Symmetric Tree](./md_files/tree/SymmetricTree.md)
-1. [Path Sum II](./md_files/tree/PathSumII.md)
-1. [Flatten Binary Tree to Linked List](./md_files/tree/FlattenBinaryTreeToLinkedList.md)
-1. [Vertical Order Traversal of a Binary Tree](./md_files/tree/VerticalOrderTraversal.md)
-1. [Binary Tree Cameras](./md_files/tree/BinaryTreeCameras.md)
-
-### Threads
-
-1. [Print Even Odd Using Threads](./md_files/threads/PrintEvenOddUsingThreads.md)
-1. [Producer Consumer](./md_files/threads/ProducerConsumer.md)
-1. [Deadlock and How to Avoid It](./md_files/threads/DeadlockDemo.md)
-1. [Print Numbers in Sequence with Three Threads](./md_files/threads/PrintNumbersWithThreeThreads.md)
-
-### Graph
-
-1. [Clone Graph](./md_files/graph/CloneGraph.md)
-1. [Course Schedule](./md_files/graph/CourseSchedule.md)
-1. [Number of Islands](./md_files/graph/NumberOfIslands.md)
-1. [Pacific Atlantic Water Flow](./md_files/graph/PacificAtlanticWaterFlow.md)
-1. [Longest Consecutive Sequence](./md_files/graph/LongestConsecutiveSequence.md)
-1. [Alien Dictionary](./md_files/graph/AlienDictionary.md)
-1. [Graph Valid Tree](./md_files/graph/GraphValidTree.md)
-1. [Number of Connected Components in an Undirected Graph](./md_files/graph/NumberOfConnectedComponents.md)
-1. [Max Area of Island](./md_files/graph/MaxAreaOfIsland.md)
-1. [Walls and Gates](./md_files/graph/WallsAndGates.md)
-1. [Rotting Oranges](./md_files/graph/RottingOranges.md)
-1. [Surrounded Regions](./md_files/graph/SurroundedRegions.md)
-1. [Course Schedule II](./md_files/graph/CourseScheduleII.md)
-1. [Redundant Connection](./md_files/graph/RedundantConnection.md)
-1. [Word Ladder](./md_files/graph/WordLadder.md)
-1. [Reconstruct Itinerary](./md_files/graph/ReconstructItinerary.md)
-1. [Min Cost to Connect All Points](./md_files/graph/MinCostToConnectAllPoints.md)
-1. [Network Delay Time](./md_files/graph/NetworkDelayTime.md)
-1. [Swim in Rising Water](./md_files/graph/SwimInRisingWater.md)
-1. [Cheapest Flights Within K Stops](./md_files/graph/CheapestFlightsWithinKStops.md)
-1. [Graph Traversals (BFS and DFS)](./md_files/graph/GraphTraversals.md)
-1. [Topological Sort](./md_files/graph/TopologicalSort.md)
-1. [Dijkstra's Shortest Path](./md_files/graph/DijkstraShortestPath.md)
-1. [Flood Fill](./md_files/graph/FloodFill.md)
-1. [Accounts Merge](./md_files/graph/AccountsMerge.md)
-1. [Minimum Spanning Tree (Kruskal and Prim)](./md_files/graph/MinimumSpanningTree.md)
-1. [Critical Connections in a Network](./md_files/graph/CriticalConnections.md)
-1. [Evaluate Division](./md_files/graph/EvaluateDivision.md)
-
-### Dynamic Programming
-
-1. [Fibonacci (Dynamic Programming)](./md_files/dp/Fibonacci.md)
-1. [Climbing Stairs](./md_files/dp/ClimbingStairs.md)
-1. [Coin Change](./md_files/dp/CoinChange.md)
-1. [Longest Increasing Subsequence](./md_files/dp/LongestIncreasingSubsequence.md)
-1. [Longest Common Subsequence](./md_files/dp/LongestCommonSubsequence.md)
-1. [Word Break](./md_files/dp/WordBreak.md)
-1. [Combination Sum](./md_files/dp/CombinationSum.md)
-1. [House Robber](./md_files/dp/HouseRobber.md)
-1. [House Robber II](./md_files/dp/HouseRobberII.md)
-1. [Decode Ways](./md_files/dp/DecodeWays.md)
-1. [Unique Paths](./md_files/dp/UniquePaths.md)
-1. [Jump Game](./md_files/dp/JumpGame.md)
-1. [Min Cost Climbing Stairs](./md_files/dp/MinCostClimbingStairs.md)
-1. [Partition Equal Subset Sum](./md_files/dp/PartitionEqualSubsetSum.md)
-1. [Best Time to Buy and Sell Stock with Cooldown](./md_files/dp/BestTimeToBuyAndSellStockWithCooldown.md)
-1. [Coin Change II](./md_files/dp/CoinChangeII.md)
-1. [Target Sum](./md_files/dp/TargetSum.md)
-1. [Interleaving String](./md_files/dp/InterleavingString.md)
-1. [Longest Increasing Path in a Matrix](./md_files/dp/LongestIncreasingPathInAMatrix.md)
-1. [Distinct Subsequences](./md_files/dp/DistinctSubsequences.md)
-1. [Edit Distance](./md_files/dp/EditDistance.md)
-1. [Burst Balloons](./md_files/dp/BurstBalloons.md)
-1. [Regular Expression Matching](./md_files/dp/RegularExpressionMatching.md)
-1. [0/1 Knapsack](./md_files/dp/Knapsack01.md)
-1. [Longest Palindromic Subsequence](./md_files/dp/LongestPalindromicSubsequence.md)
-1. [Minimum Path Sum](./md_files/dp/MinimumPathSum.md)
-1. [Maximum Profit in Job Scheduling](./md_files/dp/MaximumProfitInJobScheduling.md)
-
-### Interval
-
-1. [Insert Interval](./md_files/interval/InsertInterval.md)
-1. [Merge Intervals](./md_files/array/MergeIntervals.md)
-1. [Non-overlapping Intervals](./md_files/interval/NonOverlappingIntervals.md)
-1. [Meeting Rooms](./md_files/interval/MeetingRooms.md)
-1. [Meeting Rooms II](./md_files/interval/MeetingRoomsII.md)
-1. [Minimum Interval to Include Each Query](./md_files/interval/MinimumIntervalToIncludeEachQuery.md)
-
-### Backtracking
-
-1. [Subsets](./md_files/backtracking/Subsets.md)
-1. [Permutations](./md_files/backtracking/Permutations.md)
-1. [Subsets II](./md_files/backtracking/SubsetsII.md)
-1. [Combination Sum II](./md_files/backtracking/CombinationSumII.md)
-1. [Palindrome Partitioning](./md_files/backtracking/PalindromePartitioning.md)
-1. [Letter Combinations of a Phone Number](./md_files/backtracking/LetterCombinationsOfAPhoneNumber.md)
-1. [N-Queens](./md_files/backtracking/NQueens.md)
-1. [Sudoku Solver](./md_files/backtracking/SudokuSolver.md)
-1. [Permutations II](./md_files/backtracking/PermutationsII.md)
-
-### Greedy
-
-1. [Jump Game II](./md_files/greedy/JumpGameII.md)
-1. [Gas Station](./md_files/greedy/GasStation.md)
-1. [Hand of Straights](./md_files/greedy/HandOfStraights.md)
-1. [Merge Triplets to Form Target Triplet](./md_files/greedy/MergeTripletsToFormTargetTriplet.md)
-1. [Partition Labels](./md_files/greedy/PartitionLabels.md)
-1. [Valid Parenthesis String](./md_files/greedy/ValidParenthesisString.md)
-1. [Candy](./md_files/greedy/Candy.md)
-
-### Bit Manipulation
-
-1. [Single Number](./md_files/bit/SingleNumber.md)
-1. [Single Number II](./md_files/bit/SingleNumberII.md)
-1. [Counting Bits](./md_files/bit/CountingBits.md)
-1. [Reverse Bits](./md_files/bit/ReverseBits.md)
-1. [Number of 1 Bits (Hamming Weight)](./md_files/bit/NumberOf1Bits.md)
-
-### Design
-
-1. [Range Sum Query - Mutable](./md_files/design/RangeSumQueryMutable.md)
-1. [LFU Cache](./md_files/design/LFUCache.md)
-1. [Design HashSet](./md_files/design/DesignHashSet.md)
-1. [Insert Delete GetRandom O(1)](./md_files/design/InsertDeleteGetRandom.md)
-1. [Design Hit Counter](./md_files/design/DesignHitCounter.md)
-1. [Logger Rate Limiter](./md_files/design/LoggerRateLimiter.md)
-1. [All O(1) Data Structure](./md_files/design/AllOneDataStructure.md)
-1. [Design Circular Queue](./md_files/design/DesignCircularQueue.md)
-1. [Design Skip List](./md_files/design/DesignSkipList.md)
-1. [Design a Min/Max Heap](./md_files/design/BinaryHeap.md)
-1. [Union-Find (Disjoint Set Union) from Scratch](./md_files/design/UnionFind.md)
+| # | Problem | Main concept |
+|---|---------|--------------|
+| 201 | [Thread-Safe BlockingQueue](./md_files/threads/BoundedBlockingQueue.md) | ReentrantLock + Conditions (notFull, notEmpty) |
+| 202 | [Print Odd and Even Alternately](./md_files/threads/PrintEvenOddUsingThreads.md) | Thread coordination using wait/notify or semaphores |
+| 203 | [Custom Simple Thread Pool](./md_files/threads/SimpleThreadPool.md) | Worker thread pool with a task queue |
+| 204 | [Producer-Consumer Implementation](./md_files/threads/ProducerConsumer.md) | Raw monitor synchronization (wait() / notifyAll()) |
+| 205 | [Custom Read-Write Lock](./md_files/threads/CustomReadWriteLock.md) | State-based tracking for multiple readers / single writer |
+| 206 | [Concurrency Coordination Puzzles](./md_files/threads/ConcurrencyCoordinationPuzzles.md) | Print in Order / FooBar sequence synchronization |
+| 207 | [Thread-Safe Singleton Variations](./md_files/basic/SingletonPattern.md) | Double-Checked Locking (volatile) and Bill Pugh Holder pattern |
+| 208 | [Fully Immutable Class with Mutable Fields](./md_files/basic/ImmutableClassDemo.md) | Deep defensive copying for constructors and getters |
+| 209 | [Custom Functional Interface and Collector](./md_files/core/CustomCollectors.md) | Custom stream reduction aggregation logic |
+| 210 | [Custom Resource Manager (AutoCloseable)](./md_files/core/ResourceManager.md) | Try-with-resources integration with exception suppression |
