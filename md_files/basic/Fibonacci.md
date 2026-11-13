@@ -147,11 +147,11 @@ private static long[] fastDoubling(int n) {
 
 ### Optimized Solution
 
-The optimized solution is Approach 4 and 5 above. The version implemented in this repository is Approach 3 and 4.
+The optimized solution is Approach 4 and 5 above. The version implemented in this repository is Approach 4.
 
 ## Source Code
 
-### basic/Fibonacci.java
+### Fibonacci.java
 
 ```java
 public class Fibonacci {
@@ -188,44 +188,6 @@ public class Fibonacci {
             System.out.print(third + " ");
             first = second;
             second = third;
-        }
-    }
-}
-```
-
-### dp/Fibonacci.java
-
-```java
-public class Fibonacci {
-
-    public static void main(String[] args) {
-        int n = 10;
-
-        System.out.println("Input  : n = " + n);
-        System.out.print("Output : ");
-        printFibonacciNumber(n);
-        System.out.println();
-    }
-
-    /**
-     * Prints the first {@code n} Fibonacci numbers using a table.
-     *
-     * @param n how many numbers to print
-     */
-    private static void printFibonacciNumber(int n) {
-        // Guard Clause: nothing to print for non-positive n
-        if (n <= 0) {
-            return;
-        }
-
-        int[] fib_dp = new int[Math.max(n, 2)];
-        fib_dp[0] = 0;
-        fib_dp[1] = 1;
-        for (int i = 2; i < n; i++) {
-            fib_dp[i] = fib_dp[i - 1] + fib_dp[i - 2];
-        }
-        for (int i = 0; i < n; i++) {
-            System.out.print(fib_dp[i] + " ");
         }
     }
 }
