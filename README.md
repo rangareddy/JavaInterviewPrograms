@@ -45,6 +45,13 @@
 1. [Merge Sorted Array](./md_files/array/MergeSortedArray.md)
 1. [Intersection of Two Arrays](./md_files/array/IntersectionOfTwoArrays.md)
 1. [Find Peak Element](./md_files/array/FindPeakElement.md)
+1. [Missing Number](./md_files/array/MissingNumber.md)
+1. [Find All Numbers Disappeared in an Array](./md_files/array/FindAllNumbersDisappeared.md)
+1. [First Missing Positive](./md_files/array/FirstMissingPositive.md)
+1. [Subarray Sum Equals K](./md_files/array/SubarraySumEqualsK.md)
+1. [Move Zeroes](./md_files/array/MoveZeroes.md)
+1. [4Sum](./md_files/array/FourSum.md)
+1. [Sort Colors](./md_files/array/MoveZerosAndOnes.md)
 
 ### Matrix
 
@@ -72,6 +79,7 @@
 1. [String Compression](./md_files/string/StringCompression.md)
 1. [Isomorphic Strings](./md_files/string/IsomorphicStrings.md)
 1. [String to Integer (atoi)](./md_files/string/StringToIntegerAtoi.md)
+1. [Find All Anagrams in a String](./md_files/string/FindAllAnagramsInAString.md)
 
 ### Searching
 
