@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Java interview programs (clone of github.com/rangareddy/JavaInterviewPrograms, branch `master`). Each program is a standalone class under `src/main/java/com/ranga/<category>/` (`array`, `backtracking`, `basic`, `collection`, `dp`, `graph`, `greedy`, `heap`, `interval`, `linkedlist`, `math`, `matrix`, `search`, `sort`, `stack`, `string`, `threads`, `tree`). There is no shared code between classes, no test suite, and no external dependencies.
+Java interview programs (clone of github.com/rangareddy/JavaInterviewPrograms, branch `master`). Each program is a standalone class under `src/main/java/com/ranga/<category>/` (`array`, `backtracking`, `basic`, `bit`, `collection`, `design`, `dp`, `graph`, `greedy`, `heap`, `interval`, `linkedlist`, `math`, `matrix`, `search`, `sort`, `stack`, `string`, `threads`, `tree`). There is no shared code between classes, no test suite, and no external dependencies.
 
 Every program has a class-level Javadoc (summary, detailed `Algorithm Strategy` ordered list, `Example walkthrough`, `Complexity Analysis`, `@author Ranga Reddy`; see `array/ProductOfArrayExceptSelf.java` for the reference style) and a write-up in `md_files/<category>/<ClassName>.md`. Every `main` prints its sample data the same way as `array/MoveZerosAndOnes.java`: an aligned input line and an output line (`Original Array : ...` / `Sorted Array   : ...` or `Input  : ...` / `Output : ...`).
 
@@ -23,6 +23,12 @@ The NeetCode 150 problems that are not in the Blind 75 list or elsewhere in the 
 ### Classic interview questions
 
 Beyond the Blind 75 and NeetCode 150 problems the repository holds 40 classic interview programs that are not on those lists: Java core questions in `basic` (palindrome, primes, FizzBuzz, factorial, GCD/LCM, string reversal, first unique character, Armstrong numbers, swapping, Singleton), `string`, `array`, `collection` (a custom hash map, Java 8 streams), `threads` (producer-consumer, deadlock, three-thread printing) and data-structure/algorithm classics in `sort`, `search`, `linkedlist`, `tree`, `graph` and `dp`. They follow the same conventions as above (Javadoc, aligned `Input  :` / `Output :` lines, verified `Approaches` section). When adding to this set check the README first so that a question is not covered twice.
+
+### 200 coding interview questions
+
+The repository covers the 200-question interview list (arrays and hashing, two pointers and sliding window, strings, linked lists, stacks and queues, binary search and sorting, trees, heaps, graphs, dynamic programming, backtracking, greedy and intervals, tries, bit manipulation and design problems). 57 programs were added for it on top of the earlier sets, which added the packages `bit` (Single Number, Single Number II, Counting Bits, Reverse Bits, Number of 1 Bits) and `design` (Range Sum Query Mutable, LFU Cache, Design HashSet, Insert Delete GetRandom O(1), Design Hit Counter, Logger Rate Limiter, All O(1) Data Structure, Design Circular Queue, Design Skip List, Binary Heap, Union-Find). The README gets two new sections, "Bit Manipulation" and "Design".
+
+A few questions on that list are answered by existing pages and are not duplicated: Sort Colors is `array/MoveZerosAndOnes` (the README has a "Sort Colors" entry pointing at it), Design HashMap is `collection/CustomHashMap`, Implement Dijkstra from Scratch is `graph/DijkstraShortestPath`, Longest Palindromic Substring is `string/LongestPalindrome`, First and Last Position of Element is `search/FirstAndLastPosition` and Construct Tree from Preorder and Inorder is `tree/ConstructBinaryTreeFromPreorderInorder`. Same conventions as the other sets; every `Approaches` snippet of the new pages was compiled (`--release 8`) and compared with the repository class on randomized inputs before committing.
 
 ## Build and run
 
