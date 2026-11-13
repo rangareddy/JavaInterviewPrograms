@@ -228,6 +228,11 @@
 1. [Graph Traversals (BFS and DFS)](./md_files/graph/GraphTraversals.md)
 1. [Topological Sort](./md_files/graph/TopologicalSort.md)
 1. [Dijkstra's Shortest Path](./md_files/graph/DijkstraShortestPath.md)
+1. [Flood Fill](./md_files/graph/FloodFill.md)
+1. [Accounts Merge](./md_files/graph/AccountsMerge.md)
+1. [Minimum Spanning Tree (Kruskal and Prim)](./md_files/graph/MinimumSpanningTree.md)
+1. [Critical Connections in a Network](./md_files/graph/CriticalConnections.md)
+1. [Evaluate Division](./md_files/graph/EvaluateDivision.md)
 
 ### Dynamic Programming
 
@@ -256,6 +261,8 @@
 1. [Regular Expression Matching](./md_files/dp/RegularExpressionMatching.md)
 1. [0/1 Knapsack](./md_files/dp/Knapsack01.md)
 1. [Longest Palindromic Subsequence](./md_files/dp/LongestPalindromicSubsequence.md)
+1. [Minimum Path Sum](./md_files/dp/MinimumPathSum.md)
+1. [Maximum Profit in Job Scheduling](./md_files/dp/MaximumProfitInJobScheduling.md)
 
 ### Interval
 
@@ -275,6 +282,7 @@
 1. [Palindrome Partitioning](./md_files/backtracking/PalindromePartitioning.md)
 1. [Letter Combinations of a Phone Number](./md_files/backtracking/LetterCombinationsOfAPhoneNumber.md)
 1. [N-Queens](./md_files/backtracking/NQueens.md)
+1. [Sudoku Solver](./md_files/backtracking/SudokuSolver.md)
 
 ### Greedy
 
@@ -284,3 +292,4 @@
 1. [Merge Triplets to Form Target Triplet](./md_files/greedy/MergeTripletsToFormTargetTriplet.md)
 1. [Partition Labels](./md_files/greedy/PartitionLabels.md)
 1. [Valid Parenthesis String](./md_files/greedy/ValidParenthesisString.md)
+1. [Candy](./md_files/greedy/Candy.md)
