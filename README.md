@@ -96,6 +96,7 @@
 1. [Median of Two Sorted Arrays](./md_files/search/MedianOfTwoSortedArrays.md)
 1. [Search Insert Position](./md_files/search/SearchInsertPosition.md)
 1. [Find First and Last Position of Element in Sorted Array](./md_files/search/FirstAndLastPosition.md)
+1. [Capacity to Ship Packages Within D Days](./md_files/search/CapacityToShipPackages.md)
 
 ### Sorting
 
@@ -106,6 +107,7 @@
 1. [Quick Sort](./md_files/sort/QuickSort.md)
 1. [Insertion Sort](./md_files/sort/InsertionSort.md)
 1. [Heap Sort](./md_files/sort/HeapSort.md)
+1. [Sort an Array](./md_files/sort/SortAnArray.md)
 
 ### Collection
 
@@ -159,6 +161,9 @@
 1. [Kth Largest Element in an Array](./md_files/heap/KthLargestElementInAnArray.md)
 1. [Task Scheduler](./md_files/heap/TaskScheduler.md)
 1. [Design Twitter](./md_files/heap/DesignTwitter.md)
+1. [Reorganize String](./md_files/heap/ReorganizeString.md)
+1. [Smallest Range Covering Elements from K Lists](./md_files/heap/SmallestRangeCoveringKLists.md)
+1. [Find K Pairs with Smallest Sums](./md_files/heap/FindKPairsWithSmallestSums.md)
 
 ### Tree
 
@@ -184,6 +189,12 @@
 1. [Binary Tree Traversals (Inorder, Preorder, Postorder)](./md_files/tree/TreeTraversals.md)
 1. [Binary Tree Zigzag Level Order Traversal](./md_files/tree/BinaryTreeZigzagLevelOrder.md)
 1. [Lowest Common Ancestor of a Binary Tree](./md_files/tree/LowestCommonAncestorOfBinaryTree.md)
+1. [Minimum Depth of Binary Tree](./md_files/tree/MinimumDepthOfBinaryTree.md)
+1. [Symmetric Tree](./md_files/tree/SymmetricTree.md)
+1. [Path Sum II](./md_files/tree/PathSumII.md)
+1. [Flatten Binary Tree to Linked List](./md_files/tree/FlattenBinaryTreeToLinkedList.md)
+1. [Vertical Order Traversal of a Binary Tree](./md_files/tree/VerticalOrderTraversal.md)
+1. [Binary Tree Cameras](./md_files/tree/BinaryTreeCameras.md)
 
 ### Threads
 
