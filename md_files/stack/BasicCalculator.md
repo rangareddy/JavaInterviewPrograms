@@ -8,7 +8,7 @@ Evaluate a string expression made of non-negative integers, `+`, `-`, parenthese
 2. On `+` or `-`, add `sign * number` to `result`, reset `number` and set `sign` to the new operator.
 3. On `(`, push the current `result` and `sign` onto a stack, then restart with `result = 0` and `sign = 1` to evaluate the inside of the parentheses as its own expression.
 4. On `)`, finish the pending number, then combine: `result = savedResult + savedSign * result`. At the end of the string add the last number.
-5. A leading `-` or a `-` right after `(` works without special cases, because `result` is 0 at that point.
+5. A leading `-` or a `-` right after `(` works without special cases, because `result` is 0 at that point. Valid input never has two operators in a row such as `--`.
 
 ## Example walkthrough
 

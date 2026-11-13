@@ -293,3 +293,25 @@
 1. [Partition Labels](./md_files/greedy/PartitionLabels.md)
 1. [Valid Parenthesis String](./md_files/greedy/ValidParenthesisString.md)
 1. [Candy](./md_files/greedy/Candy.md)
+
+### Bit Manipulation
+
+1. [Single Number](./md_files/bit/SingleNumber.md)
+1. [Single Number II](./md_files/bit/SingleNumberII.md)
+1. [Counting Bits](./md_files/bit/CountingBits.md)
+1. [Reverse Bits](./md_files/bit/ReverseBits.md)
+1. [Number of 1 Bits (Hamming Weight)](./md_files/bit/NumberOf1Bits.md)
+
+### Design
+
+1. [Range Sum Query - Mutable](./md_files/design/RangeSumQueryMutable.md)
+1. [LFU Cache](./md_files/design/LFUCache.md)
+1. [Design HashSet](./md_files/design/DesignHashSet.md)
+1. [Insert Delete GetRandom O(1)](./md_files/design/InsertDeleteGetRandom.md)
+1. [Design Hit Counter](./md_files/design/DesignHitCounter.md)
+1. [Logger Rate Limiter](./md_files/design/LoggerRateLimiter.md)
+1. [All O(1) Data Structure](./md_files/design/AllOneDataStructure.md)
+1. [Design Circular Queue](./md_files/design/DesignCircularQueue.md)
+1. [Design Skip List](./md_files/design/DesignSkipList.md)
+1. [Design a Min/Max Heap](./md_files/design/BinaryHeap.md)
+1. [Union-Find (Disjoint Set Union) from Scratch](./md_files/design/UnionFind.md)

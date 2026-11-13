@@ -12,7 +12,7 @@ import java.util.Deque;
  *   <li>On {@code +} or {@code -}, add {@code sign * number} to {@code result}, reset {@code number} and set {@code sign} to the new operator.</li>
  *   <li>On {@code (}, push the current {@code result} and {@code sign} onto a stack, then restart with {@code result = 0} and {@code sign = 1} to evaluate the inside of the parentheses as its own expression.</li>
  *   <li>On {@code )}, finish the pending number, then combine: {@code result = savedResult + savedSign * result}. At the end of the string add the last number.</li>
- *   <li>A leading {@code -} or a {@code -} right after {@code (} works without special cases, because {@code result} is 0 at that point.</li>
+ *   <li>A leading {@code -} or a {@code -} right after {@code (} works without special cases, because {@code result} is 0 at that point. Valid input never has two operators in a row such as {@code --}.</li>
  * </ol>
  *
  * <p><b>Example walkthrough</b>
