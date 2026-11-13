@@ -80,6 +80,11 @@
 1. [Isomorphic Strings](./md_files/string/IsomorphicStrings.md)
 1. [String to Integer (atoi)](./md_files/string/StringToIntegerAtoi.md)
 1. [Find All Anagrams in a String](./md_files/string/FindAllAnagramsInAString.md)
+1. [Integer to Roman](./md_files/string/IntegerToRoman.md)
+1. [Multiply Strings](./md_files/string/MultiplyStrings.md)
+1. [Decode String](./md_files/string/DecodeString.md)
+1. [Longest Valid Parentheses](./md_files/string/LongestValidParentheses.md)
+1. [Minimum Remove to Make Valid Parentheses](./md_files/string/MinimumRemoveToMakeValidParentheses.md)
 
 ### Searching
 
@@ -124,6 +129,8 @@
 1. [Palindrome Linked List](./md_files/linkedlist/PalindromeLinkedList.md)
 1. [Intersection of Two Linked Lists](./md_files/linkedlist/IntersectionOfTwoLinkedLists.md)
 1. [Linked List Cycle II](./md_files/linkedlist/LinkedListCycleII.md)
+1. [Middle of the Linked List](./md_files/linkedlist/MiddleOfTheLinkedList.md)
+1. [Sort List](./md_files/linkedlist/SortList.md)
 
 ### Stack
 
