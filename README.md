@@ -140,6 +140,13 @@
 1. [Daily Temperatures](./md_files/stack/DailyTemperatures.md)
 1. [Car Fleet](./md_files/stack/CarFleet.md)
 1. [Largest Rectangle in Histogram](./md_files/stack/LargestRectangleInHistogram.md)
+1. [Implement Queue Using Stacks](./md_files/stack/ImplementQueueUsingStacks.md)
+1. [Implement Stack Using Queues](./md_files/stack/ImplementStackUsingQueues.md)
+1. [Next Greater Element I](./md_files/stack/NextGreaterElementI.md)
+1. [Next Greater Element II](./md_files/stack/NextGreaterElementII.md)
+1. [Asteroid Collision](./md_files/stack/AsteroidCollision.md)
+1. [Online Stock Span](./md_files/stack/OnlineStockSpan.md)
+1. [Basic Calculator](./md_files/stack/BasicCalculator.md)
 
 ### Heap
 
