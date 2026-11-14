@@ -25,7 +25,7 @@ Demonstrates a generic singly linked list with common interview operations.
 
 The same problem can be solved in several ways. They are listed from the simplest to the most efficient.
 
-### Approach 1: Add: Walk to the Tail
+### Approach 1: Add: Walk to the Tail (Implemented)
 
 To append, start at the head and follow `next` until the last node. Simple, but every `add` is `O(n)`; adding `n` elements costs `O(n^2)`. This is the version implemented in the repository.
 
@@ -70,7 +70,7 @@ static class TailList<T> {
 - **Time Complexity:** O(1) per add
 - **Space Complexity:** O(1)
 
-### Approach 3: Middle Element: Count Then Walk
+### Approach 3: Middle Element: Count Then Walk (Implemented)
 
 First pass computes the length, second pass advances `size / 2` nodes. Two traversals, but easy to follow (the repository keeps a `size` field, which makes the first pass free).
 
@@ -161,9 +161,9 @@ static <T> void reverseWithStack(Node<T> head) {
 
 | # | Approach | Time | Space |
 |---|----------|------|-------|
-| 1 | Add: Walk to the Tail | O(n) per add | O(1) |
+| 1 | Add: Walk to the Tail (Implemented) | O(n) per add | O(1) |
 | 2 | Add: Keep a Tail Pointer (Optimized) | O(1) per add | O(1) |
-| 3 | Middle Element: Count Then Walk | O(n) | O(1) |
+| 3 | Middle Element: Count Then Walk (Implemented) | O(n) | O(1) |
 | 4 | Middle Element: Slow and Fast Pointers (Optimized) | O(n) | O(1) |
 | 5 | Reverse: Iterative Pointer Reversal (Optimized) | O(n) | O(1) |
 | 6 | Reverse: Recursive | O(n) | O(n) recursion stack |
@@ -367,7 +367,7 @@ class SingleLinkedList<T> {
 
 ## Solution
 
-The optimized solution is Approach 2, 4 and 5 above. The version implemented in this repository is Approach 1, 3, 4 and 5.
+This repository implements Approach 1 (Add: Walk to the Tail), Approach 3 (Middle Element: Count Then Walk), Approach 4 (Middle Element: Slow and Fast Pointers), Approach 5 (Reverse: Iterative Pointer Reversal), marked `(Implemented)` in the Approaches section. The optimized approaches on this page, Approach 2 (Add: Keep a Tail Pointer), Approach 4 (Middle Element: Slow and Fast Pointers), Approach 5 (Reverse: Iterative Pointer Reversal), are not implemented in the class.
 
 **Note:** the page marks Approaches 2, 4 and 5 as optimized, but `SingleLinkedListDemo.java` implements Approaches 1, 3, 4 and 5. Its `add` walks to the tail (O(n) per add, no tail pointer) and its main method also uses the count-then-walk middle. The two optimized pieces that are really in the class, the slow/fast middle (`getMiddleElement2`) and the iterative `reverse`, are explained here.
 

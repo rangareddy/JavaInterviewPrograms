@@ -191,9 +191,7 @@ public class Fibonacci {
 
 ## Solution
 
-The optimized solution is Approach 4 and 5 above. The version implemented in this repository is Approach 4.
-
-This page names Approach 4 and 5 as optimized; the class implements Approach 4 (iterative with two variables), which is what is explained here.
+This repository implements Approach 4 (Iterative with Two Variables), which is optimized for printing the series. Approach 5 (Fast Doubling) is the optimized choice for a single number and is not implemented in the class.
 
 The idea: every Fibonacci number is the sum of the two before it, so only the last two numbers need to be kept. `first` and `second` hold two consecutive numbers; each loop step prints `third = first + second` and slides the pair one position forward (`first = second; second = third`). No array is needed: O(n) time, O(1) space.
 

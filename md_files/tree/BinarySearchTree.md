@@ -26,7 +26,7 @@ Demonstrates a Binary Search Tree (BST) of integers with common interview operat
 
 The same problem can be solved in several ways. They are listed from the simplest to the most efficient.
 
-### Approach 1: Insert: Recursive
+### Approach 1: Insert: Recursive (Implemented)
 
 Go left or right depending on the comparison and attach a new node where a null child is found. Concise, but uses `O(h)` stack. This is the version implemented in the repository.
 
@@ -71,7 +71,7 @@ static BinaryNode insertIterative(BinaryNode root, int value) {
 - **Time Complexity:** O(h)
 - **Space Complexity:** O(1)
 
-### Approach 3: Validate: Range Check (Min / Max)
+### Approach 3: Validate: Range Check (Min / Max) (Implemented)
 
 Pass the allowed `(min, max)` range down the recursion; every node must be inside it. Use `long` bounds so that `Integer.MIN_VALUE` / `MAX_VALUE` values are handled correctly. This is the version implemented in the repository.
 
@@ -124,7 +124,7 @@ static int sizeRecursive(BinaryNode node) {
 - **Time Complexity:** O(n)
 - **Space Complexity:** O(h)
 
-### Approach 6: Size: Iterative In-Order with a Stack
+### Approach 6: Size: Iterative In-Order with a Stack (Implemented)
 
 Simulate the recursion with an explicit stack, counting each visited node. This is the version implemented in the repository.
 
@@ -174,7 +174,7 @@ static class CountingTree {
 - **Time Complexity:** O(1) for size()
 - **Space Complexity:** O(1)
 
-### Approach 8: Level-Order: Queue (BFS)
+### Approach 8: Level-Order: Queue (BFS) (Implemented)
 
 Process the tree level by level with a queue, taking `queue.size()` nodes per level. This is the version implemented in the repository.
 
@@ -228,14 +228,14 @@ private static void fill(BinaryNode node, int depth, List<List<Integer>> levels)
 
 | # | Approach | Time | Space |
 |---|----------|------|-------|
-| 1 | Insert: Recursive | O(h) | O(h) |
+| 1 | Insert: Recursive (Implemented) | O(h) | O(h) |
 | 2 | Insert: Iterative (Optimized) | O(h) | O(1) |
-| 3 | Validate: Range Check (Min / Max) | O(n) | O(h) |
+| 3 | Validate: Range Check (Min / Max) (Implemented) | O(n) | O(h) |
 | 4 | Validate: In-Order Traversal Must Be Increasing | O(n) | O(h) |
 | 5 | Size: Recursive Count | O(n) | O(h) |
-| 6 | Size: Iterative In-Order with a Stack | O(n) | O(h) |
+| 6 | Size: Iterative In-Order with a Stack (Implemented) | O(n) | O(h) |
 | 7 | Size: Maintain a Counter (Optimized) | O(1) for size() | O(1) |
-| 8 | Level-Order: Queue (BFS) | O(n) | O(w) (maximum width) |
+| 8 | Level-Order: Queue (BFS) (Implemented) | O(n) | O(w) (maximum width) |
 | 9 | Level-Order: Recursion by Depth | O(n) | O(h) |
 
 ## Source Code
@@ -431,7 +431,7 @@ class BinaryTree {
 
 ## Solution
 
-The optimized solution is Approach 2 and 7 above. The version implemented in this repository is Approach 1, 3, 6 and 8.
+This repository implements Approach 1 (Insert: Recursive), Approach 3 (Validate: Range Check (Min / Max)), Approach 6 (Size: Iterative In-Order with a Stack), Approach 8 (Level-Order: Queue (BFS)), marked `(Implemented)` in the Approaches section. The optimized approaches on this page, Approach 2 (Insert: Iterative), Approach 7 (Size: Maintain a Counter), are not implemented in the class.
 
 The page names Approach 2 (iterative insert) and Approach 7 (maintained counter) as the optimized ones, but the class in this repository codes Approaches 1, 3, 6 and 8: a recursive `add`, the `isBST` range check, a stack-based `size()` and a queue-based `levelOrderTraversal()`. This block explains those coded versions; the class wins.
 

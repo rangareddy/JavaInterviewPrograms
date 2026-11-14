@@ -9,25 +9,24 @@ random pivot in an array results in an improved time complexity in most of the c
 
 ![Mergesort](https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Quicksort-diagram.svg/400px-Quicksort-diagram.svg.png)
 
-## Algorithm Strategy (Partition Around a Pivot)
+## Algorithm Strategy (Random Pivot, Smaller Side First)
 
-1. **Base case:** a range with fewer than two elements (`low >= high`) is already sorted.
-2. **Choose a pivot:** take the rightmost element `arr[high]`.
-3. **Partition:** keep a pointer `i` to the last element known to be `<= pivot` (initially `low - 1`). Scan `j = low .. high - 1`; whenever `arr[j] <= pivot`, increment `i` and swap `arr[i]` with `arr[j]`.
-4. Swap the pivot into position `i + 1`. Everything to its left is `<= pivot`, everything to its right is `> pivot`, so the pivot is in its final position.
-5. **Recurse:** sort `arr[low..pivot-1]` and `arr[pivot+1..high]` independently.
+1. Guard first: a `null` array and ranges with fewer than two elements (`low >= high`) are already sorted.
+2. **Choose a pivot:** pick a random index in `[low, high]` and swap it to `high`. No fixed input order (sorted, reversed, all equal) can then trigger the quadratic worst case on purpose.
+3. **Partition (Lomuto):** keep `i` at the last element known to be `<= pivot` (initially `low - 1`). Scan `j = low .. high - 1`; whenever `arr[j] <= pivot`, increment `i` and swap. Then swap the pivot into `i + 1`, its final position.
+4. **Recurse on the smaller part only:** call `quickSort` on the smaller side and continue the `while` loop on the larger side. Each recursive call handles at most half of the range, so the stack depth is `O(log n)` even in the worst case.
 
-## Example walkthrough for `[8, 3, 7, 1, 5]` (pivot = 5)
+## Example walkthrough for `[8, 3, 7, 1, 5]` (suppose the random pivot is 5)
 
 - Scan: 8 > 5 skip, 3 <= 5 swap to front, 7 > 5 skip, 1 <= 5 swap `-> [3, 1, 7, 8, 5]`
-- Place pivot: `-> [3, 1, 5, 8, 7]`; 5 is final. Recurse on `[3, 1]` and `[8, 7]`.
+- Place pivot: `-> [3, 1, 5, 8, 7]`; 5 is final. The left part has 2 elements and the right part 2, so the left one is recursed and the loop continues on the right one.
 
 ## Complexity Analysis
 
 - **Time Complexity (Best):** `O(n log n)` — The pivot splits the range into two nearly equal parts.
-- **Time Complexity (Average):** `O(n log n)` — Random-like input gives balanced partitions.
-- **Time Complexity (Worst):** `O(n^2)` — Already sorted input with the rightmost pivot gives maximally unbalanced partitions.
-- **Space Complexity:** `O(log n)` — Recursion stack on average (`O(n)` in the worst case); sorts in place.
+- **Time Complexity (Average):** `O(n log n)` — The random pivot gives balanced partitions in expectation for every input order.
+- **Time Complexity (Worst):** `O(n^2)` — Possible only with extremely unlucky random pivots; many equal keys also reduce the benefit of Lomuto partitioning.
+- **Space Complexity:** `O(log n)` — Recursion only on the smaller side bounds the stack depth, even in the worst case; sorts in place.
 
 ## Approaches
 
@@ -145,39 +144,72 @@ public static void quickSortOptimized(int[] arr, int low, int high) {
 
 ```java
 import java.util.Arrays;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class QuickSort {
 
     public static void main(String[] args) {
         int[] arr = {12, 4, 5, 7, 9, 20, 30, 6, 15};
-
         System.out.println("Original Array : " + Arrays.toString(arr));
-        quickSort(arr, 0, arr.length - 1);
+        quickSort(arr);
         System.out.println("Sorted Array   : " + Arrays.toString(arr));
+        System.out.println();
+
+        int[] sorted = {1, 2, 3, 4, 5, 6, 7, 8};
+        System.out.println("Original Array : " + Arrays.toString(sorted) + "   (sorted input: no longer a worst case)");
+        quickSort(sorted);
+        System.out.println("Sorted Array   : " + Arrays.toString(sorted));
+        System.out.println();
+
+        int[] duplicates = {3, 1, 3, 2, 1, 3};
+        System.out.println("Original Array : " + Arrays.toString(duplicates));
+        quickSort(duplicates);
+        System.out.println("Sorted Array   : " + Arrays.toString(duplicates));
+        System.out.println();
+
+        int[] empty = {};
+        quickSort(empty);
+        quickSort(null);
+        System.out.println("Empty and null arrays are returned untouched: " + Arrays.toString(empty));
     }
 
     /**
-     * Sorts {@code arr[low..high]} in place using Quick Sort.
+     * Sorts the whole array in ascending order.
+     *
+     * @param arr the array to sort in place; {@code null} is ignored
+     */
+    private static void quickSort(int[] arr) {
+        // Guard Clause: nothing to sort
+        if (arr == null || arr.length <= 1) {
+            return;
+        }
+        quickSort(arr, 0, arr.length - 1);
+    }
+
+    /**
+     * Sorts {@code arr[low..high]} in place using Quick Sort with a random pivot.
      *
      * @param arr  the array to sort
      * @param low  the first index of the range
      * @param high the last index of the range
      */
     private static void quickSort(int[] arr, int low, int high) {
-        if (low < high) {
-            // Select the pivot position
+        while (low < high) {
             int pivot = partition(arr, low, high);
 
-            // Sort the elements on the left of pivot
-            quickSort(arr, low, pivot - 1);
-
-            // Sort the elements on the right of pivot
-            quickSort(arr, pivot + 1, high);
+            // Recurse on the smaller part and loop on the larger one: the stack depth stays O(log n)
+            if (pivot - low < high - pivot) {
+                quickSort(arr, low, pivot - 1);
+                low = pivot + 1;
+            } else {
+                quickSort(arr, pivot + 1, high);
+                high = pivot - 1;
+            }
         }
     }
 
     /**
-     * Partitions {@code arr[low..high]} around the rightmost element.
+     * Partitions {@code arr[low..high]} around a randomly chosen pivot.
      *
      * @param arr  the array to partition
      * @param low  the first index of the range
@@ -185,10 +217,11 @@ public class QuickSort {
      * @return the final index of the pivot
      */
     private static int partition(int[] arr, int low, int high) {
-        // choose the rightmost element as pivot
+        // choose a random pivot and move it to the end
+        swap(arr, low + ThreadLocalRandom.current().nextInt(high - low + 1), high);
         int pivot = arr[high];
 
-        // pointer for greater element
+        // pointer for the last element that is <= pivot
         int i = low - 1;
 
         for (int j = low; j < high; j++) {
@@ -213,39 +246,28 @@ public class QuickSort {
 
 ## Solution
 
-The optimized solution is Approach 4 above. The version implemented in this repository is Approach 1.
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
-The idea: pick one element as the pivot, rearrange the range so that everything `<=` the pivot is on its left and everything larger is on its right (`partition`), which puts the pivot at its final sorted index, then sort the left part and the right part the same way. Here the pivot is the rightmost element; `i` marks the end of the "<= pivot" zone and `j` scans the range, swapping each small element into that zone. On average each level does O(n) work and there are about log n levels, giving O(n log n); the sort is in place. The page names a random-pivot variant as the optimized one, but the class in this repository uses the rightmost pivot and plain recursion, which is what is traced.
+The idea: partition the range around a pivot so smaller values end up on its left and larger ones on its right, then sort the two sides the same way. Two safeguards make it robust: the pivot is picked at random, so a sorted or reversed input is no longer a worst case, and only the smaller side is recursed while a loop handles the larger side, so the call stack stays at O(log n).
 
-**Input:** `arr = [12, 4, 5, 7, 9, 20, 30, 6, 15]`.
+**Input:** `arr = [8, 3, 7, 1, 5]`. The pivot is random, so this trace assumes the picks 5, 8 and 1 (the sorted result is the same for any picks).
 
-First partition (`low = 0`, `high = 8`, pivot = 15, `i` starts at -1). Elements `<= 15` are swapped to the front; 20 and 30 are skipped; when `j = 7` the value 6 is swapped with `arr[5]` (20); finally the pivot is swapped into position `i + 1 = 6`.
+| Step | Range `[low..high]` | Pivot (moved to `high`) | Array after partitioning | Pivot ends at | Left / right size | What happens next |
+|------|---------------------|-------------------------|--------------------------|---------------|-------------------|-------------------|
+| 1 | `[0..4]` | 5 | `3 1 [5] 8 7` | 2 | 2 / 2 | equal sizes: recurse on the right `[3..4]`, loop on the left `[0..1]` |
+| 2 | `[3..4]` | 8 | `3 1 5 7 [8]` | 4 | 1 / 0 | the right side is empty and the left side is one element: done |
+| 3 | `[0..1]` | 1 | `[1] 3 5 7 8` | 0 | 0 / 1 | the left side is empty and the right side is one element: done |
 
-| j | arr[j] | arr[j] <= 15 ? | i after | Array |
-|---|--------|----------------|---------|-------|
-| 0 | 12 | yes | 0 | `12 4 5 7 9 20 30 6 15` |
-| 1 | 4 | yes | 1 | unchanged |
-| 2 | 5 | yes | 2 | unchanged |
-| 3 | 7 | yes | 3 | unchanged |
-| 4 | 9 | yes | 4 | unchanged |
-| 5 | 20 | no | 4 | unchanged |
-| 6 | 30 | no | 4 | unchanged |
-| 7 | 6 | yes | 5 | `12 4 5 7 9 6 30 20 15` (swap indices 5 and 7) |
-| end | pivot 15 | swap `arr[6]` with `arr[8]` | | `12 4 5 7 9 6 15 20 30`, pivot index 6 |
+```mermaid
+flowchart TD
+    A["3 1 5 8 7 after pivot 5"] --> B["left part: 3 1"]
+    A --> C["right part: 8 7"]
+    C --> D["pivot 8 gives 7 8"]
+    B --> E["pivot 1 gives 1 3"]
+```
 
-All partitions in the order the recursion runs them:
+Why the stack stays small: at every level the recursive call gets the smaller part (at most half of the range), and the larger part is handled by the loop. On a sorted input of 200,000 elements a fixed last-element pivot would recurse 200,000 levels deep, while this version needs only about log2(200,000), roughly 18, and the random pivot keeps the partitions balanced.
 
-| Range (low..high) | Pivot | Pivot ends at | Array after the partition |
-|-------------------|-------|---------------|---------------------------|
-| 0..8 | 15 | 6 | `12 4 5 7 9 6 15 20 30` |
-| 0..5 | 6 | 2 | `4 5 6 7 9 12 15 20 30` |
-| 0..1 | 5 | 1 | `4 5 6 7 9 12 15 20 30` |
-| 3..5 | 12 | 5 | `4 5 6 7 9 12 15 20 30` |
-| 3..4 | 9 | 4 | `4 5 6 7 9 12 15 20 30` |
-| 7..8 | 30 | 8 | `4 5 6 7 9 12 15 20 30` |
+**Edge cases.** `null`, empty and one-element arrays return at once through the guard clause. Duplicates such as `[3, 1, 3, 2, 1, 3]` are handled by the `<=` test and sort correctly, but a very large number of equal keys makes the partitions lopsided (see Approach 3 for the three-way partition). The sort is not stable.
 
-Ranges with `low >= high` (such as 0..0, 3..3, 7..7 or 9..8) stop immediately.
-
-**Edge cases.** One element or an empty range (`low >= high`) does nothing. Duplicates are fine because the test is `<=`. A sorted or reverse-sorted array with the rightmost pivot is the worst case, O(n^2) time and deep recursion, which is the weakness the random-pivot variant addresses. The recursion needs O(log n) stack on average.
-
-**Result:** `[4, 5, 6, 7, 9, 12, 15, 20, 30]`, matching the class output.
+**Result:** `[4, 5, 6, 7, 9, 12, 15, 20, 30]` for the sample in the class, matching its output.

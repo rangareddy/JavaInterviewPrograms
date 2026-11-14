@@ -43,7 +43,7 @@ public static boolean anagramSort(String a, String b) {
 - **Time Complexity:** O(n log n)
 - **Space Complexity:** O(n)
 
-### Approach 2: Frequency Map (HashMap)
+### Approach 2: Frequency Map (HashMap) (Implemented)
 
 Count the characters of the first string and subtract the characters of the second; any shortage means they differ. Works for any Unicode text. This is the version implemented in the repository.
 
@@ -110,7 +110,7 @@ public static boolean anagramXorWrong(String a, String b) {
 | # | Approach | Time | Space |
 |---|----------|------|-------|
 | 1 | Sort Both Strings | O(n log n) | O(n) |
-| 2 | Frequency Map (HashMap) | O(n) | O(k) |
+| 2 | Frequency Map (HashMap) (Implemented) | O(n) | O(k) |
 | 3 | Frequency Array (Optimized) | O(n) | O(1) (fixed-size array) |
 | 4 | Pitfall: XOR of All Characters (Incorrect) | O(n) | O(1) |
 
@@ -168,7 +168,7 @@ public class Anagram {
 
 ## Solution
 
-The optimized solution is Approach 3 above. The version implemented in this repository is Approach 2.
+This repository implements Approach 2 (Frequency Map (HashMap)), marked `(Implemented)` in the Approaches section. The optimized approach on this page, Approach 3 (Frequency Array), is not implemented in the class.
 
 **Note:** the page names Approach 3 (frequency array) as the optimized one, but the version coded in `Anagram.java` is Approach 2, the `HashMap` frequency count. The walkthrough below follows the class; the array version works the same way with `int[256]` in place of the map.
 

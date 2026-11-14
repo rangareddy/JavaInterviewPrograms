@@ -137,7 +137,7 @@ public static int ladderLengthBidirectional(String beginWord, String endWord, Li
 - **Time Complexity:** O(N * L * 26), usually far fewer steps
 - **Space Complexity:** O(N * L)
 
-### Approach 4: BFS Trying All 26 Letters
+### Approach 4: BFS Trying All 26 Letters (Implemented)
 
 Generate the neighbours of a word by replacing each position with every letter and keeping those in the dictionary; remove found words from the set so they are queued once. This is the version implemented in the repository.
 
@@ -181,7 +181,7 @@ public static int ladderLength(String beginWord, String endWord, List<String> wo
 | 1 | BFS over a Pairwise-Built Graph | O(N^2 * L) | O(N^2) |
 | 2 | BFS with Wildcard Patterns | O(N * L^2) | O(N * L^2) |
 | 3 | Bidirectional BFS (Optimized) | O(N * L * 26), usually far fewer steps | O(N * L) |
-| 4 | BFS Trying All 26 Letters | O(N * L * 26) | O(N * L) |
+| 4 | BFS Trying All 26 Letters (Implemented) | O(N * L * 26) | O(N * L) |
 
 ## Source Code
 
@@ -248,7 +248,7 @@ public class WordLadder {
 
 ## Solution
 
-The optimized solution is Approach 3 above. The version implemented in this repository is Approach 4.
+This repository implements Approach 4 (BFS Trying All 26 Letters), marked `(Implemented)` in the Approaches section. The optimized approach on this page, Approach 3 (Bidirectional BFS), is not implemented in the class.
 
 This page marks Approach 3 (bidirectional BFS) as the fastest, but the class in this repository implements Approach 4, so this section explains the code as written: a one-directional BFS that tries all 26 letters at every position.
 

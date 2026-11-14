@@ -75,7 +75,7 @@ public static String palindromeDp(String s) {
 - **Time Complexity:** O(n^2)
 - **Space Complexity:** O(n^2)
 
-### Approach 3: Expand Around Center
+### Approach 3: Expand Around Center (Implemented)
 
 Every palindrome is centered on a character (odd length) or between two characters (even length). Expand outwards from each of the `2n - 1` centers. This is the version implemented in the repository: simple and `O(1)` space.
 
@@ -144,7 +144,7 @@ public static String palindromeManacher(String s) {
 |---|----------|------|-------|
 | 1 | Brute Force | O(n^3) | O(1) |
 | 2 | Dynamic Programming Table | O(n^2) | O(n^2) |
-| 3 | Expand Around Center | O(n^2) | O(1) |
+| 3 | Expand Around Center (Implemented) | O(n^2) | O(1) |
 | 4 | Manacher's Algorithm (Optimized) | O(n) | O(n) |
 
 ## Source Code
@@ -217,9 +217,7 @@ public class LongestPalindrome {
 
 ## Solution
 
-The optimized solution is Approach 4 above. The version implemented in this repository is Approach 3.
-
-Note: the Approaches section marks Approach 4 (Manacher's algorithm), but the class in this repository implements Approach 3, expanding around every center. This block explains the code as it is written.
+This repository implements Approach 3 (Expand Around Center), marked `(Implemented)` in the Approaches section. The optimized approach on this page, Approach 4 (Manacher's Algorithm), is not implemented in the class.
 
 The idea: every palindrome mirrors around its center, which is either one character (odd length) or the gap between two characters (even length). For each index `i`, expand outward from `(i, i)` and from `(i, i+1)` while the two characters match, and keep the longest palindrome found. A longer one replaces the best only if it is strictly longer.
 

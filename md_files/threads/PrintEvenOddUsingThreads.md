@@ -26,7 +26,7 @@ Utility class to print numbers in order with one thread printing the odd numbers
 
 The same problem can be solved in several ways. They are listed from the simplest to the most efficient.
 
-### Approach 1: wait() / notify() with a Shared Monitor
+### Approach 1: wait() / notify() with a Shared Monitor (Implemented)
 
 Both threads share one lock object and a flag that says whose turn it is. A thread waits in a `while` loop until it is its turn, prints, flips the flag and calls `notify()`. This is the version implemented in the repository.
 
@@ -251,7 +251,7 @@ public static String semaphores(int max) throws InterruptedException {
 
 | # | Approach | Time | Space |
 |---|----------|------|-------|
-| 1 | wait() / notify() with a Shared Monitor | O(n) | O(1) |
+| 1 | wait() / notify() with a Shared Monitor (Implemented) | O(n) | O(1) |
 | 2 | ReentrantLock + Condition | O(n) | O(1) |
 | 3 | BlockingQueue Token Passing | O(n) | O(1) |
 | 4 | Volatile Turn Flag with Spinning | O(n) (plus busy waiting) | O(1) |
@@ -354,9 +354,7 @@ class Printer {
 
 ## Solution
 
-The optimized solution is Approach 7 above. The version implemented in this repository is Approach 1.
-
-Note: the page's text calls Approach 7 (two semaphores) the optimized one, but the class in this repository implements Approach 1, `wait()` / `notify()` on a shared monitor, so that is what is traced here.
+This repository implements Approach 1 (wait() / notify() with a Shared Monitor), marked `(Implemented)` in the Approaches section. The optimized approach on this page, Approach 7 (Two Semaphores), is not implemented in the class.
 
 The idea: two threads share one `Printer` object. A flag `isOdd` says who goes next: `false` means "an odd number is printed next" (the initial state), `true` means "an even number". `printOdd` waits in a `while (isOdd)` loop, prints, sets `isOdd = true` and calls `notify()`; `printEven` waits in `while (!isOdd)`, prints, sets `isOdd = false` and calls `notify()`. Because the flag strictly alternates and both methods are `synchronized`, the output is always in numeric order, however the threads are scheduled. Each thread just loops its own numbers: Odd runs `1, 3, 5, ...`, Even runs `2, 4, 6, ...`.
 

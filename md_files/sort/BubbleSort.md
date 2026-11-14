@@ -3,23 +3,23 @@ Bubble sorting is a sorting algorithm where we check two elements and swap them 
 
 !["Bubble Sort"](./images/bubble_sort_algorithm.png)
 
-## Algorithm Strategy (Repeated Adjacent Swaps)
+## Algorithm Strategy (Adjacent Swaps with a Shrinking Range)
 
-1. Let `n` be the array length. Run an outer loop for `i = 0 .. n - 2` (one pass per iteration).
-2. In each pass, walk an inner index `j` from `0` to `n - i - 2`.
-3. Compare `arr[j]` with `arr[j + 1]`; if the left element is greater, swap them.
-4. After pass `i`, the `i + 1` largest elements are in their final positions at the end of the array, so the next pass can stop one element earlier (`n - i - 1`).
-5. After `n - 1` passes the whole array is sorted.
+1. Guard first: a `null` or single-element array is already sorted and is returned untouched.
+2. Let `end` be the last index that still has to be compared (initially `n - 1`).
+3. In each pass walk `j` from `0` to `end - 1`; if `arr[j] > arr[j + 1]` swap them and remember `lastSwap = j`.
+4. Everything after the last swap of a pass is already in its final place, so the next pass stops at `end = lastSwap`.
+5. A pass without any swap leaves `lastSwap = 0`, which ends the loop. A sorted array therefore needs a single pass.
 
 ## Example walkthrough for `[5, 3, 8, 4]`
 
-- Pass 1: `[5,3,8,4] -> [3,5,8,4] -> [3,5,8,4] -> [3,5,4,8]` (8 is now in place)
-- Pass 2: `[3,5,4,8] -> [3,5,4,8] -> [3,4,5,8]` (5 is now in place)
-- Pass 3: `[3,4,5,8]` (no swaps, the array is sorted)
+- Pass 1 (`end = 3`): `[5,3,8,4] -> [3,5,8,4] -> [3,5,8,4] -> [3,5,4,8]`; the last swap was at `j = 2`, so `end = 2`.
+- Pass 2 (`end = 2`): `[3,5,4,8] -> [3,5,4,8] -> [3,4,5,8]`; the last swap was at `j = 1`, so `end = 1`.
+- Pass 3 (`end = 1`): `3 <= 4`, no swap, `lastSwap = 0`, the loop ends with `[3, 4, 5, 8]`.
 
 ## Complexity Analysis
 
-- **Time Complexity (Best):** `O(n^2)` — Every pass is performed because this version has no early-exit check.
+- **Time Complexity (Best):** `O(n)` — An already sorted array needs one pass without a swap.
 - **Time Complexity (Average):** `O(n^2)` — Nested loops over the array.
 - **Time Complexity (Worst):** `O(n^2)` — Array in reverse order.
 - **Space Complexity:** `O(1)` — Sorts in place; only a temporary variable is used when swapping.
@@ -204,16 +204,33 @@ public class BubbleSort {
 
     public static void main(String[] args) {
         int[] arr = {12, 4, 5, 7, 9, 20, 30, 6, 15};
-
         System.out.println("Original Array : " + Arrays.toString(arr));
         bubbleSort(arr);
         System.out.println("Sorted Array   : " + Arrays.toString(arr));
+        System.out.println();
+
+        int[] sorted = {1, 2, 3, 4, 5};
+        System.out.println("Original Array : " + Arrays.toString(sorted) + "   (already sorted: one pass, no swap)");
+        bubbleSort(sorted);
+        System.out.println("Sorted Array   : " + Arrays.toString(sorted));
+        System.out.println();
+
+        int[] duplicates = {3, 1, 3, 2, 1};
+        System.out.println("Original Array : " + Arrays.toString(duplicates));
+        bubbleSort(duplicates);
+        System.out.println("Sorted Array   : " + Arrays.toString(duplicates));
+        System.out.println();
+
+        int[] empty = {};
+        bubbleSort(empty);
+        bubbleSort(null);
+        System.out.println("Empty and null arrays are returned untouched: " + Arrays.toString(empty));
     }
 
     /**
-     * Sorts the array in ascending order using Bubble Sort.
+     * Sorts the array in ascending order using Bubble Sort that stops at the last swap position of each pass.
      *
-     * @param arr the array to sort in place
+     * @param arr the array to sort in place; {@code null} and arrays with fewer than two elements are left as they are
      */
     private static void bubbleSort(int[] arr) {
         // Guard Clause: null or single-element arrays are already sorted
@@ -221,14 +238,17 @@ public class BubbleSort {
             return;
         }
 
-        int n = arr.length;
-        for (int i = 0; i < n - 1; i++) {
-            // The last i elements are already in place, so the inner loop shrinks every pass
-            for (int j = 0; j < n - i - 1; j++) {
+        int end = arr.length - 1;
+        while (end > 0) {
+            int lastSwap = 0;
+            for (int j = 0; j < end; j++) {
                 if (arr[j] > arr[j + 1]) {
                     swap(arr, j, j + 1);
+                    lastSwap = j;
                 }
             }
+            // Everything after the last swap is already in its final place
+            end = lastSwap;
         }
     }
 
@@ -243,25 +263,32 @@ public class BubbleSort {
 
 ## Solution
 
-The optimized solution is Approach 7 above. The version implemented in this repository is Approach 1.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
-The idea: repeatedly walk through the array comparing neighbours and swapping any pair that is out of order. After pass 1 the largest value has "bubbled" to the last slot, after pass 2 the second largest sits in the second-last slot, and so on, so the inner loop can stop earlier each pass (`j < n - i - 1`). The page names "remember the last swap position" as the optimized variant, but the class in this repository implements this basic version with the shrinking inner loop and no early exit, and that is what is traced here.
+The idea: walk through the array comparing neighbours and swapping any pair that is out of order, but remember where the last swap of the pass happened. Everything after that position is already sorted, so the next pass stops there. When a pass makes no swap, the position is 0 and the loop ends.
 
-**Input:** `arr = [12, 4, 5, 7, 9, 20, 30, 6, 15]` (n = 9, so 8 passes).
+**Input:** `arr = [12, 4, 5, 7, 9, 20, 30, 6, 15]` (n = 9, so the first pass compares up to index 7 and 8).
 
-| Pass i | Inner loop j | Swaps | Array after the pass |
-|--------|--------------|-------|----------------------|
-| 0 | 0 to 7 | 6 | `4 5 7 9 12 20 6 15 30` |
-| 1 | 0 to 6 | 2 | `4 5 7 9 12 6 15 20 30` |
-| 2 | 0 to 5 | 1 | `4 5 7 9 6 12 15 20 30` |
-| 3 | 0 to 4 | 1 | `4 5 7 6 9 12 15 20 30` |
-| 4 | 0 to 3 | 1 | `4 5 6 7 9 12 15 20 30` |
-| 5 | 0 to 2 | 0 | `4 5 6 7 9 12 15 20 30` |
-| 6 | 0 to 1 | 0 | `4 5 6 7 9 12 15 20 30` |
-| 7 | 0 | 0 | `4 5 6 7 9 12 15 20 30` |
+| Pass | Compares `j` from 0 to | Swaps | Last swap at `j` | Array after the pass | Next `end` |
+|------|------------------------|-------|------------------|----------------------|------------|
+| 1 | 7 | 6 | 7 | `4 5 7 9 12 20 6 15 30` | 7 |
+| 2 | 6 | 2 | 6 | `4 5 7 9 12 6 15 20 30` | 6 |
+| 3 | 5 | 1 | 4 | `4 5 7 9 6 12 15 20 30` | 4 |
+| 4 | 3 | 1 | 3 | `4 5 7 6 9 12 15 20 30` | 3 |
+| 5 | 2 | 1 | 2 | `4 5 6 7 9 12 15 20 30` | 2 |
+| 6 | 1 | 0 | 0 | `4 5 6 7 9 12 15 20 30` | 0, the loop ends |
 
-After pass 0 the value 30 is fixed at the end, after pass 1 the value 20 is fixed, and so on. The array is already sorted after pass 4, but this version has no "no swaps" check, so passes 5 to 7 still run and only compare.
+Pass 3 shows the saving: the last swap was at index 4, so the sorted tail `12 15 20 30` is skipped. The basic version would still compare all of it.
 
-**Edge cases.** `null`, empty and one-element arrays return at once through the guard clause. An already sorted array does no swaps but still makes n(n-1)/2 comparisons, so the time is O(n^2) in every case; space is O(1) and equal values are never swapped (strict `>`), so the sort is stable. `swap` ignores `i == j`.
+```mermaid
+flowchart LR
+    S(["end = n - 1"]) --> P["one pass: j = 0 .. end - 1<br/>swap if arr[j] > arr[j+1]<br/>lastSwap = j"]
+    P --> Q{"lastSwap = 0 ?"}
+    Q -->|"no"| E["end = lastSwap"]
+    E --> P
+    Q -->|"yes"| D(["sorted"])
+```
+
+**Edge cases.** `null`, empty and one-element arrays return at once through the guard clause. An already sorted array (`[1, 2, 3, 4, 5]`) makes one pass with no swap, so it costs only n - 1 comparisons, O(n). A reverse-ordered array swaps in every pass and is the O(n^2) worst case. Duplicates are never swapped with each other (the test is a strict `>`), so equal values keep their order and the sort is stable.
 
 **Result:** `[4, 5, 6, 7, 9, 12, 15, 20, 30]`, matching the class output.

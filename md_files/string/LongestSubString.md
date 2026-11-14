@@ -45,7 +45,7 @@ public static String longestBrute(String s) {
 - **Time Complexity:** O(n^2)
 - **Space Complexity:** O(min(n, k))
 
-### Approach 2: Sliding Window with a Set
+### Approach 2: Sliding Window with a Set (Implemented)
 
 Grow the window on the right while characters are new; when a duplicate appears, remove characters from the left until it is gone. Each character is added and removed at most once (up to `2n` steps). This is the version implemented in the repository.
 
@@ -116,7 +116,7 @@ public static int longestLengthAscii(String s) {
 | # | Approach | Time | Space |
 |---|----------|------|-------|
 | 1 | Brute Force | O(n^2) | O(min(n, k)) |
-| 2 | Sliding Window with a Set | O(n) | O(min(n, k)) |
+| 2 | Sliding Window with a Set (Implemented) | O(n) | O(min(n, k)) |
 | 3 | Sliding Window with Last-Seen Index (Optimized) | O(n) | O(min(n, k)) |
 | 4 | Last-Seen Array for ASCII Input | O(n) | O(1) (fixed-size array) |
 
@@ -179,9 +179,9 @@ public class LongestSubString {
 
 ## Solution
 
-The optimized solution is Approach 3 above. The version implemented in this repository is Approach 2.
+This repository implements Approach 2 (Sliding Window with a Set), marked `(Implemented)` in the Approaches section. The optimized approach on this page, Approach 3 (Sliding Window with Last-Seen Index), is not implemented in the class.
 
-The idea (as coded in the class, which is Approach 2 of the page, a sliding window with a `HashSet`; the Approaches section marks Approach 3, last-seen index): keep a window `[left, right)` that never contains a repeated character. If the next character is new, add it and grow the window to the right. If it is already in the window, remove the character at `left` and shrink from the left until the duplicate is gone. The longest window seen is remembered by its start and length.
+The idea (as coded in the class, a sliding window with a `HashSet`): keep a window `[left, right)` that never contains a repeated character. If the next character is new, add it and grow the window to the right. If it is already in the window, remove the character at `left` and shrink from the left until the duplicate is gone. The longest window seen is remembered by its start and length.
 
 **Input:** `str = "abcadbc"`.
 

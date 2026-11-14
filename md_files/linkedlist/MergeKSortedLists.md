@@ -177,7 +177,7 @@ public class MergeKSortedLists {
 
 ## Solution
 
-The optimized solution is Approach 3 and 4 above. The version implemented in this repository is Approach 4.
+This repository implements Approach 4 (Min-Heap of the List Heads), marked `(Implemented)` in the Approaches section. The optimized approaches on this page, Approach 3 (Divide and Conquer), Approach 4 (Min-Heap of the List Heads), are not implemented in the class.
 
 The idea: the smallest remaining node overall is always the head of one of the k lists. A min-heap (`PriorityQueue` ordered by node value) holds exactly one node per list - the current head. Pop the smallest, append it to the result, and push its `next` so that list is represented again. The heap never has more than k nodes, so each of the N nodes costs O(log k): O(N log k) time, O(k) space.
 

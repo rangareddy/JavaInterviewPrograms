@@ -65,7 +65,7 @@ private static int solve(String a, String b, int i, int j, int[][] memo) {
 - **Time Complexity:** O(m * n)
 - **Space Complexity:** O(m * n)
 
-### Approach 3: Bottom-Up DP Table
+### Approach 3: Bottom-Up DP Table (Implemented)
 
 `dp[i][j]` is the LCS of the first `i` and `j` characters. This is the version implemented in the repository.
 
@@ -115,7 +115,7 @@ public static int lcsTwoRows(String text1, String text2) {
 |---|----------|------|-------|
 | 1 | Plain Recursion | O(2^(m + n)) | O(m + n) |
 | 2 | Memoization (Top-Down DP) | O(m * n) | O(m * n) |
-| 3 | Bottom-Up DP Table | O(m * n) | O(m * n) |
+| 3 | Bottom-Up DP Table (Implemented) | O(m * n) | O(m * n) |
 | 4 | Two Rolling Rows (Optimized) | O(m * n) | O(min(m, n)) |
 
 ## Source Code
@@ -158,7 +158,7 @@ public class LongestCommonSubsequence {
 
 ## Solution
 
-The optimized solution is Approach 4 above. The version implemented in this repository is Approach 3.
+This repository implements Approach 3 (Bottom-Up DP Table), marked `(Implemented)` in the Approaches section. The optimized approach on this page, Approach 4 (Two Rolling Rows), is not implemented in the class.
 
 **Note:** the page lists Approach 4 (two rolling rows) as the optimized one, but the class in this repository implements Approach 3, the full bottom-up table. This block explains the code as written; the rolling-row version computes the same cells while keeping only two rows.
 
