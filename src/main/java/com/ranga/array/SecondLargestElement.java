@@ -1,7 +1,6 @@
 package com.ranga.array;
 
 import java.util.Arrays;
-import java.util.OptionalInt;
 
 /**
  * Find the second largest distinct value of an integer array in a single pass, or report that it does not exist (fewer than two distinct values).
@@ -14,10 +13,12 @@ import java.util.OptionalInt;
  *   <li>If {@code second} was never set, there is no second largest value.</li>
  * </ol>
  *
+ * <p><b>Return convention:</b> the method returns a plain {@code Integer}, never an {@code Optional}: the second largest value, or {@code null} when it does not exist (a {@code null} array, an empty array, one element or only equal elements).
+ *
  * <p><b>Example walkthrough</b>
  * <ul>
  *   <li>For {@code [12, 35, 1, 10, 34, 1]}: the pass ends with {@code largest = 35} and {@code second = 34}.</li>
- *   <li>For {@code [7, 7, 7]} there is only one distinct value, so the answer does not exist.</li>
+ *   <li>For {@code [7, 7, 7]} there is only one distinct value, so the answer does not exist ({@code null}); the same holds for {@code []}, {@code [3]} and a {@code null} array.</li>
  * </ul>
  *
  * <p><b>Complexity Analysis:</b>
@@ -31,16 +32,20 @@ import java.util.OptionalInt;
 public class SecondLargestElement {
 
     public static void main(String[] args) {
-        int[][] inputs = {{12, 35, 1, 10, 34, 1}, {10, 5, 10}, {7, 7, 7}, {3}, {-5, -1, -9}};
+        int[][] inputs = {{12, 35, 1, 10, 34, 1}, {10, 5, 10}, {7, 7, 7}, {3}, {-5, -1, -9}, {}, null};
         for (int[] nums : inputs) {
             System.out.println("Input  : nums = " + Arrays.toString(nums));
-            OptionalInt second = secondLargest(nums);
-            System.out.println("Output : " + (second.isPresent() ? String.valueOf(second.getAsInt()) : "does not exist"));
+            Integer second = secondLargest(nums);
+            System.out.println("Output : " + (second != null ? String.valueOf(second) : "does not exist"));
             System.out.println();
         }
     }
 
-    public static OptionalInt secondLargest(int[] nums) {
+    /** The second largest distinct value, or {@code null} when it does not exist (also for a null or too short array). */
+    public static Integer secondLargest(int[] nums) {
+        if (nums == null || nums.length < 2) {
+            return null;
+        }
         long largest = Long.MIN_VALUE;
         long second = Long.MIN_VALUE;
         for (int num : nums) {
@@ -51,6 +56,6 @@ public class SecondLargestElement {
                 second = num;
             }
         }
-        return second == Long.MIN_VALUE ? OptionalInt.empty() : OptionalInt.of((int) second);
+        return second == Long.MIN_VALUE ? null : Integer.valueOf((int) second);
     }
 }
