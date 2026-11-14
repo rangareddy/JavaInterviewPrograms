@@ -203,6 +203,25 @@ public static int maxProduct(int[] nums) {
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: a product can flip sign. A very negative product times a negative number becomes the new maximum. So the loop tracks both the largest (`max`) and the smallest (`min`) product of a subarray ending at the current element. For each number `n` the new `max` and `min` are the largest and smallest of `n` (start fresh), `max * n` and `min * n`. `result` keeps the best `max` seen.
+
+**Input:** `nums = [-2, 3, -4]`. Start: `max = min = result = -2`.
+
+| Step | `i` | `n` | `max * n` | `min * n` | new `max` | new `min` | `result` |
+|------|-----|-----|-----------|-----------|-----------|-----------|----------|
+| 1 | 1 | 3 | -6 | -6 | 3 | -6 | 3 |
+| 2 | 2 | -4 | -12 | 24 | 24 | -12 | 24 |
+
+At step 2 the old minimum `-6` times `-4` gives `24`: that is why `min` must be tracked.
+
+The page's other sample, `[2, 3, -2, 4]`, traces as: step 1 `n=3` gives `max=6, min=3, result=6`; step 2 `n=-2` gives `max=-2, min=-12`; step 3 `n=4` gives `max=4, min=-48`; `result` stays `6`.
+
+**Edge cases.** A zero resets both `max` and `min` to `0` (since `n = 0` is among the candidates), so `[-2, 0, -1]` returns `0` and the next number starts fresh. A single element returns itself. `null` or empty throws `IllegalArgumentException`.
+
+**Result:** `24` for `[-2, 3, -4]` and `6` for `[2, 3, -2, 4]`, both matching the class output.
+
 ## Source Code
 
 ### MaximumProductSubarray.java

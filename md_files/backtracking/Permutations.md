@@ -149,6 +149,48 @@ private static void backtrack(int[] nums, boolean[] used, List<Integer> current,
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: build the permutation one position at a time. A `used[]` array marks the indices already in the path; at each depth the loop tries every unused index, marks it, adds the value, recurses, then undoes both (`remove` and `used[i] = false`). When the path length equals `nums.length` a copy is stored. Trying all unused indices in order produces every ordering exactly once, in lexicographic index order.
+
+**Input:** `nums = [1, 2, 3]`.
+
+| Step | Action | Path | Result so far |
+|------|--------|------|---------------|
+| 1 | choose 1 (idx 0) | `[1]` | |
+| 2 | choose 2 (idx 1) | `[1, 2]` | |
+| 3 | choose 3 (idx 2), full | `[1, 2, 3]` | record `[1, 2, 3]` |
+| 4 | undo 3, 2; choose 3 (idx 2) | `[1, 3]` | |
+| 5 | choose 2 (idx 1), full | `[1, 3, 2]` | record `[1, 3, 2]` |
+| 6 | undo to `[]`; choose 2 (idx 1) | `[2]` | |
+| 7 | choose 1, then 3 | `[2, 1, 3]` | record `[2, 1, 3]` |
+| 8 | undo; choose 3, then 1 | `[2, 3, 1]` | record `[2, 3, 1]` |
+| 9 | undo to `[]`; choose 3 (idx 2), then 1, 2 | `[3, 1, 2]` | record `[3, 1, 2]` |
+| 10 | undo; choose 2, then 1 | `[3, 2, 1]` | record `[3, 2, 1]` |
+
+```mermaid
+graph TD
+    R["[ ]"] --> A["1"]
+    R --> B["2"]
+    R --> C["3"]
+    A --> A1["1,2"]
+    A --> A2["1,3"]
+    A1 --> L1["1,2,3"]
+    A2 --> L2["1,3,2"]
+    B --> B1["2,1"]
+    B --> B2["2,3"]
+    B1 --> L3["2,1,3"]
+    B2 --> L4["2,3,1"]
+    C --> C1["3,1"]
+    C --> C2["3,2"]
+    C1 --> L5["3,1,2"]
+    C2 --> L6["3,2,1"]
+```
+
+**Edge cases.** An empty array returns an empty list immediately (the guard returns before any recursion). A single element returns `[[1]]`. The `used` array keeps an element from appearing twice in one path.
+
+**Result:** `permute([1, 2, 3])` returns `[[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]`, matching the class output.
+
 ## Source Code
 
 ### Permutations.java

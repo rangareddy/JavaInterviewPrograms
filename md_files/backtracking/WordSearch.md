@@ -251,6 +251,45 @@ private static boolean dfs(char[][] board, String word, int i, int j, int index)
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: try every cell as a starting point; from a cell, `dfs` checks that the current letter equals `word.charAt(index)`, then explores down, up, right, left for the next letter. To stop a cell being reused in one path, the cell is overwritten with `#` while it is on the path and restored afterwards (backtracking), so no `visited` array is needed. Running off the grid, hitting `#`, or a letter mismatch ends that branch; reaching the last index of the word means success.
+
+**Input:** the board below and `word = "ABCCED"`.
+
+```text
+     c0 c1 c2 c3
+r0 [  A  B  C  E ]
+r1 [  S  F  C  S ]
+r2 [  A  D  E  E ]
+```
+
+| Step | Cell | `index` / letter wanted | Result |
+|------|------|-------------------------|--------|
+| 1 | (0,0) `A` | 0 / `A` | match, mark `#`; try down first |
+| 2 | (1,0) `S` | 1 / `B` | mismatch, return false |
+| 3 | (0,1) `B` | 1 / `B` | match (right from (0,0), after down failed and up was off-grid), mark `#` |
+| 4 | (1,1) `F` | 2 / `C` | mismatch (down from `B`) |
+| 5 | (0,2) `C` | 2 / `C` | match (right from `B`), mark `#` |
+| 6 | (1,2) `C` | 3 / `C` | match (down), mark `#` |
+| 7 | (2,2) `E` | 4 / `E` | match (down), mark `#` |
+| 8 | (2,1) `D` | 5 / `D` | down is off-grid, up is `#` and right is `E` (both fail); left is `D`: `index == 5 == length - 1`, return true |
+
+The true result travels back up through the `||` chain; each cell restores its letter on the way out, and `exist` returns true from the very first start cell.
+
+```mermaid
+graph LR
+    A["A (0,0)"] --> B["B (0,1)"]
+    B --> C1["C (0,2)"]
+    C1 --> C2["C (1,2)"]
+    C2 --> E["E (2,2)"]
+    E --> D["D (2,1)"]
+```
+
+**Edge cases.** `null` board, empty board, `null` word or empty word returns `false` immediately. For `"ABCB"` the path reaches `C` at (0,2) but the only `B` next to that `C` is already on the path (`#`), so every start fails and `exist` returns `false`. `"SEE"` is found starting at (1,3).
+
+**Result:** `exist(board, "ABCCED")` returns `true` (and `"SEE"` true, `"ABCB"` false), matching the class output.
+
 ## Source Code
 
 ### WordSearch.java

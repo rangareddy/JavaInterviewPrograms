@@ -102,6 +102,48 @@ public static TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode 
 
 The optimized solution is Approach 3 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: ask each subtree "does it contain `p` or `q`?". The recursive call returns the node itself as soon as it meets `p` or `q` (there is no need to look below it), or `null` for a branch that has neither. At a node, if both the left and the right answers are non-null, then `p` and `q` are on different sides and this node is their lowest common ancestor; if only one side answered, that answer (which is either one of the targets or an ancestor already found) is passed up.
+
+**Input:** the tree `[3, 5, 1, 6, 2, 0, 8, null, null, 7, 4]`, with `p = 6` and `q = 4`.
+
+```mermaid
+flowchart TD
+    n3((3)) --> n5((5))
+    n3 --> n1((1))
+    n5 --> n6((6))
+    n5 --> n2((2))
+    n1 --> n0((0))
+    n1 --> n8((8))
+    n2 --> n7((7))
+    n2 --> n4((4))
+    classDef target fill:#dbeafe,stroke:#3b82f6
+    classDef ans fill:#dcfce7,stroke:#22c55e
+    class n6,n4 target
+    class n5 ans
+```
+
+Blue nodes are `p` and `q`, the green node is the answer.
+
+| Step | Call | Left answer | Right answer | Returns |
+|------|------|-------------|--------------|---------|
+| 1 | `lca(6)` | - | - | `6` (it is `p`, returned at once) |
+| 2 | `lca(7)` | `null` | `null` | `null` |
+| 3 | `lca(4)` | - | - | `4` (it is `q`) |
+| 4 | `lca(2)` | `null` (from 7) | `4` | `4` (only one side found) |
+| 5 | `lca(5)` | `6` | `4` | `5` (both sides found, so `5` is the ancestor) |
+| 6 | `lca(0)`, `lca(8)`, `lca(1)` | `null` | `null` | `null` |
+| 7 | `lca(3)` | `5` | `null` (from 1) | `5` |
+
+The answer is node `5`.
+
+**Other pairs.** For `p = 5, q = 4`, node `5` is returned immediately (`root == p`) without looking below it, and `3` passes it up: the answer is `5`, a node being its own ancestor. For `p = 5, q = 1` the left answer is `5` and the right is `1`, so the root `3` is returned.
+
+**Edge cases.** The comparison is by node identity (`root == p`), and the demo finds the node objects with `find` first. A `null` root returns `null`. The method assumes both nodes are in the tree. If only one is present it returns that node. Each node is visited once: time `O(n)`, recursion space `O(h)`.
+
+**Result:** `5` for the traced pair; the class output for the five pairs in `main` is `3`, `5`, `5`, `3`, `1`.
+
 ## Source Code
 
 Uses the shared helper [`TreeNode`](../../src/main/java/com/ranga/tree/TreeNode.java) (a small `TreeNode` with `of(...)` and `toString(...)` helpers for building and printing test data).

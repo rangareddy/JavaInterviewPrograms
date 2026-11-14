@@ -138,6 +138,28 @@ public static int evalRPN(String[] tokens) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: in Reverse Polish Notation an operator always applies to the two most recent results, which is exactly what a stack gives. Each number is pushed; each operator pops two numbers, applies itself, and pushes the result. For `-` and `/` the first pop is the right operand (`b`) and the second pop is the left operand, so the code computes `second - first` and `second / first`. Division is Java integer division, which truncates toward zero. One pass, O(n) time.
+
+**Input:** `tokens = ["4", "13", "5", "/", "+"]`. The stack is written bottom to top.
+
+| Step | Token | What happens | Stack (bottom → top) |
+|------|-------|--------------|----------------------|
+| 1 | `4` | number: push | `4` |
+| 2 | `13` | number: push | `4 13` |
+| 3 | `5` | number: push | `4 13 5` |
+| 4 | `/` | b = pop = 5, left = pop = 13, 13 / 5 = 2 (integer division), push | `4 2` |
+| 5 | `+` | pop 2 and pop 4, 4 + 2 = 6, push | `6` |
+
+The last `stack.pop()` returns `6`.
+
+A second input, `["2", "1", "+", "3", "*"]`, goes `2`, `2 1`, `3` (after `+`), `3 3`, `9` (after `*`).
+
+**Edge cases.** Negative numbers such as `"-11"` or `"-4"` are not confused with the operator `-`, because the `switch` matches the whole token and only the exact string `"-"` is an operator; anything else goes to `Integer.parseInt`. A single-number input just returns that number. The order of operands matters only for `-` and `/` (hence the saved `b`). The class assumes a valid expression; too few operands would throw `NoSuchElementException`.
+
+**Result:** `6`, matching the class output (the long sample `["10","6","9","3","+","-11","*","/","*","17","+","5","+"]` gives `22`, and `["3","-4","+"]` gives `-1`).
+
 ## Source Code
 
 ### EvaluateReversePolishNotation.java

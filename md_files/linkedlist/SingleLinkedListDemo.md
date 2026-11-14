@@ -173,6 +173,50 @@ static <T> void reverseWithStack(Node<T> head) {
 
 The optimized solution is Approach 2, 4 and 5 above. The version implemented in this repository is Approach 1, 3, 4 and 5.
 
+#### Optimized solution explained
+
+**Note:** the page marks Approaches 2, 4 and 5 as optimized, but `SingleLinkedListDemo.java` implements Approaches 1, 3, 4 and 5. Its `add` walks to the tail (O(n) per add, no tail pointer) and its main method also uses the count-then-walk middle. The two optimized pieces that are really in the class, the slow/fast middle (`getMiddleElement2`) and the iterative `reverse`, are explained here.
+
+The idea: the middle is found in one pass with two pointers, `slow` moving one node and `fast` two nodes per step, so when `fast` reaches the end `slow` is halfway. Reversal walks once and re-points each node's `next` to the node before it, keeping `curr`, `next` (saved before it is overwritten) and `reverseNode` (the already-reversed part), in O(n) time and O(1) space.
+
+**Input:** a list built with `add` of `A, B, C, D, E` (checked in a scratch run against the real classes).
+
+Middle with slow and fast:
+
+| Step | `slow` | `fast` | Loop continues? |
+|------|--------|--------|-----------------|
+| start | A | A | yes |
+| 1 | B | C | yes (`fast.next` = D) |
+| 2 | C | E | no (`fast.next` is `null`) |
+
+`slow` is `C`, the middle.
+
+Reverse:
+
+| Step | `curr` | `next` (saved) | Action | `reverseNode` afterwards |
+|------|--------|----------------|--------|--------------------------|
+| 1 | A | B | `A.next = null` | A |
+| 2 | B | C | `B.next = A` | B -> A |
+| 3 | C | D | `C.next = B` | C -> B -> A |
+| 4 | D | E | `D.next = C` | D -> C -> B -> A |
+| 5 | E | null | `E.next = D` | E -> D -> C -> B -> A |
+
+Then `curr` is `null`, the loop stops and `head = reverseNode`.
+
+```mermaid
+flowchart LR
+    subgraph s1["Before"]
+        A1["A"] --> B1["B"] --> C1["C"] --> D1["D"] --> E1["E"]
+    end
+    subgraph s2["After reverse"]
+        E2["E"] --> D2["D"] --> C2["C"] --> B2["B"] --> A2["A"]
+    end
+```
+
+**Edge cases.** With an even count (`A, B, C, D`) `fast` becomes `null` and `slow` stops on the second middle, `C`. Reversing an empty list leaves it empty; `getMiddleElement2` on an empty list throws a `NullPointerException` (`slow` is `null`). `remove` and `get` throw `IndexOutOfBoundsException` for a bad index.
+
+**Result:** `[A, B, C, D, E]` has middle `C` and reverses to `[E, D, C, B, A]`. For the class's own main (11 items after the removal) both middle methods print `List7` and the reversed list is `[List12, ..., List2]`.
+
 ## Source Code
 
 ### SingleLinkedListDemo.java

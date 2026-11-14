@@ -170,6 +170,37 @@ static class DoublyLinkedLRU {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository, written with generics (`LRUCache<K, V>`), so a miss returns `null` rather than the `-1` used by the integer snippets above.
 
+#### Optimized solution explained
+
+The idea: a `HashMap` finds a node by key in O(1), and a doubly linked list (with dummy `head` and `tail`) keeps the nodes in usage order: `head.next` is the most recently used, `tail.prev` the least recently used. Every `get` or `put` unlinks the node and re-inserts it right after `head` (O(1), because the node knows its neighbours). When the map grows past the capacity, the node before `tail` is unlinked and its key is removed from the map.
+
+**Input:** `LRUCache(2)`, then `put(1,1)`, `put(2,2)`, `get(1)`, `put(3,3)`, `get(2)`, `put(4,4)`, `get(1)`, `get(3)`, `get(4)`.
+
+| Step | Operation | List, most recent first | Map keys | Result |
+|------|-----------|-------------------------|----------|--------|
+| 1 | `put(1,1)` | `1` | {1} | |
+| 2 | `put(2,2)` | `2, 1` | {1, 2} | |
+| 3 | `get(1)` | `1, 2` (1 moved to the front) | {1, 2} | `1` |
+| 4 | `put(3,3)` | `3, 1, 2` then size 3 > 2: evict `tail.prev` = 2 -> `3, 1` | {1, 3} | |
+| 5 | `get(2)` | `3, 1` | {1, 3} | `null` (miss) |
+| 6 | `put(4,4)` | `4, 3, 1` then evict `tail.prev` = 1 -> `4, 3` | {3, 4} | |
+| 7 | `get(1)` | `4, 3` | {3, 4} | `null` (evicted) |
+| 8 | `get(3)` | `3, 4` | {3, 4} | `3` |
+| 9 | `get(4)` | `4, 3` | {3, 4} | `4` |
+
+```mermaid
+flowchart LR
+    H["head"] <--> N3["key 3"] <--> N4["key 4"] <--> T["tail"]
+    M["HashMap<br/>3 and 4"] -.-> N3
+    M -.-> N4
+```
+
+The list above is the state after step 8 (`3` was just used, `4` is the next to be evicted).
+
+**Edge cases.** A `get` of a missing key returns `null` and changes nothing. `put` of an existing key unlinks the old node and inserts a new node with the new value at the front (so the map still holds one entry per key and no eviction is triggered). The dummy `head` and `tail` mean no special cases for an empty list or for removing the first or last node. Both operations are O(1).
+
+**Result:** the outputs are `1`, `null`, then `null, 3, 4`, exactly what the class prints.
+
 ## Source Code
 
 ### LRUCache.java

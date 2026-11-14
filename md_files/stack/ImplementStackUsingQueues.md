@@ -95,6 +95,33 @@ public boolean empty() {
 
 The optimized solution is Approach 2 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: a queue gives the oldest element first, but a stack must give the newest. So after adding a new element at the back, the code rotates the queue: it moves every older element (size - 1 of them) from the front to the back, one by one. The new element ends up at the front, so `pop` and `top` are just `remove` and `peek` on the single queue. `push` costs O(n); `pop`, `top` and `empty` cost O(1).
+
+**Input:** `push(1), push(2), push(3), top(), pop(), empty()`, then `pop(), pop(), empty()`. The queue is written front to back.
+
+| Step | Operation | What happens | Queue (front → back) | Returns |
+|------|-----------|--------------|----------------------|---------|
+| 1 | push(1) | add, size 1: no rotation | `1` | |
+| 2 | push(2) | add gives `1 2`; rotate 1 time: move 1 to the back | `2 1` | |
+| 3 | push(3) | add gives `2 1 3`; rotate 2 times: `1 3 2`, then `3 2 1` | `3 2 1` | |
+| 4 | top() | peek the front | `3 2 1` | 3 |
+| 5 | pop() | remove the front | `2 1` | 3 |
+| 6 | empty() | queue has 2 elements | `2 1` | false |
+| 7 | pop() | remove the front | `1` | 2 |
+| 8 | pop() | remove the front | empty | 1 |
+| 9 | empty() | queue is empty | empty | true |
+
+```text
+push(3):  2 1  --add-->  2 1 3  --move front to back-->  1 3 2  --again-->  3 2 1
+                                                                    ^ newest is at the front
+```
+
+**Edge cases.** The loop `for i = 1; i < size` rotates `size - 1` times, so the first push into an empty queue does not rotate. The queue always holds the elements in stack order (newest first), which is why no second queue is needed. `pop` or `top` on an empty stack is not guarded (`remove()` throws `NoSuchElementException`, `peek()` returns `null` so unboxing fails); the problem guarantees valid calls.
+
+**Result:** `3, 3, false` for the first sequence and `2, 1, true` for the second, matching the class output.
+
 ## Source Code
 
 ### ImplementStackUsingQueues.java

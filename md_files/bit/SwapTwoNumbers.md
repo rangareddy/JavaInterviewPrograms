@@ -71,7 +71,7 @@ public static void swapArithmetic(int[] values, int i, int j) {
 - **Time Complexity:** O(1)
 - **Space Complexity:** O(1)
 
-### Approach 4: XOR Swap
+### Approach 4: XOR Swap (Optimized)
 
 XOR-ing twice with the same value restores it. This is the second version implemented in the repository.
 
@@ -97,6 +97,31 @@ public static void swapXor(int[] values, int i, int j) {
 | 4 | XOR Swap | O(1) | O(1) |
 
 ### Optimized Solution
+
+The optimized solution is Approach 4 above (the XOR swap), which is also the version implemented in this repository next to the addition/subtraction swap of Approach 3.
+
+#### Optimized solution explained
+
+The idea: XOR (`^`) gives the bits where two numbers differ, and XOR-ing the same value twice cancels it out. Three XORs on the two array slots therefore exchange the values without a temporary variable and without any chance of arithmetic overflow.
+
+**Input:** `a = 5`, `b = 9` (stored as `values[0] = 5`, `values[1] = 9`). In binary, `5 = 0101` and `9 = 1001`.
+
+| Step | Statement | Calculation | `a` afterwards | `b` afterwards |
+|------|-----------|-------------|----------------|----------------|
+| start | | | `0101` (5) | `1001` (9) |
+| 1 | `a = a ^ b` | `0101 ^ 1001 = 1100` | `1100` (12) | `1001` (9) |
+| 2 | `b = a ^ b` | `1100 ^ 1001 = 0101` | `1100` (12) | `0101` (5) |
+| 3 | `a = a ^ b` | `1100 ^ 0101 = 1001` | `1001` (9) | `0101` (5) |
+
+Now `a = 9` and `b = 5`: the values have been exchanged.
+
+```text
+a = 0101        step 1:  a = a ^ b  ->  1100   (a now holds "the difference" of a and b)
+b = 1001        step 2:  b = a ^ b  ->  0101   ((a ^ b) ^ b  =  the old a)
+                step 3:  a = a ^ b  ->  1001   ((a ^ b) ^ old a  =  the old b)
+```
+
+**Why it is safe in this class.** `swapXor` returns at once when the two indexes are the same (`i == j`): XOR-ing a slot with itself would turn it into `0` and destroy the value. XOR never overflows, so `Integer.MAX_VALUE` and `1` swap correctly (`a = 1, b = 2147483647`), as do negative numbers (`-3` and `7` give `7` and `-3`) and zero (`0` and `4` give `4` and `0`). The arithmetic swap (`a + b`) gives the same results here only because Java integers wrap around on overflow. Both methods expect a non-`null` array and valid indexes.
 
 ## Source Code
 

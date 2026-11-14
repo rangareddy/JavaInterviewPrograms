@@ -119,6 +119,24 @@ public static boolean mergeTriplets(int[][] triplets, int[] target) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: merging takes the element-wise maximum, so any triplet with a value larger than the target in some position can never be used (it would overshoot and cannot be undone). Among the remaining "safe" triplets, the target is reachable exactly when each of the three positions is matched exactly by at least one safe triplet. The code keeps three flags `matched[0..2]` and makes one pass.
+
+**Input:** `triplets = [[2,5,3], [1,8,4], [1,7,5]]`, `target = [2,7,5]`.
+
+| Triplet | Safe? (all values <= target) | Positions equal to target | matched after |
+|---------|------------------------------|---------------------------|----------------|
+| [2,5,3] | 2<=2, 5<=7, 3<=5 yes | position 0 (2 == 2) | [true, false, false] |
+| [1,8,4] | 8 > 7 no, skipped | - | [true, false, false] |
+| [1,7,5] | 1<=2, 7<=7, 5<=5 yes | position 1 (7), position 2 (5) | [true, true, true] |
+
+All three flags are true, so the method returns `true` (merging [2,5,3] and [1,7,5] gives [2,7,5]).
+
+**Edge cases:** `[[3,4,5],[4,5,6]]` with target `[3,2,5]` has no safe triplet (4 > 2 and 4 > 3), so no flag is set and the result is `false`. A single triplet equal to the target (`[[1,1,1]]`) sets all flags and returns `true`. An empty triplet list leaves all flags false and returns `false`.
+
+**Result:** returns `true`, matching the class output.
+
 ## Source Code
 
 ### MergeTripletsToFormTargetTriplet.java

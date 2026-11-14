@@ -109,6 +109,32 @@ public static boolean isPalindrome(String s) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: two pointers start at the two ends. Each moves inward past characters that are not letters or digits, then the two characters are compared ignoring case. Nothing is copied or cleaned up beforehand, so it runs in O(n) with O(1) extra space.
+
+**Input:** `s = "No 'x' in Nixon"` (15 characters; indices 2, 3, 5, 6, 9 are spaces or quotes).
+
+| Step | `left` after skipping | `right` after skipping | Characters | Result |
+|------|-----------------------|------------------------|------------|--------|
+| 1 | 0 | 14 | `N`, `n` | equal ignoring case, move to 1, 13 |
+| 2 | 1 | 13 | `o`, `o` | equal, move to 2, 12 |
+| 3 | 4 (skipped space and quote) | 12 | `x`, `x` | equal, move to 5, 11 |
+| 4 | 7 (skipped quote and space) | 11 | `i`, `i` | equal, move to 8, 10 |
+| 5 | 8 | 10 | `n`, `N` | equal ignoring case, move to 9, 9 |
+| 6 | - | - | `left < right` is false, loop ends | |
+
+```text
+index: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14
+s:     N o _ ' x ' _ i n _ N  i  x  o  n
+       L                                R     N = n
+                                              ... meet in the middle at 9
+```
+
+**Edge cases.** `null` returns `false`. `" "` (only a space) returns `true`, because the pointers meet while skipping and the loop ends. `"0P"` returns `false` (`0` and `p` differ), and `"race a car"` returns `false` at the comparison of `c` and `a`.
+
+**Result:** `true`, matching the class output.
+
 ## Source Code
 
 ### ValidPalindrome.java

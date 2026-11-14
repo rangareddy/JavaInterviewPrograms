@@ -124,6 +124,35 @@ public static int longestLengthAscii(String s) {
 
 The optimized solution is Approach 3 above. The version implemented in this repository is Approach 2.
 
+#### Optimized solution explained
+
+The idea (as coded in the class, which is Approach 2 of the page, a sliding window with a `HashSet`; the page's own "Optimized Solution" sentence names Approach 3, last-seen index): keep a window `[left, right)` that never contains a repeated character. If the next character is new, add it and grow the window to the right. If it is already in the window, remove the character at `left` and shrink from the left until the duplicate is gone. The longest window seen is remembered by its start and length.
+
+**Input:** `str = "abcadbc"`.
+
+| Step | `left` | `right` (next char) | Action | Window set | Best |
+|------|--------|---------------------|--------|-----------|------|
+| 1 | 0 | 0 (`a`) | new, add, `right=1` | {a} | `a` (1) |
+| 2 | 0 | 1 (`b`) | new, add, `right=2` | {a, b} | `ab` (2) |
+| 3 | 0 | 2 (`c`) | new, add, `right=3` | {a, b, c} | `abc` (3) |
+| 4 | 0 | 3 (`a`) | duplicate, remove `a` at `left`, `left=1` | {b, c} | `abc` |
+| 5 | 1 | 3 (`a`) | new, add, `right=4` | {b, c, a} | size 3 not > 3, unchanged |
+| 6 | 1 | 4 (`d`) | new, add, `right=5` | {b, c, a, d} | **`bcad` (4)**, start 1 |
+| 7 | 1 | 5 (`b`) | duplicate, remove `b`, `left=2` | {c, a, d} | `bcad` |
+| 8 | 2 | 5 (`b`) | new, add, `right=6` | {c, a, d, b} | size 4 not > 4 |
+| 9 | 2 | 6 (`c`) | duplicate, remove `c`, `left=3` | {a, d, b} | `bcad` |
+| 10 | 3 | 6 (`c`) | new, add, `right=7`, loop ends | {a, d, b, c} | `bcad` |
+
+```text
+index:  0 1 2 3 4 5 6
+chars:  a b c a d b c
+best:     [1 .. 4]   -> b c a d   (window at step 6)
+```
+
+**Edge cases.** `null` or `""` returns `""`. `"bbbb"` returns `"b"` (every step after the first removes the only character and adds it again). On ties the first window found wins, because the best is replaced only when the size is strictly larger. Each character is added once and removed at most once, so the work is O(n).
+
+**Result:** `"bcad"` (length 4), matching the class output.
+
 ## Source Code
 
 ### LongestSubString.java

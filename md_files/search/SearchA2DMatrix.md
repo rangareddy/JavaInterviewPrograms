@@ -111,6 +111,30 @@ public static boolean searchMatrix(int[][] matrix, int target) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: the rows are sorted and every row starts above the previous row's last value, so reading the matrix row by row gives one sorted list of `rows * cols` values. Binary search runs on the virtual indices `0 .. rows*cols - 1` and converts each `mid` to a cell with `row = mid / cols`, `col = mid % cols`; no copy is made. This is O(log(rows * cols)) time and O(1) space.
+
+**Input:** `matrix = [[1, 3, 5, 7], [10, 11, 16, 20], [23, 30, 34, 60]]` (3 rows, 4 columns, 12 cells), `target = 3`.
+
+| Step | low | high | mid | row = mid / 4 | col = mid % 4 | value | Compare with 3 | Next |
+|------|-----|------|-----|---------------|---------------|-------|----------------|------|
+| 1 | 0 | 11 | 5 | 1 | 1 | 11 | too large | high = 4 |
+| 2 | 0 | 4 | 2 | 0 | 2 | 5 | too large | high = 1 |
+| 3 | 0 | 1 | 0 | 0 | 0 | 1 | too small | low = 1 |
+| 4 | 1 | 1 | 1 | 0 | 1 | 3 | equal | return true |
+
+```text
+flat index :  0  1  2  3 | 4   5   6   7 |  8   9  10  11
+value      :  1  3  5  7 | 10  11  16  20 | 23  30  34  60
+```
+
+For target `13` the probes are `mid = 5` (11, low = 6), `mid = 8` (23, high = 7), `mid = 6` (16, high = 5); then `low > high` and the result is `false`.
+
+**Edge cases.** `null`, zero rows or zero columns return `false` immediately. A target below the first or above the last cell (0 or 61) is never matched and ends with an empty range. The rows must satisfy the two ordering rules; the code uses `matrix[0].length` as the column count for all rows.
+
+**Result:** `true` for target 3 and `false` for 13, matching the class output.
+
 ## Source Code
 
 ### SearchA2DMatrix.java

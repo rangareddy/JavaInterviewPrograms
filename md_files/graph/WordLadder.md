@@ -187,6 +187,39 @@ public static int ladderLength(String beginWord, String endWord, List<String> wo
 
 The optimized solution is Approach 3 above. The version implemented in this repository is Approach 4.
 
+#### Optimized solution explained
+
+This page marks Approach 3 (bidirectional BFS) as the fastest, but the class in this repository implements Approach 4, so this section explains the code as written: a one-directional BFS that tries all 26 letters at every position.
+
+The idea: words are nodes and two words are neighbours when they differ in one letter. BFS from `beginWord` finds the shortest chain, one level per word-change. The dictionary is put in a `HashSet`; instead of a separate visited set, a word is **removed** from the set when it is first reached (`words.remove(next)` returns `true` only for an unseen dictionary word), so it can never be queued twice. For each dequeued word, every position is replaced with `'a'..'z'` and the candidate is looked up in O(1). The first time `endWord` is produced the chain length is `length + 1`.
+
+**Input:** `beginWord = "hit"`, `endWord = "cog"`, `wordList = [hot, dot, dog, lot, log, cog]`. Start: `words = {hot, dot, dog, lot, log, cog}` (`hit` is not in it), queue = `[hit]`, `length = 1`.
+
+| Round | `length` | Word taken | Candidate found in the set | Queue afterwards |
+|-------|----------|------------|----------------------------|------------------|
+| 1 | 1 | `hit` | `hot` (position 1 = `o`) | `hot` |
+| 2 | 2 | `hot` | `dot`, `lot` (position 0) | `dot lot` |
+| 3 | 3 | `dot` | `dog` (position 2) | `lot dog` |
+| 3 | 3 | `lot` | `log` (position 2) | `dog log` |
+| 4 | 4 | `dog` | `cog` (position 0 = `c`), equals `endWord` | return `length + 1 = 5` |
+
+```mermaid
+flowchart LR
+    A(["hit"]) --> B["hot"]
+    B --> C["dot"]
+    B --> D["lot"]
+    C --> E["dog"]
+    D --> F["log"]
+    E --> G(["cog"])
+    F -.->|"not reached, the search stopped"| G
+```
+
+The shortest chain is `hit -> hot -> dot -> dog -> cog`, which has 5 words, so the method returns `5`.
+
+**Edge cases.** If `endWord` is not in the word list the method returns `0` at once (second sample, where `cog` is missing). If the queue empties without producing `endWord` the result is `0`. For `"a" -> "c"` with `[a, b, c]` the first round finds `c`, so the result is `2`. A word equal to `beginWord` in the list is removed up front so it is not revisited.
+
+**Result:** `5` for the traced input, matching the class output (`5`, `0`, `2` for its three samples).
+
 ## Source Code
 
 ### WordLadder.java

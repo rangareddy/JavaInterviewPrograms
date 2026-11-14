@@ -121,6 +121,34 @@ private static double dfs(Map<String, Map<String, Double>> graph, String from, S
 
 The optimized solution is Approach 2 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: every equation `a / b = v` is an edge in a weighted graph: `a -> b` with weight `v` and `b -> a` with weight `1/v`. A query `x / y` is the product of the weights along any path from `x` to `y`. A DFS from `x` multiplies the edge weight with the result of the rest of the path and uses a `visited` set so it does not loop. Unknown variables or unreachable pairs give `-1.0`.
+
+**Input:** `equations = [[a,b],[b,c]]`, `values = [2.0, 3.0]`. Graph built: `a -> b (2.0)`, `b -> a (0.5)`, `b -> c (3.0)`, `c -> b (0.3333...)`.
+
+| Query | Check | DFS | Answer |
+|-------|-------|-----|--------|
+| `a / c` | both exist | `dfs(a)`: edge `a->b` 2.0, `dfs(b)`: edge `b->a` skipped (a is visited), edge `b->c` 3.0, `dfs(c)`: `c == c` returns 1.0, so `dfs(b)` = 3.0 * 1.0 = 3.0 and `dfs(a)` = 2.0 * 3.0 | `6.0` |
+| `b / a` | both exist | `dfs(b)`: edge `b->a` 0.5, `dfs(a)` returns 1.0 | `0.5` |
+| `a / e` | `e` not in the graph | no DFS | `-1.0` |
+| `a / a` | both exist | `dfs(a)`: `a == a` returns 1.0 immediately | `1.0` |
+| `x / x` | `x` not in the graph | no DFS | `-1.0` |
+
+```mermaid
+flowchart LR
+    A(["a"]) -->|"2.0"| B(["b"])
+    B -->|"0.5"| A
+    B -->|"3.0"| C(["c"])
+    C -->|"0.3333"| B
+```
+
+The query `a / c` follows `a -> b -> c`: `2.0 * 3.0 = 6.0`, which is right because `a/b * b/c = a/c`. Note the unknown-variable check comes first, so `x / x` is `-1.0` even though a variable divided by itself would normally be 1.
+
+**Edge cases.** A variable never seen in an equation gives `-1.0`; variables in separate components (no path) give `-1.0`, because the DFS returns `-1.0` when it runs out of unvisited neighbours. The DFS tests for `-1.0` as the "no path" marker, which assumes real answers are never exactly `-1.0` (true here since all values are positive).
+
+**Result:** `[6.0, 0.5, -1.0, 1.0, -1.0]`, identical to the class output.
+
 ## Source Code
 
 ### EvaluateDivision.java

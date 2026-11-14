@@ -134,6 +134,32 @@ public static int firstOccurrence(int[] arr, int element) {
 
 The optimized solution is Approach 3 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: because the array is sorted, one comparison with the middle element rules out half of the remaining range. `low` and `high` always bound the part that can still contain the element; if the middle value is too small the element can only be to its right (`low = mid + 1`), otherwise only to its left (`high = mid - 1`). The range shrinks until the element is found or `low > high`. `mid = low + (high - low) / 2` gives the same middle as `(low + high) / 2` but cannot overflow.
+
+**Input:** sorted `arr = [4, 5, 6, 7, 9, 12, 15, 20, 30]`, element `16` (not present).
+
+| Step | low | high | mid | arr[mid] | Compare with 16 | Next range |
+|------|-----|------|-----|----------|-----------------|------------|
+| 1 | 0 | 8 | 4 | 9 | 9 < 16, go right | low = 5 |
+| 2 | 5 | 8 | 6 | 15 | 15 < 16, go right | low = 7 |
+| 3 | 7 | 8 | 7 | 20 | 20 > 16, go left | high = 6 |
+| 4 | 7 | 6 | - | - | `low > high`, range empty | stop |
+
+```text
+step 1: [ 4  5  6  7  (9) 12  15  20  30 ]   mid = 9    < 16 -> keep right of it
+step 2:                [ 12 (15) 20  30 ]    mid = 15   < 16 -> keep right of it
+step 3:                        [ (20) 30 ]   mid = 20   > 16 -> keep left of it
+step 4:                        [ ]           empty range -> -1
+```
+
+Searching `9` instead finishes in one step: `mid = 4`, `arr[4] == 9`, return 4.
+
+**Edge cases.** A `null` or empty array returns `-1` through the guard clause. A one-element array is handled by the same loop (`low == high`). The array must be sorted; on unsorted input the answer is unreliable. Duplicates: any matching index may be returned, not necessarily the first.
+
+**Result:** `-1` for 16 and `4` for 9, matching the class output (the class also finds 20 at index 7).
+
 ## Source Code
 
 ### BinarySearch.java

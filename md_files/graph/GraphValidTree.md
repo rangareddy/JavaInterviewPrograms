@@ -231,6 +231,29 @@ private static int find(int[] parent, int node) {
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: a graph with `n` nodes is a tree exactly when it is connected and has no cycle, which for `n` nodes means "exactly `n - 1` edges and no edge closes a cycle". The code first rejects any graph whose edge count is not `n - 1`. Then Union-Find processes the edges: `parent[]` starts with every node as its own root, and for each edge the two roots are found. If the roots are equal, the two ends are already connected and this edge would close a cycle, so the answer is `false`; otherwise the components are merged with `parent[rootA] = rootB`. `find` uses path halving (`parent[node] = parent[parent[node]]`) to keep the paths short. With `n - 1` edges and no cycle, the graph is automatically connected.
+
+**Input:** `n = 5`, `edges = [[0,1],[0,2],[0,3],[1,4]]`. Edge count 4 = `n - 1`, so the check passes. Start: `parent = [0,1,2,3,4]`.
+
+| Edge | `find(a)` | `find(b)` | Same root? | `parent` afterwards |
+|------|-----------|-----------|------------|---------------------|
+| `[0,1]` | 0 | 1 | no, set `parent[0] = 1` | `[1,1,2,3,4]` |
+| `[0,2]` | 1 | 2 | no, set `parent[1] = 2` | `[1,2,2,3,4]` |
+| `[0,3]` | 2 | 3 | no, set `parent[2] = 3` | `[2,2,3,3,4]` |
+| `[1,4]` | 3 | 4 | no, set `parent[3] = 4` | `[2,3,3,4,4]` |
+
+No edge closed a cycle, so the method returns `true`.
+
+**Cycle example:** `n = 5`, `edges = [[0,1],[1,2],[2,3],[1,3],[1,4]]`. There are 5 edges but `n - 1 = 4`, so the first check already returns `false`. (Without that check, edge `[1,3]` would find the same root `3` for both ends, which is exactly the cycle test.)
+
+**Not connected:** `n = 4`, `edges = [[0,1],[2,3]]` has 2 edges, not 3, so the result is `false`.
+
+**Edge cases.** `n = 1` with no edges has 0 = `n - 1` edges and returns `true`. For `n = 0` the edge count `0` differs from `-1`, so it returns `false`.
+
+**Result:** `true`, `false`, `false` for the three samples, matching the class output.
+
 ## Source Code
 
 ### GraphValidTree.java

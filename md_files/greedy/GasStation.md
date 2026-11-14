@@ -123,6 +123,26 @@ public static int canCompleteCircuit(int[] gas, int[] cost) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: two running sums. `total` is the overall balance `sum(gas - cost)`; if it is negative no start can work, so the answer is `-1`. `tank` is the balance since the current candidate `start`. When `tank` drops below 0 at station `i`, no station from `start` to `i` can be a valid start (each would have arrived at `i` with even less), so the next candidate is `i + 1` and the tank resets. If `total >= 0`, the last candidate survives and is the answer.
+
+**Input:** `gas = [1, 2, 3, 4, 5]`, `cost = [3, 4, 5, 1, 2]`.
+
+| i | diff = gas - cost | total | tank | tank < 0? | start |
+|---|-------------------|-------|------|-----------|-------|
+| 0 | 1 - 3 = -2 | -2 | -2 | yes, reset | 1 |
+| 1 | 2 - 4 = -2 | -4 | -2 | yes, reset | 2 |
+| 2 | 3 - 5 = -2 | -6 | -2 | yes, reset | 3 |
+| 3 | 4 - 1 = 3 | -3 | 3 | no | 3 |
+| 4 | 5 - 2 = 3 | 0 | 6 | no | 3 |
+
+`total = 0 >= 0`, so the result is `start = 3`.
+
+**Edge cases:** for `gas = [2, 3, 4]`, `cost = [3, 4, 3]` the diffs are -1, -1, 1, so `total = -1 < 0` and the method returns `-1` even though `start` ended as 2. A single station such as `[5]`, `[4]` has `total = 1`, `tank = 1`, and returns `0`. An empty array would return `0` (total 0, start 0).
+
+**Result:** returns `3`, matching the class output.
+
 ## Source Code
 
 ### GasStation.java

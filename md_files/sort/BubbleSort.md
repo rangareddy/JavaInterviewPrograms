@@ -197,6 +197,29 @@ public static void bubbleSortOptimized(int[] arr) {
 
 The optimized solution is Approach 7 above. The version implemented in this repository is Approach 1.
 
+#### Optimized solution explained
+
+The idea: repeatedly walk through the array comparing neighbours and swapping any pair that is out of order. After pass 1 the largest value has "bubbled" to the last slot, after pass 2 the second largest sits in the second-last slot, and so on, so the inner loop can stop earlier each pass (`j < n - i - 1`). The page names "remember the last swap position" as the optimized variant, but the class in this repository implements this basic version with the shrinking inner loop and no early exit, and that is what is traced here.
+
+**Input:** `arr = [12, 4, 5, 7, 9, 20, 30, 6, 15]` (n = 9, so 8 passes).
+
+| Pass i | Inner loop j | Swaps | Array after the pass |
+|--------|--------------|-------|----------------------|
+| 0 | 0 to 7 | 6 | `4 5 7 9 12 20 6 15 30` |
+| 1 | 0 to 6 | 2 | `4 5 7 9 12 6 15 20 30` |
+| 2 | 0 to 5 | 1 | `4 5 7 9 6 12 15 20 30` |
+| 3 | 0 to 4 | 1 | `4 5 7 6 9 12 15 20 30` |
+| 4 | 0 to 3 | 1 | `4 5 6 7 9 12 15 20 30` |
+| 5 | 0 to 2 | 0 | `4 5 6 7 9 12 15 20 30` |
+| 6 | 0 to 1 | 0 | `4 5 6 7 9 12 15 20 30` |
+| 7 | 0 | 0 | `4 5 6 7 9 12 15 20 30` |
+
+After pass 0 the value 30 is fixed at the end, after pass 1 the value 20 is fixed, and so on. The array is already sorted after pass 4, but this version has no "no swaps" check, so passes 5 to 7 still run and only compare.
+
+**Edge cases.** `null`, empty and one-element arrays return at once through the guard clause. An already sorted array does no swaps but still makes n(n-1)/2 comparisons, so the time is O(n^2) in every case; space is O(1) and equal values are never swapped (strict `>`), so the sort is stable. `swap` ignores `i == j`.
+
+**Result:** `[4, 5, 6, 7, 9, 12, 15, 20, 30]`, matching the class output.
+
 ## Source Code
 
 ### BubbleSort.java

@@ -200,6 +200,39 @@ public static int search(int[] nums, int target) {
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: after rotation the array is two sorted runs, so for any `mid` at least one side of it is fully sorted. If `nums[low] <= nums[mid]` the left half `[low, mid]` is sorted, otherwise the right half is. With the sorted half's endpoints we can tell if the target lies inside it; if it does we search that half, if not we search the other one. Every step halves the range, so the search is O(log n) with O(1) space.
+
+**Input:** `nums = [4, 5, 6, 7, 0, 1, 2]`, `target = 0`.
+
+| Step | low | high | mid | nums[mid] | Sorted half | Target in it ? | Next |
+|------|-----|------|-----|-----------|-------------|----------------|------|
+| 1 | 0 | 6 | 3 | 7 | left `[4..7]` (4 <= 7) | 4 <= 0 < 7 no | low = 4 |
+| 2 | 4 | 6 | 5 | 1 | left `[0, 1]` (0 <= 1) | 0 <= 0 < 1 yes | high = 4 |
+| 3 | 4 | 4 | 4 | 0 | - | `nums[mid] == 0` | return 4 |
+
+```mermaid
+flowchart TD
+    A["mid = low + (high - low) / 2"] --> B{"nums[mid] == target ?"}
+    B -->|"yes"| R(["return mid"])
+    B -->|"no"| C{"nums[low] <= nums[mid] ?"}
+    C -->|"yes: left half sorted"| D{"nums[low] <= target < nums[mid] ?"}
+    D -->|"yes"| E["high = mid - 1"]
+    D -->|"no"| F["low = mid + 1"]
+    C -->|"no: right half sorted"| G{"nums[mid] < target <= nums[high] ?"}
+    G -->|"yes"| F
+    G -->|"no"| E
+    E --> A
+    F --> A
+```
+
+Target `3` on the same array: `mid = 3` (7): left sorted, 3 not in `[4, 7)`, low = 4. `mid = 5` (1): left `[0, 1]` sorted, 3 not in `[0, 1)`, low = 6. `mid = 6` (2): not equal, left (single element) sorted, 3 not in `[2, 2)`, low = 7, so `low > high` and the result is `-1`.
+
+**Edge cases.** `null` or empty returns `-1`. A single element `[1]` with target 1 hits `nums[mid] == target` at once and returns 0. The comparison uses `<=` for `nums[low] <= nums[mid]` so a one-element left half (`low == mid`) counts as sorted. Values must be unique.
+
+**Result:** `4` for target 0 and `-1` for target 3, matching the class output.
+
 ## Source Code
 
 ### SearchInRotatedSortedArray.java

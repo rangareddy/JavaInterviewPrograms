@@ -134,6 +134,29 @@ static class HeapKth {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: only the `k` largest values seen so far matter, and the k-th largest is the smallest of them. A min-heap capped at size `k` keeps exactly those values, with the smallest on top. Each `add` pushes the new value, drops the top if the heap grew past `k`, and returns the top: `O(log k)` per call.
+
+**Input:** `KthLargest(3, [4, 5, 8, 2])`, then `add(3)`, `add(5)`, `add(10)`, `add(9)`, `add(4)`. The constructor feeds the array through `add`: after `4, 5, 8` the heap is `{4, 5, 8}`; adding `2` makes size 4, so the smallest (`2`) is removed and the heap is again `{4, 5, 8}`.
+
+| Call | Heap after push | Size > 3? | Removed (poll) | Heap afterwards | Returned (`peek`) |
+|------|-----------------|-----------|----------------|-----------------|-------------------|
+| `add(3)` | `{3, 4, 5, 8}` | yes | 3 | `{4, 5, 8}` | **4** |
+| `add(5)` | `{4, 5, 5, 8}` | yes | 4 | `{5, 5, 8}` | **5** |
+| `add(10)` | `{5, 5, 8, 10}` | yes | 5 | `{5, 8, 10}` | **5** |
+| `add(9)` | `{5, 8, 9, 10}` | yes | 5 | `{8, 9, 10}` | **8** |
+| `add(4)` | `{4, 8, 9, 10}` | yes | 4 | `{8, 9, 10}` | **8** |
+
+```text
+heap (min on the left) after each call:  [4 5 8] -> [5 5 8] -> [5 8 10] -> [8 9 10] -> [8 9 10]
+                                          ^top=4     ^5         ^5          ^8          ^8
+```
+
+**Edge cases:** a value smaller than the current k-th largest (like `3` and `4` above) is pushed and immediately removed, so the heap never changes. While fewer than `k` values exist, nothing is removed and `peek` is the smallest of those values.
+
+**Result:** the outputs `4, 5, 5, 8, 8`, the same as the class output.
+
 ## Source Code
 
 ### KthLargestElementInAStream.java

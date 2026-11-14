@@ -255,6 +255,45 @@ public static String fooBar(int n) throws InterruptedException {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: use semaphores as "turn tokens". A semaphore with 0 permits blocks `acquire()` until another thread calls `release()`, so a thread can only run its step after the thread before it has handed it a token. This makes the order depend on the tokens and not on which thread the scheduler starts first. The class contains two puzzles, both solved this way.
+
+**Puzzle 1, print in order (`printInOrder`).** `Ordered` has two semaphores, `afterFirst` and `afterSecond`, both starting at 0. `first` prints then releases `afterFirst`; `second` acquires `afterFirst`, prints, then releases `afterSecond`; `third` acquires `afterSecond` and prints.
+
+**Input:** threads started in the order `[3, 2, 1]` (the worst case).
+
+| Step | Thread | Call | Semaphores `(afterFirst, afterSecond)` | Effect | Output so far |
+|------|--------|------|----------------------------------------|--------|---------------|
+| 1 | 3 | `third` starts | (0, 0) | `afterSecond.acquire()` has no permit: blocks | |
+| 2 | 2 | `second` starts | (0, 0) | `afterFirst.acquire()` has no permit: blocks | |
+| 3 | 1 | `first` runs | (0, 0) | prints `first`, `afterFirst.release()` | `first` |
+| 4 | 2 | wakes | (1, 0) then (0, 0) | acquires the permit, prints `second`, `afterSecond.release()` | `firstsecond` |
+| 5 | 3 | wakes | (0, 1) then (0, 0) | acquires the permit, prints `third` | `firstsecondthird` |
+
+Whichever order the threads reach their `acquire` call, the chain is the same. If thread 1 runs first, the permits are simply waiting when threads 2 and 3 arrive, and they do not block.
+
+**Puzzle 2, FooBar (`fooBar(n)`).** `fooTurn` starts with 1 permit and `barTurn` with 0. `foo` loops `n` times: acquire `fooTurn`, print `foo`, release `barTurn`. `bar` loops `n` times: acquire `barTurn`, print `bar`, release `fooTurn`. The two permits pass back and forth.
+
+**Input:** `n = 3`. (`bar` is started first in the code, so it blocks at once on `barTurn` with 0 permits.)
+
+| Step | Thread | `fooTurn` / `barTurn` before | Action | Output so far |
+|------|--------|------------------------------|--------|---------------|
+| 1 | foo, round 1 | 1 / 0 | acquire `fooTurn`, print, release `barTurn` | `foo` |
+| 2 | bar, round 1 | 0 / 1 | acquire `barTurn`, print, release `fooTurn` | `foobar` |
+| 3-4 | foo, bar round 2 | same pattern | `foo`, then `bar` | `foobarfoobar` |
+| 5-6 | foo, bar round 3 | same pattern | `foo`, then `bar` | `foobarfoobarfoobar` |
+
+```mermaid
+flowchart LR
+    F["foo prints"] -->|"release barTurn"| B["bar prints"]
+    B -->|"release fooTurn"| F
+```
+
+**Edge cases.** The total number of permits in `fooTurn` and `barTurn` is always exactly 1, so the two threads can never print out of turn; with `n = 0` neither loop runs and the result is an empty string. An interrupt while blocked in `acquire` restores the interrupt flag and stops that thread. Both strings are built in a `StringBuffer` and the threads are joined before the result is read.
+
+**Result:** `printInOrder` returns `firstsecondthird` for the orders `[1, 2, 3]`, `[3, 2, 1]` and `[2, 3, 1]`, and `fooBar(3)` returns `foobarfoobarfoobar`; this was the output in all three runs checked.
+
 ## Source Code
 
 ### ConcurrencyCoordinationPuzzles.java

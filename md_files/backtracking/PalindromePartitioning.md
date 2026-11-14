@@ -158,6 +158,41 @@ private static void backtrack(String s, int start, boolean[][] isPal, List<Strin
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: first build a table `isPal[start][end]` once, so later "is this piece a palindrome?" is an `O(1)` lookup. A substring is a palindrome when its end letters match and the inside is a palindrome (or the length is at most 2). Then backtrack: from position `start`, try every `end` where `isPal[start][end]` is true, add that piece, recurse from `end + 1`, and remove it. Reaching the end of the string records the partition.
+
+**Input:** `s = "aab"`. The table (rows `start`, columns `end`), computed by the first loop:
+
+| `isPal` | end=0 `a` | end=1 `a` | end=2 `b` |
+|---------|-----------|-----------|-----------|
+| start=0 | true | true (`aa`) | false (`aab`) |
+| start=1 | false | true | false (`ab`) |
+| start=2 | false | false | true |
+
+| Step | `start` | Piece tried | Path | Action |
+|------|---------|-------------|------|--------|
+| 1 | 0 | `a` (0..0) | `[a]` | palindrome: recurse from 1 |
+| 2 | 1 | `a` (1..1) | `[a, a]` | recurse from 2 |
+| 3 | 2 | `b` (2..2) | `[a, a, b]` | `start == 3`: record `[a, a, b]` |
+| 4 | 1 | `ab` (1..2) | `[a]` | not a palindrome, skipped |
+| 5 | 0 | `aa` (0..1) | `[aa]` | palindrome: recurse from 2 |
+| 6 | 2 | `b` | `[aa, b]` | record `[aa, b]` |
+| 7 | 0 | `aab` (0..2) | `[]` | not a palindrome, skipped |
+
+```mermaid
+graph TD
+    A["start 0"] --> B["a, start 1"]
+    A --> C["aa, start 2"]
+    B --> D["a, start 2"]
+    D --> E["b: record a,a,b"]
+    C --> F["b: record aa,b"]
+```
+
+**Edge cases.** A single character gives `[[a]]`. A string with no repeated letters (`"abc"`) returns only the all-singles partition. The table is filled with increasing `end`, so `isPal[start + 1][end - 1]` is always ready. An empty string would create an empty table and return `[[]]`.
+
+**Result:** `partition("aab")` returns `[[a, a, b], [aa, b]]`, matching the class output.
+
 ## Source Code
 
 ### PalindromePartitioning.java

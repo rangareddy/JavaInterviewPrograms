@@ -113,6 +113,36 @@ private static void dfs(int v, int parent, List<List<Integer>> graph, int[] disc
 
 The optimized solution is Approach 2 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: run one DFS from server 0 and give each server a discovery number `disc[v]` (the order it is first reached). Also keep `low[v]`, the smallest discovery number that the subtree of `v` can reach, using tree edges plus back edges to already-visited servers (the edge back to the parent is skipped). After finishing a child `w` of `v`, the link `v - w` is a bridge exactly when `low[w] > disc[v]`: nothing in the subtree of `w` can get back to `v` or higher except through this link.
+
+**Input:** `n = 4`, `connections = [[0,1], [1,2], [2,0], [1,3]]`. Adjacency lists: `0: [1,2]`, `1: [0,2,3]`, `2: [1,0]`, `3: [1]`. All `disc` start at -1.
+
+| Step | Event | `disc` | `low` | Note |
+|------|-------|--------|-------|------|
+| 1 | enter 0 (parent -1) | `[0,-1,-1,-1]` | `[0,-,-,-]` | first neighbour 1 is unvisited, recurse |
+| 2 | enter 1 (parent 0) | `[0,1,-1,-1]` | `[0,1,-,-]` | skip neighbour 0 (parent), recurse into 2 |
+| 3 | enter 2 (parent 1) | `[0,1,2,-1]` | `[0,1,2,-]` | skip 1 (parent) |
+| 4 | at 2, neighbour 0 already visited | | `[0,1,0,-]` | back edge: `low[2] = min(2, disc[0]) = 0` |
+| 5 | back at 1 from 2 | | `[0,0,0,-]` | `low[1] = min(1, low[2]) = 0`; `low[2] = 0 > disc[1] = 1`? no |
+| 6 | enter 3 (parent 1) | `[0,1,2,3]` | `[0,0,0,3]` | no other neighbours |
+| 7 | back at 1 from 3 | | `[0,0,0,3]` | `low[3] = 3 > disc[1] = 1`: **bridge `[1, 3]`** |
+| 8 | back at 0 from 1 | | `[0,0,0,3]` | `low[1] = 0 > disc[0] = 0`? no |
+| 9 | at 0, neighbour 2 already visited | | `[0,0,0,3]` | back edge, `low[0]` stays 0 |
+
+```mermaid
+flowchart LR
+    A0(("0")) --- A1(("1"))
+    A1 --- A2(("2"))
+    A2 --- A0
+    A1 ===|"bridge"| A3(("3"))
+```
+
+**Edge cases.** Two servers with one link (`n = 2`, `[[0,1]]`): `low[1] = 1 > disc[0] = 0`, so `[[0, 1]]` is reported. A graph that is one big cycle reports nothing, because every `low` value reaches back to the start. The graph is assumed connected (the DFS starts only at 0) and without parallel links.
+
+**Result:** the only bridge is `[1, 3]`, so the method returns `[[1, 3]]`, as the class prints.
+
 ## Source Code
 
 ### CriticalConnections.java

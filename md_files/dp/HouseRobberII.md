@@ -200,6 +200,41 @@ private static int robRange(int[] nums, int from, int to) {
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: the houses form a circle, so the first and the last house are neighbours and cannot both be robbed. That splits the problem into two ordinary House Robber runs: one on houses `0 .. n-2` (the last house is excluded) and one on houses `1 .. n-1` (the first house is excluded). Every valid choice falls into one of the two, and the answer is the larger result. `robRange` is the two-variable House Robber loop (`best = max(prev1, prev2 + money)`), so the total is O(n) time, O(1) space.
+
+**Input:** `nums = [1, 2, 3, 1]`. The code evaluates `robRange(nums, 0, 2)` and `robRange(nums, 1, 3)`.
+
+Run A: houses `[1, 2, 3]` (indices 0 to 2)
+
+| House | `money` | Skip `prev1` | Rob `prev2 + money` | `best` |
+|-------|---------|--------------|---------------------|--------|
+| 0 | 1 | 0 | 0 + 1 = 1 | 1 |
+| 1 | 2 | 1 | 0 + 2 = 2 | 2 |
+| 2 | 3 | 2 | 1 + 3 = 4 | 4 |
+
+Run B: houses `[2, 3, 1]` (indices 1 to 3)
+
+| House | `money` | Skip `prev1` | Rob `prev2 + money` | `best` |
+|-------|---------|--------------|---------------------|--------|
+| 1 | 2 | 0 | 0 + 2 = 2 | 2 |
+| 2 | 3 | 2 | 0 + 3 = 3 | 3 |
+| 3 | 1 | 3 | 2 + 1 = 3 | 3 |
+
+```text
+circle:  [1] [2] [3] [1]  (house 3 is next to house 0)
+Run A:    1   2   3   x   -> 4 (rob houses 0 and 2)
+Run B:    x   2   3   1   -> 3
+answer = max(4, 3) = 4
+```
+
+The method returns `max(4, 3) = 4`.
+
+**Edge cases.** `null` or an empty array returns `0`. A single house (`[7]`) returns `7` directly, because the two ranges would otherwise be empty or overlap. For two houses each run contains exactly one house, so the answer is the larger one. For `[2, 3, 2]` both runs give 3 (the two 2s are neighbours in the circle), so the result is `3`.
+
+**Result:** `4` for the traced input, matching the class output (`3`, `4`, `3`, `7` for its four samples).
+
 ## Source Code
 
 ### HouseRobberII.java

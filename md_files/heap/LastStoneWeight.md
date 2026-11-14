@@ -132,6 +132,30 @@ public static int lastStoneWeight(int[] stones) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: every round smashes the two heaviest stones, so a max-heap gives them in `O(log n)`. If they are equal both vanish; otherwise the difference goes back into the heap. Rounds repeat until at most one stone is left.
+
+**Input:** `stones = [2, 7, 4, 1, 8, 1]`; the max-heap holds `{8, 7, 4, 2, 1, 1}`.
+
+| Round | `heaviest` | `second` | Equal? | Pushed back | Heap afterwards |
+|-------|-----------|----------|--------|-------------|-----------------|
+| 1 | 8 | 7 | no | 1 | `{4, 2, 1, 1, 1}` |
+| 2 | 4 | 2 | no | 2 | `{2, 1, 1, 1}` |
+| 3 | 2 | 1 | no | 1 | `{1, 1, 1}` |
+| 4 | 1 | 1 | yes | nothing | `{1}` |
+
+The heap size is now 1, the loop stops and the single remaining stone is `1`.
+
+```text
+8 7 4 2 1 1 -> 4 2 1 1 1 -> 2 1 1 1 -> 1 1 1 -> 1
+  (8-7=1)       (4-2=2)      (2-1=1)    (1,1 vanish)
+```
+
+**Edge cases:** `[]` leaves an empty heap and returns `0`; `[1]` never enters the loop and returns `1`; `[2, 2]` destroys both stones and returns `0`.
+
+**Result:** `1`, the same as the class output.
+
 ## Source Code
 
 ### LastStoneWeight.java

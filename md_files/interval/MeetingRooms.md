@@ -141,6 +141,33 @@ public static boolean canAttendMeetings(int[][] intervals) {
 
 The optimized solution is Approach 5 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: once the meetings are sorted by start time, any overlap must show up between two neighbours. So after sorting, each meeting only has to be compared with the one right before it: if it starts before the previous one ends, the person cannot attend both.
+
+**Input:** `[[0, 30], [5, 10], [15, 20]]`.
+
+| `i` | `sorted[i]` | `sorted[i-1]` | Check `start < previous end` | Action |
+|-----|-------------|---------------|------------------------------|--------|
+| (sort) | `[[0,30],[5,10],[15,20]]` | - | - | already in start order |
+| 1 | `[5,10]` | `[0,30]` | `5 < 30` is true | return `false` |
+
+The loop stops at the first overlap, so `[15,20]` is never looked at. The class prints `false`.
+
+```text
+time:  0         5    10        15   20                30
+       [0 ---------------------------------------------30]
+                 [5--10]
+                                [15--20]
+                 ^ starts at 5, before the previous meeting ends at 30 -> overlap
+```
+
+**Second input:** `[[7, 10], [2, 4]]`. Sorting gives `[[2,4],[7,10]]`; at `i = 1` the check is `7 < 4`, which is false, the loop ends and the result is `true`. For `[[1,5],[5,8]]` the check is `5 < 5`, false, so back-to-back meetings are allowed and the result is `true`.
+
+**Edge cases.** `null` or fewer than two meetings returns `true` immediately. The input array is cloned before sorting, so the caller's array order is untouched (only the references are copied, giving `O(n)` for the clone itself). The comparison uses `<`, not `<=`, which is why a meeting that starts exactly when another ends is accepted.
+
+**Result:** `false`, `true`, `true` for the three inputs in `main`, matching the class output.
+
 ## Source Code
 
 ### MeetingRooms.java

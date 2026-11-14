@@ -70,6 +70,33 @@ public static ListNode middleNode(ListNode head) {
 
 The optimized solution is Approach 2 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: `fast` moves two nodes for every one node `slow` moves. When `fast` can no longer jump, `slow` has covered half the distance, so it is on the middle. This takes one pass and O(1) space, with no need to know the length.
+
+**Input:** `head = [1, 2, 3, 4, 5]`.
+
+| Step | `slow` | `fast` | Check `fast != null && fast.next != null` |
+|------|--------|--------|-------------------------------------------|
+| start | 1 | 1 | true |
+| 1 | 2 | 3 | true |
+| 2 | 3 | 5 | false (`5.next` is `null`) |
+
+The loop stops and `slow` (node `3`) is returned, so the output is the list from there: `[3, 4, 5]`.
+
+```mermaid
+flowchart LR
+    n1["1"] --> n2["2"] --> n3["3"] --> n4["4"] --> n5["5"]
+    S(["slow ends here"]) -.-> n3
+    F(["fast ends here"]) -.-> n5
+```
+
+**Even length.** For `[1, 2, 3, 4, 5, 6]`: the pointers go `(1,1)`, `(2,3)`, `(3,5)`, `(4, null)` and the loop stops because `fast` is `null`, so `slow` is the second middle, node `4`, and the output is `[4, 5, 6]`.
+
+**Edge cases.** One node (`[1]`) never enters the loop and returns `[1]`; `[1, 2]` returns `[2]`. A `null` head returns `null`.
+
+**Result:** `[3, 4, 5]` for the sample, matching the class output.
+
 ## Source Code
 
 ### MiddleOfTheLinkedList.java

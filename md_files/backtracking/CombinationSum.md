@@ -134,6 +134,44 @@ public static int combinationSum4(int[] nums, int target) {
 
 The optimized solution is Approach 2 above. The version implemented in this repository is Approach 2 and 4.
 
+#### Optimized solution explained
+
+The idea: sort the candidates, then build combinations by choosing a candidate, subtracting it from `remaining` and recursing from the same index `i` (so a number can be reused) but never from an earlier index (so `[2, 3]` and `[3, 2]` are not both produced). Because the array is sorted, the loop stops as soon as `candidates[i] > remaining`: every later candidate is bigger too. When `remaining == 0` the path is recorded.
+
+**Input:** `candidates = [2, 3, 6, 7]`, `target = 7`.
+
+| Step | Path | `remaining` | What happens |
+|------|------|-------------|--------------|
+| 1 | `[2]` | 5 | add 2 |
+| 2 | `[2, 2]` | 3 | add 2 |
+| 3 | `[2, 2, 2]` | 1 | add 2; next candidate 2 > 1, loop stops |
+| 4 | `[2, 2, 3]` | 0 | add 3 (from `[2, 2]`); record `[2, 2, 3]` |
+| 5 | `[2, 2]` | 3 | next candidate 6 > 3, stop |
+| 6 | `[2, 3]` | 2 | add 3 (from `[2]`); next candidate 3 > 2, stop |
+| 7 | `[2]` | 5 | next candidate 6 > 5, stop |
+| 8 | `[3, 3]` | 1 | `[3]` has remaining 4; add 3; next candidate 3 > 1, stop; then 6 > 4, stop |
+| 9 | `[6]` | 1 | 6 > 1 stops |
+| 10 | `[7]` | 0 | record `[7]` |
+
+```mermaid
+graph TD
+    R["rem 7"] --> A["2: rem 5"]
+    R --> B["3: rem 4"]
+    R --> C["6: rem 1"]
+    R --> D["7: rem 0, RECORD 7"]
+    A --> A1["2,2: rem 3"]
+    A --> A2["2,3: rem 2"]
+    A1 --> A3["2,2,2: rem 1"]
+    A1 --> A4["2,2,3: rem 0, RECORD"]
+    B --> B1["3,3: rem 1"]
+```
+
+**Edge cases.** If no combination reaches the target (`[2]`, target `1`), the first candidate 2 > 1 stops the loop at once and the result is `[]`. The candidates are cloned before sorting.
+
+**Counting variant** (also in this class, `combinationSum4`): `ways[t]` counts ordered sequences summing to `t`, with `ways[0] = 1`. For `nums = [1, 2, 3]`, `target = 4`: `ways[1] = 1`, `ways[2] = ways[1] + ways[0] = 2`, `ways[3] = ways[2] + ways[1] + ways[0] = 4`, `ways[4] = ways[3] + ways[2] + ways[1] = 7`.
+
+**Result:** `combinationSum([2, 3, 6, 7], 7)` returns `[[2, 2, 3], [7]]` and `combinationSum4([1, 2, 3], 4)` returns `7`, matching the class output.
+
 ## Source Code
 
 ### CombinationSum.java

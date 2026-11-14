@@ -84,6 +84,31 @@ private static boolean isPalindrome(String s, int left, int right) {
 
 The optimized solution is Approach 2 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: walk two pointers inward while the characters match. At the first mismatch there is exactly one chance to delete a character: either the left one or the right one. So check whether the substring without `s[left]` (`left+1..right`) or the substring without `s[right]` (`left..right-1`) is a palindrome. Characters before the mismatch were already matched and are never re-checked.
+
+**Input:** `s = "abca"`.
+
+| Step | `left` | `right` | `s[left]`, `s[right]` | Action |
+|------|--------|---------|-----------------------|--------|
+| 1 | 0 | 3 | `a`, `a` | equal, move to 1, 2 |
+| 2 | 1 | 2 | `b`, `c` | mismatch: try `isPalindrome(s, 2, 2)` (delete `b`) |
+| 3 | helper | | `left = 2`, `right = 2` | `left < right` is false, returns `true` |
+
+The `||` stops here, so the second option is not evaluated. Deleting `b` leaves `"aca"`, a palindrome.
+
+```text
+index: 0 1 2 3
+s:     a b c a
+       L     R     a = a
+         L R       b != c  -> skip b: check [2..2] -> true
+```
+
+**Edge cases.** `"aba"`, `"a"` and `""` never mismatch and return `true`. For `"abc"`: step 1 mismatches `a`/`c`, then `isPalindrome(s, 1, 2)` compares `b`/`c` (false) and `isPalindrome(s, 0, 1)` compares `a`/`b` (false), so the result is `false`. `"deeee"` mismatches `d`/`e`; dropping the left `d` leaves `"eeee"`, so `true`. A `null` string would throw `NullPointerException`.
+
+**Result:** `true`, matching the class output.
+
 ## Source Code
 
 ### ValidPalindromeII.java

@@ -74,6 +74,28 @@ public int next(int price) {
 
 The optimized solution is Approach 2 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: the span of today's price is the number of consecutive days up to and including today with price <= today's. Instead of scanning back day by day, the stack stores pairs `{price, span}` where each pair already summarizes a run of earlier days. A new price pops every pair with price <= it and adds their spans to its own span (starting at 1), then pushes its own pair. The prices on the stack are strictly decreasing from bottom to top, and every pair is pushed and popped once, so `next` is O(1) amortized.
+
+**Input:** `next(100), next(80), next(60), next(70), next(60), next(75), next(85)`. The stack is written bottom to top as `(price, span)`.
+
+| Call | Price | Pops (adds to span) | Span returned | Stack afterwards |
+|------|-------|---------------------|---------------|------------------|
+| 1 | 100 | none | 1 | (100,1) |
+| 2 | 80 | none (100 > 80) | 1 | (100,1) (80,1) |
+| 3 | 60 | none | 1 | (100,1) (80,1) (60,1) |
+| 4 | 70 | (60,1) → span 2 | 2 | (100,1) (80,1) (70,2) |
+| 5 | 60 | none (70 > 60) | 1 | (100,1) (80,1) (70,2) (60,1) |
+| 6 | 75 | (60,1) → 2, (70,2) → 4 | 4 | (100,1) (80,1) (75,4) |
+| 7 | 85 | (75,4) → 5, (80,1) → 6 | 6 | (100,1) (85,6) |
+
+The pair (75,4) stands for four days (prices 60, 70, 60, 75) that are all <= 75, so later prices pop that one pair instead of re-reading four days.
+
+**Edge cases.** The first call has an empty stack and returns `1`. An equal price pops the earlier pair (`<=`), so `100, 100` gives spans `1, 2`. A price that is the lowest so far pops nothing and has span `1`.
+
+**Result:** `[1, 1, 1, 2, 1, 4, 6]`, matching the class output.
+
 ## Source Code
 
 ### OnlineStockSpan.java

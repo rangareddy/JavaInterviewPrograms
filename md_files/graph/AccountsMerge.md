@@ -136,6 +136,38 @@ private static int find(int[] parent, int x) {
 
 The optimized solution is Approach 2 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: two accounts belong to the same person when they share an email, and sharing is transitive, so this is a connected-components problem on emails. Each distinct email gets an integer id (`ids`) and remembers its owner name (`owner`). For every account, the ids of all its emails are unioned with the id of its first email (Union-Find with `parent[]`). At the end, every email is grouped by its root, each group is sorted, and the owner name is put in front. Groups are collected in a `TreeMap` keyed by the root id, so the output order is deterministic.
+
+**Input:**
+`[[John, johnsmith@mail.com, john_newyork@mail.com], [John, johnsmith@mail.com, john00@mail.com], [Mary, mary@mail.com], [John, johnnybravo@mail.com]]`.
+`parent` has `total = 6` slots (the sum of the email counts, duplicates included); only ids 0 to 4 are used.
+
+| Step | Account | Email | Id | Action | `parent[0..4]` |
+|------|---------|-------|----|--------|----------------|
+| 1 | John #1 | `johnsmith@` | 0 (new) | first email of the account | `[0,1,2,3,4]` |
+| 2 | John #1 | `john_newyork@` | 1 (new) | union(1, 0): `parent[1] = 0` | `[0,0,2,3,4]` |
+| 3 | John #2 | `johnsmith@` | 0 (known) | first email of the account | `[0,0,2,3,4]` |
+| 4 | John #2 | `john00@` | 2 (new) | union(2, 0): `parent[2] = 0` | `[0,0,0,3,4]` |
+| 5 | Mary | `mary@` | 3 (new) | first email, nothing to union | `[0,0,0,3,4]` |
+| 6 | John #3 | `johnnybravo@` | 4 (new) | first email, nothing to union | `[0,0,0,3,4]` |
+
+The shared email `johnsmith@` (id 0) is what links the first two accounts. Grouping by root: root 0 has `john00@, john_newyork@, johnsmith@` (after sorting), root 3 has `mary@`, root 4 has `johnnybravo@`.
+
+```text
+root 0: johnsmith -- john_newyork       (account 1)
+        johnsmith -- john00             (account 2, linked through johnsmith)
+root 3: mary
+root 4: johnnybravo
+```
+
+Each group is emitted as `[owner, sorted emails...]`, where the owner is looked up from the first sorted email.
+
+**Edge cases.** An account with only a name and one email contributes a group of one. Two different people with the same name but no shared email stay separate (names are never used for merging). An empty account list produces an empty result.
+
+**Result:** `[[John, john00@mail.com, john_newyork@mail.com, johnsmith@mail.com], [Mary, mary@mail.com], [John, johnnybravo@mail.com]]`, identical to the class output.
+
 ## Source Code
 
 ### AccountsMerge.java

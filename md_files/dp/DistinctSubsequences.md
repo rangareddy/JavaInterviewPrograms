@@ -122,6 +122,28 @@ public static int numDistinct(String s, String t) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: `dp[j]` is the number of ways the first `j` characters of `t` can be formed as a subsequence of the part of `s` read so far. `dp[0] = 1` (the empty string can be formed in one way). For each character `c` of `s`, go through `j` from `n` down to 1; when `t[j-1] == c` that character can extend every way of forming the first `j - 1` characters, so `dp[j] += dp[j-1]`. Going downwards makes sure `dp[j-1]` still holds the value from before this character.
+
+**Input:** `s = "babgbag"`, `t = "bag"`. Start: `dp = [1, 0, 0, 0]` (for the prefixes "", "b", "ba", "bag").
+
+| `i` | `s[i]` | Update | `dp` afterwards |
+|-----|--------|--------|-----------------|
+| 0 | b | `t[0] = b`: `dp[1] += dp[0]` | `[1, 1, 0, 0]` |
+| 1 | a | `t[1] = a`: `dp[2] += dp[1]` | `[1, 1, 1, 0]` |
+| 2 | b | `dp[1] += dp[0]` | `[1, 2, 1, 0]` |
+| 3 | g | `t[2] = g`: `dp[3] += dp[2]` | `[1, 2, 1, 1]` |
+| 4 | b | `dp[1] += dp[0]` | `[1, 3, 1, 1]` |
+| 5 | a | `dp[2] += dp[1]` | `[1, 3, 4, 1]` |
+| 6 | g | `dp[3] += dp[2]` | `[1, 3, 4, 5]` |
+
+The last cell `dp[3] = 5` is the number of distinct ways to pick `b`, `a`, `g` in order from `babgbag`. No diagram is added; the table is the full picture.
+
+**Edge cases.** If `t` is longer than `s` (`"abc"`, `"abcd"`) the last cell is never raised above 0, so the result is `0`. Both strings empty gives `dp = [1]` and returns `1`. A character of `s` that is not in `t` changes nothing. Space is `O(len(t))`.
+
+**Result:** the method returns `5`, matching the class output (`rabbbit` / `rabbit` prints `3`).
+
 ## Source Code
 
 ### DistinctSubsequences.java

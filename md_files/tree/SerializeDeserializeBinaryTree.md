@@ -288,6 +288,42 @@ private static TreeNode read(Queue<String> tokens) {
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: write the tree in pre-order (node, left, right) and write the word `null` for every missing child. The null markers make the shape unambiguous, so reading the tokens back in the same order rebuilds the tree: take a token, if it is `null` return nothing, otherwise create the node and build its left and then its right subtree from the following tokens.
+
+**Input:** `root = [1, 2, 3, null, null, 4, 5]`.
+
+Serialize visits `1, 2, null, null, 3, 4, null, null, 5, null, null` and the trailing comma is removed, giving `1,2,null,null,3,4,null,null,5,null,null`.
+
+Deserialize consumes the token queue:
+
+| Token # | Token | Action |
+|---------|-------|--------|
+| 1 | `1` | create 1, build its left |
+| 2 | `2` | create 2 as left of 1, build its left |
+| 3 | `null` | left of 2 is empty |
+| 4 | `null` | right of 2 is empty, 2 is done |
+| 5 | `3` | create 3 as right of 1, build its left |
+| 6 | `4` | create 4 as left of 3, build its left |
+| 7 | `null` | left of 4 is empty |
+| 8 | `null` | right of 4 is empty |
+| 9 | `5` | create 5 as right of 3, build its left |
+| 10 | `null` | left of 5 is empty |
+| 11 | `null` | right of 5 is empty, the queue is now empty |
+
+```mermaid
+flowchart TD
+    A["1"] --> B["2"]
+    A --> C["3"]
+    C --> D["4"]
+    C --> E["5"]
+```
+
+**Edge cases:** an empty tree serializes to `null` and deserializes back to an empty tree; `[1, 2]` serializes to `1,2,null,null,null`.
+
+**Result:** the rebuilt tree prints `[1, 2, 3, null, null, 4, 5]`, the same as the class output.
+
 ## Source Code
 
 Uses the shared helper [`TreeNode`](../../src/main/java/com/ranga/tree/TreeNode.java) (a small `TreeNode` with `of(...)` and `toString(...)` helpers for building and printing test data).

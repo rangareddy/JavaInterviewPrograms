@@ -125,6 +125,29 @@ public static int[] dailyTemperatures(int[] temperatures) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: for each day we want the distance to the next warmer day. The stack holds the indexes of days still waiting for a warmer day, and their temperatures are non-increasing from bottom to top (a monotonic stack). When day `i` is warmer than the day on top, that day has found its answer `i - day`, so it is popped; this repeats while the new day is warmer. Then day `i` itself waits on the stack. Each index is pushed and popped once: O(n).
+
+**Input:** `temperatures = [73, 74, 75, 71, 69, 72, 76, 73]`. The stack holds indexes, bottom to top.
+
+| i | Temp | Pops (day: answer = i - day) | Stack after push | answer array so far |
+|---|------|------------------------------|------------------|---------------------|
+| 0 | 73 | none | 0 | `[0,0,0,0,0,0,0,0]` |
+| 1 | 74 | day 0: 1 - 0 = 1 | 1 | `[1,0,0,0,0,0,0,0]` |
+| 2 | 75 | day 1: 2 - 1 = 1 | 2 | `[1,1,0,0,0,0,0,0]` |
+| 3 | 71 | none (71 < 75) | 2 3 | unchanged |
+| 4 | 69 | none (69 < 71) | 2 3 4 | unchanged |
+| 5 | 72 | day 4: 1, day 3: 2 (72 < 75 stops) | 2 5 | `[1,1,0,2,1,0,0,0]` |
+| 6 | 76 | day 5: 1, day 2: 4 | 6 | `[1,1,4,2,1,1,0,0]` |
+| 7 | 73 | none | 6 7 | unchanged |
+
+Days 6 and 7 stay on the stack at the end: no warmer day follows them, so their answer remains `0`.
+
+**Edge cases.** Equal temperatures do not pop (the test is strictly `>`), because an equal day is not warmer. A strictly rising input such as `[30, 40, 50, 60]` gives `[1, 1, 1, 0]`; a falling input such as `[90, 80, 70]` never pops and gives all zeros. An empty array returns an empty array.
+
+**Result:** `[1, 1, 4, 2, 1, 1, 0, 0]`, matching the class output.
+
 ## Source Code
 
 ### DailyTemperatures.java

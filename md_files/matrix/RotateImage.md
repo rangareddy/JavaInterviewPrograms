@@ -191,6 +191,34 @@ public static void rotate(int[][] matrix) {
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: a 90-degree clockwise rotation equals a transpose (swap `matrix[i][j]` with `matrix[j][i]`, mirroring over the main diagonal) followed by reversing every row. Both steps are in place, so no second matrix is needed.
+
+**Input:** `[[1, 2, 3], [4, 5, 6], [7, 8, 9]]` (`n = 3`).
+
+| Step | Operation | Matrix afterwards |
+|------|-----------|-------------------|
+| 1 | swap `(0,1)` and `(1,0)`: 2 and 4 | [[1,4,3],[2,5,6],[7,8,9]] |
+| 2 | swap `(0,2)` and `(2,0)`: 3 and 7 | [[1,4,7],[2,5,6],[3,8,9]] |
+| 3 | swap `(1,2)` and `(2,1)`: 6 and 8 | [[1,4,7],[2,5,8],[3,6,9]] |
+| 4 | reverse row 0 | [[7,4,1],[2,5,8],[3,6,9]] |
+| 5 | reverse row 1 | [[7,4,1],[8,5,2],[3,6,9]] |
+| 6 | reverse row 2 | [[7,4,1],[8,5,2],[9,6,3]] |
+
+The transpose loop starts the inner index at `j = i + 1`, so each pair is swapped only once (swapping twice would undo it).
+
+```text
+original     transpose    reverse rows
+1 2 3        1 4 7        7 4 1
+4 5 6   ->   2 5 8   ->   8 5 2
+7 8 9        3 6 9        9 6 3
+```
+
+**Edge cases.** `null` or a matrix with at most 1 row returns without change (a `1x1` matrix is its own rotation). The 4x4 sample `[[5,1,9,11],[2,4,8,10],[13,3,6,7],[15,14,12,16]]` gives `[[15,13,2,5],[14,3,4,1],[12,6,8,9],[16,7,10,11]]` (class output). The matrix must be square.
+
+**Result:** `[[7, 4, 1], [8, 5, 2], [9, 6, 3]]`, matching the class output.
+
 ## Source Code
 
 ### RotateImage.java

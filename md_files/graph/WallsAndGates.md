@@ -153,6 +153,49 @@ public static void wallsAndGates(int[][] rooms) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: every empty room wants the distance to its nearest gate, so instead of searching from each room, all gates start a breadth-first search together. The queue first holds every gate (distance 0). Taking a cell off the queue, each neighbour that still holds `INF` is an unvisited empty room: it gets `distance(cell) + 1`, which both stores its answer and marks it visited (it no longer equals `INF`), and it joins the queue. Walls (`-1`), gates and already-filled rooms are skipped. BFS reaches cells in increasing distance order, so the first value a room receives is already the shortest one. Each room is queued once: O(m * n). Neighbours are tried in the order down, up, right, left.
+
+**Input** (`I` = `INF`):
+
+```text
+I -1  0  I
+I  I  I -1
+I -1  I -1
+0 -1  I  I
+```
+
+Start: queue = `(0,2) (3,0)`.
+
+| Step | Cell taken | Rooms filled (value) | Queue afterwards |
+|------|------------|----------------------|------------------|
+| 1 | `(0,2)` d=0 | `(1,2)=1`, `(0,3)=1` | `(3,0) (1,2) (0,3)` |
+| 2 | `(3,0)` d=0 | `(2,0)=1` | `(1,2) (0,3) (2,0)` |
+| 3 | `(1,2)` d=1 | `(2,2)=2`, `(1,1)=2` | `(0,3) (2,0) (2,2) (1,1)` |
+| 4 | `(0,3)` d=1 | none | `(2,0) (2,2) (1,1)` |
+| 5 | `(2,0)` d=1 | `(1,0)=2` | `(2,2) (1,1) (1,0)` |
+| 6 | `(2,2)` d=2 | `(3,2)=3` | `(1,1) (1,0) (3,2)` |
+| 7 | `(1,1)` d=2 | none | `(1,0) (3,2)` |
+| 8 | `(1,0)` d=2 | `(0,0)=3` | `(3,2) (0,0)` |
+| 9 | `(3,2)` d=3 | `(3,3)=4` | `(0,0) (3,3)` |
+| 10 | `(0,0)` d=3 | none | `(3,3)` |
+| 11 | `(3,3)` d=4 | none | empty |
+
+```text
+filled grid (W = wall)
+3  W  0  1
+2  2  1  W
+1  W  2  W
+0  W  3  4
+```
+
+The queue is empty, so the loop ends. The grid is changed in place and the method returns nothing.
+
+**Edge cases.** A `null` or empty grid returns immediately. A grid with no gate (for example `[[-1]]`) leaves the queue empty and nothing changes; rooms that cannot reach any gate because of walls simply stay `INF`. For `[[INF,INF],[INF,0]]` the single gate fills `(0,1)` and `(1,0)` with 1 and then `(0,0)` with 2.
+
+**Result:** `[[3,-1,0,1],[2,2,1,-1],[1,-1,2,-1],[0,-1,3,4]]`, the same as the class output.
+
 ## Source Code
 
 ### WallsAndGates.java

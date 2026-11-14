@@ -122,6 +122,37 @@ public static int lcsTwoRows(String text1, String text2) {
 
 The optimized solution is Approach 4 above. The version implemented in this repository is Approach 3.
 
+#### Optimized solution explained
+
+**Note:** the page lists Approach 4 (two rolling rows) as the optimized one, but the class in this repository implements Approach 3, the full bottom-up table. This block explains the code as written; the rolling-row version computes the same cells while keeping only two rows.
+
+The idea: `dp[i][j]` is the LCS length of the first `i` characters of `text1` and the first `j` of `text2`. If the last characters match, they extend the best answer of both shorter prefixes (`dp[i-1][j-1] + 1`); otherwise drop one character from either string and keep the better result (`max(dp[i-1][j], dp[i][j-1])`). Row 0 and column 0 stay 0 (an empty prefix).
+
+**Input:** `text1 = "abcde"`, `text2 = "ace"`.
+
+| `i` (char of text1) | `dp[i][0..3]` (cols: "", a, c, e) | What happened |
+|---------------------|-----------------------------------|---------------|
+| 0 (none) | `[0, 0, 0, 0]` | initial |
+| 1 (`a`) | `[0, 1, 1, 1]` | `a = a` gives `dp[0][0] + 1 = 1`; the rest copy the left cell |
+| 2 (`b`) | `[0, 1, 1, 1]` | no match, `max(above, left)` everywhere |
+| 3 (`c`) | `[0, 1, 2, 2]` | `c = c` gives `dp[2][1] + 1 = 2` |
+| 4 (`d`) | `[0, 1, 2, 2]` | no match |
+| 5 (`e`) | `[0, 1, 2, 3]` | `e = e` gives `dp[4][2] + 1 = 3` |
+
+```text
+        ""  a  c  e
+   ""    0  0  0  0
+   a     0  1  1  1
+   b     0  1  1  1
+   c     0  1  2  2
+   d     0  1  2  2
+   e     0  1  2  3   <- dp[5][3] = 3  (subsequence "ace")
+```
+
+**Edge cases.** A `null` string returns `0`. An empty string leaves the whole table at 0, so the result is `0`. Strings with nothing in common (`"abc"`, `"def"`) also give `0`.
+
+**Result:** `longestCommonSubsequence("abcde", "ace")` returns `3`, matching the class output.
+
 ## Source Code
 
 ### LongestCommonSubsequence.java

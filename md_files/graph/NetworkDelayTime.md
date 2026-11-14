@@ -163,6 +163,32 @@ public static int networkDelayTime(int[][] times, int n, int k) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: a signal sent from node `k` reaches node `v` after the length of the shortest path from `k` to `v`, so all nodes are informed after the **largest** shortest-path distance. Dijkstra's algorithm computes all of them: `dist[]` holds the best known distance (initially `Integer.MAX_VALUE`, `dist[k] = 0`), and a min-heap of `{node, distance}` always yields the closest unfinished node next. Taking a node, each outgoing edge is relaxed (`dist[node] + weight < dist[next]` updates `dist` and pushes a new heap entry). Old entries are not removed from the heap; an entry whose distance is larger than the current `dist[node]` is stale and skipped (`continue`). Finally the answer is the maximum of `dist[1..n]`, or `-1` if any node still has `MAX_VALUE`. Time O(E log V).
+
+**Input:** `times = [[1,2,1],[2,3,2],[1,3,4]]`, `n = 3`, `k = 1` (edges are `u, v, weight`). Start: `dist = [-, 0, INF, INF]` (index 0 unused), heap = `{1,0}`.
+
+| Step | Heap entry polled `{node, dist}` | Stale? | Relaxations | `dist[1..3]` afterwards |
+|------|----------------------------------|--------|-------------|-------------------------|
+| 1 | `{1, 0}` | no | `1->2`: 0+1 = 1 < INF, push `{2,1}`; `1->3`: 0+4 = 4 < INF, push `{3,4}` | `0, 1, 4` |
+| 2 | `{2, 1}` | no | `2->3`: 1+2 = 3 < 4, push `{3,3}` | `0, 1, 3` |
+| 3 | `{3, 3}` | no | node 3 has no outgoing edges | `0, 1, 3` |
+| 4 | `{3, 4}` | yes (4 > `dist[3]` = 3), skipped | | `0, 1, 3` |
+
+```mermaid
+flowchart LR
+    N1(["1 dist 0"]) -->|"1"| N2(["2 dist 1"])
+    N2 -->|"2"| N3(["3 dist 3"])
+    N1 -->|"4, beaten by 1 + 2 = 3"| N3
+```
+
+The heap is empty. All three nodes are reachable, and the maximum of `0, 1, 3` is `3`, so the method returns `3`.
+
+**Edge cases.** If some node is unreachable (for example `times = [[1,2,1]]`, `n = 2`, `k = 2`: node 1 keeps `MAX_VALUE`) the result is `-1`. With `n = 2`, `k = 1` and one edge `[1,2,1]` the answer is `1`. A single node (`k` only) gives `0`. The stale-entry check is what makes pushing duplicate entries safe.
+
+**Result:** `3` for the traced input, matching the class output (`2`, `1`, `-1`, `3` for its four samples).
+
 ## Source Code
 
 ### NetworkDelayTime.java

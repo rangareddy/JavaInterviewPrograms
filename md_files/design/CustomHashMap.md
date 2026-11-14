@@ -179,6 +179,34 @@ static class ChainedMap {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: an array of buckets, where each bucket is a singly linked chain of `Entry(key, value, next)`. A key goes to bucket `(hashCode & 0x7fffffff) % capacity`; for an `int` key that is the key modulo the capacity. Operations only walk one short chain, so they are O(1) on average. New entries are inserted at the head of the chain. When `size` exceeds `capacity * 0.75`, the table doubles and every entry is re-linked into its new bucket, which keeps the chains short.
+
+**Input (operations):** start with 16 empty buckets, then `put(1,10)`, `put(2,20)`, `put(17,30)`, `get(17)`, `get(5)`, `put(1,11)`, `remove(2)`.
+
+| Step | Operation | Bucket | What happens | Table afterwards (`bucket: chain`) | `size` |
+|------|-----------|--------|--------------|-------------------------------------|--------|
+| 1 | `put(1, 10)` | 1 | chain empty, new head | `1: 1=10` | 1 |
+| 2 | `put(2, 20)` | 2 | new head | `1: 1=10`, `2: 2=20` | 2 |
+| 3 | `put(17, 30)` | 17 % 16 = 1 | key not in chain, collision, new head | `1: 17=30 -> 1=10`, `2: 2=20` | 3 |
+| 4 | `get(17)` | 1 | first entry matches, returns `30` | unchanged | 3 |
+| 5 | `get(5)` | 5 | chain empty, returns `-1` | unchanged | 3 |
+| 6 | `put(1, 11)` | 1 | key `1` found, value overwritten, no new entry | `1: 17=30 -> 1=11`, `2: 2=20` | 3 |
+| 7 | `remove(2)` | 2 | found with `previous == null`, bucket set to `entry.next` | `1: 17=30 -> 1=11` | 2 |
+
+```mermaid
+flowchart LR
+    B1["bucket 1"] --> E17["17 = 30"] --> E1["1 = 11"] --> N1["null"]
+    B2["bucket 2"] --> N2["empty after remove(2)"]
+```
+
+**Resizing.** The check is `size > capacity * 0.75`, i.e. `size > 12` for 16 buckets, so the 13th distinct key triggers `resize()`. Continuing from step 7 with `put(100..109)` and then `put(110, 220)` makes `size = 13`; the table doubles to 32 buckets and every entry is re-hashed with `% 32`. Key `17` moves from bucket 1 to bucket 17, while `1` stays in bucket 1.
+
+**Edge cases.** `get` of a missing key returns `-1`. `remove` of a missing key does nothing. Negative keys are handled by masking the sign bit before the modulo. Updating an existing key never grows the size.
+
+**Result:** `get(17) = 30`, `get(5) = -1`, then after step 7 `get(1) = 11`, `get(2) = -1`, `size = 2`, matching the class output. The bucket contents above were also read from the real class by reflection.
+
 ## Source Code
 
 ### CustomHashMap.java

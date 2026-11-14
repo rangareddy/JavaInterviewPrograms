@@ -147,6 +147,35 @@ public int count() {
 
 The optimized solution is Approach 3 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: keep each set as a tree of `parent` pointers whose root represents the set. `find(x)` walks up to the root and shortens the path on the way (path halving: `parent[x] = parent[parent[x]]`). `union(a, b)` finds both roots; if they are equal it returns `false` (already in one set); otherwise the root with the smaller `rank` (an upper bound of the tree height) is attached under the other, so trees stay shallow, and on equal ranks the second root goes under the first and the winner's rank grows by 1. `count` starts at `n` and decreases by one for every real merge. Together, path compression and union by rank make each operation almost O(1).
+
+**Input:** `new UnionFind(5)`, then `union(0,1)`, `union(1,2)`, `count()`, `connected(0,2)`, `connected(0,3)`, `union(0,2)`. Start: `parent = [0,1,2,3,4]`, `rank = [0,0,0,0,0]`, `count = 5`.
+
+| Operation | Roots found | What happens | `parent` | `rank` | `count` | Returns |
+|-----------|-------------|--------------|----------|--------|---------|---------|
+| `union(0,1)` | 0 and 1 | equal ranks (0, 0): `parent[1] = 0`, `rank[0]` becomes 1 | `[0,0,2,3,4]` | `[1,0,0,0,0]` | 4 | `true` |
+| `union(1,2)` | 0 and 2 | `rank[0] = 1 > rank[2] = 0`: `parent[2] = 0` | `[0,0,0,3,4]` | `[1,0,0,0,0]` | 3 | `true` |
+| `count()` | | read the counter | | | 3 | `3` |
+| `connected(0,2)` | 0 and 0 | same root | | | 3 | `true` |
+| `connected(0,3)` | 0 and 3 | different roots | | | 3 | `false` |
+| `union(0,2)` | 0 and 0 | same root, nothing changes | `[0,0,0,3,4]` | `[1,0,0,0,0]` | 3 | `false` |
+
+```mermaid
+flowchart TD
+    R0(["0 rank 1"]) --> C1(["1"])
+    R0 --> C2(["2"])
+    S3(["3"])
+    S4(["4"])
+```
+
+The final state has three sets: `{0,1,2}`, `{3}`, `{4}`. Because rank decided the direction, root 0 stays the root of the bigger tree and 2 is attached directly to it (depth 1) instead of making a chain 2 -> 1 -> 0.
+
+**Edge cases.** `union` of two elements already in one set returns `false` and leaves `count` alone. `find` of a root returns the root itself in zero steps. The class does not check bounds, so an index outside `0..n-1` would throw `ArrayIndexOutOfBoundsException`.
+
+**Result:** `true, true, 3, true, false, false`, identical to the class output.
+
 ## Source Code
 
 ### UnionFind.java

@@ -123,6 +123,32 @@ public static Node copyRandomList(Node head) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: copying `next` is easy, but a copy's `random` must point at the copy of the target, which normally needs a hash map from original to copy. Instead, the code places each copy directly after its original (`A -> A' -> B -> B'`). Then "the copy of X" is simply `X.next`, so `copy.random = original.random.next`. A last pass splits the two lists apart. No map is needed, so the extra space is O(1) beyond the new nodes.
+
+**Input:** two nodes, written `[value, index of random]`: `[[1,1],[2,1]]`, i.e. A(1) with random B and B(2) with random B.
+
+| Pass | What the code does | Structure afterwards |
+|------|--------------------|----------------------|
+| 1 | for A insert A' (1) after it; for B insert B' (2) after it | `A -> A' -> B -> B' -> null` |
+| 2 | A'.random = A.random.next = B.next = B'; B'.random = B.random.next = B' | copies' random set, originals untouched |
+| 3a | curr = A: copy = A', A.next = B, A'.next = B.next = B' | `A -> B`, `A' -> B'` |
+| 3b | curr = B: copy = B', B.next = null, B'.next = null | `B -> null`, `B' -> null` |
+
+```mermaid
+flowchart LR
+    subgraph s1["After pass 1 and 2"]
+        A["A: 1"] --> A1["A copy: 1"] --> B["B: 2"] --> B1["B copy: 2"]
+        A1 -.->|"random"| B1
+        B1 -.->|"random"| B1
+    end
+```
+
+**Edge cases.** A `null` head returns `null` before any pass. A `random` that is `null` stays `null` in the copy (the ternary in pass 2). Pass 3 guards the last copy with `copy.next == null ? null : ...`, so the copy list ends cleanly and the original list is restored exactly. The class also checks that no copied node is shared with the original.
+
+**Result:** the returned head is `A'`, and the printed copy is `[[1,1], [2,1]]`, equal in shape to the input and sharing no node with it (`shares a node with the original: false`), matching the class output.
+
 ## Source Code
 
 ### CopyListWithRandomPointer.java

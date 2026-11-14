@@ -101,6 +101,27 @@ public static int searchInsert(int[] nums, int target) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: the answer is the lower bound, the first index whose value is `>= target` (or `n` if all values are smaller). The window is half-open, `[low, high)` with `high = n`, so `n` is a legal answer. If `nums[mid] < target`, the answer is right of `mid` (`low = mid + 1`); otherwise `mid` itself might be the answer, so it stays inside (`high = mid`). When `low == high` the window is empty and `low` is the insertion index; it is also the target's index when the target exists.
+
+**Input:** `nums = [1, 3, 5, 6]`, `target = 2`.
+
+| Step | low | high | mid | nums[mid] | nums[mid] < 2 ? | Next window |
+|------|-----|------|-----|-----------|-----------------|-------------|
+| 1 | 0 | 4 | 2 | 5 | no | high = 2 |
+| 2 | 0 | 2 | 1 | 3 | no | high = 1 |
+| 3 | 0 | 1 | 0 | 1 | yes | low = 1 |
+| 4 | 1 | 1 | - | - | `low == high`, stop | return 1 |
+
+2 belongs between 1 and 3, which is index 1.
+
+Target `7` (larger than everything): `mid = 2` (5 < 7, low = 3), `mid = 3` (6 < 7, low = 4), `low == high == 4`, return 4, the position after the last element.
+
+**Edge cases.** A target smaller than all values returns 0 (`high` keeps moving down to 0). A target equal to an element returns that element's index (target 5 gives 2, target 6 gives 3). An empty array gives `low = high = 0` and returns 0. The array must be sorted and its values distinct.
+
+**Result:** `1` for target 2 and `4` for target 7, matching the class output.
+
 ## Source Code
 
 ### SearchInsertPosition.java

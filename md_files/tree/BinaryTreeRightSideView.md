@@ -134,6 +134,38 @@ public static List<Integer> rightSideView(TreeNode root) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: standing on the right of the tree you see, on every level, the right-most node. A queue-based level-order traversal visits the nodes of a level from left to right, so the last node polled in each round is the one that is visible. The code records the node whose index in the round is `levelSize - 1` and still enqueues all children, so deeper levels are handled the same way.
+
+**Input:** the tree `[1, 2, 3, null, 5, null, 4]`.
+
+```mermaid
+flowchart TD
+    n1((1)) --> n2((2))
+    n1 --> n3((3))
+    n2 --> n5((5))
+    n3 --> n4((4))
+    classDef seen fill:#dcfce7,stroke:#22c55e
+    class n1,n3,n4 seen
+```
+
+The green nodes are the ones recorded.
+
+| Round | Queue at start (`levelSize`) | Polled (index `i`) | Recorded? (`i == levelSize - 1`) | `result` | Queue at end |
+|-------|------------------------------|--------------------|----------------------------------|----------|--------------|
+| 1 | `[1]` (1) | `1` (0) | yes | `[1]` | `[2, 3]` |
+| 2 | `[2, 3]` (2) | `2` (0) | no | `[1]` | `[3, 5]` |
+| 2 | | `3` (1) | yes | `[1, 3]` | `[5, 4]` |
+| 3 | `[5, 4]` (2) | `5` (0) | no | `[1, 3]` | `[4]` |
+| 3 | | `4` (1) | yes | `[1, 3, 4]` | `[ ]` |
+
+The queue is empty, so the result is `[1, 3, 4]`. The value `5` is hidden behind `4`: both are on the third level and only the right-most counts.
+
+**Edge cases.** An empty tree returns `[]`. A tree like `[1, 2]` (only a left child) returns `[1, 2]`, because the left node is the last node of its level; `[1, 2, 3, 4]` returns `[1, 3, 4]`, where `4` is a left child that shows through since level 3 has no node on the right. The size is captured before the loop, so children enqueued in a round are processed in the next one. Time is `O(n)`, extra space `O(w)`.
+
+**Result:** `[1, 3, 4]` here, and the class output for the other inputs in `main` is `[1, 3]`, `[]`, `[1, 3, 4]` and `[1, 2]`.
+
 ## Source Code
 
 Uses the shared helper [`TreeNode`](../../src/main/java/com/ranga/tree/TreeNode.java) (a small `TreeNode` with `of(...)` and `toString(...)` helpers for building and printing test data).

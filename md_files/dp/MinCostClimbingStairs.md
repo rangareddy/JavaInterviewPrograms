@@ -110,6 +110,31 @@ public static int minCostClimbingStairs(int[] cost) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: to stand on step `i` (where `cost.length` is the "top") you arrive either from step `i - 1` paying `cost[i - 1]`, or from step `i - 2` paying `cost[i - 2]`. The cheapest way to stand on step `i` is therefore `min(best(i-1) + cost[i-1], best(i-2) + cost[i-2])`. Starting on step 0 or step 1 is free, so both `best(0)` and `best(1)` are 0. Only the last two values are needed, so `twoBack` and `oneBack` replace the whole table: O(n) time, O(1) space.
+
+**Input:** `cost = [10, 15, 20]`. Start: `twoBack = 0` (step 0), `oneBack = 0` (step 1). The loop runs for `i = 2 .. 3`.
+
+| `i` (step) | `oneBack + cost[i-1]` | `twoBack + cost[i-2]` | `current` = min | `twoBack` after | `oneBack` after |
+|------------|-----------------------|-----------------------|-----------------|-----------------|-----------------|
+| 2 | 0 + 15 = 15 | 0 + 10 = 10 | 10 | 0 | 10 |
+| 3 (the top) | 10 + 20 = 30 | 0 + 15 = 15 | 15 | 10 | 15 |
+
+```text
+step:        0     1     2     top
+cost:       10    15    20
+best(step):  0     0    10     15
+```
+
+The cheapest route is to start on step 1 (cost 15) and jump two steps to the top, so the method returns `oneBack = 15`.
+
+**Second sample:** `cost = [1,100,1,1,1,100,1,1,100,1]` gives `oneBack` values 1, 2, 2, 3, 3, 4, 4, 5, 6 for `i = 2 .. 10`, so the result is `6`.
+
+**Edge cases.** For two steps (`[5, 5]`) the loop runs once: `min(0 + 5, 0 + 5) = 5`. For `[0,0,0,0]` every `current` is 0, so the result is `0`. With fewer than two entries the loop does not run and `0` is returned.
+
+**Result:** `15` for the traced input, matching the class output (`15`, `6`, `5`, `0` for its four samples).
+
 ## Source Code
 
 ### MinCostClimbingStairs.java

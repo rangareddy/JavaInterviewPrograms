@@ -98,6 +98,35 @@ public static int firstMissingPositive(int[] nums) {
 
 The optimized solution is Approach 3 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: the answer is always in `1..n+1`. So try to place every value `v` in `1..n` at index `v - 1` (cyclic sort), swapping it into place; values that are `<= 0`, `> n` or already duplicated in their slot are ignored. Afterwards the first index `i` where `nums[i] != i + 1` gives the answer `i + 1`; if all slots are right the answer is `n + 1`.
+
+**Input:** `nums = [3, 4, -1, 1]` (`n = 4`).
+
+| Step | `i` | Value at `i` | Action | Array afterwards |
+|------|-----|--------------|--------|------------------|
+| 1 | 0 | 3 | slot 2 holds -1, not 3, so swap `nums[0]` with `nums[2]` | [-1, 4, 3, 1] |
+| 2 | 0 | -1 | not positive, the `while` stops | [-1, 4, 3, 1] |
+| 3 | 1 | 4 | slot 3 holds 1, not 4, so swap | [-1, 1, 3, 4] |
+| 4 | 1 | 1 | slot 0 holds -1, not 1, so swap | [1, -1, 3, 4] |
+| 5 | 1 | -1 | not positive, the `while` stops | [1, -1, 3, 4] |
+| 6 | 2 | 3 | slot 2 already holds 3, nothing to do | [1, -1, 3, 4] |
+| 7 | 3 | 4 | slot 3 already holds 4, nothing to do | [1, -1, 3, 4] |
+
+Scan: `nums[0] = 1` is right; `nums[1] = -1` is not `2`, so return `2`.
+
+```text
+index:      0    1    2    3
+expected:   1    2    3    4
+array:      1   -1    3    4
+                 ^ first mismatch -> answer 2
+```
+
+**Edge cases.** `[1, 1]` stops swapping at the duplicate (`nums[nums[i]-1] != nums[i]` fails), so the scan returns `2`. `[1, 2, 0]` is fully placed except the `0`, so the answer is `n + 1 = 3`. `[7, 8, 9, 11, 12]` has nothing in range and returns `1`. Each swap puts one value in its final slot, so the total work is O(n). The class changes the input array.
+
+**Result:** `2`, matching the class output.
+
 ## Source Code
 
 ### FirstMissingPositive.java

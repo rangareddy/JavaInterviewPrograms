@@ -115,6 +115,24 @@ public static int change(int amount, int[] coins) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: `dp[a]` is the number of coin combinations that make amount `a`. Start with `dp[0] = 1` (one way to make 0: take nothing). Process the coins one at a time, and for each coin sweep the amounts **upwards** with `dp[a] += dp[a - coin]`. Because a coin is handled completely before the next one starts, each combination is counted once regardless of order (1+2 and 2+1 are the same), and sweeping upwards lets the same coin be reused.
+
+**Input:** `amount = 5`, `coins = [1, 2, 5]`. Start: `dp = [1, 0, 0, 0, 0, 0]` (indices 0 to 5).
+
+| Coin | Amounts updated | `dp` afterwards | Meaning |
+|------|-----------------|-----------------|---------|
+| 1 | `a = 1..5`: `dp[a] += dp[a-1]` | `[1, 1, 1, 1, 1, 1]` | only 1s: one way per amount |
+| 2 | `a = 2..5`: `dp[a] += dp[a-2]` | `[1, 1, 2, 2, 3, 3]` | e.g. `dp[4] = 1 + dp[2] = 3` (1111, 112, 22) |
+| 5 | `a = 5`: `dp[5] += dp[0]` | `[1, 1, 2, 2, 3, 4]` | adds the combination `5` |
+
+The final cell `dp[5] = 4` counts: `5`, `2+2+1`, `2+1+1+1`, `1+1+1+1+1`. No diagram is added; the table of the `dp` array is the whole picture.
+
+**Edge cases.** `amount = 0` returns `dp[0] = 1` (the empty combination), even for coins like `[7]`. If no combination exists (`amount = 3`, `coins = [2]`) the cell stays `0`. A coin larger than the amount never enters the inner loop. The array is one-dimensional, so space is `O(amount)`.
+
+**Result:** the method returns `dp[5] = 4`, which matches the class output (the other samples print `0`, `1`, `1`, `1`).
+
 ## Source Code
 
 ### CoinChangeII.java

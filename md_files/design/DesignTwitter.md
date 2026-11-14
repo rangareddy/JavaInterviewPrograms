@@ -135,6 +135,28 @@ static class HeapTwitter {
 
 The optimized solution is Approach 3 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: each user has a list of their own tweets in posting order (every tweet carries a global `clock` number), plus a set of followees. To build a feed, treat each relevant user's list as a sorted stream, newest at the end, and merge the streams with a max-heap ordered by tweet time. The heap holds only one entry per user, `{user, index of that user's newest unread tweet}`. Poll the newest, add its id to the feed, then push the same user's previous tweet. Stop after 10 tweets or when the heap is empty, so the work depends on the feed size, not on how many tweets exist.
+
+**Input:** `postTweet(1,5)`, `getNewsFeed(1)`, `follow(1,2)`, `postTweet(2,6)`, `getNewsFeed(1)`, `unfollow(1,2)`, `getNewsFeed(1)`.
+
+| Step | Operation | State | Heap work | Result |
+|------|-----------|-------|-----------|--------|
+| 1 | `postTweet(1,5)` | `tweets{1: [(time 0, id 5)]}`, clock = 1 | | |
+| 2 | `getNewsFeed(1)` | users = {1} | push `{1, idx 0}`; poll it, feed = [5]; index 0 has no older tweet | `[5]` |
+| 3 | `follow(1,2)` | `followees{1: {2}}` | | |
+| 4 | `postTweet(2,6)` | `tweets{2: [(time 1, id 6)]}`, clock = 2 | | |
+| 5 | `getNewsFeed(1)` | users = {1, 2} | push `{1, idx 0}` (time 0) and `{2, idx 0}` (time 1); poll user 2 (newer), feed = [6]; poll user 1, feed = [6, 5] | `[6, 5]` |
+| 6 | `unfollow(1,2)` | `followees{1: {}}` | | |
+| 7 | `getNewsFeed(1)` | users = {1} | as in step 2 | `[5]` |
+
+If a user had several tweets, polling `{user, idx k}` pushes `{user, idx k-1}`, so a prolific user is read lazily and never fully copied.
+
+**Edge cases.** A user with no tweets (or an unknown user) adds nothing to the heap; the feed can be empty. A user always sees their own tweets (the user is added to the set), and following yourself or following twice does not duplicate anything because the followees are a set. `unfollow` of someone not followed does nothing. The feed holds at most 10 tweet ids.
+
+**Result:** `[5]`, `[6, 5]`, `[5]`, exactly what the class prints. No diagram is added; the table is the picture.
+
 ## Source Code
 
 ### DesignTwitter.java

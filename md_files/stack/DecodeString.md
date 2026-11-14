@@ -104,6 +104,33 @@ public static String decodeString(String s) {
 
 The optimized solution is Approach 2 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: an encoded string nests as `k[...]`, and the inner part must be fully decoded before it is repeated into the outer part. The code reads left to right keeping the string being built (`current`) and the number being read (`k`). On `[` it saves the pair (`k`, `current`) on two stacks and starts a fresh `current`. On `]` it takes the saved outer text back, appends the finished inner text `repeat` times to it, and makes that the new `current`. One pass, and every character is appended once per repetition level, so the work is proportional to the length of the output.
+
+**Input:** `s = "3[a2[c]]"`. Stacks are written bottom to top.
+
+| Step | Char | What happens | k | current | counts | previous |
+|------|------|--------------|---|---------|--------|----------|
+| 1 | `3` | digit: k = 0 * 10 + 3 | 3 | `""` | | |
+| 2 | `[` | push k and current, reset | 0 | `""` | 3 | `""` |
+| 3 | `a` | letter: append | 0 | `a` | 3 | `""` |
+| 4 | `2` | digit | 2 | `a` | 3 | `""` |
+| 5 | `[` | push k and current, reset | 0 | `""` | 3 2 | `""` `a` |
+| 6 | `c` | letter: append | 0 | `c` | 3 2 | `""` `a` |
+| 7 | `]` | pop `a` and 2; `a` + `c` twice | 0 | `acc` | 3 | `""` |
+| 8 | `]` | pop `""` and 3; `""` + `acc` three times | 0 | `accaccacc` | | |
+
+```text
+3 [ a 2 [ c ] ]
+      |   +-- c x 2 -> "acc"   (joined to the saved "a")
+      +------ "acc" x 3 -> "accaccacc"
+```
+
+**Edge cases.** Digits are accumulated (`k = k * 10 + digit`), so `10[z]` repeats ten times, not once or zero times. A string without brackets such as `abc` never touches the stacks and is returned as is. Letters following a `]` (as in `2[abc]3[cd]ef`) are simply appended to the restored `current`. The code assumes well-formed input; an unmatched `]` would pop an empty stack and throw.
+
+**Result:** `"accaccacc"`, matching the class output (`3[a]2[bc]` gives `"aaabcbc"`).
+
 ## Source Code
 
 ### DecodeString.java

@@ -200,6 +200,37 @@ public static boolean isSameTree(TreeNode p, TreeNode q) {
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: two trees are the same if their roots match and, recursively, their left subtrees match and their right subtrees match. The check walks both trees in step and stops at the first difference: two empty positions match, one empty and one filled position do not, and filled positions must hold equal values.
+
+**Input:** `p = [1, 2]`, `q = [1, null, 2]` (the values are the same, the shapes differ: in `p` the `2` is a left child, in `q` a right child).
+
+```mermaid
+flowchart TD
+    subgraph sp["p"]
+        p1((1)) --> p2((2))
+    end
+    subgraph sq["q"]
+        q1((1)) --> qn["null"]
+        q1 --> q2((2))
+    end
+```
+
+| Step | Call | Test | Outcome |
+|------|------|------|---------|
+| 1 | `isSameTree(1, 1)` | both non-null, `1 == 1` | go on to the left pair, then the right pair |
+| 2 | `isSameTree(2, null)` (the two left children) | `p` is non-null, `q` is null | return `false` |
+| 3 | right pair `isSameTree(null, 2)` | never evaluated | `&&` short-circuits after the `false` |
+
+The step-1 call returns `false`. The class prints `false`.
+
+**Matching case.** For `p = q = [1, 2, 3]` the calls are `(1,1)`, then `(2,2)` whose child pairs are `(null,null)` twice (both `true`), then `(3,3)` likewise, so every call returns `true` and the result is `true`. For `[1, 2, 1]` vs `[1, 1, 2]` the left pair `(2, 1)` already differs in value, so the result is `false`.
+
+**Edge cases.** Both trees empty returns `true`. Exactly one empty returns `false`. The comparison `p.val != q.val` is on `int` values (not boxed objects), so there is no identity pitfall. Recursion depth is the height of the trees, so extra space is `O(h)`.
+
+**Result:** `true`, `false`, `false` for the three inputs in `main`, matching the class output.
+
 ## Source Code
 
 Uses the shared helper [`TreeNode`](../../src/main/java/com/ranga/tree/TreeNode.java) (a small `TreeNode` with `of(...)` and `toString(...)` helpers for building and printing test data).

@@ -118,6 +118,34 @@ private static int bound(int[] nums, int target, boolean strict) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: with duplicates sorted together, the target occupies one contiguous block. Two binary searches find its edges: `bound(nums, target, false)` returns the first index with value `>= target` (the start), and `bound(nums, target, true)` returns the first index with value `> target`, so the end is that index minus 1. The `strict` flag only changes the "go right" test to also skip values equal to the target. Both searches are O(log n).
+
+**Input:** `nums = [5, 7, 7, 8, 8, 10]`, `target = 8`. Windows are half-open `[low, high)` with `high = 6`.
+
+| Search | low | high | mid | nums[mid] | Go right ? | Next |
+|--------|-----|------|-----|-----------|-----------|------|
+| lower bound (strict = false) | 0 | 6 | 3 | 8 | 8 < 8 no | high = 3 |
+| lower bound | 0 | 3 | 1 | 7 | 7 < 8 yes | low = 2 |
+| lower bound | 2 | 3 | 2 | 7 | 7 < 8 yes | low = 3, result 3 |
+| upper bound (strict = true) | 0 | 6 | 3 | 8 | 8 == 8 yes | low = 4 |
+| upper bound | 4 | 6 | 5 | 10 | no | high = 5 |
+| upper bound | 4 | 5 | 4 | 8 | 8 == 8 yes | low = 5, result 5 |
+
+`first = 3`, `nums[3] == 8`, so the target exists and the answer is `[3, 5 - 1] = [3, 4]`.
+
+```text
+index :  0  1  2  3  4  5
+value :  5  7  7  8  8  10
+                  ^     ^
+            first=3     upper bound=5  (last = 5 - 1 = 4)
+```
+
+**Edge cases.** Target `6`: the lower bound is 1 and `nums[1] = 7 != 6`, so the method returns `[-1, -1]` without running the second search. Target `11`: the lower bound is `6 == nums.length`, which is also `[-1, -1]`. A target occurring once, such as 5 or 10, gives equal first and last (`[0, 0]`, `[5, 5]`).
+
+**Result:** `[3, 4]`, matching the class output.
+
 ## Source Code
 
 ### FirstAndLastPosition.java

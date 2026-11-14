@@ -112,6 +112,33 @@ public static long lcm(int a, int b) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: Euclid's algorithm. `gcd(a, b)` equals `gcd(b, a % b)`, because any common divisor of `a` and `b` also divides the remainder. Repeat until the remainder is `0`; the last non-zero value is the gcd. The remainder shrinks quickly, so the loop runs O(log min(a, b)) times with constant memory. The lcm then follows from `gcd * lcm = a * b`, computed as `a / gcd * b` (dividing first keeps the number small, and the arithmetic is done in `long`).
+
+**Input:** `a = 48`, `b = 18`.
+
+| Step | `a` | `b` | `remainder = a % b` | Next `(a, b)` |
+|------|-----|-----|---------------------|---------------|
+| 1 | 48 | 18 | 12 | (18, 12) |
+| 2 | 18 | 12 | 6 | (12, 6) |
+| 3 | 12 | 6 | 0 | (6, 0) |
+| 4 | 6 | 0 | loop ends | return `a = 6` |
+
+So `gcd(48, 18) = 6`, and `lcm(48, 18) = 48 / 6 * 18 = 8 * 18 = 144`.
+
+```mermaid
+flowchart LR
+    A["48, 18"] -->|"48 mod 18 = 12"| B["18, 12"]
+    B -->|"18 mod 12 = 6"| C["12, 6"]
+    C -->|"12 mod 6 = 0"| D["6, 0"]
+    D --> E(["gcd = 6"])
+```
+
+**Edge cases.** `gcd` takes `Math.abs` of both inputs first, so negatives work (`gcd(-48, 18) = 6`). If `b` is `0` the loop is skipped and `a` is returned (`gcd(7, 0) = 7`; `gcd(0, 0) = 0`). `lcm` returns `0` when either number is `0`, avoiding a division by a zero gcd, and takes the absolute value so the result is never negative.
+
+**Result:** the class prints `gcd = 6, lcm = 144` for `(48, 18)`, `1, 85` for `(17, 5)`, `25, 300` for `(100, 75)`, `7, 0` for `(7, 0)` and `3, 42` for `(21, 6)`, matching the trace.
+
 ## Source Code
 
 ### GcdAndLcm.java

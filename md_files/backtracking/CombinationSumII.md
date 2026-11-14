@@ -142,6 +142,45 @@ private static void backtrack(int[] a, int remaining, int start, List<Integer> c
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: sort the candidates, then pick numbers left to right with `start = i + 1` so each array element is used at most once. Two rules keep the search small and free of duplicates: `break` as soon as `candidates[i] > remaining` (everything after it is larger), and `continue` when `i > start` and the value equals its left neighbour (a second copy of a value cannot begin a new branch at the same level, but it can still follow the first copy deeper).
+
+**Input:** `candidates = [10, 1, 2, 7, 6, 1, 5]`, `target = 8`. Sorted: `[1, 1, 2, 5, 6, 7, 10]` (indices 0-6).
+
+| Step | Path (remaining) | Note |
+|------|------------------|------|
+| 1 | `[1]` (7) | take idx 0 |
+| 2 | `[1, 1]` (6) | take idx 1 (`i == start`, so not skipped) |
+| 3 | `[1, 1, 2]` (4) | next 5 > 4: break |
+| 4 | `[1, 1, 5]` (1) | next 6 > 1: break |
+| 5 | `[1, 1, 6]` (0) | record `[1, 1, 6]`; then 7 > 6: break |
+| 6 | `[1, 2]` (5) | back at `[1]`; take 2 |
+| 7 | `[1, 2, 5]` (0) | record `[1, 2, 5]`; then 6 > 5: break |
+| 8 | `[1, 5]` (2), `[1, 6]` (1) | both end at once (next number too large) |
+| 9 | `[1, 7]` (0) | record `[1, 7]`; then 10 > 7: break |
+| 10 | root, idx 1 | value 1 equals idx 0 and `i > start`: skipped (it would repeat every `[1, ...]` result) |
+| 11 | `[2]` (6), `[2, 5]` (1) | dead end |
+| 12 | `[2, 6]` (0) | record `[2, 6]` |
+| 13 | `[5]`, `[6]`, `[7]` | remaining 3, 2, 1: every continuation is too large; then 10 > 8 breaks the root loop |
+
+```mermaid
+graph TD
+    R["rem 8"] --> A["1: rem 7"]
+    R --> B["2: rem 6"]
+    R --> C["5, 6, 7: dead ends"]
+    A --> A1["1,1: rem 6"]
+    A --> A2["1,2: rem 5"]
+    A --> A3["1,7: rem 0, RECORD"]
+    A1 --> A4["1,1,6: rem 0, RECORD"]
+    A2 --> A5["1,2,5: rem 0, RECORD"]
+    B --> B1["2,6: rem 0, RECORD"]
+```
+
+**Edge cases.** If nothing reaches the target (`[3, 4]`, target `2`), the first number is larger than `remaining`, the loop breaks and the result is `[]`. `[1, 1, 1]` with target `2` returns the single combination `[1, 1]` thanks to the skip rule. The input array is cloned before sorting.
+
+**Result:** `combinationSum2([10, 1, 2, 7, 6, 1, 5], 8)` returns `[[1, 1, 6], [1, 2, 5], [1, 7], [2, 6]]`, matching the class output.
+
 ## Source Code
 
 ### CombinationSumII.java

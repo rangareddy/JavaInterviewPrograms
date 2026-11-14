@@ -123,6 +123,31 @@ public static String compress(String s) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: walk the string once; at each position remember the character, count how long the run of equal characters is with an inner loop (which also advances `i` past the run), then append the character and, only if the run is longer than 1, its length. Every character is visited once, so it is O(n). At the end the result is used only if it is strictly shorter than the input.
+
+**Input:** `s = "aabcccccaaa"` (length 11).
+
+| Step | `i` at start | `c` | Run counted | Appended | `result` afterwards | `i` afterwards |
+|------|--------------|-----|-------------|----------|---------------------|----------------|
+| 1 | 0 | `a` | 2 | `a2` | `a2` | 2 |
+| 2 | 2 | `b` | 1 | `b` | `a2b` | 3 |
+| 3 | 3 | `c` | 5 | `c5` | `a2bc5` | 8 |
+| 4 | 8 | `a` | 3 | `a3` | `a2bc5a3` | 11 |
+
+`i = 11` equals the length, so the loop ends. The compressed length 7 is less than 11, so `"a2bc5a3"` is returned.
+
+```text
+a a b c c c c c a a a
+\_/ | \_____/ \___/
+ a2  b    c5     a3
+```
+
+**Edge cases.** A run of length 1 gets no number (`b`, not `b1`). If compression does not help, the original string is returned: `"abc"` stays `"abc"`, and `"aabb"` would compress to `a2b2` (length 4, not shorter than 4) so `"aabb"` is returned. The empty string never enters the loop and returns `""`.
+
+**Result:** `"a2bc5a3"`, which matches the output of `StringCompression.compress("aabcccccaaa")`.
+
 ## Source Code
 
 ### StringCompression.java

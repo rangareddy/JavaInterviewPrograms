@@ -148,6 +148,34 @@ static class SemaphoreBuffer {
 
 The optimized solution is Approach 1 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: both threads share one `BoundedBuffer` (a queue plus a `capacity`), and every method is `synchronized` on that buffer, so only one thread changes the queue at a time. `put` waits in a `while (queue.size() == capacity)` loop while the buffer is full; `take` waits in a `while (queue.isEmpty())` loop while it is empty. After changing the queue each one calls `notifyAll()` to wake the other side. The check is a `while`, not an `if`, so a woken thread re-tests the condition before acting (protection against spurious wake-ups and against another thread having taken the slot first).
+
+**Input:** producer puts `1..10`, consumer takes 10 items, capacity `3`. The exact interleaving of the two threads changes from run to run, so the table shows one possible start of a run and the rules that always hold.
+
+| Step | Thread | Call | Condition seen | Action | Queue afterwards |
+|------|--------|------|----------------|--------|------------------|
+| 1 | Producer | `put(1)` | size 0, not full | add, `notifyAll()` | `[1]` |
+| 2 | Producer | `put(2)` | size 1, not full | add, `notifyAll()` | `[1, 2]` |
+| 3 | Producer | `put(3)` | size 2, not full | add, `notifyAll()` | `[1, 2, 3]` |
+| 4 | Producer | `put(4)` | size 3 equals capacity | `wait()`, releases the lock | `[1, 2, 3]` |
+| 5 | Consumer | `take()` | queue not empty | remove `1`, `notifyAll()` | `[2, 3]` |
+| 6 | Producer | wakes in `put(4)` | size 2, not full now | add, `notifyAll()` | `[2, 3, 4]` |
+| 7 | Consumer | `take()` ... | queue not empty | remove `2`, `3`, `4` as long as items exist; if the queue is empty it waits for the producer | |
+
+```mermaid
+flowchart LR
+    P["Producer thread<br/>put 1..10"] -->|"put: waits while full"| Q["BoundedBuffer<br/>capacity 3"]
+    Q -->|"take: waits while empty"| C["Consumer thread<br/>take 10 times"]
+```
+
+What is guaranteed in every run: the queue never holds more than 3 items, the single lock makes each `put`/`take` atomic, and a `LinkedList` queue is first in, first out, so the consumer receives the items in the order they were produced. Threads are joined before printing, so `consumed` is complete when it is read.
+
+**Edge cases.** If the consumer runs first it waits on an empty queue until the first `put`; if the producer is far ahead it waits on a full queue. An interrupt during `wait()` throws `InterruptedException`, which the thread bodies catch and turn back into the interrupt flag. `maxSize` records the largest queue length seen; in the runs checked it printed `3`, but that figure depends on thread timing and is only guaranteed to be between 1 and 3.
+
+**Result:** the class prints `consumed = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]` (always, in this order) and `max buffered = 3` in every run observed.
+
 ## Source Code
 
 ### ProducerConsumer.java

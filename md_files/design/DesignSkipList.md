@@ -136,6 +136,42 @@ private int randomHeight() {
 
 The optimized solution is Approach 2 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: a skip list is a sorted linked list with "express lanes" above it. Level 0 holds every value; each higher level holds a random subset (each node gets height 1, then keeps growing while a coin flip says heads). A search starts at the top level of a sentinel `head`, moves right while the next value is smaller than the target, then drops one level, so it skips many nodes at once. At level 0 the node right after the stop point is the only candidate. `add` and `erase` use the same walk and remember the last node visited on each level (`update[i]`), which are exactly the pointers to rewire.
+
+**Input:** `add(1), add(2), add(3), search(0), add(4), search(1), erase(0), erase(1), search(1)`. The class uses `new Random(42)`, so the heights are the same on every run: value 1 gets height 2, value 2 gets height 2, value 3 gets height 1, value 4 gets height 2 (observed by running the class and dumping its levels).
+
+| Step | Operation | What the code does | Structure afterwards (`L1` / `L0`) | Result |
+|------|-----------|--------------------|-------------------------------------|--------|
+| 1 | `add(1)` | `update[0] = update[1] = head`; height 2 raises `level` from 1 to 2; link into both levels | `head -> 1` / `head -> 1` | |
+| 2 | `add(2)` | at each level the walk stops after 1; height 2 | `head -> 1 -> 2` / `head -> 1 -> 2` | |
+| 3 | `add(3)` | walk stops after 2 on both levels; height 1, so only level 0 is linked | `head -> 1 -> 2` / `head -> 1 -> 2 -> 3` | |
+| 4 | `search(0)` | `L1`: next is 1, `1 < 0` is false, stay at head; `L0`: same; candidate is `1`, and `1 != 0` | unchanged | `false` |
+| 5 | `add(4)` | walk goes right to 2 on `L1` and to 3 on `L0`; height 2 | `head -> 1 -> 2 -> 4` / `head -> 1 -> 2 -> 3 -> 4` | |
+| 6 | `search(1)` | stops at head on both levels; candidate `1` equals 1 | unchanged | `true` |
+| 7 | `erase(0)` | `update[0] = head`, target is `1`, `1 != 0` | unchanged | `false` |
+| 8 | `erase(1)` | target is `1`; unlink it on `L1` and `L0` (both `update[i].next[i] == target`); `head.next[1]` is 2, so `level` stays 2 | `head -> 2 -> 4` / `head -> 2 -> 3 -> 4` | `true` |
+| 9 | `search(1)` | stops at head, candidate is `2`, `2 != 1` | unchanged | `false` |
+
+```mermaid
+flowchart LR
+    subgraph s1["Level 1 (express lane)"]
+        H1["head"] --> N2a["2"] --> N4a["4"]
+    end
+    subgraph s0["Level 0 (all values)"]
+        H0["head"] --> N2b["2"] --> N3b["3"] --> N4b["4"]
+    end
+    N2a -.->|"drop down"| N2b
+    N4a -.->|"drop down"| N4b
+```
+
+The diagram shows the structure after step 8. For example, a search for `4` would go head to `2` to `4` on level 1, then drop to level 0 and find `4` immediately, without visiting `3`.
+
+**Edge cases.** The walk in `search` ends with `node != null && node.val == num`, so searching past the last value or in an empty list returns `false`. `erase` of a missing value returns `false` before touching any pointer. After an erase, `level` shrinks while the top lane is empty (`head.next[level - 1] == null`), but never below 1. Heights are capped at `MAX_LEVEL = 16`. Duplicates are allowed; `erase` removes one occurrence.
+
+**Result:** the outputs are `false, true, false, true, false`, which matches what the class prints.
+
 ## Source Code
 
 ### DesignSkipList.java

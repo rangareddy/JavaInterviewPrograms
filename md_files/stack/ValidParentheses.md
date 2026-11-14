@@ -207,6 +207,50 @@ public static boolean isValid(String s) {
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: every opening bracket must be closed by the matching bracket, in the reverse order it was opened. So when an opening bracket is read, the stack stores the closing bracket that will be expected; when a closing bracket is read, it must equal the top of the stack.
+
+```mermaid
+flowchart TD
+    S(["start"]) --> L{"length is odd?"}
+    L -->|"yes"| F1(["false"])
+    L -->|"no"| R["read the next character c"]
+    R --> O{"c is ( { or [ ?"}
+    O -->|"yes"| P["push the matching closer<br/>( pushes )  { pushes }  [ pushes ]"]
+    P --> M{"more characters?"}
+    O -->|"no"| C{"stack empty, or pop() != c ?"}
+    C -->|"yes"| F2(["false"])
+    C -->|"no"| M
+    M -->|"yes"| R
+    M -->|"no"| E{"stack empty?"}
+    E -->|"yes"| T(["true"])
+    E -->|"no"| F3(["false"])
+```
+
+**Input 1:** `s = "([)]"` (length 4, even, so the quick odd-length check passes). The stack is written from bottom to top.
+
+| Step | Character | What happens | Stack (bottom → top) |
+|------|-----------|--------------|----------------------|
+| 1 | `(` | opening bracket, push its closer `)` | `)` |
+| 2 | `[` | opening bracket, push its closer `]` | `)` `]` |
+| 3 | `)` | closing bracket: pop gives `]`, but `]` is not `)` | stop, **return `false`** |
+
+**Input 2:** `s = "()[]{}"`.
+
+| Step | Character | What happens | Stack (bottom → top) |
+|------|-----------|--------------|----------------------|
+| 1 | `(` | push `)` | `)` |
+| 2 | `)` | pop gives `)`, equals the character | (empty) |
+| 3 | `[` | push `]` | `]` |
+| 4 | `]` | pop gives `]`, equals the character | (empty) |
+| 5 | `{` | push `}` | `}` |
+| 6 | `}` | pop gives `}`, equals the character | (empty) |
+
+All characters are read and the stack is empty, so the method returns `true`.
+
+**Quick rejections.** An odd length such as `"(()"` returns `false` before any character is read, because brackets come in pairs. A string that starts with a closing bracket (`"]"`) finds an empty stack at the first character and returns `false` at once. A string such as `"(("` is read completely but leaves `)` `)` on the stack, so the final `stack.isEmpty()` check returns `false`.
+
 ## Source Code
 
 ### ValidParentheses.java

@@ -78,6 +78,24 @@ public static int subarraySum(int[] nums, int k) {
 
 The optimized solution is Approach 2 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea (prefix sums + hash map): a subarray ending at the current position sums to `k` exactly when `currentPrefix - earlierPrefix = k`. So keep a map `prefix sum -> how many times it has occurred`. At each element, add the number of earlier prefixes equal to `sum - k` to the answer, then record the current prefix. The map starts with `{0: 1}` so subarrays that begin at index 0 are counted.
+
+**Input:** `nums = [1, 2, 3]`, `k = 3`. Start: `seen = {0=1}`, `sum = 0`, `count = 0`.
+
+| Step | `x` | `sum` | Look up `sum - k` | `count` afterwards | `seen` afterwards |
+|------|-----|-------|-------------------|--------------------|-------------------|
+| 1 | 1 | 1 | `-2`: not there | 0 | {0=1, 1=1} |
+| 2 | 2 | 3 | `0`: found 1 time (subarray `[1, 2]`) | 1 | {0=1, 1=1, 3=1} |
+| 3 | 3 | 6 | `3`: found 1 time (subarray `[3]`) | 2 | {0=1, 1=1, 3=1, 6=1} |
+
+The lookup is done before the current prefix is stored, so an empty subarray is never counted when `k = 0`.
+
+**Edge cases.** Negative numbers and zeros are fine, because no window is shrunk: `[1, -1, 0]` with `k = 0` returns `3` since the map counts how many times each prefix repeats. An empty array returns `0`. The class does not check for `null`.
+
+**Result:** `2`, matching the class output (`[1, 1, 1]` with `k = 2` also gives `2`).
+
 ## Source Code
 
 ### SubarraySumEqualsK.java

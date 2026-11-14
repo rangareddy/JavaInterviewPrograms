@@ -118,6 +118,33 @@ public static int[] maxSlidingWindow(int[] nums, int k) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: keep a deque of indices whose values are in decreasing order, so the front is always the index of the current window's maximum. For each new index `i`, pop from the back every index whose value is `<= nums[i]` (they can never be a maximum while `i` is in the window), push `i`, and pop the front if it has fallen out of the window (`front <= i - k`). From `i = k - 1` on, `nums[front]` is the answer for that window.
+
+**Input:** `nums = [1, 3, -1, -3, 5, 3, 6, 7]`, `k = 3`.
+
+| `i` | `nums[i]` | Deque after (index:value, front first) | Window | Output written |
+|-----|-----------|----------------------------------------|--------|----------------|
+| 0 | 1 | [0:1] | - | - |
+| 1 | 3 | [1:3] (pops 0:1 since 1 <= 3) | - | - |
+| 2 | -1 | [1:3, 2:-1] | [1, 3, -1] | 3 |
+| 3 | -3 | [1:3, 2:-1, 3:-3] | [3, -1, -3] | 3 |
+| 4 | 5 | [4:5] (pops all; 1 is also out of the window) | [-1, -3, 5] | 5 |
+| 5 | 3 | [4:5, 5:3] | [-3, 5, 3] | 5 |
+| 6 | 6 | [6:6] (pops 5:3 and 4:5) | [5, 3, 6] | 6 |
+| 7 | 7 | [7:7] | [3, 6, 7] | 7 |
+
+```text
+index: 0  1  2  3  4  5  6  7
+nums:  1  3 -1 -3  5  3  6  7
+max:         3  3  5  5  6  7     (one per window of 3)
+```
+
+**Edge cases.** `null`, an empty array or `k <= 0` returns an empty array. `k = 1` returns the array itself (`{1}`, `1` gives `[1]`). Equal values are popped (`<=`), so the newest equal index is kept. If `k > n + 1` the result size `n - k + 1` is negative and the class throws `NegativeArraySizeException` (it does not guard this case); `k = n + 1` gives an empty array. Each index is pushed and popped at most once: O(n).
+
+**Result:** `[3, 3, 5, 5, 6, 7]`, matching the class output.
+
 ## Source Code
 
 ### SlidingWindowMaximum.java

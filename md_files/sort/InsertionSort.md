@@ -112,6 +112,28 @@ public static void insertionSort(int[] arr) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: keep the left part of the array sorted and grow it one element at a time, like sorting playing cards in the hand. Take the next element as `key`, shift every larger element of the sorted part one slot to the right, and drop `key` into the gap. Shifting (a single assignment per element) is cheaper than repeated swaps, and when the array is nearly sorted very few elements move, so the best case is O(n).
+
+**Input:** `arr = [5, 2, 4, 6, 1, 3]`.
+
+| i | key | Elements shifted right | Array after inserting key |
+|---|-----|------------------------|---------------------------|
+| 1 | 2 | 5 | `[2, 5, 4, 6, 1, 3]` |
+| 2 | 4 | 5 | `[2, 4, 5, 6, 1, 3]` |
+| 3 | 6 | none (5 is not greater than 6) | `[2, 4, 5, 6, 1, 3]` |
+| 4 | 1 | 6, 5, 4, 2 | `[1, 2, 4, 5, 6, 3]` |
+| 5 | 3 | 6, 5, 4 | `[1, 2, 3, 4, 5, 6]` |
+
+```text
+i = 4, key = 1:   2 4 5 6 | 1 3    shift 6,5,4,2 right ->  _ 2 4 5 6 | 3    place 1 at index 0
+```
+
+**Edge cases.** An empty or one-element array never enters the loop (`i` starts at 1). An already sorted array such as `[1, 2, 3, 4]` does no shifts, only one comparison per element, O(n). A reversed array `[4, 3, 2, 1]` is the worst case with every element shifted past all earlier ones, O(n^2). The test is strictly `arr[j] > key`, so equal elements are not moved past each other and the sort is stable. A `null` array is not guarded and would throw `NullPointerException`.
+
+**Result:** `[1, 2, 3, 4, 5, 6]`, matching the class output.
+
 ## Source Code
 
 ### InsertionSort.java

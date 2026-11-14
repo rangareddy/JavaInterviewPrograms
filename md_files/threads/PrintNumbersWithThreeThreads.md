@@ -164,6 +164,37 @@ static List<String> runSpin(int limit, int threadCount) throws InterruptedExcept
 
 The optimized solution is Approach 1 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: all three threads share one lock (the object itself) and a counter `next` (the next number to print). Number `next` belongs to thread `id` when `(next - 1) % 3 == id`. A thread loops while `next <= limit`: if it is its turn it records `T<id+1>:<next>`, increments `next` and calls `notifyAll()`; otherwise it `wait()`s, which releases the lock. Because only the owner of the current number can advance `next`, the numbers are produced strictly in order, whatever order the threads start or wake in. When the limit is passed, each thread calls `notifyAll()` once more so the others wake up, see `next > limit` and exit.
+
+**Input:** `n = 10`, `threads = 3` (ids 0, 1, 2 are named T1, T2, T3). `next = 1`.
+
+| Step | `next` | Owner `(next - 1) % 3` | Thread that prints | Recorded | `next` afterwards |
+|------|--------|-----------------------|--------------------|----------|-------------------|
+| 1 | 1 | 0 | T1 | `T1:1` | 2 |
+| 2 | 2 | 1 | T2 | `T2:2` | 3 |
+| 3 | 3 | 2 | T3 | `T3:3` | 4 |
+| 4 | 4 | 0 | T1 | `T1:4` | 5 |
+| 5 | 5 | 1 | T2 | `T2:5` | 6 |
+| 6 | 6 | 2 | T3 | `T3:6` | 7 |
+| 7 | 7 | 0 | T1 | `T1:7` | 8 |
+| 8 | 8 | 1 | T2 | `T2:8` | 9 |
+| 9 | 9 | 2 | T3 | `T3:9` | 10 |
+| 10 | 10 | 0 | T1 | `T1:10` | 11 |
+
+Any thread that wakes at a step where it is not the owner goes straight back to `wait()`. After step 10, `next = 11 > limit`: the loops end and the threads leave. What is deterministic is the order of the recorded list (it follows the table); which thread wakes first at each step is not, and does not matter.
+
+```mermaid
+flowchart LR
+    A["next = 1<br/>T1"] --> B["next = 2<br/>T2"] --> C["next = 3<br/>T3"] --> D["next = 4<br/>T1"]
+    D --> E["... same cycle ..."] --> F["next = 10<br/>T1"] --> G(["next = 11, all threads exit"])
+```
+
+**Edge cases.** With `limit = 0` no thread enters the loop and the result is `[]`. All access to `next` and the `printed` list is inside `synchronized (this)`, so the list needs no extra locking, and `run()` joins every thread before returning it. An interrupt while waiting restores the interrupt flag and stops that thread.
+
+**Result:** `[T1:1, T2:2, T3:3, T1:4, T2:5, T3:6, T1:7, T2:8, T3:9, T1:10]`, the same in all 3 runs checked and matching the class output.
+
 ## Source Code
 
 ### PrintNumbersWithThreeThreads.java

@@ -86,6 +86,24 @@ public static int missingNumber(int[] nums) {
 
 The optimized solution is Approach 3 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: XOR has two properties, `a ^ a = 0` and `a ^ 0 = a`, and order does not matter. XOR together every index `0..n` and every value in the array. Every number that is present appears twice (once as an index, once as a value) and cancels; the missing number appears only as an index and is what remains. The code starts `result` at `n` (the one index the loop does not visit) and then XORs `i ^ nums[i]` for each position.
+
+**Input:** `nums = [3, 0, 1]` (`n = 3`, so the numbers should be `0..3`). Start: `result = 3`.
+
+| Step | `i` | `nums[i]` | `i ^ nums[i]` | `result` afterwards |
+|------|-----|-----------|---------------|---------------------|
+| 1 | 0 | 3 | 0 ^ 3 = 3 | 3 ^ 3 = 0 |
+| 2 | 1 | 0 | 1 ^ 0 = 1 | 0 ^ 1 = 1 |
+| 3 | 2 | 1 | 2 ^ 1 = 3 | 1 ^ 3 = 2 |
+
+Overall: `3 ^ (0^3) ^ (1^0) ^ (2^1)` = `(3^3) ^ (0^0) ^ (1^1) ^ 2` = `2`.
+
+**Edge cases.** `[0]` returns `1` (n = 1, nothing cancels the extra index). `[0, 1]` returns `2`: the missing number is `n` itself. The method does not check for `null` (it would throw `NullPointerException`) and needs no extra memory or overflow-prone sum.
+
+**Result:** `2`, matching the class output (`[9, 6, 4, 2, 3, 5, 7, 0, 1]` gives `8`).
+
 ## Source Code
 
 ### MissingNumber.java

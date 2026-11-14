@@ -247,6 +247,31 @@ public static int[][] mergeIntervals(int[][] intervals) {
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: sort the intervals by start. After sorting, an interval can only overlap the one currently being built, never an earlier finished one, so a single pass is enough. Keep `currentInterval` (the last interval in the result list). For the next interval: if `currentEnd >= nextStart` they overlap or touch, so extend the end with `max(currentEnd, nextEnd)`; otherwise the current one is final and a new current interval is started. Sorting costs O(n log n), the pass O(n). The first interval is copied so the caller's inner arrays are not modified.
+
+**Input:** `[[1, 3], [8, 10], [2, 6], [15, 18]]`. After sorting by start: `[[1, 3], [2, 6], [8, 10], [15, 18]]`.
+
+| Step | Next interval | current (before) | currentEnd >= nextStart ? | Action | Result list |
+|------|---------------|------------------|---------------------------|--------|-------------|
+| start | - | `[1, 3]` | - | add a copy of the first interval | `[1,3]` |
+| 1 | `[2, 6]` | `[1, 3]` | 3 >= 2 yes | end = max(3, 6) = 6 | `[1,6]` |
+| 2 | `[8, 10]` | `[1, 6]` | 6 >= 8 no | new current `[8, 10]` | `[1,6] [8,10]` |
+| 3 | `[15, 18]` | `[8, 10]` | 10 >= 15 no | new current `[15, 18]` | `[1,6] [8,10] [15,18]` |
+
+```text
+1---3
+  2-------6
+            8--10
+                      15---18
+=> [1,6]    [8,10]    [15,18]
+```
+
+**Edge cases.** `null`, empty or single-interval input is returned as it is (the same array object). Intervals that only touch are merged because the test is `>=`: `[[1, 4], [4, 5]]` becomes `[[1, 5]]`. An interval fully inside the current one (`[1, 10]` then `[2, 3]`) keeps the end at 10 thanks to `max`. The input array is sorted in place (its order changes).
+
+**Result:** `[[1, 6], [8, 10], [15, 18]]`, matching the class output.
+
 ## Source Code
 
 ### MergeIntervals.java

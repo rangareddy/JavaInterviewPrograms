@@ -112,6 +112,31 @@ public static int maxCoins(int[] nums) {
 
 The optimized solution is Approach 3 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: think backwards. Instead of choosing which balloon to burst first (which changes the neighbours), choose which balloon in a range is burst **last**. `dp[left][right]` is the best coins from bursting everything strictly between positions `left` and `right`. If `last` is the final balloon there, its neighbours at that moment are exactly `balloons[left]` and `balloons[right]`, so it earns `balloons[left] * balloons[last] * balloons[right]`, plus the best of the two independent sides `dp[left][last]` and `dp[last][right]`. Ranges are filled from short to long, so the sides are always ready.
+
+**Input:** `nums = [3, 1, 5, 8]`. The padded array is `balloons = [1, 3, 1, 5, 8, 1]` (indices 0 to 5), and `dp` is a 6 x 6 table of zeros. `right = left + length`.
+
+| `length` | `(left, right)` | Best `last` and calculation | `dp[left][right]` |
+|----------|-----------------|-----------------------------|-------------------|
+| 2 | (0, 2) | last=1: `1*3*1` | 3 |
+| 2 | (1, 3) | last=2: `3*1*5` | 15 |
+| 2 | (2, 4) | last=3: `1*5*8` | 40 |
+| 2 | (3, 5) | last=4: `5*8*1` | 40 |
+| 3 | (0, 3) | last=2: `dp[0][2] + 1*1*5 + dp[2][3]` = 3 + 5 + 0 = 8; last=1: `0 + 1*3*5 + 15` = 30 (best) | 30 |
+| 3 | (1, 4) | last=3: `15 + 3*5*8 + 0` = 135 (best); last=2: `0 + 3*1*8 + 40` = 64 | 135 |
+| 3 | (2, 5) | last=3: `0 + 1*5*1 + 40` = 45; last=4: `40 + 1*8*1 + 0` = 48 (best) | 48 |
+| 4 | (0, 4) | last=3: `dp[0][3] + 1*5*8 + 0` = 30 + 40 + 0 = 70; last=2: `3 + 1*1*8 + 40` = 51; last=1: `0 + 1*3*8 + 135` = 159 (best) | 159 |
+| 4 | (1, 5) | last=2: `0 + 3*1*1 + 48` = 51; last=3: `15 + 3*5*1 + 40` = 70; last=4: `135 + 3*8*1 + 0` = 159 (best) | 159 |
+| 5 | (0, 5) | last=1: `0 + 1*3*1 + 159` = 162; last=2: `3 + 1*1*1 + 48` = 52; last=3: `30 + 1*5*1 + 40` = 75; last=4: `159 + 1*8*1 + 0` = 167 (best) | **167** |
+
+The winning order for the whole range: balloon `8` is burst last (earning `1*8*1`), after the left part `[3, 1, 5]` was cleared for 159 coins. No diagram is added; the interval table is the picture.
+
+**Edge cases.** An empty array gives `n = 0`, `balloons = [1, 1]`, the loop `length = 2..1` never runs and `dp[0][1] = 0` is returned. One balloon (`[7]`) runs only `length = 2` (range (0,2)): `1*7*1 = 7`. The two virtual balloons of value 1 at both ends handle the borders. Time is `O(n^3)`, space `O(n^2)`.
+
+**Result:** the method returns `dp[0][5] = 167`, matching the class output (`[1, 5]` prints `10`, `[7]` prints `7`).
+
 ## Source Code
 
 ### BurstBalloons.java

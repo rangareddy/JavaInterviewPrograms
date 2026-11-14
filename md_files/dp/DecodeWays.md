@@ -125,6 +125,31 @@ public static int numDecodings(String s) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: let `dp[i]` be the number of ways to decode the first `i` characters, with `dp[0] = 1` (the empty prefix) and `dp[1] = 1` (the first character is not `'0'`, checked at the start). The last character can be decoded alone if it is not `'0'` (adds `dp[i-1]`), and the last two characters can be decoded together if they form a number from 10 to 26 (adds `dp[i-2]`). Only the previous two values are needed, so `prev2` (= `dp[i-2]`) and `prev1` (= `dp[i-1]`) replace the array: O(n) time, O(1) space.
+
+**Input:** `s = "226"`. Start: `prev2 = 1`, `prev1 = 1`. The loop runs for `i = 2 .. 3`.
+
+| `i` | Last digit alone (`s[i-1]`) | Last two digits (`s[i-2..i-1]`) | `current` | `prev2` after | `prev1` after |
+|-----|-----------------------------|-----------------------------------|-----------|---------------|---------------|
+| 2 | `2` is not `0`: add `prev1` = 1 | `22` is in 10..26: add `prev2` = 1 | 2 | 1 | 2 |
+| 3 | `6` is not `0`: add `prev1` = 2 | `26` is in 10..26: add `prev2` = 1 | 3 | 2 | 3 |
+
+```text
+prefix:   ""   "2"   "22"   "226"
+dp:        1     1      2      3
+decodings of "226": 2|2|6 (BBF), 22|6 (VF), 2|26 (BZ)
+```
+
+The method returns `prev1 = 3`.
+
+**Zeros.** For `"11106"` the values of `current` for `i = 2 .. 5` are 2, 3, 2, 2: at `i = 4` the last digit `0` cannot stand alone, so only the pair `10` counts (`prev2` = 2); at `i = 5` the pair `06` is below 10 and is rejected, so only the digit `6` counts (`prev1` = 2). The result is `2`. For `"10"` the digit `0` is alone not allowed but `10` is, so `current = prev2 = 1` and the result is `1`.
+
+**Edge cases.** `null`, an empty string, or a string starting with `'0'` (such as `"06"`) returns `0` at once. A single non-zero digit never enters the loop and returns `1`. A `0` that is not preceded by `1` or `2` (such as `"30"`) makes `current = 0`, which then propagates and the result is `0`.
+
+**Result:** `3` for the traced input, matching the class output (`2`, `3`, `0`, `2`, `1` for its five samples).
+
 ## Source Code
 
 ### DecodeWays.java

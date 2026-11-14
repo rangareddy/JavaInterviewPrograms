@@ -231,6 +231,36 @@ public static List<String> decode(String s) {
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: a delimiter alone is unsafe because a string may contain it. Instead each string is written as `length#string`. When decoding, the digits before the next `#` say exactly how many characters to take, so the content of a string is never scanned and may hold `#`, digits or nothing at all.
+
+**Input:** `["we", "say", "", "#3"]`.
+
+Encode appends `length#string` for each item:
+
+| Step | String | Appended | `sb` afterwards |
+|------|--------|----------|-----------------|
+| 1 | `"we"` | `2#we` | `2#we` |
+| 2 | `"say"` | `3#say` | `2#we3#say` |
+| 3 | `""` | `0#` | `2#we3#say0#` |
+| 4 | `"#3"` | `2##3` | `2#we3#say0#2##3` |
+
+Decode walks the encoded string with an index `i` (positions: `2#we3#say0#2##3` has 15 characters):
+
+| Step | `i` | `indexOf('#', i)` | `length` | Characters taken | `i` afterwards |
+|------|-----|-------------------|----------|------------------|----------------|
+| 1 | 0 | 1 | 2 | `s[2..4)` = `"we"` | 4 |
+| 2 | 4 | 5 | 3 | `s[6..9)` = `"say"` | 9 |
+| 3 | 9 | 10 | 0 | `s[11..11)` = `""` | 11 |
+| 4 | 11 | 12 | 2 | `s[13..15)` = `"#3"` | 15 |
+
+At step 4 the first `#` after `i` is the separator (index 12); the `#` and `3` that follow belong to the string because the length says to take 2 characters. `i = 15` equals the length, so the loop ends.
+
+**Edge cases.** An empty list encodes to `""` and decodes to an empty list (the loop never runs). Empty strings are kept as `0#`.
+
+**Result:** encoded `2#we3#say0#2##3`, decoded `[we, say, , #3]`, which matches the output of the real class.
+
 ## Source Code
 
 ### EncodeAndDecodeStrings.java

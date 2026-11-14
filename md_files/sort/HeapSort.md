@@ -144,6 +144,40 @@ private static void swap(int[] arr, int i, int j) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: build a max-heap inside the array itself (the children of index `k` are `2k + 1` and `2k + 2`, and every parent is `>=` its children), so the largest value sits at index 0. Then repeat: swap the root with the last element of the heap, shrink the heap by one (the largest value is now in its final place at the end), and `siftDown` the new root to restore the heap property. `siftDown` swaps a node with its larger child until neither child is bigger. Building costs O(n), the n - 1 extractions cost O(log n) each, so the total is O(n log n) in every case with O(1) extra space.
+
+**Input:** `arr = [4, 10, 3, 5, 1]`.
+
+Step 1 builds the heap by sifting down from the last parent (`n / 2 - 1 = 1`) to the root:
+
+| Step | Action | Array |
+|------|--------|-------|
+| build i = 1 | node 10 has children 5 and 1, both smaller, so no swap | `[4, 10, 3, 5, 1]` |
+| build i = 0 | node 4 has children 10 and 3, swap with 10; then 4 at index 1 has child 5 (index 3), swap with 5 | `[10, 5, 3, 4, 1]` |
+
+```mermaid
+flowchart TD
+    A["10"] --> B["5"]
+    A --> C["3"]
+    B --> D["4"]
+    B --> E["1"]
+```
+
+Step 2 repeatedly moves the root to the end and repairs the heap (the sorted tail is shown after the bar):
+
+| Step | Swap root with | siftDown of the new root | Heap part \| sorted tail |
+|------|----------------|--------------------------|--------------------------|
+| end = 4 | `arr[4]` (1) | 1 swaps with 5, then with 4 | `[5, 4, 3, 1]` \| `10` |
+| end = 3 | `arr[3]` (1) | 1 swaps with 4 | `[4, 1, 3]` \| `5 10` |
+| end = 2 | `arr[2]` (3) | 3 is not smaller than child 1, stays | `[3, 1]` \| `4 5 10` |
+| end = 1 | `arr[1]` (1) | heap size 1, nothing to do | `[1]` \| `3 4 5 10` |
+
+**Edge cases.** An empty or one-element array does nothing (the build loop starts at `n / 2 - 1 < 0` and the extraction loop does not run). Duplicates work (`[2, 2, 1, 1]` gives `[1, 1, 2, 2]`) but the sort is not stable. The order of the input has no influence on the running time. A `null` array is not guarded and would throw `NullPointerException`.
+
+**Result:** `[1, 3, 4, 5, 10]`, matching the class output.
+
 ## Source Code
 
 ### HeapSort.java

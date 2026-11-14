@@ -139,6 +139,32 @@ public static int longestValidParentheses(String s) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: keep a stack of indexes. The element under the top is always the index just before the current valid stretch, so the length of a valid stretch ending at `i` is `i - stack.peek()`. The stack starts with `-1` as that "base" index. A `(` pushes its index. A `)` pops; if the stack becomes empty, this `)` has no partner and its index becomes the new base; otherwise the popped `(` was matched and the current valid length is measured against the new top. One pass, O(n) time and space.
+
+**Input:** `s = ")()())"` (indexes 0 to 5). The stack is written bottom to top.
+
+| Step | Index, char | What happens | Stack | best |
+|------|-------------|--------------|-------|------|
+| 0 | start | push the base `-1` | -1 | 0 |
+| 1 | 0 `)` | pop -1, stack empty, so push 0 as the new base | 0 | 0 |
+| 2 | 1 `(` | push 1 | 0 1 | 0 |
+| 3 | 2 `)` | pop 1, top is 0, length 2 - 0 = 2 | 0 | 2 |
+| 4 | 3 `(` | push 3 | 0 3 | 2 |
+| 5 | 4 `)` | pop 3, top is 0, length 4 - 0 = 4 | 0 | 4 |
+| 6 | 5 `)` | pop 0, stack empty, so push 5 as the new base | 5 | 4 |
+
+```text
+index: 0 1 2 3 4 5
+char : ) ( ) ( ) )
+         |_____|        valid "()()" = indexes 1..4, length 4 = 4 - 0
+```
+
+**Edge cases.** An empty string never enters the loop and returns `0`. A string with only unmatched `(` such as `"(()"` leaves base `-1` and `0` on the stack; the only match is at index 2 (2 - 0 = 2), so the answer is `2`. The stack is never empty when `peek()` is called, because an empty stack is refilled with the current index immediately.
+
+**Result:** `4`, matching the class output (`"()(())"` gives `6`).
+
 ## Source Code
 
 ### LongestValidParentheses.java
