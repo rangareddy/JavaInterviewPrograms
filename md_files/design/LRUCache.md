@@ -172,39 +172,82 @@ The optimized solution is Approach 4 above, which is also the version implemente
 
 ## Source Code
 
-### LRUCache.java
+### LRUCacheApp.java
 
 ```java
-import java.util.HashMap;
 import java.util.Map;
+import java.util.HashMap;
 
-public class LRUCache {
-
-    private static class Node {
-        int key;
-        int value;
-        Node prev;
-        Node next;
-
-        Node(int key, int value) {
-            this.key = key;
-            this.value = value;
-        }
+class Node<K, V> {
+    K key;
+    V value;
+    Node<K, V> next;
+    Node<K, V> prev;
+    
+    Node(K k, V v) {
+        key = k;
+        value = v;
+        next = null;
+        prev = null;
     }
+}
 
-    private final int capacity;
-    private final Map<Integer, Node> map = new HashMap<>();
-    private final Node head = new Node(0, 0);       // dummy: head.next is the most recently used
-    private final Node tail = new Node(0, 0);       // dummy: tail.prev is the least recently used
-
-    public LRUCache(int capacity) {
-        this.capacity = capacity;
+class LRUCache<K, V> {
+    private int capacity;
+    private Map<K, Node<K, V>> cacheMap = new HashMap<>();
+    private Node<K, V> head = new Node<>(null, null);
+    private Node<K, V> tail = new Node<>(null, null);
+    
+    public LRUCache(int c) {
+        capacity = c;
         head.next = tail;
         tail.prev = head;
     }
+    
+    public void put(K key, V value) {
+        Node<K, V> node = cacheMap.get(key);
+        if (node != null) {
+            removeNode(node);
+        }
+        
+        node = new Node<>(key, value);
+        cacheMap.put(key, node);
+        addNode(node);
 
+        if (cacheMap.size() > capacity) {
+            Node<K, V> nodeToDelete = tail.prev;
+            removeNode(nodeToDelete);
+            cacheMap.remove(nodeToDelete.key);
+        }
+    }
+    
+    public V get(K key) {
+        Node<K, V> node = cacheMap.get(key);
+        if (node == null) return null;
+        removeNode(node);
+        addNode(node);
+        return node.value;
+    }
+    
+    public void addNode(Node<K, V> node) {
+        Node<K, V> nextNode = head.next;
+        head.next = node;
+        node.prev = head;
+        node.next = nextNode;
+        nextNode.prev = node;
+    }
+    
+    public void removeNode(Node<K, V> node) {
+        Node<K, V> prevNode = node.prev;
+        Node<K, V> nextNode = node.next;
+        prevNode.next = nextNode;
+        nextNode.prev = prevNode;
+    }
+}
+
+public class LRUCacheApp {
     public static void main(String[] args) {
-        LRUCache cache = new LRUCache(2);
+        LRUCache<Integer, Integer> cache = new LRUCache<>(2);
         System.out.println("Input  : LRUCache(2), put(1, 1), put(2, 2)");
         cache.put(1, 1);
         cache.put(2, 2);
@@ -216,47 +259,6 @@ public class LRUCache {
         System.out.println("Input  : put(4, 4)   (evicts key 1), get(1), get(3), get(4)");
         cache.put(4, 4);
         System.out.println("Output : " + cache.get(1) + ", " + cache.get(3) + ", " + cache.get(4));
-    }
-
-    public int get(int key) {
-        Node node = map.get(key);
-        if (node == null) {
-            return -1;
-        }
-        remove(node);
-        addToFront(node);
-        return node.value;
-    }
-
-    public void put(int key, int value) {
-        Node node = map.get(key);
-        if (node != null) {
-            node.value = value;
-            remove(node);
-            addToFront(node);
-            return;
-        }
-
-        node = new Node(key, value);
-        map.put(key, node);
-        addToFront(node);
-        if (map.size() > capacity) {
-            Node leastRecentlyUsed = tail.prev;
-            remove(leastRecentlyUsed);
-            map.remove(leastRecentlyUsed.key);
-        }
-    }
-
-    private void remove(Node node) {
-        node.prev.next = node.next;
-        node.next.prev = node.prev;
-    }
-
-    private void addToFront(Node node) {
-        node.next = head.next;
-        node.prev = head;
-        head.next.prev = node;
-        head.next = node;
     }
 }
 ```
