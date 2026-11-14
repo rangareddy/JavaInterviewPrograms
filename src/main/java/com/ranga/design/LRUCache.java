@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Design a data structure that follows the Least Recently Used (LRU) cache policy. {@code LRUCache(capacity)} creates a cache with a positive capacity. {@code get(key)} returns the value of the key or -1 if it does not exist. {@code put(key, value)} inserts or updates the value and, when the number of keys exceeds the capacity, evicts the least recently used key. Both operations must run in {@code O(1)} average time.
+ * Design a data structure that follows the Least Recently Used (LRU) cache policy. {@code LRUCache<K, V>(capacity)} creates a cache with a positive capacity. {@code get(key)} returns the value of the key or {@code null} if it does not exist. {@code put(key, value)} inserts or updates the value and, when the number of keys exceeds the capacity, evicts the least recently used key. Both operations must run in {@code O(1)} average time.
+ *
+ * <p>The cache is generic in the key and value types ({@code LRUCache<K, V>}), so a miss returns {@code null} instead of the {@code -1} sentinel.
  *
  * <p><b>Algorithm Strategy (Hash Map + Doubly Linked List):</b>
  * <ol>
@@ -17,7 +19,7 @@ import java.util.Map;
  * <p><b>Example walkthrough</b>
  * <ul>
  *   <li>Capacity 2: {@code put(1,1)}, {@code put(2,2)}, {@code get(1)} returns 1 (key 1 is now the most recent); {@code put(3,3)} evicts key 2.</li>
- *   <li>{@code get(2)} returns -1; {@code put(4,4)} evicts key 1; {@code get(1)} returns -1, {@code get(3)} returns 3, {@code get(4)} returns 4.</li>
+ *   <li>{@code get(2)} returns {@code null}; {@code put(4,4)} evicts key 1; {@code get(1)} returns {@code null}, {@code get(3)} returns 3, {@code get(4)} returns 4.</li>
  * </ul>
  *
  * <p><b>Complexity Analysis:</b>
@@ -28,24 +30,24 @@ import java.util.Map;
  *
  * @author Ranga Reddy
  */
-public class LRUCache {
+public class LRUCache<K, V> {
 
-    private static class Node {
-        int key;
-        int value;
-        Node prev;
-        Node next;
+    private static class Node<K, V> {
+        K key;
+        V value;
+        Node<K, V> next;
+        Node<K, V> prev;
 
-        Node(int key, int value) {
+        Node(K key, V value) {
             this.key = key;
             this.value = value;
         }
     }
 
     private final int capacity;
-    private final Map<Integer, Node> map = new HashMap<>();
-    private final Node head = new Node(0, 0);       // dummy: head.next is the most recently used
-    private final Node tail = new Node(0, 0);       // dummy: tail.prev is the least recently used
+    private final Map<K, Node<K, V>> cacheMap = new HashMap<>();
+    private final Node<K, V> head = new Node<>(null, null);       // dummy: head.next is the most recently used
+    private final Node<K, V> tail = new Node<>(null, null);       // dummy: tail.prev is the least recently used
 
     public LRUCache(int capacity) {
         this.capacity = capacity;
@@ -54,7 +56,7 @@ public class LRUCache {
     }
 
     public static void main(String[] args) {
-        LRUCache cache = new LRUCache(2);
+        LRUCache<Integer, Integer> cache = new LRUCache<>(2);
         System.out.println("Input  : LRUCache(2), put(1, 1), put(2, 2)");
         cache.put(1, 1);
         cache.put(2, 2);
@@ -68,44 +70,45 @@ public class LRUCache {
         System.out.println("Output : " + cache.get(1) + ", " + cache.get(3) + ", " + cache.get(4));
     }
 
-    public int get(int key) {
-        Node node = map.get(key);
-        if (node == null) {
-            return -1;
+    public void put(K key, V value) {
+        Node<K, V> node = cacheMap.get(key);
+        if (node != null) {
+            removeNode(node);
         }
-        remove(node);
-        addToFront(node);
+
+        node = new Node<>(key, value);
+        cacheMap.put(key, node);
+        addNode(node);
+
+        if (cacheMap.size() > capacity) {
+            Node<K, V> nodeToDelete = tail.prev;
+            removeNode(nodeToDelete);
+            cacheMap.remove(nodeToDelete.key);
+        }
+    }
+
+    public V get(K key) {
+        Node<K, V> node = cacheMap.get(key);
+        if (node == null) {
+            return null;
+        }
+        removeNode(node);
+        addNode(node);
         return node.value;
     }
 
-    public void put(int key, int value) {
-        Node node = map.get(key);
-        if (node != null) {
-            node.value = value;
-            remove(node);
-            addToFront(node);
-            return;
-        }
-
-        node = new Node(key, value);
-        map.put(key, node);
-        addToFront(node);
-        if (map.size() > capacity) {
-            Node leastRecentlyUsed = tail.prev;
-            remove(leastRecentlyUsed);
-            map.remove(leastRecentlyUsed.key);
-        }
-    }
-
-    private void remove(Node node) {
-        node.prev.next = node.next;
-        node.next.prev = node.prev;
-    }
-
-    private void addToFront(Node node) {
-        node.next = head.next;
-        node.prev = head;
-        head.next.prev = node;
+    private void addNode(Node<K, V> node) {
+        Node<K, V> nextNode = head.next;
         head.next = node;
+        node.prev = head;
+        node.next = nextNode;
+        nextNode.prev = node;
+    }
+
+    private void removeNode(Node<K, V> node) {
+        Node<K, V> prevNode = node.prev;
+        Node<K, V> nextNode = node.next;
+        prevNode.next = nextNode;
+        nextNode.prev = prevNode;
     }
 }
