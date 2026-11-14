@@ -1,4 +1,4 @@
-package com.ranga.math;
+package com.ranga.bit;
 
 /**
  * Swap the values of two integer variables without using a third temporary variable. (Java passes arguments by value, so a helper method cannot swap caller variables; the swap is shown on array elements and on local variables.)

@@ -1,4 +1,4 @@
-package com.ranga.math;
+package com.ranga.dp;
 
 /**
  * Utility class to print the first {@code n} Fibonacci numbers using iteration.

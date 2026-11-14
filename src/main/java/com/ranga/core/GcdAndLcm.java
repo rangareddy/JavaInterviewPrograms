@@ -1,4 +1,4 @@
-package com.ranga.math;
+package com.ranga.core;
 
 /**
  * Find the greatest common divisor (GCD, the largest number that divides both) and the least common multiple (LCM, the smallest positive number divisible by both) of two integers.

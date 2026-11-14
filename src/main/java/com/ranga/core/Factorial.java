@@ -1,4 +1,4 @@
-package com.ranga.math;
+package com.ranga.core;
 
 import java.math.BigInteger;
 

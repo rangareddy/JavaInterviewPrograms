@@ -1,4 +1,4 @@
-package com.ranga.math;
+package com.ranga.core;
 
 import java.util.ArrayList;
 import java.util.List;
