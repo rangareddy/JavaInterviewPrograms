@@ -136,42 +136,6 @@ private static void backtrack(int[] nums, int start, List<Integer> current, List
 | 3 | Choose How Many Copies of Each Distinct Value | O(n * 2^n) | O(n) |
 | 4 | Sorted Backtracking Skipping Equal Siblings (Optimized) | O(n * 2^n) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: the same record-then-extend backtracking as Subsets, but the array is sorted first so equal values sit next to each other. Inside one loop, `if (i > start && nums[i] == nums[i - 1]) continue;` skips a value that was already tried at that position, so a duplicate value can only extend a path as the next copy of the same value, never start a repeated branch.
-
-**Input:** `nums = [1, 2, 2]` (already sorted).
-
-| Call | `start` | Path recorded | Loop notes |
-|------|---------|---------------|------------|
-| 1 | 0 | `[]` | `i = 0`: take 1; later `i = 2` is skipped (`i > start` and `2 == 2`) |
-| 2 | 1 | `[1]` | `i = 1`: take 2; `i = 2` skipped (`2 == 2`, `i > start`) |
-| 3 | 2 | `[1, 2]` | `i = 2`: `i > start` is false, so the second 2 is taken |
-| 4 | 3 | `[1, 2, 2]` | nothing left; back up |
-| 5 | 2 | `[2]` | (from call 1, `i = 1`) `i = 2`: `i == start`, so the second 2 is taken |
-| 6 | 3 | `[2, 2]` | nothing left |
-
-```mermaid
-graph TD
-    A["[ ]"] --> B["[1]"]
-    A --> C["[2]"]
-    A -.-> X["skip i=2: second 2"]
-    B --> D["[1,2]"]
-    D --> E["[1,2,2]"]
-    B -.-> Y["skip i=2: second 2"]
-    C --> F["[2,2]"]
-```
-
-Without the skip, `[2]` and `[1, 2]` would each be produced twice (once per copy of 2).
-
-**Edge cases.** The input is cloned and sorted, so the caller's array is not changed. A single element gives `[[], [0]]`-style output (empty set plus the element). All-equal arrays such as `[4, 4, 4, 1, 4]` yield one subset per count of each value.
-
-**Result:** `subsetsWithDup([1, 2, 2])` returns `[[], [1], [1, 2], [1, 2, 2], [2], [2, 2]]`, matching the class output.
-
 ## Source Code
 
 ### SubsetsII.java
@@ -213,3 +177,37 @@ public class SubsetsII {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: the same record-then-extend backtracking as Subsets, but the array is sorted first so equal values sit next to each other. Inside one loop, `if (i > start && nums[i] == nums[i - 1]) continue;` skips a value that was already tried at that position, so a duplicate value can only extend a path as the next copy of the same value, never start a repeated branch.
+
+**Input:** `nums = [1, 2, 2]` (already sorted).
+
+| Call | `start` | Path recorded | Loop notes |
+|------|---------|---------------|------------|
+| 1 | 0 | `[]` | `i = 0`: take 1; later `i = 2` is skipped (`i > start` and `2 == 2`) |
+| 2 | 1 | `[1]` | `i = 1`: take 2; `i = 2` skipped (`2 == 2`, `i > start`) |
+| 3 | 2 | `[1, 2]` | `i = 2`: `i > start` is false, so the second 2 is taken |
+| 4 | 3 | `[1, 2, 2]` | nothing left; back up |
+| 5 | 2 | `[2]` | (from call 1, `i = 1`) `i = 2`: `i == start`, so the second 2 is taken |
+| 6 | 3 | `[2, 2]` | nothing left |
+
+```mermaid
+graph TD
+    A["[ ]"] --> B["[1]"]
+    A --> C["[2]"]
+    A -.-> X["skip i=2: second 2"]
+    B --> D["[1,2]"]
+    D --> E["[1,2,2]"]
+    B -.-> Y["skip i=2: second 2"]
+    C --> F["[2,2]"]
+```
+
+Without the skip, `[2]` and `[1, 2]` would each be produced twice (once per copy of 2).
+
+**Edge cases.** The input is cloned and sorted, so the caller's array is not changed. A single element gives `[[], [0]]`-style output (empty set plus the element). All-equal arrays such as `[4, 4, 4, 1, 4]` yield one subset per count of each value.
+
+**Result:** `subsetsWithDup([1, 2, 2])` returns `[[], [1], [1, 2], [1, 2, 2], [2], [2, 2]]`, matching the class output.

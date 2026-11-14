@@ -122,48 +122,6 @@ public static boolean isBalancedIterative(TreeNode root) {
 | 3 | Bottom-Up Returning a (height, balanced) Pair | O(n) | O(h) |
 | 4 | Iterative Post-order with a Height Map | O(n) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 2 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: a tree is height-balanced when, at every node, the heights of the two subtrees differ by at most 1. Instead of recomputing heights for each node, one post-order walk returns the height of a subtree, or the sentinel `-1` meaning "this subtree is already unbalanced". As soon as a `-1` shows up it is passed straight up, and the right subtree is not even visited.
-
-**Input:** the tree `[1, 2, 2, 3, 3, null, null, 4, 4]`, which is not balanced.
-
-```mermaid
-flowchart TD
-    n1((1)) --> a2((2))
-    n1 --> b2((2))
-    a2 --> a3((3))
-    a2 --> b3((3))
-    a3 --> a4((4))
-    a3 --> b4((4))
-    classDef bad fill:#fee2e2,stroke:#ef4444
-    class n1 bad
-```
-
-The root is the first place where the heights differ by more than 1.
-
-| Step | Node finished | `left` | `right` | Check | Returns |
-|------|---------------|--------|---------|-------|---------|
-| 1 | `4` (left leaf) | 0 | 0 | diff 0 | 1 |
-| 2 | `4` (right leaf) | 0 | 0 | diff 0 | 1 |
-| 3 | `3` (left, has two children) | 1 | 1 | diff 0 | 2 |
-| 4 | `3` (right, leaf) | 0 | 0 | diff 0 | 1 |
-| 5 | `2` (left) | 2 | 1 | diff 1, allowed | 3 |
-| 6 | `2` (right, leaf) | 0 | 0 | diff 0 | 1 |
-| 7 | `1` (root) | 3 | 1 | diff 2, more than 1 | `-1` |
-
-`isBalanced` returns `height(root) != -1`, which is `false`.
-
-**Early exit.** The line `if (left == -1) return -1;` stops before the right subtree is examined, and `right == -1` is tested before the height difference. For `[1, 2, null, 3]` the call for `2` gets left height 1 and right height 0 (fine, returns 2), but at the root the left is 2 and the right is 0, so the result is `-1` and `false`.
-
-**Edge cases.** An empty tree has height `0`, so it is balanced (`true`). A single node returns `1`, balanced. Each node is visited at most once: time `O(n)`, recursion space `O(h)`.
-
-**Result:** `false` for the traced tree; the class output for the five inputs in `main` is `true`, `false`, `true`, `false`, `true`.
-
 ## Source Code
 
 Uses the shared helper [`TreeNode`](../../src/main/java/com/ranga/tree/TreeNode.java) (a small `TreeNode` with `of(...)` and `toString(...)` helpers for building and printing test data).
@@ -204,3 +162,43 @@ public class BalancedBinaryTree {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+
+The idea: a tree is height-balanced when, at every node, the heights of the two subtrees differ by at most 1. Instead of recomputing heights for each node, one post-order walk returns the height of a subtree, or the sentinel `-1` meaning "this subtree is already unbalanced". As soon as a `-1` shows up it is passed straight up, and the right subtree is not even visited.
+
+**Input:** the tree `[1, 2, 2, 3, 3, null, null, 4, 4]`, which is not balanced.
+
+```mermaid
+flowchart TD
+    n1((1)) --> a2((2))
+    n1 --> b2((2))
+    a2 --> a3((3))
+    a2 --> b3((3))
+    a3 --> a4((4))
+    a3 --> b4((4))
+    classDef bad fill:#fee2e2,stroke:#ef4444
+    class n1 bad
+```
+
+The root is the first place where the heights differ by more than 1.
+
+| Step | Node finished | `left` | `right` | Check | Returns |
+|------|---------------|--------|---------|-------|---------|
+| 1 | `4` (left leaf) | 0 | 0 | diff 0 | 1 |
+| 2 | `4` (right leaf) | 0 | 0 | diff 0 | 1 |
+| 3 | `3` (left, has two children) | 1 | 1 | diff 0 | 2 |
+| 4 | `3` (right, leaf) | 0 | 0 | diff 0 | 1 |
+| 5 | `2` (left) | 2 | 1 | diff 1, allowed | 3 |
+| 6 | `2` (right, leaf) | 0 | 0 | diff 0 | 1 |
+| 7 | `1` (root) | 3 | 1 | diff 2, more than 1 | `-1` |
+
+`isBalanced` returns `height(root) != -1`, which is `false`.
+
+**Early exit.** The line `if (left == -1) return -1;` stops before the right subtree is examined, and `right == -1` is tested before the height difference. For `[1, 2, null, 3]` the call for `2` gets left height 1 and right height 0 (fine, returns 2), but at the root the left is 2 and the right is 0, so the result is `-1` and `false`.
+
+**Edge cases.** An empty tree has height `0`, so it is balanced (`true`). A single node returns `1`, balanced. Each node is visited at most once: time `O(n)`, recursion space `O(h)`.
+
+**Result:** `false` for the traced tree; the class output for the five inputs in `main` is `true`, `false`, `true`, `false`, `true`.

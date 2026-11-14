@@ -121,41 +121,6 @@ public boolean isFull() {
 | 1 | Singly Linked List with a Size Limit | O(1) | O(k) with an allocation per element |
 | 2 | Ring Buffer (Optimized) | O(1) | O(k) |
 
-### Optimized Solution
-
-The optimized solution is Approach 2 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: keep a fixed array of `k` slots, the index `head` of the front element and a counter `size`. The next free slot is `(head + size) % k` and the rear element is at `(head + size - 1) % k`; the modulo wraps the index to 0 after the last slot, so slots freed at the front are reused and nothing is allocated after construction. Keeping `size` separately tells "empty" (`size == 0`) from "full" (`size == k`) with no ambiguity.
-
-**Input:** `DesignCircularQueue(3)` then `enQueue(1)`, `enQueue(2)`, `enQueue(3)`, `enQueue(4)`, `rear()`, `isFull()`, `deQueue()`, `enQueue(4)`, `rear()`. The array starts as `[0, 0, 0]`, `head = 0`, `size = 0`.
-
-| Step | Operation | Index used | Result | `data` | `head` | `size` |
-|------|-----------|-----------|--------|--------|--------|--------|
-| 1 | `enQueue(1)` | `(0 + 0) % 3 = 0` | `true` | `[1, 0, 0]` | 0 | 1 |
-| 2 | `enQueue(2)` | `(0 + 1) % 3 = 1` | `true` | `[1, 2, 0]` | 0 | 2 |
-| 3 | `enQueue(3)` | `(0 + 2) % 3 = 2` | `true` | `[1, 2, 3]` | 0 | 3 |
-| 4 | `enQueue(4)` | `size == k`, queue is full | `false` | `[1, 2, 3]` | 0 | 3 |
-| 5 | `rear()` | `(0 + 3 - 1) % 3 = 2` | `3` | `[1, 2, 3]` | 0 | 3 |
-| 6 | `isFull()` | `3 == 3` | `true` | `[1, 2, 3]` | 0 | 3 |
-| 7 | `deQueue()` | `head = (0 + 1) % 3 = 1` | `true` | `[1, 2, 3]` | 1 | 2 |
-| 8 | `enQueue(4)` | `(1 + 2) % 3 = 0` (wraps around) | `true` | `[4, 2, 3]` | 1 | 3 |
-| 9 | `rear()` | `(1 + 3 - 1) % 3 = 0` | `4` | `[4, 2, 3]` | 1 | 3 |
-
-```text
-after step 7:   slot:  0   1   2          after step 8:   slot:  0   1   2
-                data: [1] [2] [3]                         data: [4] [2] [3]
-                           ^head                                      ^head
-                (slot 0 is free, the 1 is only stale data)   (4 wrapped into slot 0; order is 2, 3, 4)
-```
-
-`deQueue` does not erase the old value; it only moves `head` and lowers `size`, and the stale `1` is overwritten by step 8.
-
-**Edge cases.** `enQueue` on a full queue and `deQueue` on an empty queue return `false` and change nothing. `front()` and `rear()` return `-1` on an empty queue (checked through `isEmpty()`, so a stored `-1` is not confused with it because the check uses `size`). A capacity of `0` would make `% data.length` divide by zero, but `isFull()` is already true then, so `enQueue` returns `false` before reaching the modulo.
-
-**Result:** the outputs are `true, true, true, false, 3, true, true, true, 4`, which matches what the class prints.
-
 ## Source Code
 
 ### DesignCircularQueue.java
@@ -221,3 +186,36 @@ public class DesignCircularQueue {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+
+The idea: keep a fixed array of `k` slots, the index `head` of the front element and a counter `size`. The next free slot is `(head + size) % k` and the rear element is at `(head + size - 1) % k`; the modulo wraps the index to 0 after the last slot, so slots freed at the front are reused and nothing is allocated after construction. Keeping `size` separately tells "empty" (`size == 0`) from "full" (`size == k`) with no ambiguity.
+
+**Input:** `DesignCircularQueue(3)` then `enQueue(1)`, `enQueue(2)`, `enQueue(3)`, `enQueue(4)`, `rear()`, `isFull()`, `deQueue()`, `enQueue(4)`, `rear()`. The array starts as `[0, 0, 0]`, `head = 0`, `size = 0`.
+
+| Step | Operation | Index used | Result | `data` | `head` | `size` |
+|------|-----------|-----------|--------|--------|--------|--------|
+| 1 | `enQueue(1)` | `(0 + 0) % 3 = 0` | `true` | `[1, 0, 0]` | 0 | 1 |
+| 2 | `enQueue(2)` | `(0 + 1) % 3 = 1` | `true` | `[1, 2, 0]` | 0 | 2 |
+| 3 | `enQueue(3)` | `(0 + 2) % 3 = 2` | `true` | `[1, 2, 3]` | 0 | 3 |
+| 4 | `enQueue(4)` | `size == k`, queue is full | `false` | `[1, 2, 3]` | 0 | 3 |
+| 5 | `rear()` | `(0 + 3 - 1) % 3 = 2` | `3` | `[1, 2, 3]` | 0 | 3 |
+| 6 | `isFull()` | `3 == 3` | `true` | `[1, 2, 3]` | 0 | 3 |
+| 7 | `deQueue()` | `head = (0 + 1) % 3 = 1` | `true` | `[1, 2, 3]` | 1 | 2 |
+| 8 | `enQueue(4)` | `(1 + 2) % 3 = 0` (wraps around) | `true` | `[4, 2, 3]` | 1 | 3 |
+| 9 | `rear()` | `(1 + 3 - 1) % 3 = 0` | `4` | `[4, 2, 3]` | 1 | 3 |
+
+```text
+after step 7:   slot:  0   1   2          after step 8:   slot:  0   1   2
+                data: [1] [2] [3]                         data: [4] [2] [3]
+                           ^head                                      ^head
+                (slot 0 is free, the 1 is only stale data)   (4 wrapped into slot 0; order is 2, 3, 4)
+```
+
+`deQueue` does not erase the old value; it only moves `head` and lowers `size`, and the stale `1` is overwritten by step 8.
+
+**Edge cases.** `enQueue` on a full queue and `deQueue` on an empty queue return `false` and change nothing. `front()` and `rear()` return `-1` on an empty queue (checked through `isEmpty()`, so a stored `-1` is not confused with it because the check uses `size`). A capacity of `0` would make `% data.length` divide by zero, but `isFull()` is already true then, so `enQueue` returns `false` before reaching the modulo.
+
+**Result:** the outputs are `true, true, true, false, 3, true, true, true, 4`, which matches what the class prints.

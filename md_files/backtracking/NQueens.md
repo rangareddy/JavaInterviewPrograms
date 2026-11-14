@@ -158,36 +158,6 @@ private static void place(int row, int n, int[] queenColumn, boolean[] columns, 
 | 3 | Bit-Mask Backtracking | O(n!) (much faster constants) | O(n) |
 | 4 | Backtracking with Column and Diagonal Marker Arrays (Optimized) | O(n!) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: place one queen per row, row by row, so two queens can never share a row. Three boolean marker arrays make each safety test `O(1)`: `columns[col]`, `diagonals[row - col + n - 1]` (the `\` direction) and `antiDiagonals[row + col]` (the `/` direction). A square is usable only if all three are free. After placing, recurse to the next row; afterwards clear the three markers. When `row == n` the column of each row is turned into a board of strings.
-
-**Input:** `n = 4`. The table shows each row-0 start and where the search goes (`q = [column of the queen in each row]`).
-
-| First queen (row 0) | Deeper placements | Outcome |
-|---------------------|-------------------|---------|
-| col 0 | row 1: cols 0 and 1 blocked, col 2 placed; row 2 has no free square | dead end, back to row 1 |
-| col 0 | row 1: col 3 placed; row 2: col 1 placed; row 3 has no free square | dead end, nothing left |
-| col 1 | row 1: col 3; row 2: col 0; row 3: col 2 | solution `q = [1, 3, 0, 2]` |
-| col 2 | row 1: col 0; row 2: col 3; row 3: col 1 | solution `q = [2, 0, 3, 1]` |
-| col 3 | row 1: col 0 then row 2: col 2, row 3 blocked; row 1: col 1, row 2 blocked | dead ends |
-
-```text
-Solution 1  q = [1, 3, 0, 2]      Solution 2  q = [2, 0, 3, 1]
-. Q . .                           . . Q .
-. . . Q                           Q . . .
-Q . . .                           . . . Q
-. . Q .                           . Q . .
-```
-
-**Edge cases.** `n = 1` returns one board `["Q"]`; `n = 2` and `n = 3` have no solutions and return an empty list (every row-1 square is blocked). `n = 6` has 4 solutions. The marker arrays have size `2n - 1` because there are that many diagonals in each direction.
-
-**Result:** `solveNQueens(4)` returns `[[.Q.., ...Q, Q..., ..Q.], [..Q., Q..., ...Q, .Q..]]`, matching the class output.
-
 ## Source Code
 
 ### NQueens.java
@@ -246,3 +216,31 @@ public class NQueens {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: place one queen per row, row by row, so two queens can never share a row. Three boolean marker arrays make each safety test `O(1)`: `columns[col]`, `diagonals[row - col + n - 1]` (the `\` direction) and `antiDiagonals[row + col]` (the `/` direction). A square is usable only if all three are free. After placing, recurse to the next row; afterwards clear the three markers. When `row == n` the column of each row is turned into a board of strings.
+
+**Input:** `n = 4`. The table shows each row-0 start and where the search goes (`q = [column of the queen in each row]`).
+
+| First queen (row 0) | Deeper placements | Outcome |
+|---------------------|-------------------|---------|
+| col 0 | row 1: cols 0 and 1 blocked, col 2 placed; row 2 has no free square | dead end, back to row 1 |
+| col 0 | row 1: col 3 placed; row 2: col 1 placed; row 3 has no free square | dead end, nothing left |
+| col 1 | row 1: col 3; row 2: col 0; row 3: col 2 | solution `q = [1, 3, 0, 2]` |
+| col 2 | row 1: col 0; row 2: col 3; row 3: col 1 | solution `q = [2, 0, 3, 1]` |
+| col 3 | row 1: col 0 then row 2: col 2, row 3 blocked; row 1: col 1, row 2 blocked | dead ends |
+
+```text
+Solution 1  q = [1, 3, 0, 2]      Solution 2  q = [2, 0, 3, 1]
+. Q . .                           . . Q .
+. . . Q                           Q . . .
+Q . . .                           . . . Q
+. . Q .                           . Q . .
+```
+
+**Edge cases.** `n = 1` returns one board `["Q"]`; `n = 2` and `n = 3` have no solutions and return an empty list (every row-1 square is blocked). `n = 6` has 4 solutions. The marker arrays have size `2n - 1` because there are that many diagonals in each direction.
+
+**Result:** `solveNQueens(4)` returns `[[.Q.., ...Q, Q..., ..Q.], [..Q., Q..., ...Q, .Q..]]`, matching the class output.

@@ -253,40 +253,6 @@ public static String minWindow(String s, String t) {
 | 6 | Prefix Counts and Binary Search for the End | O(|s| log |s| * |alphabet|) | O(|s| * |t|) |
 | 7 | Sliding Window with a Missing Counter (Optimized) | O(|s| + |t|) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 7 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: `need[c]` holds how many of each character of `t` are still required, and `missing` is the total number of required characters not yet covered. `right` extends the window; a character that was still needed (`need[c] > 0` before the decrement) lowers `missing`. When `missing == 0` the window is valid: record it if it is the shortest, then move `left` forward, giving back characters, until the window becomes invalid again (a returned character with `need > 0` raises `missing`). Characters not in `t` go negative in `need`, so they are ignored automatically.
-
-**Input:** `s = "ADOBECODEBANC"`, `t = "ABC"` (`need` A=1, B=1, C=1, `missing = 3`).
-
-| Step | `right` / char | `missing` after | Action |
-|------|----------------|-----------------|--------|
-| 1 | 0 `A` | 2 | needed |
-| 2 | 1 `D` | 2 | not needed |
-| 3 | 2 `O` | 2 | not needed |
-| 4 | 3 `B` | 1 | needed |
-| 5 | 4 `E` | 1 | not needed |
-| 6 | 5 `C` | 0 | valid window `ADOBEC` (0..5), **best = `ADOBEC`**; drop `A` (`left=1`), `missing=1` |
-| 7 | 6-9 `O D E B` | 1 | extra letters, nothing changes |
-| 8 | 10 `A` | 0 | valid `DOBECODEBA`; shrink: drop `D`, `O`, `B`, `E` (still valid, no shorter), then drop `C` -> `missing=1`, `left=6` |
-| 9 | 11 `N` | 1 | not needed |
-| 10 | 12 `C` | 0 | valid `ODEBANC` (6..12); shrink: drop `O` (`left=7`), drop `D` (`left=8`); `EBANC` (8..12) length 5 is **best**; drop `E` (`left=9`) -> `BANC` length 4 is **best**; drop `B` -> `missing=1`, `left=10` |
-
-```text
-index: 0 1 2 3 4 5 6 7 8 9 10 11 12
-s:     A D O B E C O D E B A  N  C
-first valid: [0..5] ADOBEC (length 6)
-final best:                [9..12] BANC (length 4)
-```
-
-**Edge cases.** `null`, an empty `t`, or `s` shorter than `t` returns `""`. If no window ever covers `t` (`"a"`, `"aa"`) `bestLength` stays `Integer.MAX_VALUE` and `""` is returned. Duplicates in `t` are counted (`"a"`, `"a"` returns `"a"`). `need` has 128 slots, so ASCII input is assumed. Each index enters and leaves the window at most once: O(n).
-
-**Result:** `"BANC"`, matching the class output.
-
 ## Source Code
 
 ### MinimumWindowSubstring.java
@@ -337,3 +303,35 @@ public class MinimumWindowSubstring {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
+
+The idea: `need[c]` holds how many of each character of `t` are still required, and `missing` is the total number of required characters not yet covered. `right` extends the window; a character that was still needed (`need[c] > 0` before the decrement) lowers `missing`. When `missing == 0` the window is valid: record it if it is the shortest, then move `left` forward, giving back characters, until the window becomes invalid again (a returned character with `need > 0` raises `missing`). Characters not in `t` go negative in `need`, so they are ignored automatically.
+
+**Input:** `s = "ADOBECODEBANC"`, `t = "ABC"` (`need` A=1, B=1, C=1, `missing = 3`).
+
+| Step | `right` / char | `missing` after | Action |
+|------|----------------|-----------------|--------|
+| 1 | 0 `A` | 2 | needed |
+| 2 | 1 `D` | 2 | not needed |
+| 3 | 2 `O` | 2 | not needed |
+| 4 | 3 `B` | 1 | needed |
+| 5 | 4 `E` | 1 | not needed |
+| 6 | 5 `C` | 0 | valid window `ADOBEC` (0..5), **best = `ADOBEC`**; drop `A` (`left=1`), `missing=1` |
+| 7 | 6-9 `O D E B` | 1 | extra letters, nothing changes |
+| 8 | 10 `A` | 0 | valid `DOBECODEBA`; shrink: drop `D`, `O`, `B`, `E` (still valid, no shorter), then drop `C` -> `missing=1`, `left=6` |
+| 9 | 11 `N` | 1 | not needed |
+| 10 | 12 `C` | 0 | valid `ODEBANC` (6..12); shrink: drop `O` (`left=7`), drop `D` (`left=8`); `EBANC` (8..12) length 5 is **best**; drop `E` (`left=9`) -> `BANC` length 4 is **best**; drop `B` -> `missing=1`, `left=10` |
+
+```text
+index: 0 1 2 3 4 5 6 7 8 9 10 11 12
+s:     A D O B E C O D E B A  N  C
+first valid: [0..5] ADOBEC (length 6)
+final best:                [9..12] BANC (length 4)
+```
+
+**Edge cases.** `null`, an empty `t`, or `s` shorter than `t` returns `""`. If no window ever covers `t` (`"a"`, `"aa"`) `bestLength` stays `Integer.MAX_VALUE` and `""` is returned. Duplicates in `t` are counted (`"a"`, `"a"` returns `"a"`). `need` has 128 slots, so ASCII input is assumed. Each index enters and leaves the window at most once: O(n).
+
+**Result:** `"BANC"`, matching the class output.

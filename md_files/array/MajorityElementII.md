@@ -130,33 +130,6 @@ public static List<Integer> majorityElement(int[] nums) {
 | 2 | Sorting and Run Lengths | O(n log n) | O(n) for the copy |
 | 3 | Extended Boyer-Moore (Optimized) | O(n) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea (extended Boyer-Moore): an element appearing more than `n/3` times is at most two values, so keep two candidates with two counters. A number equal to a candidate adds a vote; otherwise it takes a free slot (counter `0`); if both slots are busy it cancels one vote from each candidate (three different numbers wiped out together). The survivors are only candidates, so a second pass counts them and keeps those with count above `n/3`.
-
-**Input:** `nums = [1, 1, 1, 3, 3, 2, 2, 2]` (`n = 8`, threshold `8 / 3 = 2`). Start: `candidate1 = candidate2 = 1`, both counts `0`.
-
-| Step | `num` | Rule used | `candidate1` / `count1` | `candidate2` / `count2` |
-|------|-------|-----------|--------------------------|--------------------------|
-| 1 | 1 | equals candidate1 | 1 / 1 | 1 / 0 |
-| 2 | 1 | equals candidate1 | 1 / 2 | 1 / 0 |
-| 3 | 1 | equals candidate1 | 1 / 3 | 1 / 0 |
-| 4 | 3 | count2 is 0, take slot 2 | 1 / 3 | 3 / 1 |
-| 5 | 3 | equals candidate2 | 1 / 3 | 3 / 2 |
-| 6 | 2 | both busy, cancel one vote each | 1 / 2 | 3 / 1 |
-| 7 | 2 | both busy, cancel one vote each | 1 / 1 | 3 / 0 |
-| 8 | 2 | count2 is 0, take slot 2 | 1 / 1 | 2 / 1 |
-
-Verification pass with candidates `1` and `2`: `1` occurs 3 times and `2` occurs 3 times, both greater than `2`, so both are added. Candidate `3` was dropped; it occurs only twice anyway.
-
-**Edge cases.** An empty array returns `[]`. `[1]` returns `[1]`; `[1, 2]` returns `[1, 2]` (threshold `0`). The check `candidate2 != candidate1` stops the same value being added twice when both slots hold it (both start as `nums[0]`).
-
-**Result:** `[1, 2]`, matching the class output.
-
 ## Source Code
 
 ### MajorityElementII.java
@@ -221,3 +194,28 @@ public class MajorityElementII {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+
+The idea (extended Boyer-Moore): an element appearing more than `n/3` times is at most two values, so keep two candidates with two counters. A number equal to a candidate adds a vote; otherwise it takes a free slot (counter `0`); if both slots are busy it cancels one vote from each candidate (three different numbers wiped out together). The survivors are only candidates, so a second pass counts them and keeps those with count above `n/3`.
+
+**Input:** `nums = [1, 1, 1, 3, 3, 2, 2, 2]` (`n = 8`, threshold `8 / 3 = 2`). Start: `candidate1 = candidate2 = 1`, both counts `0`.
+
+| Step | `num` | Rule used | `candidate1` / `count1` | `candidate2` / `count2` |
+|------|-------|-----------|--------------------------|--------------------------|
+| 1 | 1 | equals candidate1 | 1 / 1 | 1 / 0 |
+| 2 | 1 | equals candidate1 | 1 / 2 | 1 / 0 |
+| 3 | 1 | equals candidate1 | 1 / 3 | 1 / 0 |
+| 4 | 3 | count2 is 0, take slot 2 | 1 / 3 | 3 / 1 |
+| 5 | 3 | equals candidate2 | 1 / 3 | 3 / 2 |
+| 6 | 2 | both busy, cancel one vote each | 1 / 2 | 3 / 1 |
+| 7 | 2 | both busy, cancel one vote each | 1 / 1 | 3 / 0 |
+| 8 | 2 | count2 is 0, take slot 2 | 1 / 1 | 2 / 1 |
+
+Verification pass with candidates `1` and `2`: `1` occurs 3 times and `2` occurs 3 times, both greater than `2`, so both are added. Candidate `3` was dropped; it occurs only twice anyway.
+
+**Edge cases.** An empty array returns `[]`. `[1]` returns `[1]`; `[1, 2]` returns `[1, 2]` (threshold `0`). The check `candidate2 != candidate1` stops the same value being added twice when both slots hold it (both start as `nums[0]`).
+
+**Result:** `[1, 2]`, matching the class output.

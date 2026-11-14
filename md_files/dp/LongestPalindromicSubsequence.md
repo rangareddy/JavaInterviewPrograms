@@ -114,37 +114,6 @@ public static int longestPalindromeSubseq(String s) {
 | 3 | Longest Common Subsequence with the Reverse | O(n^2) | O(n^2) |
 | 4 | Interval DP Table (Optimized) | O(n^2) | O(n^2) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: `dp[i][j]` is the longest palindromic subsequence inside `s[i..j]`. Every single character is a palindrome of length 1 (`dp[i][i] = 1`). If `s[i] == s[j]` they wrap the best palindrome of the inside `s[i+1..j-1]` and add 2; otherwise one end is useless, so take the better of `dp[i+1][j]` and `dp[i][j-1]`. Rows are filled from the bottom (`i = n-1`) up so the cells below and to the left are ready.
-
-**Input:** `s = "bbbab"` (indices 0-4: `b b b a b`). Cells with `j < i` stay 0.
-
-| `i` | Row `dp[i][0..4]` | Key cells |
-|-----|-------------------|-----------|
-| 4 | `[0, 0, 0, 0, 1]` | `dp[4][4] = 1` |
-| 3 | `[0, 0, 0, 1, 1]` | `a != b`: `dp[3][4] = max(dp[4][4], dp[3][3]) = 1` |
-| 2 | `[0, 0, 1, 1, 3]` | `dp[2][3] = 1` (`b != a`); `dp[2][4]`: `b = b`, `dp[3][3] + 2 = 3` |
-| 1 | `[0, 1, 2, 2, 3]` | `dp[1][2]`: `b = b`, `dp[2][1] + 2 = 2`; `dp[1][3] = max(dp[2][3], dp[1][2]) = 2`; `dp[1][4]`: `b = b`, `dp[2][3] + 2 = 3` |
-| 0 | `[1, 2, 3, 3, 4]` | `dp[0][2] = dp[1][1] + 2 = 3`; `dp[0][3] = max(dp[1][3], dp[0][2]) = 3`; `dp[0][4]`: `b = b`, `dp[1][3] + 2 = 4` |
-
-```text
-      j=0 1 2 3 4
-i=0     1 2 3 3 4   <- dp[0][4] = 4  ("bbbb")
-i=1       1 2 2 3
-i=2         1 1 3
-i=3           1 1
-i=4             1
-```
-
-**Edge cases.** An empty string returns `0` (the `n == 0` check avoids reading `dp[0][-1]`). A single character returns `1`. A string with all different characters (`"abcde"`) returns `1`.
-
-**Result:** `longestPalindromeSubseq("bbbab")` returns `4`, matching the class output.
-
 ## Source Code
 
 ### LongestPalindromicSubsequence.java
@@ -178,3 +147,32 @@ public class LongestPalindromicSubsequence {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: `dp[i][j]` is the longest palindromic subsequence inside `s[i..j]`. Every single character is a palindrome of length 1 (`dp[i][i] = 1`). If `s[i] == s[j]` they wrap the best palindrome of the inside `s[i+1..j-1]` and add 2; otherwise one end is useless, so take the better of `dp[i+1][j]` and `dp[i][j-1]`. Rows are filled from the bottom (`i = n-1`) up so the cells below and to the left are ready.
+
+**Input:** `s = "bbbab"` (indices 0-4: `b b b a b`). Cells with `j < i` stay 0.
+
+| `i` | Row `dp[i][0..4]` | Key cells |
+|-----|-------------------|-----------|
+| 4 | `[0, 0, 0, 0, 1]` | `dp[4][4] = 1` |
+| 3 | `[0, 0, 0, 1, 1]` | `a != b`: `dp[3][4] = max(dp[4][4], dp[3][3]) = 1` |
+| 2 | `[0, 0, 1, 1, 3]` | `dp[2][3] = 1` (`b != a`); `dp[2][4]`: `b = b`, `dp[3][3] + 2 = 3` |
+| 1 | `[0, 1, 2, 2, 3]` | `dp[1][2]`: `b = b`, `dp[2][1] + 2 = 2`; `dp[1][3] = max(dp[2][3], dp[1][2]) = 2`; `dp[1][4]`: `b = b`, `dp[2][3] + 2 = 3` |
+| 0 | `[1, 2, 3, 3, 4]` | `dp[0][2] = dp[1][1] + 2 = 3`; `dp[0][3] = max(dp[1][3], dp[0][2]) = 3`; `dp[0][4]`: `b = b`, `dp[1][3] + 2 = 4` |
+
+```text
+      j=0 1 2 3 4
+i=0     1 2 3 3 4   <- dp[0][4] = 4  ("bbbb")
+i=1       1 2 2 3
+i=2         1 1 3
+i=3           1 1
+i=4             1
+```
+
+**Edge cases.** An empty string returns `0` (the `n == 0` check avoids reading `dp[0][-1]`). A single character returns `1`. A string with all different characters (`"abcde"`) returns `1`.
+
+**Result:** `longestPalindromeSubseq("bbbab")` returns `4`, matching the class output.

@@ -121,30 +121,6 @@ public static boolean isIsomorphic(String s, String t) {
 | 3 | Last-Seen Index Arrays | O(n) | O(1) |
 | 4 | Two-Way Mapping Arrays (Optimized) | O(n) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: `s` and `t` are isomorphic when each character of `s` always maps to the same character of `t`, and no two different characters of `s` map to the same one. Keep two lookup tables of 256 characters: `sToT` (what `s[i]` maps to) and `tToS` (the reverse). At each position, if either table already holds a different partner, the mapping is broken; otherwise record the pair. Checking both directions is what rejects `"ab"` vs `"aa"`.
-
-**Input:** `s = "egg"`, `t = "add"`.
-
-| Step | `i` | `a` (from `s`) | `b` (from `t`) | Existing `sToT[a]` / `tToS[b]` | Conflict? | Tables afterwards |
-|------|-----|----------------|----------------|--------------------------------|-----------|-------------------|
-| 1 | 0 | `e` | `a` | none / none | no | `e -> a`, `a -> e` |
-| 2 | 1 | `g` | `d` | none / none | no | add `g -> d`, `d -> g` |
-| 3 | 2 | `g` | `d` | `d` / `g` | no (both agree) | unchanged |
-
-The loop finishes, so the method returns `true`.
-
-**A failing case.** `s = "foo"`, `t = "bar"`: step 1 stores `f -> b`, step 2 stores `o -> a`, step 3 finds `sToT['o'] = a` but `b = r`, so it returns `false`. For `"ab"` vs `"aa"` the second step finds `tToS['a'] = a` while `a` would be `b`, so the reverse table returns `false`.
-
-**Edge cases.** Different lengths return `false` immediately. Two empty strings return `true` (no loop iterations). The tables hold 256 entries, so the code assumes characters below 256, and `0` is used as the "empty" marker.
-
-**Result:** `true` for `egg`/`add`, `false` for `foo`/`bar` and `ab`/`aa`, matching the class output.
-
 ## Source Code
 
 ### IsomorphicStrings.java
@@ -181,3 +157,25 @@ public class IsomorphicStrings {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: `s` and `t` are isomorphic when each character of `s` always maps to the same character of `t`, and no two different characters of `s` map to the same one. Keep two lookup tables of 256 characters: `sToT` (what `s[i]` maps to) and `tToS` (the reverse). At each position, if either table already holds a different partner, the mapping is broken; otherwise record the pair. Checking both directions is what rejects `"ab"` vs `"aa"`.
+
+**Input:** `s = "egg"`, `t = "add"`.
+
+| Step | `i` | `a` (from `s`) | `b` (from `t`) | Existing `sToT[a]` / `tToS[b]` | Conflict? | Tables afterwards |
+|------|-----|----------------|----------------|--------------------------------|-----------|-------------------|
+| 1 | 0 | `e` | `a` | none / none | no | `e -> a`, `a -> e` |
+| 2 | 1 | `g` | `d` | none / none | no | add `g -> d`, `d -> g` |
+| 3 | 2 | `g` | `d` | `d` / `g` | no (both agree) | unchanged |
+
+The loop finishes, so the method returns `true`.
+
+**A failing case.** `s = "foo"`, `t = "bar"`: step 1 stores `f -> b`, step 2 stores `o -> a`, step 3 finds `sToT['o'] = a` but `b = r`, so it returns `false`. For `"ab"` vs `"aa"` the second step finds `tToS['a'] = a` while `a` would be `b`, so the reverse table returns `false`.
+
+**Edge cases.** Different lengths return `false` immediately. Two empty strings return `true` (no loop iterations). The tables hold 256 entries, so the code assumes characters below 256, and `0` is used as the "empty" marker.
+
+**Result:** `true` for `egg`/`add`, `false` for `foo`/`bar` and `ab`/`aa`, matching the class output.

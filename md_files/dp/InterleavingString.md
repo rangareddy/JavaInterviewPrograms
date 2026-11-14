@@ -128,38 +128,6 @@ public static boolean isInterleave(String s1, String s2, String s3) {
 | 3 | BFS over (i, j) States | O(m * n) | O(min(m, n)) |
 | 4 | 1D DP Row (Optimized) | O(m * n) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: `dp[i][j]` is true when the first `i` characters of `s1` and the first `j` of `s2` can interleave into the first `i + j` characters of `s3`. It is true if the last character of `s3` so far matches `s1[i-1]` and `dp[i-1][j]` is true, or matches `s2[j-1]` and `dp[i][j-1]` is true. Only the previous row is needed, so one array `dp` is updated in place: before the update `dp[j]` still holds the value for `i - 1`, and `dp[j-1]` already holds the value for `i`. If the lengths do not add up the method returns `false` at once.
-
-**Input:** `s1 = "aabcc"`, `s2 = "dbbca"`, `s3 = "aadbbcbcac"`. Lengths: 5 + 5 = 10, so the DP runs. Each row lists `dp[0..5]` (T/F) after finishing that `i`.
-
-| `i` | Chars of `s1` used | `dp[0..5]` | Why (highlights) |
-|-----|--------------------|------------|------------------|
-| 0 | none | `T F F F F F` | `dp[0]` starts true; `s2[0] = d` differs from `s3[0] = a`, so every later cell stays false |
-| 1 | `a` | `T F F F F F` | `dp[0]` stays true (`s1[0] = a = s3[0]`); `dp[1]` is false (old `dp[1]` is false and `s2[0] = d` differs from `s3[1] = a`) |
-| 2 | `aa` | `T T T T T F` | `dp[0]`: `s1[1] = a = s3[1]`; `dp[1]`: `s2[0] = d = s3[2]` and `dp[0]` true; `dp[2]`, `dp[3]`, `dp[4]` extend along `s2` (`b`, `b`, `c`) |
-| 3 | `aab` | `F T T F T F` | `dp[0]` becomes false (`s1[2] = b` differs from `s3[2] = d`) |
-| 4 | `aabc` | `F F T T T T` | `dp[5]` is true: `s2[4] = a = s3[8]` and `dp[4]` (same row) is true |
-| 5 | `aabcc` | `F F F T F T` | `dp[5]` is true: `s1[4] = c = s3[9]` and the old `dp[5]` (row 4) is true |
-
-The final value `dp[5] = T`.
-
-```text
-s3 = a a d b b c b c a c
-     1 1 2 1 2 1 2 2 2 1     1 = taken from s1, 2 = taken from s2
-```
-
-The last cell is true, so the strings interleave.
-
-**Edge cases.** If `m + n != s3.length()` the method returns `false` immediately. Empty strings give `true` (`dp[0] = true`). With `s2` empty (`"a"`, `""`, `"a"`) the `j == 0` branch just compares `s1` with `s3`. The second sample (`"aadbbbaccc"`) returns `false`.
-
-**Result:** `isInterleave("aabcc", "dbbca", "aadbbcbcac")` returns `true`, matching the class output.
-
 ## Source Code
 
 ### InterleavingString.java
@@ -208,3 +176,33 @@ public class InterleavingString {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: `dp[i][j]` is true when the first `i` characters of `s1` and the first `j` of `s2` can interleave into the first `i + j` characters of `s3`. It is true if the last character of `s3` so far matches `s1[i-1]` and `dp[i-1][j]` is true, or matches `s2[j-1]` and `dp[i][j-1]` is true. Only the previous row is needed, so one array `dp` is updated in place: before the update `dp[j]` still holds the value for `i - 1`, and `dp[j-1]` already holds the value for `i`. If the lengths do not add up the method returns `false` at once.
+
+**Input:** `s1 = "aabcc"`, `s2 = "dbbca"`, `s3 = "aadbbcbcac"`. Lengths: 5 + 5 = 10, so the DP runs. Each row lists `dp[0..5]` (T/F) after finishing that `i`.
+
+| `i` | Chars of `s1` used | `dp[0..5]` | Why (highlights) |
+|-----|--------------------|------------|------------------|
+| 0 | none | `T F F F F F` | `dp[0]` starts true; `s2[0] = d` differs from `s3[0] = a`, so every later cell stays false |
+| 1 | `a` | `T F F F F F` | `dp[0]` stays true (`s1[0] = a = s3[0]`); `dp[1]` is false (old `dp[1]` is false and `s2[0] = d` differs from `s3[1] = a`) |
+| 2 | `aa` | `T T T T T F` | `dp[0]`: `s1[1] = a = s3[1]`; `dp[1]`: `s2[0] = d = s3[2]` and `dp[0]` true; `dp[2]`, `dp[3]`, `dp[4]` extend along `s2` (`b`, `b`, `c`) |
+| 3 | `aab` | `F T T F T F` | `dp[0]` becomes false (`s1[2] = b` differs from `s3[2] = d`) |
+| 4 | `aabc` | `F F T T T T` | `dp[5]` is true: `s2[4] = a = s3[8]` and `dp[4]` (same row) is true |
+| 5 | `aabcc` | `F F F T F T` | `dp[5]` is true: `s1[4] = c = s3[9]` and the old `dp[5]` (row 4) is true |
+
+The final value `dp[5] = T`.
+
+```text
+s3 = a a d b b c b c a c
+     1 1 2 1 2 1 2 2 2 1     1 = taken from s1, 2 = taken from s2
+```
+
+The last cell is true, so the strings interleave.
+
+**Edge cases.** If `m + n != s3.length()` the method returns `false` immediately. Empty strings give `true` (`dp[0] = true`). With `s2` empty (`"a"`, `""`, `"a"`) the `j == 0` branch just compares `s1` with `s3`. The second sample (`"aadbbbaccc"`) returns `false`.
+
+**Result:** `isInterleave("aabcc", "dbbca", "aadbbcbcac")` returns `true`, matching the class output.

@@ -101,37 +101,6 @@ public static int uniquePathsMath(int m, int n) {
 | 3 | Single Row DP | O(m * n) | O(n) |
 | 4 | Combinatorics (Optimized) | O(min(m, n)) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above. The version implemented in this repository is Approach 3.
-
-#### Optimized solution explained
-
-**Note:** the page names the combinatorics formula (Approach 4) as the optimized one, but the class in this repository implements Approach 3 (single-row DP). This block explains the code as written.
-
-The idea: a cell can only be entered from above or from the left, so `paths[i][j] = paths[i-1][j] + paths[i][j-1]`. The first row and column have exactly one path each. One array `row` holds the previous row; because `row[j]` still contains the value from above when it is updated, `row[j] += row[j - 1]` adds "above" plus "left" in place.
-
-**Input:** `m = 3`, `n = 3`. The row starts as `[1, 1, 1]` (the first grid row).
-
-| Grid row `i` | `j` | Update | `row` after |
-|--------------|-----|--------|-------------|
-| 0 (initial) | | all ones | `[1, 1, 1]` |
-| 1 | 1 | `row[1] = 1 + row[0] = 2` | `[1, 2, 1]` |
-| 1 | 2 | `row[2] = 1 + row[1] = 3` | `[1, 2, 3]` |
-| 2 | 1 | `row[1] = 2 + row[0] = 3` | `[1, 3, 3]` |
-| 2 | 2 | `row[2] = 3 + row[1] = 6` | `[1, 3, 6]` |
-
-```text
-grid of path counts       row array over time
-1  1  1                   [1, 1, 1]
-1  2  3                   [1, 2, 3]
-1  3  6   <- answer       [1, 3, 6]
-```
-
-**Edge cases.** `m = 1` skips the outer loop and returns `1` (single row, one path). `n = 1` makes the inner loop empty and `row[0] = 1` is returned. `1 x 1` returns `1`.
-
-**Result:** `uniquePaths(3, 3)` returns `6`, matching the class output (`uniquePaths(3, 2)` is `3`, `uniquePaths(1, 1)` is `1`).
-
 ## Source Code
 
 ### UniquePaths.java
@@ -162,3 +131,32 @@ public class UniquePaths {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above. The version implemented in this repository is Approach 3.
+
+**Note:** the page names the combinatorics formula (Approach 4) as the optimized one, but the class in this repository implements Approach 3 (single-row DP). This block explains the code as written.
+
+The idea: a cell can only be entered from above or from the left, so `paths[i][j] = paths[i-1][j] + paths[i][j-1]`. The first row and column have exactly one path each. One array `row` holds the previous row; because `row[j]` still contains the value from above when it is updated, `row[j] += row[j - 1]` adds "above" plus "left" in place.
+
+**Input:** `m = 3`, `n = 3`. The row starts as `[1, 1, 1]` (the first grid row).
+
+| Grid row `i` | `j` | Update | `row` after |
+|--------------|-----|--------|-------------|
+| 0 (initial) | | all ones | `[1, 1, 1]` |
+| 1 | 1 | `row[1] = 1 + row[0] = 2` | `[1, 2, 1]` |
+| 1 | 2 | `row[2] = 1 + row[1] = 3` | `[1, 2, 3]` |
+| 2 | 1 | `row[1] = 2 + row[0] = 3` | `[1, 3, 3]` |
+| 2 | 2 | `row[2] = 3 + row[1] = 6` | `[1, 3, 6]` |
+
+```text
+grid of path counts       row array over time
+1  1  1                   [1, 1, 1]
+1  2  3                   [1, 2, 3]
+1  3  6   <- answer       [1, 3, 6]
+```
+
+**Edge cases.** `m = 1` skips the outer loop and returns `1` (single row, one path). `n = 1` makes the inner loop empty and `row[0] = 1` is returned. `1 x 1` returns `1`.
+
+**Result:** `uniquePaths(3, 3)` returns `6`, matching the class output (`uniquePaths(3, 2)` is `3`, `uniquePaths(1, 1)` is `1`).

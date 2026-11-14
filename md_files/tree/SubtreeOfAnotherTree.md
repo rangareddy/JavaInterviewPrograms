@@ -237,40 +237,6 @@ private static boolean same(TreeNode p, TreeNode q) {
 | 6 | Merkle Hashing with Verification | O(m * n) here because the hash is recomputed per node; O(m + n) when hashes are cached | O(h) |
 | 7 | Compare Every Node with Same Tree (Optimized) | O(m * n) | O(h) |
 
-### Optimized Solution
-
-The optimized solution is Approach 7 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: `subRoot` is a subtree of `root` if the two are identical when started from some node of `root`. The method tries the identical-tree check at the current node, and if that fails it repeats the whole question for the left child and the right child. The check must cover the entire subtree, so an extra child below a matching node makes it fail.
-
-**Input:** `root = [3, 4, 5, 1, 2]`, `subRoot = [4, 1, 2]`.
-
-```mermaid
-flowchart TD
-    r3((3)) --> r4((4))
-    r3 --> r5((5))
-    r4 --> r1((1))
-    r4 --> r2((2))
-    classDef hit fill:#dcfce7,stroke:#22c55e
-    class r4,r1,r2 hit
-```
-
-| Step | Call | What is compared | Result |
-|------|------|------------------|--------|
-| 1 | `isSubtree(3, sub)` | `isSameTree(3, 4)`: values 3 and 4 differ | `false`, so try the left child |
-| 2 | `isSubtree(4, sub)` | `isSameTree(4, 4)` | equal; then pairs `(1, 1)` and `(2, 2)` |
-| 3 | inside step 2 | `(1,1)`, `(2,2)` each with two `(null,null)` child pairs | `true` |
-
-Step 2 returns `true`, so the `||` chain short-circuits and `5` is never visited. The class prints `true`.
-
-**Failing case.** In `[3, 4, 5, 1, 2, null, null, null, null, 0]` the node `2` has an extra left child `0`. At node `4`, `isSameTree` matches `4` and `1`, but at `(2, 2)` the pair `(0, null)` has one empty side and returns `false`. The search then tries the nodes `1`, `2`, `0` and `5`, none of which equals `[4, 1, 2]`, so the result is `false`.
-
-**Edge cases.** An empty `subRoot` returns `true` (the empty tree is a subtree of anything). A non-empty `subRoot` against an empty `root` returns `false`. The private `isSameTree` is the same comparison as in the Same Tree problem. Worst case time is `O(m * n)`: for each of the `m` nodes of `root` the comparison can run up to the size `n` of `subRoot`; recursion space is `O(h)`.
-
-**Result:** `true` and `false` for the two inputs in `main`, matching the class output.
-
 ## Source Code
 
 Uses the shared helper [`TreeNode`](../../src/main/java/com/ranga/tree/TreeNode.java) (a small `TreeNode` with `of(...)` and `toString(...)` helpers for building and printing test data).
@@ -313,3 +279,35 @@ public class SubtreeOfAnotherTree {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
+
+The idea: `subRoot` is a subtree of `root` if the two are identical when started from some node of `root`. The method tries the identical-tree check at the current node, and if that fails it repeats the whole question for the left child and the right child. The check must cover the entire subtree, so an extra child below a matching node makes it fail.
+
+**Input:** `root = [3, 4, 5, 1, 2]`, `subRoot = [4, 1, 2]`.
+
+```mermaid
+flowchart TD
+    r3((3)) --> r4((4))
+    r3 --> r5((5))
+    r4 --> r1((1))
+    r4 --> r2((2))
+    classDef hit fill:#dcfce7,stroke:#22c55e
+    class r4,r1,r2 hit
+```
+
+| Step | Call | What is compared | Result |
+|------|------|------------------|--------|
+| 1 | `isSubtree(3, sub)` | `isSameTree(3, 4)`: values 3 and 4 differ | `false`, so try the left child |
+| 2 | `isSubtree(4, sub)` | `isSameTree(4, 4)` | equal; then pairs `(1, 1)` and `(2, 2)` |
+| 3 | inside step 2 | `(1,1)`, `(2,2)` each with two `(null,null)` child pairs | `true` |
+
+Step 2 returns `true`, so the `||` chain short-circuits and `5` is never visited. The class prints `true`.
+
+**Failing case.** In `[3, 4, 5, 1, 2, null, null, null, null, 0]` the node `2` has an extra left child `0`. At node `4`, `isSameTree` matches `4` and `1`, but at `(2, 2)` the pair `(0, null)` has one empty side and returns `false`. The search then tries the nodes `1`, `2`, `0` and `5`, none of which equals `[4, 1, 2]`, so the result is `false`.
+
+**Edge cases.** An empty `subRoot` returns `true` (the empty tree is a subtree of anything). A non-empty `subRoot` against an empty `root` returns `false`. The private `isSameTree` is the same comparison as in the Same Tree problem. Worst case time is `O(m * n)`: for each of the `m` nodes of `root` the comparison can run up to the size `n` of `subRoot`; recursion space is `O(h)`.
+
+**Result:** `true` and `false` for the two inputs in `main`, matching the class output.

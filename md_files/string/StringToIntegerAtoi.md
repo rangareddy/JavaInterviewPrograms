@@ -130,32 +130,6 @@ public static int myAtoi(String s) {
 | 3 | Finite State Machine | O(n) | O(1) |
 | 4 | Parse with an Overflow Pre-Check (Optimized) | O(n) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: read the string left to right in four phases and never build a number outside `int`: skip leading spaces, read one optional `+` or `-`, read digits while they are digits, and stop at the first other character. Before each digit is added, check `result > (Integer.MAX_VALUE - digit) / 10`; if so, `result * 10 + digit` would overflow, so the answer is clamped to `Integer.MAX_VALUE` or `Integer.MIN_VALUE` at once, without using `long`.
-
-**Input:** `s = "   -42"`.
-
-| Step | `i` | Char | Phase | State |
-|------|-----|------|-------|-------|
-| 1 | 0 | space | skip spaces | `i = 1` |
-| 2 | 1 | space | skip spaces | `i = 2` |
-| 3 | 2 | space | skip spaces | `i = 3` |
-| 4 | 3 | `-` | sign | `sign = -1`, `i = 4` |
-| 5 | 4 | `4` | digit; overflow check `0 > (2147483647 - 4) / 10`? no | `result = 4` |
-| 6 | 5 | `2` | digit; `4 > (2147483647 - 2) / 10 = 214748364`? no | `result = 42` |
-| 7 | 6 | end | `i == n`, stop | return `-1 * 42` |
-
-**Overflow example:** `"-91283472332"`. After nine digits `result = 912834723`. For the next digit `3`, the limit is `(2147483647 - 3) / 10 = 214748364`, and `912834723 > 214748364`, so the method returns `Integer.MIN_VALUE` (sign is -1) = `-2147483648`.
-
-**Edge cases.** `""` and `"   "` give `0` (no digits read). `"words and 987"` gives `0` because the first character is not a space, sign or digit. `"4193 with words"` gives `4193` (stops at the space). `"+1"` gives `1`, and `"91283472332"` gives `Integer.MAX_VALUE` = `2147483647`. A `null` string would throw `NullPointerException`.
-
-**Result:** `-42`, matching the class output.
-
 ## Source Code
 
 ### StringToIntegerAtoi.java
@@ -198,3 +172,27 @@ public class StringToIntegerAtoi {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: read the string left to right in four phases and never build a number outside `int`: skip leading spaces, read one optional `+` or `-`, read digits while they are digits, and stop at the first other character. Before each digit is added, check `result > (Integer.MAX_VALUE - digit) / 10`; if so, `result * 10 + digit` would overflow, so the answer is clamped to `Integer.MAX_VALUE` or `Integer.MIN_VALUE` at once, without using `long`.
+
+**Input:** `s = "   -42"`.
+
+| Step | `i` | Char | Phase | State |
+|------|-----|------|-------|-------|
+| 1 | 0 | space | skip spaces | `i = 1` |
+| 2 | 1 | space | skip spaces | `i = 2` |
+| 3 | 2 | space | skip spaces | `i = 3` |
+| 4 | 3 | `-` | sign | `sign = -1`, `i = 4` |
+| 5 | 4 | `4` | digit; overflow check `0 > (2147483647 - 4) / 10`? no | `result = 4` |
+| 6 | 5 | `2` | digit; `4 > (2147483647 - 2) / 10 = 214748364`? no | `result = 42` |
+| 7 | 6 | end | `i == n`, stop | return `-1 * 42` |
+
+**Overflow example:** `"-91283472332"`. After nine digits `result = 912834723`. For the next digit `3`, the limit is `(2147483647 - 3) / 10 = 214748364`, and `912834723 > 214748364`, so the method returns `Integer.MIN_VALUE` (sign is -1) = `-2147483648`.
+
+**Edge cases.** `""` and `"   "` give `0` (no digits read). `"words and 987"` gives `0` because the first character is not a space, sign or digit. `"4193 with words"` gives `4193` (stops at the space). `"+1"` gives `1`, and `"91283472332"` gives `Integer.MAX_VALUE` = `2147483647`. A `null` string would throw `NullPointerException`.
+
+**Result:** `-42`, matching the class output.

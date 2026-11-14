@@ -151,42 +151,6 @@ private static int longest(int[][] matrix, int i, int j, int[][] memo) {
 | 3 | Topological Peeling (Kahn) | O(m * n) | O(m * n) |
 | 4 | DFS with Memoization (Optimized) | O(m * n) | O(m * n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: from each cell, the longest increasing path is 1 plus the best path from a neighbour with a strictly larger value. Because values only go up, the paths can never loop, so a depth-first search is safe. `memo[i][j]` stores the answer for a cell the first time it is computed (0 means "not computed"), so every cell is solved once. The answer is the largest value over all starting cells.
-
-**Input:** `matrix = [[9,9,4],[6,6,8],[2,1,1]]`. `memo` starts as all zeros. The main loop visits cells row by row; the table lists the order in which cells get their `memo` value (a cell finishes after the larger neighbours it called).
-
-| Order finished | Cell `(i, j)` | Value | Larger neighbours used | `memo` value |
-|----------------|---------------|-------|------------------------|--------------|
-| 1 | (0, 0) | 9 | none | 1 |
-| 2 | (0, 1) | 9 | none | 1 |
-| 3 | (1, 2) | 8 | none (called from (0, 2)) | 1 |
-| 4 | (0, 2) | 4 | (1, 2) = 8 | 2 |
-| 5 | (1, 0) | 6 | (0, 0) = 9 | 2 |
-| 6 | (1, 1) | 6 | (0, 1) = 9 | 2 |
-| 7 | (2, 0) | 2 | (1, 0) = 6, memo 2 | 3 |
-| 8 | (2, 1) | 1 | (1, 1) memo 2 and (2, 0) memo 3 | 4 |
-| 9 | (2, 2) | 1 | (1, 2) = 8, memo 1 | 2 |
-
-Final `memo`:
-
-```text
- 1 1 2
- 2 2 1
- 3 4 2
-```
-
-The maximum is `memo[2][1] = 4`, the path `1 -> 2 -> 6 -> 9` (cells (2,1), (2,0), (1,0), (0,0)). Cells that were already finished (for example (1,0) when (2,0) asks for it) return immediately from `memo`.
-
-**Edge cases.** `null` or an empty matrix returns `0`. A single cell `[[1]]` returns `1`. Equal neighbours are not followed (`matrix[x][y] > matrix[i][j]` is strict), which is what makes the recursion cycle-free. Time and space are `O(rows * cols)` (the recursion depth can reach the longest path).
-
-**Result:** the method returns `4`, matching the class output (the second sample also prints `4`, `[[1]]` prints `1`).
-
 ## Source Code
 
 ### LongestIncreasingPathInAMatrix.java
@@ -243,3 +207,37 @@ public class LongestIncreasingPathInAMatrix {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: from each cell, the longest increasing path is 1 plus the best path from a neighbour with a strictly larger value. Because values only go up, the paths can never loop, so a depth-first search is safe. `memo[i][j]` stores the answer for a cell the first time it is computed (0 means "not computed"), so every cell is solved once. The answer is the largest value over all starting cells.
+
+**Input:** `matrix = [[9,9,4],[6,6,8],[2,1,1]]`. `memo` starts as all zeros. The main loop visits cells row by row; the table lists the order in which cells get their `memo` value (a cell finishes after the larger neighbours it called).
+
+| Order finished | Cell `(i, j)` | Value | Larger neighbours used | `memo` value |
+|----------------|---------------|-------|------------------------|--------------|
+| 1 | (0, 0) | 9 | none | 1 |
+| 2 | (0, 1) | 9 | none | 1 |
+| 3 | (1, 2) | 8 | none (called from (0, 2)) | 1 |
+| 4 | (0, 2) | 4 | (1, 2) = 8 | 2 |
+| 5 | (1, 0) | 6 | (0, 0) = 9 | 2 |
+| 6 | (1, 1) | 6 | (0, 1) = 9 | 2 |
+| 7 | (2, 0) | 2 | (1, 0) = 6, memo 2 | 3 |
+| 8 | (2, 1) | 1 | (1, 1) memo 2 and (2, 0) memo 3 | 4 |
+| 9 | (2, 2) | 1 | (1, 2) = 8, memo 1 | 2 |
+
+Final `memo`:
+
+```text
+ 1 1 2
+ 2 2 1
+ 3 4 2
+```
+
+The maximum is `memo[2][1] = 4`, the path `1 -> 2 -> 6 -> 9` (cells (2,1), (2,0), (1,0), (0,0)). Cells that were already finished (for example (1,0) when (2,0) asks for it) return immediately from `memo`.
+
+**Edge cases.** `null` or an empty matrix returns `0`. A single cell `[[1]]` returns `1`. Equal neighbours are not followed (`matrix[x][y] > matrix[i][j]` is strict), which is what makes the recursion cycle-free. Time and space are `O(rows * cols)` (the recursion depth can reach the longest path).
+
+**Result:** the method returns `4`, matching the class output (the second sample also prints `4`, `[[1]]` prints `1`).

@@ -267,55 +267,6 @@ private static void mergeSortBuffer(int[] arr, int[] buffer, int low, int high) 
 | 6 | Three-Way Merge Sort | O(n log n) | O(n) |
 | 7 | Top-Down with One Shared Buffer (Optimized) | O(n log n) | O(n) (one buffer) + O(log n) stack |
 
-### Optimized Solution
-
-The optimized solution is Approach 7 above. The version implemented in this repository is Approach 1.
-
-#### Optimized solution explained
-
-The idea: divide and conquer. An array of 0 or 1 elements is already sorted; otherwise copy the left half (`n / 2` elements) and the right half into new arrays, sort each recursively, and `merge` the two sorted halves by repeatedly taking the smaller front element (`<=` takes the left one on ties, which keeps the sort stable). Every level of recursion does O(n) merging work and there are about log n levels, so the time is O(n log n) for any input order. The page names a "single shared buffer" variant as the optimized one, but the class in this repository is the simple version that allocates new arrays for each split and merge, and that is what is traced.
-
-**Input:** `arr = [12, 4, 5, 7, 9, 20, 30, 6, 15]`.
-
-```mermaid
-flowchart TD
-    A["12 4 5 7 9 20 30 6 15"] --> B["12 4 5 7"]
-    A --> C["9 20 30 6 15"]
-    B --> D["12 4"]
-    B --> E["5 7"]
-    C --> F["9 20"]
-    C --> G["30 6 15"]
-    D --> D1["12"]
-    D --> D2["4"]
-    E --> E1["5"]
-    E --> E2["7"]
-    F --> F1["9"]
-    F --> F2["20"]
-    G --> G1["30"]
-    G --> G2["6 15"]
-    G2 --> H1["6"]
-    G2 --> H2["15"]
-```
-
-The recursion goes down the left side first, and every array of length 1 is returned as is. The merges then happen in this order:
-
-| Step | Merge (left + right) | Result |
-|------|----------------------|--------|
-| 1 | `[12]` + `[4]` | `[4, 12]` |
-| 2 | `[5]` + `[7]` | `[5, 7]` |
-| 3 | `[4, 12]` + `[5, 7]` | `[4, 5, 7, 12]` |
-| 4 | `[9]` + `[20]` | `[9, 20]` |
-| 5 | `[6]` + `[15]` | `[6, 15]` |
-| 6 | `[30]` + `[6, 15]` | `[6, 15, 30]` |
-| 7 | `[9, 20]` + `[6, 15, 30]` | `[6, 9, 15, 20, 30]` |
-| 8 | `[4, 5, 7, 12]` + `[6, 9, 15, 20, 30]` | `[4, 5, 6, 7, 9, 12, 15, 20, 30]` |
-
-Step 8 in detail: front elements 4 vs 6 take 4, 5 vs 6 take 5, 7 vs 6 take 6, 7 vs 9 take 7, 12 vs 9 take 9, 12 vs 15 take 12; the left array is now used up, so the rest of the right array (15, 20, 30) is copied.
-
-**Edge cases.** An empty or one-element array is returned as is (`n <= 1`). The method returns a new sorted array and does not change the input array. When one side runs out, the other side's rest is copied unchanged. Space is O(n) for the copies. A `null` array would throw `NullPointerException` at `arr.length`.
-
-**Result:** `[4, 5, 6, 7, 9, 12, 15, 20, 30]`, matching the class output.
-
 ## Source Code
 
 ### MergeSort.java
@@ -390,3 +341,50 @@ public class MergeSort {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 7 above. The version implemented in this repository is Approach 1.
+
+The idea: divide and conquer. An array of 0 or 1 elements is already sorted; otherwise copy the left half (`n / 2` elements) and the right half into new arrays, sort each recursively, and `merge` the two sorted halves by repeatedly taking the smaller front element (`<=` takes the left one on ties, which keeps the sort stable). Every level of recursion does O(n) merging work and there are about log n levels, so the time is O(n log n) for any input order. The page names a "single shared buffer" variant as the optimized one, but the class in this repository is the simple version that allocates new arrays for each split and merge, and that is what is traced.
+
+**Input:** `arr = [12, 4, 5, 7, 9, 20, 30, 6, 15]`.
+
+```mermaid
+flowchart TD
+    A["12 4 5 7 9 20 30 6 15"] --> B["12 4 5 7"]
+    A --> C["9 20 30 6 15"]
+    B --> D["12 4"]
+    B --> E["5 7"]
+    C --> F["9 20"]
+    C --> G["30 6 15"]
+    D --> D1["12"]
+    D --> D2["4"]
+    E --> E1["5"]
+    E --> E2["7"]
+    F --> F1["9"]
+    F --> F2["20"]
+    G --> G1["30"]
+    G --> G2["6 15"]
+    G2 --> H1["6"]
+    G2 --> H2["15"]
+```
+
+The recursion goes down the left side first, and every array of length 1 is returned as is. The merges then happen in this order:
+
+| Step | Merge (left + right) | Result |
+|------|----------------------|--------|
+| 1 | `[12]` + `[4]` | `[4, 12]` |
+| 2 | `[5]` + `[7]` | `[5, 7]` |
+| 3 | `[4, 12]` + `[5, 7]` | `[4, 5, 7, 12]` |
+| 4 | `[9]` + `[20]` | `[9, 20]` |
+| 5 | `[6]` + `[15]` | `[6, 15]` |
+| 6 | `[30]` + `[6, 15]` | `[6, 15, 30]` |
+| 7 | `[9, 20]` + `[6, 15, 30]` | `[6, 9, 15, 20, 30]` |
+| 8 | `[4, 5, 7, 12]` + `[6, 9, 15, 20, 30]` | `[4, 5, 6, 7, 9, 12, 15, 20, 30]` |
+
+Step 8 in detail: front elements 4 vs 6 take 4, 5 vs 6 take 5, 7 vs 6 take 6, 7 vs 9 take 7, 12 vs 9 take 9, 12 vs 15 take 12; the left array is now used up, so the rest of the right array (15, 20, 30) is copied.
+
+**Edge cases.** An empty or one-element array is returned as is (`n <= 1`). The method returns a new sorted array and does not change the input array. When one side runs out, the other side's rest is copied unchanged. Space is O(n) for the copies. A `null` array would throw `NullPointerException` at `arr.length`.
+
+**Result:** `[4, 5, 6, 7, 9, 12, 15, 20, 30]`, matching the class output.

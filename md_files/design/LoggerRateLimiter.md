@@ -75,31 +75,6 @@ public boolean shouldPrintMessage(int timestamp, String message) {
 | 1 | Queue Plus Set with Cleanup | O(1) amortized | O(messages in the last 10 seconds) |
 | 2 | HashMap of Next Allowed Time (Optimized) | O(1) | O(distinct messages) |
 
-### Optimized Solution
-
-The optimized solution is Approach 2 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: instead of remembering when a message was last printed and doing arithmetic on every call, store the **next allowed time** for each message in a `HashMap`. A message may print when it has never been seen or when `timestamp >= nextAllowed`; printing sets `nextAllowed = timestamp + 10`. A rejected call changes nothing, so rejections do not extend the wait.
-
-**Input:** `shouldPrintMessage` called with `(1, foo)`, `(2, bar)`, `(3, foo)`, `(8, bar)`, `(10, foo)`, `(11, foo)`.
-
-| Step | Call | Stored next-allowed time | Decision | Map afterwards | Result |
-|------|------|--------------------------|----------|----------------|--------|
-| 1 | (1, foo) | none | print, set `foo -> 11` | `{foo=11}` | `true` |
-| 2 | (2, bar) | none | print, set `bar -> 12` | `{foo=11, bar=12}` | `true` |
-| 3 | (3, foo) | 11 | 3 < 11, reject | unchanged | `false` |
-| 4 | (8, bar) | 12 | 8 < 12, reject | unchanged | `false` |
-| 5 | (10, foo) | 11 | 10 < 11, reject | unchanged | `false` |
-| 6 | (11, foo) | 11 | 11 < 11 is false, print, set `foo -> 21` | `{foo=21, bar=12}` | `true` |
-
-Step 6 shows the boundary: exactly 10 seconds after the first print the message is allowed again.
-
-**Edge cases.** The first time a message appears, `get` returns `null` and it is always printed. Different messages never affect each other. The map is never cleaned, so memory grows with the number of distinct messages. Each call is O(1). No diagram is added; the table is the picture.
-
-**Result:** `true, true, false, false, false, true`, exactly what the class prints.
-
 ## Source Code
 
 ### LoggerRateLimiter.java
@@ -137,3 +112,26 @@ public class LoggerRateLimiter {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+
+The idea: instead of remembering when a message was last printed and doing arithmetic on every call, store the **next allowed time** for each message in a `HashMap`. A message may print when it has never been seen or when `timestamp >= nextAllowed`; printing sets `nextAllowed = timestamp + 10`. A rejected call changes nothing, so rejections do not extend the wait.
+
+**Input:** `shouldPrintMessage` called with `(1, foo)`, `(2, bar)`, `(3, foo)`, `(8, bar)`, `(10, foo)`, `(11, foo)`.
+
+| Step | Call | Stored next-allowed time | Decision | Map afterwards | Result |
+|------|------|--------------------------|----------|----------------|--------|
+| 1 | (1, foo) | none | print, set `foo -> 11` | `{foo=11}` | `true` |
+| 2 | (2, bar) | none | print, set `bar -> 12` | `{foo=11, bar=12}` | `true` |
+| 3 | (3, foo) | 11 | 3 < 11, reject | unchanged | `false` |
+| 4 | (8, bar) | 12 | 8 < 12, reject | unchanged | `false` |
+| 5 | (10, foo) | 11 | 10 < 11, reject | unchanged | `false` |
+| 6 | (11, foo) | 11 | 11 < 11 is false, print, set `foo -> 21` | `{foo=21, bar=12}` | `true` |
+
+Step 6 shows the boundary: exactly 10 seconds after the first print the message is allowed again.
+
+**Edge cases.** The first time a message appears, `get` returns `null` and it is always printed. Different messages never affect each other. The map is never cleaned, so memory grows with the number of distinct messages. Each call is O(1). No diagram is added; the table is the picture.
+
+**Result:** `true, true, false, false, false, true`, exactly what the class prints.

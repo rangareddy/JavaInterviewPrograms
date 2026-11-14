@@ -121,34 +121,6 @@ public static int leastInterval(char[] tasks, int n) {
 | 3 | Counting the Idle Slots | O(t) | O(26) |
 | 4 | Closed Formula (Optimized) | O(t) | O(26) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: no heap is needed. The most frequent task decides the schedule. If it occurs `maxFreq` times, there are `maxFreq - 1` full blocks of `n + 1` slots (the task itself plus `n` cooldown slots), followed by a last row containing one copy of every task that reaches `maxFreq` (`countMax` of them). Other tasks fit into the gaps; if there are so many that no idle time is left, the answer is simply the number of tasks. So the result is `max(tasks.length, (maxFreq - 1) * (n + 1) + countMax)`.
-
-**Input:** `tasks = [A, A, A, B, B, B]`, `n = 2`.
-
-| Step | Computation | Value |
-|------|-------------|-------|
-| 1 | counts per letter | `A = 3`, `B = 3` |
-| 2 | `maxFreq` | 3 |
-| 3 | `countMax` (letters with count 3) | 2 |
-| 4 | frame `(maxFreq - 1) * (n + 1) + countMax` | `(3 - 1) * 3 + 2 = 8` |
-| 5 | `max(tasks.length, frame)` | `max(6, 8) = 8` |
-
-```text
-block 1      block 2      last row
-A B _        A B _        A B
-(n + 1 = 3 slots each)    (countMax = 2 slots)      -> 3 + 3 + 2 = 8 intervals
-```
-
-**Edge cases:** with many distinct tasks the frame is too small and the task count wins: `[A, B, C, D]`, `n = 3` gives frame `0 * 4 + 4 = 4`, answer `4`. With `n = 0` the frame is 5 for the example above, so the answer is `6`. A heavy task such as `A` six times plus `B..G` once with `n = 2` gives `5 * 3 + 1 = 16`, bigger than the 12 tasks.
-
-**Result:** `8`, the same as the class output (the other inputs print `6`, `16`, `4`).
-
 ## Source Code
 
 ### TaskScheduler.java
@@ -193,3 +165,29 @@ public class TaskScheduler {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: no heap is needed. The most frequent task decides the schedule. If it occurs `maxFreq` times, there are `maxFreq - 1` full blocks of `n + 1` slots (the task itself plus `n` cooldown slots), followed by a last row containing one copy of every task that reaches `maxFreq` (`countMax` of them). Other tasks fit into the gaps; if there are so many that no idle time is left, the answer is simply the number of tasks. So the result is `max(tasks.length, (maxFreq - 1) * (n + 1) + countMax)`.
+
+**Input:** `tasks = [A, A, A, B, B, B]`, `n = 2`.
+
+| Step | Computation | Value |
+|------|-------------|-------|
+| 1 | counts per letter | `A = 3`, `B = 3` |
+| 2 | `maxFreq` | 3 |
+| 3 | `countMax` (letters with count 3) | 2 |
+| 4 | frame `(maxFreq - 1) * (n + 1) + countMax` | `(3 - 1) * 3 + 2 = 8` |
+| 5 | `max(tasks.length, frame)` | `max(6, 8) = 8` |
+
+```text
+block 1      block 2      last row
+A B _        A B _        A B
+(n + 1 = 3 slots each)    (countMax = 2 slots)      -> 3 + 3 + 2 = 8 intervals
+```
+
+**Edge cases:** with many distinct tasks the frame is too small and the task count wins: `[A, B, C, D]`, `n = 3` gives frame `0 * 4 + 4 = 4`, answer `4`. With `n = 0` the frame is 5 for the example above, so the answer is `6`. A heavy task such as `A` six times plus `B..G` once with `n = 2` gives `5 * 3 + 1 = 16`, bigger than the 12 tasks.
+
+**Result:** `8`, the same as the class output (the other inputs print `6`, `16`, `4`).

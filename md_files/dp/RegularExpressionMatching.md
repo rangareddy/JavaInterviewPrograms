@@ -116,42 +116,6 @@ public static boolean isMatch(String s, String p) {
 | 3 | Java Regex Library (Reference) | engine dependent (can backtrack) | O(m + n) |
 | 4 | Bottom-Up Table (Optimized) | O(m * n) | O(m * n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: `dp[i][j]` is `true` when the first `i` characters of `s` match the first `j` characters of the pattern `p`. A normal character or `.` needs `s[i-1]` to match and `dp[i-1][j-1]`. A `*` (which applies to the pattern character before it) has two options: use it **zero times** (`dp[i][j-2]`) or use it **one more time** if `s[i-1]` matches that character (`dp[i-1][j]`). Row 0 handles patterns like `a*b*` that can match the empty string.
-
-**Input:** `s = "aab"`, `p = "c*a*b"`. Row 0: `dp[0][0] = true`; for `j = 2..5`, `dp[0][j]` is true when `p[j-1]` is `*` and `dp[0][j-2]` is true, giving `T F T F T F` for `j = 0..5`.
-
-Columns are the pattern prefixes `""`, `c`, `c*`, `c*a`, `c*a*`, `c*a*b`:
-
-```text
-           ""   c   c*  c*a c*a* c*a*b
-  ""        T   F   T    F    T    F
-  a         F   F   F    T    T    F
-  aa        F   F   F    F    T    F
-  aab       F   F   F    F    F    T
-```
-
-How the key cells are filled:
-
-| Cell | Rule used | Value |
-|------|-----------|-------|
-| `dp[1][2]` (`a` vs `c*`) | `*`: zero times `dp[1][0]` = F; one more needs `a` = `c`, no | F |
-| `dp[1][3]` (`a` vs `c*a`) | `a` = `a` and `dp[0][2]` = T | T |
-| `dp[1][4]` (`a` vs `c*a*`) | zero times `dp[1][2]` = F; more: `a` = `a` and `dp[0][4]` = T | T |
-| `dp[2][4]` (`aa` vs `c*a*`) | more: `a` = `a` and `dp[1][4]` = T | T |
-| `dp[3][5]` (`aab` vs `c*a*b`) | `b` = `b` and `dp[2][4]` = T | T |
-
-The answer sits in the bottom-right corner, `dp[3][5]`. The zero-times option is what lets `c*` disappear entirely.
-
-**Edge cases.** An empty `s` only reads row 0: `"" vs "a*"` gives `dp[0][2] = true`. `"aa"` vs `"a"` ends with `dp[2][1] = false` because the pattern runs out. `.*` matches anything, since `.` matches every character and `*` repeats it. Time and space are `O(m * n)`.
-
-**Result:** the method returns `dp[3][5] = true`, matching the class output (verified together with the other six sample inputs).
-
 ## Source Code
 
 ### RegularExpressionMatching.java
@@ -197,3 +161,37 @@ public class RegularExpressionMatching {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: `dp[i][j]` is `true` when the first `i` characters of `s` match the first `j` characters of the pattern `p`. A normal character or `.` needs `s[i-1]` to match and `dp[i-1][j-1]`. A `*` (which applies to the pattern character before it) has two options: use it **zero times** (`dp[i][j-2]`) or use it **one more time** if `s[i-1]` matches that character (`dp[i-1][j]`). Row 0 handles patterns like `a*b*` that can match the empty string.
+
+**Input:** `s = "aab"`, `p = "c*a*b"`. Row 0: `dp[0][0] = true`; for `j = 2..5`, `dp[0][j]` is true when `p[j-1]` is `*` and `dp[0][j-2]` is true, giving `T F T F T F` for `j = 0..5`.
+
+Columns are the pattern prefixes `""`, `c`, `c*`, `c*a`, `c*a*`, `c*a*b`:
+
+```text
+           ""   c   c*  c*a c*a* c*a*b
+  ""        T   F   T    F    T    F
+  a         F   F   F    T    T    F
+  aa        F   F   F    F    T    F
+  aab       F   F   F    F    F    T
+```
+
+How the key cells are filled:
+
+| Cell | Rule used | Value |
+|------|-----------|-------|
+| `dp[1][2]` (`a` vs `c*`) | `*`: zero times `dp[1][0]` = F; one more needs `a` = `c`, no | F |
+| `dp[1][3]` (`a` vs `c*a`) | `a` = `a` and `dp[0][2]` = T | T |
+| `dp[1][4]` (`a` vs `c*a*`) | zero times `dp[1][2]` = F; more: `a` = `a` and `dp[0][4]` = T | T |
+| `dp[2][4]` (`aa` vs `c*a*`) | more: `a` = `a` and `dp[1][4]` = T | T |
+| `dp[3][5]` (`aab` vs `c*a*b`) | `b` = `b` and `dp[2][4]` = T | T |
+
+The answer sits in the bottom-right corner, `dp[3][5]`. The zero-times option is what lets `c*` disappear entirely.
+
+**Edge cases.** An empty `s` only reads row 0: `"" vs "a*"` gives `dp[0][2] = true`. `"aa"` vs `"a"` ends with `dp[2][1] = false` because the pattern runs out. `.*` matches anything, since `.` matches every character and `*` repeats it. Time and space are `O(m * n)`.
+
+**Result:** the method returns `dp[3][5] = true`, matching the class output (verified together with the other six sample inputs).

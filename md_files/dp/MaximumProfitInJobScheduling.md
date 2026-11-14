@@ -121,38 +121,6 @@ public static int jobScheduling(int[] startTime, int[] endTime, int[] profit) {
 | 2 | Memoized Recursion over Start Time | O(n log n) | O(n) |
 | 3 | Bottom-Up DP over End Times (Optimized) | O(n log n) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: sort the jobs by end time. `dp[i]` is the best profit using only the first `i` jobs of that order. For job `i` there are two choices: skip it (`dp[i-1]`) or take it, which earns its profit plus `dp[lo]`, where `lo` is the number of earlier jobs that end no later than this job starts. Since the jobs are sorted by end time, `lo` is found with a binary search instead of a scan.
-
-**Input:** `startTime = [1,2,3,3]`, `endTime = [3,4,5,6]`, `profit = [50,10,40,70]`. Sorted by end time as `(start, end, profit)`: `(1,3,50)`, `(2,4,10)`, `(3,5,40)`, `(3,6,70)` (here it is already in order). Start: `dp = [0, 0, 0, 0, 0]`.
-
-| `i` | Job | Binary search: jobs ending `<=` its start | `lo` | Take = profit + `dp[lo]` | Skip = `dp[i-1]` | `dp` afterwards |
-|-----|-----|--------------------------------------------|------|--------------------------|------------------|-----------------|
-| 1 | (1,3,50) | none ends by 1 | 0 | 50 + 0 = 50 | 0 | `[0, 50, 0, 0, 0]` |
-| 2 | (2,4,10) | none ends by 2 (first job ends at 3) | 0 | 10 + 0 = 10 | 50 | `[0, 50, 50, 0, 0]` |
-| 3 | (3,5,40) | first job ends at 3 <= 3 | 1 | 40 + 50 = 90 | 50 | `[0, 50, 50, 90, 0]` |
-| 4 | (3,6,70) | first job ends at 3 <= 3 | 1 | 70 + 50 = 120 | 90 | `[0, 50, 50, 90, 120]` |
-
-The binary search keeps `lo` as the largest count `m` (with `0 <= m <= i-1`) whose last job `jobs[m-1]` ends at or before the current start; for `i = 3` (`lo = 0`, `hi = 2`) it checks `mid = 1` (the first job ends at 3 <= 3, so `lo = 1`) and then `mid = 2` (the second job ends at 4 > 3, so `hi = 1`), and stops with `lo = 1`.
-
-```text
-time:  1    2    3    4    5    6
-job 1  [50 ---------)
-job 2       [10 --------)
-job 3            [40 ---------)
-job 4            [70 --------------)
-best = job 1 (50) + job 4 (70) = 120
-```
-
-**Edge cases.** A job that starts exactly when another ends is allowed (`<=`). If every job overlaps (`[1,1,1]` / `[2,3,4]`) all `lo` values are 0 and the result is the single best profit (6). With no jobs, `dp = [0]` and `0` is returned. Time is `O(n log n)` for the sort and the searches, space `O(n)`.
-
-**Result:** the method returns `dp[4] = 120`, matching the class output (the other samples print `150` and `6`).
-
 ## Source Code
 
 ### MaximumProfitInJobScheduling.java
@@ -202,3 +170,33 @@ public class MaximumProfitInJobScheduling {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+
+The idea: sort the jobs by end time. `dp[i]` is the best profit using only the first `i` jobs of that order. For job `i` there are two choices: skip it (`dp[i-1]`) or take it, which earns its profit plus `dp[lo]`, where `lo` is the number of earlier jobs that end no later than this job starts. Since the jobs are sorted by end time, `lo` is found with a binary search instead of a scan.
+
+**Input:** `startTime = [1,2,3,3]`, `endTime = [3,4,5,6]`, `profit = [50,10,40,70]`. Sorted by end time as `(start, end, profit)`: `(1,3,50)`, `(2,4,10)`, `(3,5,40)`, `(3,6,70)` (here it is already in order). Start: `dp = [0, 0, 0, 0, 0]`.
+
+| `i` | Job | Binary search: jobs ending `<=` its start | `lo` | Take = profit + `dp[lo]` | Skip = `dp[i-1]` | `dp` afterwards |
+|-----|-----|--------------------------------------------|------|--------------------------|------------------|-----------------|
+| 1 | (1,3,50) | none ends by 1 | 0 | 50 + 0 = 50 | 0 | `[0, 50, 0, 0, 0]` |
+| 2 | (2,4,10) | none ends by 2 (first job ends at 3) | 0 | 10 + 0 = 10 | 50 | `[0, 50, 50, 0, 0]` |
+| 3 | (3,5,40) | first job ends at 3 <= 3 | 1 | 40 + 50 = 90 | 50 | `[0, 50, 50, 90, 0]` |
+| 4 | (3,6,70) | first job ends at 3 <= 3 | 1 | 70 + 50 = 120 | 90 | `[0, 50, 50, 90, 120]` |
+
+The binary search keeps `lo` as the largest count `m` (with `0 <= m <= i-1`) whose last job `jobs[m-1]` ends at or before the current start; for `i = 3` (`lo = 0`, `hi = 2`) it checks `mid = 1` (the first job ends at 3 <= 3, so `lo = 1`) and then `mid = 2` (the second job ends at 4 > 3, so `hi = 1`), and stops with `lo = 1`.
+
+```text
+time:  1    2    3    4    5    6
+job 1  [50 ---------)
+job 2       [10 --------)
+job 3            [40 ---------)
+job 4            [70 --------------)
+best = job 1 (50) + job 4 (70) = 120
+```
+
+**Edge cases.** A job that starts exactly when another ends is allowed (`<=`). If every job overlaps (`[1,1,1]` / `[2,3,4]`) all `lo` values are 0 and the result is the single best profit (6). With no jobs, `dp = [0]` and `0` is returned. Time is `O(n log n)` for the sort and the searches, space `O(n)`.
+
+**Result:** the method returns `dp[4] = 120`, matching the class output (the other samples print `150` and `6`).

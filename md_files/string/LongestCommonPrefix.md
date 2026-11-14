@@ -111,36 +111,6 @@ public static String longestCommonPrefix(String[] strs) {
 | 3 | Divide and Conquer | O(S) | O(m log n) |
 | 4 | Vertical Scanning (Optimized) | O(S) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: the common prefix can be no longer than the first string, so scan the first string column by column. For the character at column `i`, check the same column of every other string; the first string that is too short or has a different character ends the scan, and the answer is the first string up to column `i`. No prefix is ever built and then shortened.
-
-**Input:** `strs = ["flower", "flow", "flight"]`, `first = "flower"`.
-
-| Step | `i` | `c` (from `first`) | `j` | `strs[j]` | Check | Action |
-|------|-----|--------------------|-----|-----------|-------|--------|
-| 1 | 0 | `f` | 1 | `flow` | `f` = `f` | continue |
-| 2 | 0 | `f` | 2 | `flight` | `f` = `f` | column ok |
-| 3 | 1 | `l` | 1 | `flow` | `l` = `l` | continue |
-| 4 | 1 | `l` | 2 | `flight` | `l` = `l` | column ok |
-| 5 | 2 | `o` | 1 | `flow` | `o` = `o` | continue |
-| 6 | 2 | `o` | 2 | `flight` | `i` != `o` | **return `first.substring(0, 2)`** |
-
-```text
-flower   f l o w e r
-flow     f l o w
-flight   f l i g h t
-         0 1 2        column 2 differs -> prefix = columns 0..1 = "fl"
-```
-
-**Edge cases.** `null` or an empty array returns `""`. A single word returns itself (the loops over the other strings never run). If a string is shorter than the column (`i >= strs[j].length()`) the scan stops there, so `["", "abc"]` returns `""`. If the first string is fully matched it is returned whole (`["interview", "internet", "internal"]` returns `"inter"`: mismatch at column 5).
-
-**Result:** `"fl"`, matching the class output.
-
 ## Source Code
 
 ### LongestCommonPrefix.java
@@ -177,3 +147,31 @@ public class LongestCommonPrefix {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: the common prefix can be no longer than the first string, so scan the first string column by column. For the character at column `i`, check the same column of every other string; the first string that is too short or has a different character ends the scan, and the answer is the first string up to column `i`. No prefix is ever built and then shortened.
+
+**Input:** `strs = ["flower", "flow", "flight"]`, `first = "flower"`.
+
+| Step | `i` | `c` (from `first`) | `j` | `strs[j]` | Check | Action |
+|------|-----|--------------------|-----|-----------|-------|--------|
+| 1 | 0 | `f` | 1 | `flow` | `f` = `f` | continue |
+| 2 | 0 | `f` | 2 | `flight` | `f` = `f` | column ok |
+| 3 | 1 | `l` | 1 | `flow` | `l` = `l` | continue |
+| 4 | 1 | `l` | 2 | `flight` | `l` = `l` | column ok |
+| 5 | 2 | `o` | 1 | `flow` | `o` = `o` | continue |
+| 6 | 2 | `o` | 2 | `flight` | `i` != `o` | **return `first.substring(0, 2)`** |
+
+```text
+flower   f l o w e r
+flow     f l o w
+flight   f l i g h t
+         0 1 2        column 2 differs -> prefix = columns 0..1 = "fl"
+```
+
+**Edge cases.** `null` or an empty array returns `""`. A single word returns itself (the loops over the other strings never run). If a string is shorter than the column (`i >= strs[j].length()`) the scan stops there, so `["", "abc"]` returns `""`. If the first string is fully matched it is returned whole (`["interview", "internet", "internal"]` returns `"inter"`: mismatch at column 5).
+
+**Result:** `"fl"`, matching the class output.

@@ -204,41 +204,6 @@ private static boolean isValid(TreeNode node, long min, long max) {
 | 6 | Iterative DFS with Bounds on Stacks | O(n) | O(h) |
 | 7 | Recursion with Value Bounds (Optimized) | O(n) | O(h) |
 
-### Optimized Solution
-
-The optimized solution is Approach 7 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: a BST is valid when every node lies strictly between a lower and an upper bound that comes from all of its ancestors, not only from its parent. The recursion starts with the widest range and narrows it as it goes down: going left makes the current value the new upper bound, going right makes it the new lower bound. A node outside its `(min, max)` interval, bounds excluded, makes the whole tree invalid.
-
-**Input:** the tree `[5, 4, 6, null, null, 3, 7]`. Node `3` is smaller than its parent `6`, which a parent-only check would accept, but it is also in the right subtree of `5`, so it is too small.
-
-```mermaid
-flowchart TD
-    n5((5)) --> n4((4))
-    n5 --> n6((6))
-    n6 --> n3((3))
-    n6 --> n7((7))
-    classDef bad fill:#fee2e2,stroke:#ef4444
-    class n3 bad
-```
-
-| Step | Call | Allowed range `(min, max)` | Test `val <= min \|\| val >= max` | Outcome |
-|------|------|----------------------------|-----------------------------------|---------|
-| 1 | `isValid(5)` | `(MIN, MAX)` | no | check left, then right |
-| 2 | `isValid(4)` | `(MIN, 5)` | no | its null children return `true` |
-| 3 | `isValid(6)` | `(5, MAX)` | no | check left, then right |
-| 4 | `isValid(3)` | `(5, 6)` | `3 <= 5` is true | return `false` |
-
-The `false` travels up through the `&&` chain, so `7` is never examined. The class prints `false`.
-
-**Other inputs.** `[2, 1, 3]`: `1` is in `(MIN, 2)` and `3` in `(2, MAX)`, so the result is `true`. `[5, 1, 4, null, null, 3, 6]`: `4` must be in `(5, MAX)` and `4 <= 5`, so the result is `false`.
-
-**Edge cases.** An empty tree is valid (`true`). The bounds are `long`, so a node equal to `Integer.MIN_VALUE` or `Integer.MAX_VALUE` is not wrongly rejected by the initial bounds. The comparisons are strict (`<=` and `>=` fail), so duplicate values are not allowed. Each node is visited at most once: time `O(n)`, recursion space `O(h)`.
-
-**Result:** `true`, `false`, `false` for the three inputs in `main`, matching the class output.
-
 ## Source Code
 
 Uses the shared helper [`TreeNode`](../../src/main/java/com/ranga/tree/TreeNode.java) (a small `TreeNode` with `of(...)` and `toString(...)` helpers for building and printing test data).
@@ -272,3 +237,36 @@ public class ValidateBinarySearchTree {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
+
+The idea: a BST is valid when every node lies strictly between a lower and an upper bound that comes from all of its ancestors, not only from its parent. The recursion starts with the widest range and narrows it as it goes down: going left makes the current value the new upper bound, going right makes it the new lower bound. A node outside its `(min, max)` interval, bounds excluded, makes the whole tree invalid.
+
+**Input:** the tree `[5, 4, 6, null, null, 3, 7]`. Node `3` is smaller than its parent `6`, which a parent-only check would accept, but it is also in the right subtree of `5`, so it is too small.
+
+```mermaid
+flowchart TD
+    n5((5)) --> n4((4))
+    n5 --> n6((6))
+    n6 --> n3((3))
+    n6 --> n7((7))
+    classDef bad fill:#fee2e2,stroke:#ef4444
+    class n3 bad
+```
+
+| Step | Call | Allowed range `(min, max)` | Test `val <= min \|\| val >= max` | Outcome |
+|------|------|----------------------------|-----------------------------------|---------|
+| 1 | `isValid(5)` | `(MIN, MAX)` | no | check left, then right |
+| 2 | `isValid(4)` | `(MIN, 5)` | no | its null children return `true` |
+| 3 | `isValid(6)` | `(5, MAX)` | no | check left, then right |
+| 4 | `isValid(3)` | `(5, 6)` | `3 <= 5` is true | return `false` |
+
+The `false` travels up through the `&&` chain, so `7` is never examined. The class prints `false`.
+
+**Other inputs.** `[2, 1, 3]`: `1` is in `(MIN, 2)` and `3` in `(2, MAX)`, so the result is `true`. `[5, 1, 4, null, null, 3, 6]`: `4` must be in `(5, MAX)` and `4 <= 5`, so the result is `false`.
+
+**Edge cases.** An empty tree is valid (`true`). The bounds are `long`, so a node equal to `Integer.MIN_VALUE` or `Integer.MAX_VALUE` is not wrongly rejected by the initial bounds. The comparisons are strict (`<=` and `>=` fail), so duplicate values are not allowed. Each node is visited at most once: time `O(n)`, recursion space `O(h)`.
+
+**Result:** `true`, `false`, `false` for the three inputs in `main`, matching the class output.

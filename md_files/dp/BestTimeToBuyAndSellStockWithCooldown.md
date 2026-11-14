@@ -117,36 +117,6 @@ public static int maxProfit(int[] prices) {
 | 3 | Bottom-Up Arrays | O(n) | O(n) |
 | 4 | Three Variables (Optimized) | O(n) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: each day you are in one of three states and the code keeps the best profit for each. `hold` means you own a share, `sold` means you sold today (tomorrow is a cooldown), `rest` means you own nothing and may buy. Each day: `sold = hold + price`, `hold = max(hold, rest - price)` (buying only from `rest`, never right after a sale), `rest = max(rest, previous sold)`. Three variables replace a table.
-
-**Input:** `prices = [1, 2, 3, 0, 2]`. Start: `hold = -1`, `sold = 0`, `rest = 0`.
-
-| Day `i` | Price | `sold = hold + price` | `hold = max(hold, rest - price)` | `rest = max(rest, old sold)` |
-|---------|-------|-----------------------|----------------------------------|------------------------------|
-| start | 1 | 0 | -1 | 0 |
-| 1 | 2 | `-1 + 2 = 1` | `max(-1, 0 - 2) = -1` | `max(0, 0) = 0` |
-| 2 | 3 | `-1 + 3 = 2` | `max(-1, 0 - 3) = -1` | `max(0, 1) = 1` |
-| 3 | 0 | `-1 + 0 = -1` | `max(-1, 1 - 0) = 1` | `max(1, 2) = 2` |
-| 4 | 2 | `1 + 2 = 3` | `max(1, 2 - 2) = 1` | `max(2, -1) = 2` |
-
-```text
-day:    0    1    2    3    4
-price:  1    2    3    0    2
-        buy  sell cool buy  sell      profit (2-1) + (2-0) = 3
-```
-
-At the end the answer is `max(sold, rest) = max(3, 2) = 3`.
-
-**Edge cases.** `null` or fewer than two prices returns `0` (no transaction is possible). The cooldown is enforced because `hold` reads `rest`, which only absorbs yesterday's `sold` one day later.
-
-**Result:** `maxProfit([1, 2, 3, 0, 2])` returns `3`, matching the class output.
-
 ## Source Code
 
 ### BestTimeToBuyAndSellStockWithCooldown.java
@@ -183,3 +153,31 @@ public class BestTimeToBuyAndSellStockWithCooldown {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: each day you are in one of three states and the code keeps the best profit for each. `hold` means you own a share, `sold` means you sold today (tomorrow is a cooldown), `rest` means you own nothing and may buy. Each day: `sold = hold + price`, `hold = max(hold, rest - price)` (buying only from `rest`, never right after a sale), `rest = max(rest, previous sold)`. Three variables replace a table.
+
+**Input:** `prices = [1, 2, 3, 0, 2]`. Start: `hold = -1`, `sold = 0`, `rest = 0`.
+
+| Day `i` | Price | `sold = hold + price` | `hold = max(hold, rest - price)` | `rest = max(rest, old sold)` |
+|---------|-------|-----------------------|----------------------------------|------------------------------|
+| start | 1 | 0 | -1 | 0 |
+| 1 | 2 | `-1 + 2 = 1` | `max(-1, 0 - 2) = -1` | `max(0, 0) = 0` |
+| 2 | 3 | `-1 + 3 = 2` | `max(-1, 0 - 3) = -1` | `max(0, 1) = 1` |
+| 3 | 0 | `-1 + 0 = -1` | `max(-1, 1 - 0) = 1` | `max(1, 2) = 2` |
+| 4 | 2 | `1 + 2 = 3` | `max(1, 2 - 2) = 1` | `max(2, -1) = 2` |
+
+```text
+day:    0    1    2    3    4
+price:  1    2    3    0    2
+        buy  sell cool buy  sell      profit (2-1) + (2-0) = 3
+```
+
+At the end the answer is `max(sold, rest) = max(3, 2) = 3`.
+
+**Edge cases.** `null` or fewer than two prices returns `0` (no transaction is possible). The cooldown is enforced because `hold` reads `rest`, which only absorbs yesterday's `sold` one day later.
+
+**Result:** `maxProfit([1, 2, 3, 0, 2])` returns `3`, matching the class output.

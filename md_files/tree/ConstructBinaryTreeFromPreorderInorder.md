@@ -212,38 +212,6 @@ private static TreeNode build(int[] pre, int preStart, int preEnd, int inStart, 
 | 6 | Recursion on List Sublists | O(n^2) | O(h) |
 | 7 | Hash Map of In-order Indexes (Optimized) | O(n) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 7 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: in pre-order the first value of a range is always the root. In in-order, everything left of the root belongs to the left subtree. A map `value -> in-order index` finds the root's position in `O(1)`, so `leftSize = rootIndex - inStart` says how many pre-order values belong to the left subtree. Each node is created once, so the whole build is `O(n)`.
-
-**Input:** `preorder = [3, 9, 20, 15, 7]`, `inorder = [9, 3, 15, 20, 7]`. The map is `{9=0, 3=1, 15=2, 20=3, 7=4}`.
-
-| Call | `preStart..preEnd` | `inStart` | Root (`preorder[preStart]`) | `rootIndex` | `leftSize` | Left call / right call |
-|------|-------------------|-----------|-----------------------------|-------------|------------|------------------------|
-| 1 | 0..4 | 0 | 3 | 1 | 1 | left `(1..1, in 0)`, right `(2..4, in 2)` |
-| 2 | 1..1 | 0 | 9 | 0 | 0 | left `(2..1)` = null, right `(2..1)` = null |
-| 3 | 2..4 | 2 | 20 | 3 | 1 | left `(3..3, in 2)`, right `(4..4, in 4)` |
-| 4 | 3..3 | 2 | 15 | 2 | 0 | both children empty ranges, null |
-| 5 | 4..4 | 4 | 7 | 4 | 0 | both children empty ranges, null |
-
-An empty range (`preStart > preEnd`) returns `null`.
-
-```mermaid
-flowchart TD
-    A["3<br/>pre 0..4, in 0..4"] -->|"left, 1 node"| B["9<br/>pre 1..1"]
-    A -->|"right, 3 nodes"| C["20<br/>pre 2..4"]
-    C --> D["15<br/>pre 3..3"]
-    C --> E["7<br/>pre 4..4"]
-```
-
-**Edge cases:** `null` arrays or arrays of different length return `null`; a single element such as `[-1]` builds one node with two empty ranges below it.
-
-**Result:** the tree `[3, 9, 20, null, null, 15, 7]`, the same as the class output.
-
 ## Source Code
 
 Uses the shared helper [`TreeNode`](../../src/main/java/com/ranga/tree/TreeNode.java) (a small `TreeNode` with `of(...)` and `toString(...)` helpers for building and printing test data).
@@ -294,3 +262,33 @@ public class ConstructBinaryTreeFromPreorderInorder {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
+
+The idea: in pre-order the first value of a range is always the root. In in-order, everything left of the root belongs to the left subtree. A map `value -> in-order index` finds the root's position in `O(1)`, so `leftSize = rootIndex - inStart` says how many pre-order values belong to the left subtree. Each node is created once, so the whole build is `O(n)`.
+
+**Input:** `preorder = [3, 9, 20, 15, 7]`, `inorder = [9, 3, 15, 20, 7]`. The map is `{9=0, 3=1, 15=2, 20=3, 7=4}`.
+
+| Call | `preStart..preEnd` | `inStart` | Root (`preorder[preStart]`) | `rootIndex` | `leftSize` | Left call / right call |
+|------|-------------------|-----------|-----------------------------|-------------|------------|------------------------|
+| 1 | 0..4 | 0 | 3 | 1 | 1 | left `(1..1, in 0)`, right `(2..4, in 2)` |
+| 2 | 1..1 | 0 | 9 | 0 | 0 | left `(2..1)` = null, right `(2..1)` = null |
+| 3 | 2..4 | 2 | 20 | 3 | 1 | left `(3..3, in 2)`, right `(4..4, in 4)` |
+| 4 | 3..3 | 2 | 15 | 2 | 0 | both children empty ranges, null |
+| 5 | 4..4 | 4 | 7 | 4 | 0 | both children empty ranges, null |
+
+An empty range (`preStart > preEnd`) returns `null`.
+
+```mermaid
+flowchart TD
+    A["3<br/>pre 0..4, in 0..4"] -->|"left, 1 node"| B["9<br/>pre 1..1"]
+    A -->|"right, 3 nodes"| C["20<br/>pre 2..4"]
+    C --> D["15<br/>pre 3..3"]
+    C --> E["7<br/>pre 4..4"]
+```
+
+**Edge cases:** `null` arrays or arrays of different length return `null`; a single element such as `[-1]` builds one node with two empty ranges below it.
+
+**Result:** the tree `[3, 9, 20, null, null, 15, 7]`, the same as the class output.

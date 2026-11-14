@@ -113,28 +113,6 @@ public static int[][] kClosest(int[][] points, int k) {
 | 3 | Quickselect on the Distances | O(n) expected | O(n) |
 | 4 | Max-Heap of Size k (Optimized) | O(n log k) | O(k) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: compare squared distances `x*x + y*y` (no square root needed, and the order is the same). Keep a max-heap of at most `k` points with the farthest one on top. Every new point is pushed; if the heap grows past `k`, the farthest point is removed. What stays is the `k` closest. Time `O(n log k)`, space `O(k)`.
-
-**Input:** `points = [[3, 3], [5, -1], [-2, 4]]`, `k = 2`. Squared distances: `[3,3]` = 18, `[5,-1]` = 26, `[-2,4]` = 20.
-
-| Step | Point | Distance | Heap after push (top first) | Size > 2? | Removed | Heap afterwards |
-|------|-------|----------|----------------------------|-----------|---------|-----------------|
-| 1 | `[3, 3]` | 18 | `[3,3]` | no | | `[3,3]` |
-| 2 | `[5, -1]` | 26 | `[5,-1]`, `[3,3]` | no | | `[5,-1]`, `[3,3]` |
-| 3 | `[-2, 4]` | 20 | `[5,-1]`, `[-2,4]`, `[3,3]` | yes | `[5,-1]` (26, the farthest) | `[-2,4]`, `[3,3]` |
-
-Finally the heap is emptied into the result array, farthest first: `[[-2, 4], [3, 3]]`. The class `main` sorts that by distance only for printing.
-
-**Edge cases:** with `k >=` the number of points nothing is removed and all points are returned; `[[1, 1]]` with `k = 1` returns that point. `long` arithmetic avoids overflow for large coordinates. The order of the returned array is not guaranteed by the method (farthest first here).
-
-**Result:** `[[3, 3], [-2, 4]]` after the sort in `main`, the same as the class output.
-
 ## Source Code
 
 ### KClosestPointsToOrigin.java
@@ -180,3 +158,23 @@ public class KClosestPointsToOrigin {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: compare squared distances `x*x + y*y` (no square root needed, and the order is the same). Keep a max-heap of at most `k` points with the farthest one on top. Every new point is pushed; if the heap grows past `k`, the farthest point is removed. What stays is the `k` closest. Time `O(n log k)`, space `O(k)`.
+
+**Input:** `points = [[3, 3], [5, -1], [-2, 4]]`, `k = 2`. Squared distances: `[3,3]` = 18, `[5,-1]` = 26, `[-2,4]` = 20.
+
+| Step | Point | Distance | Heap after push (top first) | Size > 2? | Removed | Heap afterwards |
+|------|-------|----------|----------------------------|-----------|---------|-----------------|
+| 1 | `[3, 3]` | 18 | `[3,3]` | no | | `[3,3]` |
+| 2 | `[5, -1]` | 26 | `[5,-1]`, `[3,3]` | no | | `[5,-1]`, `[3,3]` |
+| 3 | `[-2, 4]` | 20 | `[5,-1]`, `[-2,4]`, `[3,3]` | yes | `[5,-1]` (26, the farthest) | `[-2,4]`, `[3,3]` |
+
+Finally the heap is emptied into the result array, farthest first: `[[-2, 4], [3, 3]]`. The class `main` sorts that by distance only for printing.
+
+**Edge cases:** with `k >=` the number of points nothing is removed and all points are returned; `[[1, 1]]` with `k = 1` returns that point. `long` arithmetic avoids overflow for large coordinates. The order of the returned array is not guaranteed by the method (farthest first here).
+
+**Result:** `[[3, 3], [-2, 4]]` after the sort in `main`, the same as the class output.

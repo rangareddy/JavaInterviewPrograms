@@ -133,34 +133,6 @@ public static boolean hasCycle(ListNode head) {
 | 4 | Step Limit from the Constraints | O(maxNodes) | O(1) |
 | 5 | Floyd's Tortoise and Hare (Optimized) | O(n) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 5 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea (Floyd's tortoise and hare): move `slow` one node and `fast` two nodes per step. Without a cycle, `fast` reaches the end (`null`). With a cycle, both end up inside the loop and `fast` gains one node per step on `slow`, so it must land on `slow` after a few laps. No set of visited nodes is needed, so space is O(1).
-
-**Input:** `head = [3, 2, 0, -4]` with the tail (`-4`) linked back to the node `2`.
-
-| Step | `slow` moves to | `fast` moves to | `slow == fast`? |
-|------|-----------------|-----------------|-----------------|
-| start | 3 | 3 | |
-| 1 | 2 | 0 | no |
-| 2 | 0 | 2 (via -4) | no |
-| 3 | -4 | -4 (via 0) | **yes, return `true`** |
-
-```mermaid
-flowchart LR
-    n3["3"] --> n2["2"] --> n0["0"] --> n4["-4"]
-    n4 --> n2
-    M(["slow and fast meet here"]) -.-> n4
-```
-
-**Edge cases.** `[1, 2]` without a cycle: after one step `slow = 2` and `fast = null`, the loop condition fails and `false` is returned. `[1]` never enters the loop (`fast.next` is `null`) and returns `false`. A `null` head also returns `false`. The loop condition checks `fast` and `fast.next` before jumping two nodes, so there is no `NullPointerException`.
-
-**Result:** `true` for the cycle, `false` for `[1, 2]` and `[1]`, matching the class output.
-
 ## Source Code
 
 Uses the shared helper [`ListNode`](../../src/main/java/com/ranga/linkedlist/ListNode.java) (a small `ListNode` with `of(...)` and `toString(...)` helpers for building and printing test data).
@@ -207,3 +179,29 @@ public class LinkedListCycle {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 5 above, which is also the version implemented in this repository.
+
+The idea (Floyd's tortoise and hare): move `slow` one node and `fast` two nodes per step. Without a cycle, `fast` reaches the end (`null`). With a cycle, both end up inside the loop and `fast` gains one node per step on `slow`, so it must land on `slow` after a few laps. No set of visited nodes is needed, so space is O(1).
+
+**Input:** `head = [3, 2, 0, -4]` with the tail (`-4`) linked back to the node `2`.
+
+| Step | `slow` moves to | `fast` moves to | `slow == fast`? |
+|------|-----------------|-----------------|-----------------|
+| start | 3 | 3 | |
+| 1 | 2 | 0 | no |
+| 2 | 0 | 2 (via -4) | no |
+| 3 | -4 | -4 (via 0) | **yes, return `true`** |
+
+```mermaid
+flowchart LR
+    n3["3"] --> n2["2"] --> n0["0"] --> n4["-4"]
+    n4 --> n2
+    M(["slow and fast meet here"]) -.-> n4
+```
+
+**Edge cases.** `[1, 2]` without a cycle: after one step `slow = 2` and `fast = null`, the loop condition fails and `false` is returned. `[1]` never enters the loop (`fast.next` is `null`) and returns `false`. A `null` head also returns `false`. The loop condition checks `fast` and `fast.next` before jumping two nodes, so there is no `NullPointerException`.
+
+**Result:** `true` for the cycle, `false` for `[1, 2]` and `[1]`, matching the class output.

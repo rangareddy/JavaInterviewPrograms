@@ -129,40 +129,6 @@ private static ListNode reverse(ListNode head) {
 | 3 | Recursion with a Front Pointer | O(n) | O(n) |
 | 4 | Reverse the Second Half in Place (Optimized) | O(n) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: a palindrome reads the same from both ends, but a singly linked list cannot be walked backwards. So the code finds the middle with a slow and a fast pointer, reverses the second half in place, and then walks the first half and the reversed second half together, comparing values. Nothing is copied (O(1) space), and the second half is reversed again at the end so the caller gets the original list back.
-
-**Input:** `head = [1, 2, 2, 1]` (nodes written n0..n3 from the head).
-
-| Step | What the code does | slow | fast | State |
-|------|--------------------|------|------|-------|
-| 1 | start | n0 (1) | n0 (1) | |
-| 2 | fast and fast.next exist: move slow 1, fast 2 | n1 (2) | n2 (2) | |
-| 3 | fast.next exists: move again | n2 (2) | null | loop ends, slow is the start of the second half |
-| 4 | `reverse(slow)`: second half `2 -> 1` becomes `1 -> 2` | | | secondHalf = n3, n3 → n2 → null |
-| 5 | compare left n0 (1) with right n3 (1) | | | equal, move both |
-| 6 | compare left n1 (2) with right n2 (2) | | | equal, move both, right is null |
-| 7 | `reverse(secondHalf)` restores `2 -> 1` | | | list is `[1, 2, 2, 1]` again |
-
-```mermaid
-flowchart LR
-    subgraph s1["After step 4: first half and reversed second half"]
-        N0["n0: 1"] --> N1["n1: 2"] --> N2["n2: 2"]
-        N3["n3: 1"] --> N2
-    end
-    L(["left walks n0, n1"]) -.-> N0
-    R(["right walks n3, n2"]) -.-> N3
-```
-
-**Edge cases.** `null` or a single node returns `true` immediately. For an odd length such as `[1, 2, 3, 2, 1]` the fast pointer ends on the last node, so slow stops on the middle node `3`; the middle node ends up at the tail of the first half and is simply compared with itself. On a mismatch (`[1, 2, 3]`, compares `1` with `3`) the loop breaks, but the second half is still restored before returning. `[1, 2]` compares `1` with `2` and returns `false`.
-
-**Result:** `true` for `[1, 2, 2, 1]`, matching the class output, with the list printed unchanged afterwards.
-
 ## Source Code
 
 Uses the shared helper [`ListNode`](../../src/main/java/com/ranga/linkedlist/ListNode.java) (a small `ListNode` with `of(...)` and `toString(...)` helpers for building and printing test data).
@@ -223,3 +189,35 @@ public class PalindromeLinkedList {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: a palindrome reads the same from both ends, but a singly linked list cannot be walked backwards. So the code finds the middle with a slow and a fast pointer, reverses the second half in place, and then walks the first half and the reversed second half together, comparing values. Nothing is copied (O(1) space), and the second half is reversed again at the end so the caller gets the original list back.
+
+**Input:** `head = [1, 2, 2, 1]` (nodes written n0..n3 from the head).
+
+| Step | What the code does | slow | fast | State |
+|------|--------------------|------|------|-------|
+| 1 | start | n0 (1) | n0 (1) | |
+| 2 | fast and fast.next exist: move slow 1, fast 2 | n1 (2) | n2 (2) | |
+| 3 | fast.next exists: move again | n2 (2) | null | loop ends, slow is the start of the second half |
+| 4 | `reverse(slow)`: second half `2 -> 1` becomes `1 -> 2` | | | secondHalf = n3, n3 → n2 → null |
+| 5 | compare left n0 (1) with right n3 (1) | | | equal, move both |
+| 6 | compare left n1 (2) with right n2 (2) | | | equal, move both, right is null |
+| 7 | `reverse(secondHalf)` restores `2 -> 1` | | | list is `[1, 2, 2, 1]` again |
+
+```mermaid
+flowchart LR
+    subgraph s1["After step 4: first half and reversed second half"]
+        N0["n0: 1"] --> N1["n1: 2"] --> N2["n2: 2"]
+        N3["n3: 1"] --> N2
+    end
+    L(["left walks n0, n1"]) -.-> N0
+    R(["right walks n3, n2"]) -.-> N3
+```
+
+**Edge cases.** `null` or a single node returns `true` immediately. For an odd length such as `[1, 2, 3, 2, 1]` the fast pointer ends on the last node, so slow stops on the middle node `3`; the middle node ends up at the tail of the first half and is simply compared with itself. On a mismatch (`[1, 2, 3]`, compares `1` with `3`) the loop breaks, but the second half is still restored before returning. `[1, 2]` compares `1` with `2` and returns `false`.
+
+**Result:** `true` for `[1, 2, 2, 1]`, matching the class output, with the list printed unchanged afterwards.

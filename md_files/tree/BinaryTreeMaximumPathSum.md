@@ -217,36 +217,6 @@ private static int gain(TreeNode node) {
 | 6 | Recursion with a Single-Element Holder | O(n) | O(h) |
 | 7 | Post-order DFS with a Global Maximum (Optimized) | O(n) | O(h) |
 
-### Optimized Solution
-
-The optimized solution is Approach 7 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: visit children before the parent (post-order). Each node returns to its parent the best path that starts at it and goes down one side only: `val + max(leftGain, rightGain)`, where a negative gain is replaced by 0. Separately, the path that bends at the node, `val + leftGain + rightGain`, is compared with a global `best`. The bent path is never returned upward because a path cannot fork above a node.
-
-**Input:** `root = [-10, 9, 20, null, null, 15, 7]`. `best` starts at the smallest int.
-
-| Step | Node | `leftGain` | `rightGain` | Bent path sum | `best` | Returned gain |
-|------|------|-----------|-------------|---------------|--------|---------------|
-| 1 | 9 | 0 | 0 | 9 | 9 | 9 |
-| 2 | 15 | 0 | 0 | 15 | 15 | 15 |
-| 3 | 7 | 0 | 0 | 7 | 15 | 7 |
-| 4 | 20 | 15 | 7 | 42 | 42 | 20 + 15 = 35 |
-| 5 | -10 | 9 | 35 | 34 | 42 | -10 + 35 = 25 (unused) |
-
-```mermaid
-flowchart TD
-    R["-10<br/>bent 34"] --> L["9<br/>gain 9"]
-    R --> M["20<br/>bent 42, gain 35"]
-    M --> N["15<br/>gain 15"]
-    M --> O["7<br/>gain 7"]
-```
-
-**Edge cases:** a missing child gives gain 0. Because `best` starts at the minimum and the bent path always includes the node itself, an all-negative tree such as `[-3]` returns `-3` (not 0).
-
-**Result:** `42` (the path 15 -> 20 -> 7), the same as the class output.
-
 ## Source Code
 
 Uses the shared helper [`TreeNode`](../../src/main/java/com/ranga/tree/TreeNode.java) (a small `TreeNode` with `of(...)` and `toString(...)` helpers for building and printing test data).
@@ -286,3 +256,31 @@ public class BinaryTreeMaximumPathSum {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
+
+The idea: visit children before the parent (post-order). Each node returns to its parent the best path that starts at it and goes down one side only: `val + max(leftGain, rightGain)`, where a negative gain is replaced by 0. Separately, the path that bends at the node, `val + leftGain + rightGain`, is compared with a global `best`. The bent path is never returned upward because a path cannot fork above a node.
+
+**Input:** `root = [-10, 9, 20, null, null, 15, 7]`. `best` starts at the smallest int.
+
+| Step | Node | `leftGain` | `rightGain` | Bent path sum | `best` | Returned gain |
+|------|------|-----------|-------------|---------------|--------|---------------|
+| 1 | 9 | 0 | 0 | 9 | 9 | 9 |
+| 2 | 15 | 0 | 0 | 15 | 15 | 15 |
+| 3 | 7 | 0 | 0 | 7 | 15 | 7 |
+| 4 | 20 | 15 | 7 | 42 | 42 | 20 + 15 = 35 |
+| 5 | -10 | 9 | 35 | 34 | 42 | -10 + 35 = 25 (unused) |
+
+```mermaid
+flowchart TD
+    R["-10<br/>bent 34"] --> L["9<br/>gain 9"]
+    R --> M["20<br/>bent 42, gain 35"]
+    M --> N["15<br/>gain 15"]
+    M --> O["7<br/>gain 7"]
+```
+
+**Edge cases:** a missing child gives gain 0. Because `best` starts at the minimum and the bent path always includes the node itself, an all-negative tree such as `[-3]` returns `-3` (not 0).
+
+**Result:** `42` (the path 15 -> 20 -> 7), the same as the class output.

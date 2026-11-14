@@ -121,36 +121,6 @@ private static void reverse(int[] arr, int start, int end) {
 | 3 | Cyclic Replacements (Juggling) | O(n) | O(1) |
 | 4 | Three Reversals (Optimized) | O(n) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: rotating right by `k` can be done with three in-place reversals. Reverse the whole array, then reverse the first `k` elements, then reverse the remaining `n - k` elements. The last `k` items move to the front, and each block keeps its original order. The code first normalizes `k` with `k % n` (and `+ n` if negative), so any `k`, including negative (left rotation), works.
-
-**Input:** `arr = [1, 2, 3, 4, 5, 6, 7]`, `k = -1` (as in the class). `n = 7`; `k % n = -1`, negative, so `k = -1 + 7 = 6`.
-
-| Step | Operation | Array afterwards |
-|------|-----------|------------------|
-| 0 | start | [1, 2, 3, 4, 5, 6, 7] |
-| 1 | `reverse(0, 6)` whole array | [7, 6, 5, 4, 3, 2, 1] |
-| 2 | `reverse(0, 5)` first `k = 6` elements | [2, 3, 4, 5, 6, 7, 1] |
-| 3 | `reverse(6, 6)` last `n - k = 1` element (no change) | [2, 3, 4, 5, 6, 7, 1] |
-
-```text
-[1 2 3 4 5 6 7]
- reverse all      -> [7 6 5 4 3 2 1]
- reverse [0..5]   -> [2 3 4 5 6 7] 1
- reverse [6..6]   -> unchanged
-```
-
-Rotating right by `6` equals rotating left by `1`, which is what `k = -1` means.
-
-**Edge cases.** `null` or length `<= 1` returns immediately. If `k % n == 0` (for example `k = 7` or `k = 0`) the method returns without touching the array. `k` larger than `n` is reduced by `%`.
-
-**Result:** `[2, 3, 4, 5, 6, 7, 1]`, matching the class output.
-
 ## Source Code
 
 ### RotateAnArray.java
@@ -231,3 +201,31 @@ public class RotateAnArray {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: rotating right by `k` can be done with three in-place reversals. Reverse the whole array, then reverse the first `k` elements, then reverse the remaining `n - k` elements. The last `k` items move to the front, and each block keeps its original order. The code first normalizes `k` with `k % n` (and `+ n` if negative), so any `k`, including negative (left rotation), works.
+
+**Input:** `arr = [1, 2, 3, 4, 5, 6, 7]`, `k = -1` (as in the class). `n = 7`; `k % n = -1`, negative, so `k = -1 + 7 = 6`.
+
+| Step | Operation | Array afterwards |
+|------|-----------|------------------|
+| 0 | start | [1, 2, 3, 4, 5, 6, 7] |
+| 1 | `reverse(0, 6)` whole array | [7, 6, 5, 4, 3, 2, 1] |
+| 2 | `reverse(0, 5)` first `k = 6` elements | [2, 3, 4, 5, 6, 7, 1] |
+| 3 | `reverse(6, 6)` last `n - k = 1` element (no change) | [2, 3, 4, 5, 6, 7, 1] |
+
+```text
+[1 2 3 4 5 6 7]
+ reverse all      -> [7 6 5 4 3 2 1]
+ reverse [0..5]   -> [2 3 4 5 6 7] 1
+ reverse [6..6]   -> unchanged
+```
+
+Rotating right by `6` equals rotating left by `1`, which is what `k = -1` means.
+
+**Edge cases.** `null` or length `<= 1` returns immediately. If `k % n == 0` (for example `k = 7` or `k = 0`) the method returns without touching the array. `k` larger than `n` is reduced by `%`.
+
+**Result:** `[2, 3, 4, 5, 6, 7, 1]`, matching the class output.

@@ -115,32 +115,6 @@ public static int minEatingSpeedTight(int[] piles, int h) {
 | 3 | Binary Search on the Speed (Optimized) | O(n log M) | O(1) |
 | 4 | Binary Search with Tight Bounds | O(n log(range)) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: instead of searching the answer among the piles, search the eating speed `k` itself. A faster speed never needs more hours, so "can finish within `h` hours" is false for small speeds and true from some speed onward; binary search finds the smallest true speed. The range is `1 .. max(pile)` (a speed equal to the largest pile finishes every pile in one hour). `hoursNeeded` adds `ceil(pile / speed)` for each pile, in a `long` to avoid overflow. Total cost is O(n log max).
-
-**Input:** `piles = [3, 6, 7, 11]`, `h = 8`. Initially `low = 1`, `high = 11`, `answer = 11`.
-
-| Step | low | high | mid (speed) | Hours needed | <= 8 ? | Action |
-|------|-----|------|-------------|--------------|--------|--------|
-| 1 | 1 | 11 | 6 | 1 + 1 + 2 + 2 = 6 | yes | answer = 6, high = 5 |
-| 2 | 1 | 5 | 3 | 1 + 2 + 3 + 4 = 10 | no | low = 4 |
-| 3 | 4 | 5 | 4 | 1 + 2 + 2 + 3 = 8 | yes | answer = 4, high = 3 |
-| 4 | 4 | 3 | - | - | - | `low > high`, stop |
-
-```text
-speed :  1   2   3   4   5   6  ...  11
-ok ?  :  no  no  no  YES YES YES ... YES      smallest YES = 4
-```
-
-**Edge cases.** The answer is remembered whenever a speed is feasible, so it is always a tested feasible value. If `h` equals the number of piles the answer is the largest pile (`[30, 11, 23, 4, 20]` with `h = 5` gives 30). A single huge pile `[1000000000]` with `h = 2` gives 500000000; `mid` is computed as `low + (high - low) / 2` to avoid overflow. An empty `piles` array leaves `high = 0` and returns 0. The problem assumes `h >= piles.length`.
-
-**Result:** `4`, matching the class output.
-
 ## Source Code
 
 ### KokoEatingBananas.java
@@ -189,3 +163,27 @@ public class KokoEatingBananas {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+
+The idea: instead of searching the answer among the piles, search the eating speed `k` itself. A faster speed never needs more hours, so "can finish within `h` hours" is false for small speeds and true from some speed onward; binary search finds the smallest true speed. The range is `1 .. max(pile)` (a speed equal to the largest pile finishes every pile in one hour). `hoursNeeded` adds `ceil(pile / speed)` for each pile, in a `long` to avoid overflow. Total cost is O(n log max).
+
+**Input:** `piles = [3, 6, 7, 11]`, `h = 8`. Initially `low = 1`, `high = 11`, `answer = 11`.
+
+| Step | low | high | mid (speed) | Hours needed | <= 8 ? | Action |
+|------|-----|------|-------------|--------------|--------|--------|
+| 1 | 1 | 11 | 6 | 1 + 1 + 2 + 2 = 6 | yes | answer = 6, high = 5 |
+| 2 | 1 | 5 | 3 | 1 + 2 + 3 + 4 = 10 | no | low = 4 |
+| 3 | 4 | 5 | 4 | 1 + 2 + 2 + 3 = 8 | yes | answer = 4, high = 3 |
+| 4 | 4 | 3 | - | - | - | `low > high`, stop |
+
+```text
+speed :  1   2   3   4   5   6  ...  11
+ok ?  :  no  no  no  YES YES YES ... YES      smallest YES = 4
+```
+
+**Edge cases.** The answer is remembered whenever a speed is feasible, so it is always a tested feasible value. If `h` equals the number of piles the answer is the largest pile (`[30, 11, 23, 4, 20]` with `h = 5` gives 30). A single huge pile `[1000000000]` with `h = 2` gives 500000000; `mid` is computed as `low + (high - low) / 2` to avoid overflow. An empty `piles` array leaves `high = 0` and returns 0. The problem assumes `h >= piles.length`.
+
+**Result:** `4`, matching the class output.

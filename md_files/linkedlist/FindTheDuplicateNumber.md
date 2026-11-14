@@ -105,46 +105,6 @@ public static int findDuplicate(int[] nums) {
 | 3 | Binary Search on the Value Range (Pigeonhole) | O(n log n) | O(1) |
 | 4 | Floyd's Cycle Detection (Optimized) | O(n) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: treat the array as a linked list where index `i` points to index `nums[i]`. Because the values are in `1..n` and the array has `n + 1` items, every index has a next step, and the duplicate value is reached from two different indexes, so the walk contains a cycle whose entrance is the duplicate. Floyd's algorithm finds that entrance without modifying the array and with O(1) space: phase 1 finds a meeting point of a slow (1 step) and a fast (2 steps) pointer, phase 2 restarts `slow` from index 0 and moves both one step at a time until they meet at the entrance.
-
-**Input:** `nums = [1, 3, 4, 2, 2]`. Links: `0 -> 1`, `1 -> 3`, `2 -> 4`, `3 -> 2`, `4 -> 2`. The cycle is `2 -> 4 -> 2`.
-
-Phase 1 (`slow = nums[slow]`, `fast = nums[nums[fast]]`):
-
-| Step | `slow` | `fast` | Equal? |
-|------|--------|--------|--------|
-| start | 0 | 0 | |
-| 1 | 1 | 3 | no |
-| 2 | 3 | 4 | no |
-| 3 | 2 | 4 | no |
-| 4 | 4 | 4 | yes, meeting point `4` |
-
-Phase 2 (`slow` restarts at 0, both move one step):
-
-| Step | `slow` | `fast` | Equal? |
-|------|--------|--------|--------|
-| start | 0 | 4 | no |
-| 1 | 1 | 2 | no |
-| 2 | 3 | 4 | no |
-| 3 | 2 | 2 | **yes, return `2`** |
-
-```mermaid
-flowchart LR
-    i0["index 0"] --> i1["index 1"] --> i3["index 3"] --> i2["index 2 - entrance"]
-    i2 --> i4["index 4"]
-    i4 --> i2
-```
-
-**Edge cases.** The first phase uses a `do ... while` because `slow` and `fast` start equal, so it must move once before comparing. `[1, 1]` gives `1`, and `[3, 3, 3, 3, 3]` gives `3`. The method relies on the problem's guarantee (values `1..n`, one repeated value); an array outside that guarantee can index out of range.
-
-**Result:** `2`, matching the class output.
-
 ## Source Code
 
 ### FindTheDuplicateNumber.java
@@ -183,3 +143,41 @@ public class FindTheDuplicateNumber {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: treat the array as a linked list where index `i` points to index `nums[i]`. Because the values are in `1..n` and the array has `n + 1` items, every index has a next step, and the duplicate value is reached from two different indexes, so the walk contains a cycle whose entrance is the duplicate. Floyd's algorithm finds that entrance without modifying the array and with O(1) space: phase 1 finds a meeting point of a slow (1 step) and a fast (2 steps) pointer, phase 2 restarts `slow` from index 0 and moves both one step at a time until they meet at the entrance.
+
+**Input:** `nums = [1, 3, 4, 2, 2]`. Links: `0 -> 1`, `1 -> 3`, `2 -> 4`, `3 -> 2`, `4 -> 2`. The cycle is `2 -> 4 -> 2`.
+
+Phase 1 (`slow = nums[slow]`, `fast = nums[nums[fast]]`):
+
+| Step | `slow` | `fast` | Equal? |
+|------|--------|--------|--------|
+| start | 0 | 0 | |
+| 1 | 1 | 3 | no |
+| 2 | 3 | 4 | no |
+| 3 | 2 | 4 | no |
+| 4 | 4 | 4 | yes, meeting point `4` |
+
+Phase 2 (`slow` restarts at 0, both move one step):
+
+| Step | `slow` | `fast` | Equal? |
+|------|--------|--------|--------|
+| start | 0 | 4 | no |
+| 1 | 1 | 2 | no |
+| 2 | 3 | 4 | no |
+| 3 | 2 | 2 | **yes, return `2`** |
+
+```mermaid
+flowchart LR
+    i0["index 0"] --> i1["index 1"] --> i3["index 3"] --> i2["index 2 - entrance"]
+    i2 --> i4["index 4"]
+    i4 --> i2
+```
+
+**Edge cases.** The first phase uses a `do ... while` because `slow` and `fast` start equal, so it must move once before comparing. `[1, 1]` gives `1`, and `[3, 3, 3, 3, 3]` gives `3`. The method relies on the problem's guarantee (values `1..n`, one repeated value); an array outside that guarantee can index out of range.
+
+**Result:** `2`, matching the class output.

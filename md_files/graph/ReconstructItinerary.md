@@ -139,41 +139,6 @@ private static void visit(String airport, Map<String, PriorityQueue<String>> gra
 | 3 | Iterative Hierholzer with an Explicit Stack | O(E log E) | O(E) |
 | 4 | Hierholzer with a Priority Queue per Airport (Optimized) | O(E log E) | O(E) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: using every ticket exactly once is an Eulerian path. Store each airport's destinations in a min-heap so the smallest name is always used first, then run Hierholzer's DFS from `JFK`: while the airport still has unused tickets, poll the smallest destination and recurse. An airport is put at the **front** of the route only when it has no tickets left (post-order), so a dead end such as a final destination ends up at the back and the path that returns from it is spliced in front of it.
-
-**Input:** `tickets = [[JFK,KUL], [JFK,NRT], [NRT,JFK]]`. Heaps: `JFK: [KUL, NRT]`, `NRT: [JFK]`. `route = []`.
-
-| Step | Call | Action | Heaps afterwards | `route` afterwards |
-|------|------|--------|------------------|--------------------|
-| 1 | `visit(JFK)` | poll smallest ticket `KUL`, recurse | `JFK: [NRT]` | `[]` |
-| 2 | `visit(KUL)` | no heap, no tickets: `addFirst(KUL)` | | `[KUL]` |
-| 3 | back in `visit(JFK)` | poll next ticket `NRT`, recurse | `JFK: []` | `[KUL]` |
-| 4 | `visit(NRT)` | poll `JFK`, recurse | `NRT: []` | `[KUL]` |
-| 5 | `visit(JFK)` (second time) | heap empty: `addFirst(JFK)` | | `[JFK, KUL]` |
-| 6 | back in `visit(NRT)` | heap empty: `addFirst(NRT)` | | `[NRT, JFK, KUL]` |
-| 7 | back in the first `visit(JFK)` | heap empty: `addFirst(JFK)` | | `[JFK, NRT, JFK, KUL]` |
-
-```mermaid
-flowchart TD
-    A["visit JFK"] -->|"poll KUL"| B["visit KUL<br/>dead end: route = KUL"]
-    A -->|"poll NRT"| C["visit NRT"]
-    C -->|"poll JFK"| D["visit JFK<br/>empty: route = JFK, KUL"]
-    C -.->|"empty"| E["route = NRT, JFK, KUL"]
-    A -.->|"empty"| F["route = JFK, NRT, JFK, KUL"]
-```
-
-Going to `KUL` first (alphabetically smaller) looks wrong, but it is a dead end, so it is placed last and the trip through `NRT` fills the middle. A greedy walk without the post-order trick would get stuck at `KUL`.
-
-**Edge cases.** An airport with no outgoing tickets has no heap (`graph.get` is `null`) and is added straight away. The problem guarantees a valid itinerary starting at `JFK`; with an empty ticket list the result would just be `[JFK]`.
-
-**Result:** `[JFK, NRT, JFK, KUL]`, matching the class output. The other two samples print `[JFK, MUC, LHR, SFO, SJC]` and `[JFK, ATL, JFK, SFO, ATL, SFO]`.
-
 ## Source Code
 
 ### ReconstructItinerary.java
@@ -226,3 +191,36 @@ public class ReconstructItinerary {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: using every ticket exactly once is an Eulerian path. Store each airport's destinations in a min-heap so the smallest name is always used first, then run Hierholzer's DFS from `JFK`: while the airport still has unused tickets, poll the smallest destination and recurse. An airport is put at the **front** of the route only when it has no tickets left (post-order), so a dead end such as a final destination ends up at the back and the path that returns from it is spliced in front of it.
+
+**Input:** `tickets = [[JFK,KUL], [JFK,NRT], [NRT,JFK]]`. Heaps: `JFK: [KUL, NRT]`, `NRT: [JFK]`. `route = []`.
+
+| Step | Call | Action | Heaps afterwards | `route` afterwards |
+|------|------|--------|------------------|--------------------|
+| 1 | `visit(JFK)` | poll smallest ticket `KUL`, recurse | `JFK: [NRT]` | `[]` |
+| 2 | `visit(KUL)` | no heap, no tickets: `addFirst(KUL)` | | `[KUL]` |
+| 3 | back in `visit(JFK)` | poll next ticket `NRT`, recurse | `JFK: []` | `[KUL]` |
+| 4 | `visit(NRT)` | poll `JFK`, recurse | `NRT: []` | `[KUL]` |
+| 5 | `visit(JFK)` (second time) | heap empty: `addFirst(JFK)` | | `[JFK, KUL]` |
+| 6 | back in `visit(NRT)` | heap empty: `addFirst(NRT)` | | `[NRT, JFK, KUL]` |
+| 7 | back in the first `visit(JFK)` | heap empty: `addFirst(JFK)` | | `[JFK, NRT, JFK, KUL]` |
+
+```mermaid
+flowchart TD
+    A["visit JFK"] -->|"poll KUL"| B["visit KUL<br/>dead end: route = KUL"]
+    A -->|"poll NRT"| C["visit NRT"]
+    C -->|"poll JFK"| D["visit JFK<br/>empty: route = JFK, KUL"]
+    C -.->|"empty"| E["route = NRT, JFK, KUL"]
+    A -.->|"empty"| F["route = JFK, NRT, JFK, KUL"]
+```
+
+Going to `KUL` first (alphabetically smaller) looks wrong, but it is a dead end, so it is placed last and the trip through `NRT` fills the middle. A greedy walk without the post-order trick would get stuck at `KUL`.
+
+**Edge cases.** An airport with no outgoing tickets has no heap (`graph.get` is `null`) and is added straight away. The problem guarantees a valid itinerary starting at `JFK`; with an empty ticket list the result would just be `[JFK]`.
+
+**Result:** `[JFK, NRT, JFK, KUL]`, matching the class output. The other two samples print `[JFK, MUC, LHR, SFO, SJC]` and `[JFK, ATL, JFK, SFO, ATL, SFO]`.

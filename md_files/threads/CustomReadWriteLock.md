@@ -120,44 +120,6 @@ public synchronized void unlockWrite() {
 | 2 | JDK ReentrantReadWriteLock | O(1) per call | O(1) |
 | 3 | Reader and Writer Counters with Writer Preference (Optimized) | O(1) per call | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: a lock that lets many readers in together but a writer alone, built from three pieces of state guarded by the object's own monitor (`synchronized`): `activeReaders`, `waitingWriters` and `writerActive`. A reader may enter only when no writer is active **and no writer is waiting** (`while (writerActive || waitingWriters > 0) wait()`); this writer preference stops a steady stream of readers from starving a writer. A writer first registers itself in `waitingWriters`, then waits until no writer is active and `activeReaders == 0`, and only then sets `writerActive = true`. The last reader to leave and every writer that leaves call `notifyAll()` so the waiters re-check their conditions.
-
-**Input:** a sequence of lock calls from four threads (reader R1, R2, R3 and writer W). The rows follow directly from the code; the real interleaving of a program is up to the scheduler, so this is an ordering that the rules allow.
-
-| Step | Call | Condition seen | Effect | `activeReaders` | `waitingWriters` | `writerActive` |
-|------|------|----------------|--------|-----------------|------------------|----------------|
-| 1 | R1 `lockRead` | no writer active or waiting | enters | 1 | 0 | false |
-| 2 | R2 `lockRead` | same | enters (readers share) | 2 | 0 | false |
-| 3 | W `lockWrite` | readers are active | registers, then `wait()` | 2 | 1 | false |
-| 4 | R3 `lockRead` | `waitingWriters > 0` | `wait()`: writer preference | 2 | 1 | false |
-| 5 | R1 `unlockRead` | | count drops, no notify yet | 1 | 1 | false |
-| 6 | R2 `unlockRead` | count reaches 0 | `notifyAll()` | 0 | 1 | false |
-| 7 | W wakes | no writer, no readers | `waitingWriters--`, `writerActive = true` | 0 | 0 | true |
-| 8 | R3 wakes | `writerActive` is true | goes back to `wait()` | 0 | 0 | true |
-| 9 | W `unlockWrite` | | `writerActive = false`, `notifyAll()` | 0 | 0 | false |
-| 10 | R3 wakes | free | enters | 1 | 0 | false |
-
-```mermaid
-stateDiagram-v2
-    [*] --> Free
-    Free --> Reading: "lockRead, readers join"
-    Reading --> Free: "last unlockRead"
-    Free --> Writing: "lockWrite"
-    Reading --> WriterWaiting: "lockWrite, wait for readers"
-    WriterWaiting --> Writing: "readers reach 0"
-    Writing --> Free: "unlockWrite"
-```
-
-**Edge cases.** `unlockRead` without a read lock and `unlockWrite` without the write lock throw `IllegalMonitorStateException` ("No read lock is held" / "No write lock is held"); I checked both on the class. If a waiting writer is interrupted, it takes itself out of `waitingWriters` and calls `notifyAll()` before rethrowing, so readers it was holding back are not blocked forever. The lock is not reentrant.
-
-**Result:** in `main`, one writer increments a pair 1000 times under the write lock while 3 readers check `pair[0] == pair[1]` under the read lock. The class prints `final pair = [1000, 1000], readers always saw a consistent pair: true`, the same in all three runs checked.
-
 ## Source Code
 
 ### CustomReadWriteLock.java
@@ -260,3 +222,39 @@ public class CustomReadWriteLock {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+
+The idea: a lock that lets many readers in together but a writer alone, built from three pieces of state guarded by the object's own monitor (`synchronized`): `activeReaders`, `waitingWriters` and `writerActive`. A reader may enter only when no writer is active **and no writer is waiting** (`while (writerActive || waitingWriters > 0) wait()`); this writer preference stops a steady stream of readers from starving a writer. A writer first registers itself in `waitingWriters`, then waits until no writer is active and `activeReaders == 0`, and only then sets `writerActive = true`. The last reader to leave and every writer that leaves call `notifyAll()` so the waiters re-check their conditions.
+
+**Input:** a sequence of lock calls from four threads (reader R1, R2, R3 and writer W). The rows follow directly from the code; the real interleaving of a program is up to the scheduler, so this is an ordering that the rules allow.
+
+| Step | Call | Condition seen | Effect | `activeReaders` | `waitingWriters` | `writerActive` |
+|------|------|----------------|--------|-----------------|------------------|----------------|
+| 1 | R1 `lockRead` | no writer active or waiting | enters | 1 | 0 | false |
+| 2 | R2 `lockRead` | same | enters (readers share) | 2 | 0 | false |
+| 3 | W `lockWrite` | readers are active | registers, then `wait()` | 2 | 1 | false |
+| 4 | R3 `lockRead` | `waitingWriters > 0` | `wait()`: writer preference | 2 | 1 | false |
+| 5 | R1 `unlockRead` | | count drops, no notify yet | 1 | 1 | false |
+| 6 | R2 `unlockRead` | count reaches 0 | `notifyAll()` | 0 | 1 | false |
+| 7 | W wakes | no writer, no readers | `waitingWriters--`, `writerActive = true` | 0 | 0 | true |
+| 8 | R3 wakes | `writerActive` is true | goes back to `wait()` | 0 | 0 | true |
+| 9 | W `unlockWrite` | | `writerActive = false`, `notifyAll()` | 0 | 0 | false |
+| 10 | R3 wakes | free | enters | 1 | 0 | false |
+
+```mermaid
+stateDiagram-v2
+    [*] --> Free
+    Free --> Reading: "lockRead, readers join"
+    Reading --> Free: "last unlockRead"
+    Free --> Writing: "lockWrite"
+    Reading --> WriterWaiting: "lockWrite, wait for readers"
+    WriterWaiting --> Writing: "readers reach 0"
+    Writing --> Free: "unlockWrite"
+```
+
+**Edge cases.** `unlockRead` without a read lock and `unlockWrite` without the write lock throw `IllegalMonitorStateException` ("No read lock is held" / "No write lock is held"); I checked both on the class. If a waiting writer is interrupted, it takes itself out of `waitingWriters` and calls `notifyAll()` before rethrowing, so readers it was holding back are not blocked forever. The lock is not reentrant.
+
+**Result:** in `main`, one writer increments a pair 1000 times under the write lock while 3 readers check `pair[0] == pair[1]` under the read lock. The class prints `final pair = [1000, 1000], readers always saw a consistent pair: true`, the same in all three runs checked.

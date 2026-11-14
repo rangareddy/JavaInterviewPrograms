@@ -252,37 +252,6 @@ static class TrieDictionary {
 | 6 | Bitmap Index per (Length, Position, Letter) | addWord O(L), search O(L * N / 64) | O(N * L) |
 | 7 | Trie with Recursive Wildcard Search (Optimized) | addWord O(L), search O(L) without dots, up to O(26^L) with many dots | O(26 * N * L) worst case |
 
-### Optimized Solution
-
-The optimized solution is Approach 7 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: the words live in the same 26-way trie as a plain trie. A letter in a query follows exactly one child; a `.` tries every non-empty child, one after another, recursively, and succeeds if any branch does. The recursion stops with `false` on a `null` node, and at the end of the query it returns the node's `isWord` flag. So a query without dots costs O(length) and each dot multiplies the work by at most 26.
-
-**Input:** `addWord("bad")`, `addWord("dad")`, `addWord("mad")`, then `search("pad")`, `search("bad")`, `search(".ad")`, `search("b..")`.
-
-```mermaid
-flowchart LR
-    R(["root"]) --> B["b"]
-    R --> D["d"]
-    R --> M["m"]
-    B --> BA["a"] --> BD["d<br/>isWord"]
-    D --> DA["a"] --> DD["d<br/>isWord"]
-    M --> MA["a"] --> MD["d<br/>isWord"]
-```
-
-| Query | Steps | Returns |
-|-------|-------|---------|
-| `pad` | index 0, `p`: `root.children['p']` is null, so the next call gets `null` and returns false | `false` |
-| `bad` | b, a, d, index 3 equals length, `isWord` of that d is true | `true` |
-| `.ad` | `.` tries the children of root in alphabetical order: b first; then `a`, `d`, end, `isWord` true, so the loop stops at b | `true` |
-| `b..` | b; `.` has the single child a; `.` has the single child d; index 3 equals length, `isWord` true | `true` |
-
-**Edge cases:** if every branch under a `.` fails, the loop finishes and returns `false` (for example `search("..e")` fails because the third-level nodes have no child `e`). A query shorter than a stored word such as `search("ba")` ends on a node whose `isWord` is false, so it returns `false`. The code assumes lowercase letters and `.` only.
-
-**Result:** `false`, `true`, `true`, `true` for the four queries, matching the class output.
-
 ## Source Code
 
 ### DesignAddAndSearchWords.java
@@ -346,3 +315,32 @@ public class DesignAddAndSearchWords {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
+
+The idea: the words live in the same 26-way trie as a plain trie. A letter in a query follows exactly one child; a `.` tries every non-empty child, one after another, recursively, and succeeds if any branch does. The recursion stops with `false` on a `null` node, and at the end of the query it returns the node's `isWord` flag. So a query without dots costs O(length) and each dot multiplies the work by at most 26.
+
+**Input:** `addWord("bad")`, `addWord("dad")`, `addWord("mad")`, then `search("pad")`, `search("bad")`, `search(".ad")`, `search("b..")`.
+
+```mermaid
+flowchart LR
+    R(["root"]) --> B["b"]
+    R --> D["d"]
+    R --> M["m"]
+    B --> BA["a"] --> BD["d<br/>isWord"]
+    D --> DA["a"] --> DD["d<br/>isWord"]
+    M --> MA["a"] --> MD["d<br/>isWord"]
+```
+
+| Query | Steps | Returns |
+|-------|-------|---------|
+| `pad` | index 0, `p`: `root.children['p']` is null, so the next call gets `null` and returns false | `false` |
+| `bad` | b, a, d, index 3 equals length, `isWord` of that d is true | `true` |
+| `.ad` | `.` tries the children of root in alphabetical order: b first; then `a`, `d`, end, `isWord` true, so the loop stops at b | `true` |
+| `b..` | b; `.` has the single child a; `.` has the single child d; index 3 equals length, `isWord` true | `true` |
+
+**Edge cases:** if every branch under a `.` fails, the loop finishes and returns `false` (for example `search("..e")` fails because the third-level nodes have no child `e`). A query shorter than a stored word such as `search("ba")` ends on a node whose `isWord` is false, so it returns `false`. The code assumes lowercase letters and `.` only.
+
+**Result:** `false`, `true`, `true`, `true` for the four queries, matching the class output.

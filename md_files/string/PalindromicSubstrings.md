@@ -129,37 +129,6 @@ public static int countSubstringsManacher(String s) {
 | 3 | Expand Around Every Center | O(n^2) | O(1) |
 | 4 | Manacher's Algorithm (Optimized) | O(n) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above. The version implemented in this repository is Approach 3.
-
-#### Optimized solution explained
-
-Note: the page's "Optimized Solution" sentence names Approach 4 (Manacher's algorithm), but the class in this repository implements Approach 3, expanding around every center. This block explains the code as it is written.
-
-The idea: every palindromic substring has a center, either one character (odd length) or the gap between two (even length). For every index, expand outward from `(c, c)` and `(c, c+1)`; every step where the two ends match is one more palindromic substring, so the number of successful steps is added to `count`.
-
-**Input:** `s = "abba"`.
-
-| Center | Odd expansion `(c, c)` | Even expansion `(c, c+1)` | Added | `count` |
-|--------|------------------------|---------------------------|-------|---------|
-| 0 | `a` matches (1); then left is out of range | `a` vs `b` no (0) | 1 | 1 |
-| 1 | `b` (1); then `a` vs `b` no | `bb` (1), then `abba` (2) | 3 | 4 |
-| 2 | `b` (1); then `b` vs `a` no | `b` vs `a` no (0) | 1 | 5 |
-| 3 | `a` (1); then right is out of range | right is out of range (0) | 1 | 6 |
-
-The six palindromic substrings are `a`, `b`, `b`, `a`, `bb`, `abba`.
-
-```text
-index: 0 1 2 3
-s:     a b b a
-center 1 (even): s[1]=s[2] -> "bb", then s[0]=s[3] -> "abba", then left < 0 stop
-```
-
-**Edge cases.** `null` or `""` returns `0`. `"abc"` returns `3` (only single letters); `"aaa"` returns `6`. Each expansion stops at the first mismatch or string end, so the time is O(n^2) in the worst case with O(1) extra space.
-
-**Result:** `6`, matching the class output.
-
 ## Source Code
 
 ### PalindromicSubstrings.java
@@ -200,3 +169,32 @@ public class PalindromicSubstrings {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above. The version implemented in this repository is Approach 3.
+
+Note: the Approaches section marks Approach 4 (Manacher's algorithm), but the class in this repository implements Approach 3, expanding around every center. This block explains the code as it is written.
+
+The idea: every palindromic substring has a center, either one character (odd length) or the gap between two (even length). For every index, expand outward from `(c, c)` and `(c, c+1)`; every step where the two ends match is one more palindromic substring, so the number of successful steps is added to `count`.
+
+**Input:** `s = "abba"`.
+
+| Center | Odd expansion `(c, c)` | Even expansion `(c, c+1)` | Added | `count` |
+|--------|------------------------|---------------------------|-------|---------|
+| 0 | `a` matches (1); then left is out of range | `a` vs `b` no (0) | 1 | 1 |
+| 1 | `b` (1); then `a` vs `b` no | `bb` (1), then `abba` (2) | 3 | 4 |
+| 2 | `b` (1); then `b` vs `a` no | `b` vs `a` no (0) | 1 | 5 |
+| 3 | `a` (1); then right is out of range | right is out of range (0) | 1 | 6 |
+
+The six palindromic substrings are `a`, `b`, `b`, `a`, `bb`, `abba`.
+
+```text
+index: 0 1 2 3
+s:     a b b a
+center 1 (even): s[1]=s[2] -> "bb", then s[0]=s[3] -> "abba", then left < 0 stop
+```
+
+**Edge cases.** `null` or `""` returns `0`. `"abc"` returns `3` (only single letters); `"aaa"` returns `6`. Each expansion stops at the first mismatch or string end, so the time is O(n^2) in the worst case with O(1) extra space.
+
+**Result:** `6`, matching the class output.

@@ -88,31 +88,6 @@ public static int[] countBits(int n) {
 | 2 | Highest Power of Two | O(n) | O(1) |
 | 3 | DP with a Right Shift (Optimized) | O(n) | O(1) besides the output |
 
-### Optimized Solution
-
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: the number of 1 bits of `i` equals the count for `i >> 1` (the same number without its last bit) plus that last bit `i & 1`. Since `i >> 1 < i`, its answer is already in the array, so each entry is one lookup and one addition. Total O(n) time, with no per-number bit loop.
-
-**Input:** `n = 5`, so `ans` has 6 cells, all 0 at the start.
-
-| i | Binary | i >> 1 | i & 1 | ans[i] = ans[i >> 1] + (i & 1) | ans so far |
-|---|--------|--------|-------|----------------------------------|------------|
-| 0 | 000 | - | - | stays 0 (loop starts at 1) | [0] |
-| 1 | 001 | 0 | 1 | ans[0] + 1 = 1 | [0, 1] |
-| 2 | 010 | 1 | 0 | ans[1] + 0 = 1 | [0, 1, 1] |
-| 3 | 011 | 1 | 1 | ans[1] + 1 = 2 | [0, 1, 1, 2] |
-| 4 | 100 | 2 | 0 | ans[2] + 0 = 1 | [0, 1, 1, 2, 1] |
-| 5 | 101 | 2 | 1 | ans[2] + 1 = 2 | [0, 1, 1, 2, 1, 2] |
-
-The table is the whole algorithm, so no separate diagram is added.
-
-**Edge cases:** `n = 0` creates an array of length 1 and the loop does not run, giving `[0]`. The array always has `n + 1` entries, one for each number from 0 to `n`.
-
-**Result:** returns `[0, 1, 1, 2, 1, 2]`, matching the class output.
-
 ## Source Code
 
 ### CountingBits.java
@@ -140,3 +115,26 @@ public class CountingBits {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+
+The idea: the number of 1 bits of `i` equals the count for `i >> 1` (the same number without its last bit) plus that last bit `i & 1`. Since `i >> 1 < i`, its answer is already in the array, so each entry is one lookup and one addition. Total O(n) time, with no per-number bit loop.
+
+**Input:** `n = 5`, so `ans` has 6 cells, all 0 at the start.
+
+| i | Binary | i >> 1 | i & 1 | ans[i] = ans[i >> 1] + (i & 1) | ans so far |
+|---|--------|--------|-------|----------------------------------|------------|
+| 0 | 000 | - | - | stays 0 (loop starts at 1) | [0] |
+| 1 | 001 | 0 | 1 | ans[0] + 1 = 1 | [0, 1] |
+| 2 | 010 | 1 | 0 | ans[1] + 0 = 1 | [0, 1, 1] |
+| 3 | 011 | 1 | 1 | ans[1] + 1 = 2 | [0, 1, 1, 2] |
+| 4 | 100 | 2 | 0 | ans[2] + 0 = 1 | [0, 1, 1, 2, 1] |
+| 5 | 101 | 2 | 1 | ans[2] + 1 = 2 | [0, 1, 1, 2, 1, 2] |
+
+The table is the whole algorithm, so no separate diagram is added.
+
+**Edge cases:** `n = 0` creates an array of length 1 and the loop does not run, giving `[0]`. The array always has `n + 1` entries, one for each number from 0 to `n`.
+
+**Result:** returns `[0, 1, 1, 2, 1, 2]`, matching the class output.

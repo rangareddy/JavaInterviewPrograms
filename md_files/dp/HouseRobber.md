@@ -104,36 +104,6 @@ public static int rob(int[] nums) {
 | 3 | Tabulation (Bottom-Up DP) | O(n) | O(n) |
 | 4 | Two Variables (Optimized) | O(n) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: at each house you either skip it (keep the best total so far, `prev1`) or rob it (its money plus the best total up to two houses back, `prev2`, because the neighbour must be skipped). The better of the two is the best total up to this house: `best = max(prev1, prev2 + money)`. Only the last two totals are needed, so two variables replace the DP array: O(n) time, O(1) space.
-
-**Input:** `nums = [2, 7, 9, 3, 1]`. Start: `prev2 = 0`, `prev1 = 0`.
-
-| House | `money` | Skip: `prev1` | Rob: `prev2 + money` | `best` | `prev2` after | `prev1` after |
-|-------|---------|---------------|----------------------|--------|---------------|---------------|
-| 1 | 2 | 0 | 0 + 2 = 2 | 2 | 0 | 2 |
-| 2 | 7 | 2 | 0 + 7 = 7 | 7 | 2 | 7 |
-| 3 | 9 | 7 | 2 + 9 = 11 | 11 | 7 | 11 |
-| 4 | 3 | 11 | 7 + 3 = 10 | 11 | 11 | 11 |
-| 5 | 1 | 11 | 11 + 1 = 12 | 12 | 11 | 12 |
-
-```text
-houses:   2   7   9   3   1
-best:     2   7  11  11  12
-robbed:   2       9       1     = 12 (houses 1, 3 and 5; no two are adjacent)
-```
-
-After the last house `prev1 = 12`, which the method returns.
-
-**Edge cases.** `null` or an empty array returns `0` immediately. A single house (`[5]`) gives `max(0, 0 + 5) = 5`. Two houses give the larger of the two amounts.
-
-**Result:** `12` for the traced input, matching the class output (`4`, `12`, `5`, `0` for its four samples).
-
 ## Source Code
 
 ### HouseRobber.java
@@ -168,3 +138,31 @@ public class HouseRobber {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: at each house you either skip it (keep the best total so far, `prev1`) or rob it (its money plus the best total up to two houses back, `prev2`, because the neighbour must be skipped). The better of the two is the best total up to this house: `best = max(prev1, prev2 + money)`. Only the last two totals are needed, so two variables replace the DP array: O(n) time, O(1) space.
+
+**Input:** `nums = [2, 7, 9, 3, 1]`. Start: `prev2 = 0`, `prev1 = 0`.
+
+| House | `money` | Skip: `prev1` | Rob: `prev2 + money` | `best` | `prev2` after | `prev1` after |
+|-------|---------|---------------|----------------------|--------|---------------|---------------|
+| 1 | 2 | 0 | 0 + 2 = 2 | 2 | 0 | 2 |
+| 2 | 7 | 2 | 0 + 7 = 7 | 7 | 2 | 7 |
+| 3 | 9 | 7 | 2 + 9 = 11 | 11 | 7 | 11 |
+| 4 | 3 | 11 | 7 + 3 = 10 | 11 | 11 | 11 |
+| 5 | 1 | 11 | 11 + 1 = 12 | 12 | 11 | 12 |
+
+```text
+houses:   2   7   9   3   1
+best:     2   7  11  11  12
+robbed:   2       9       1     = 12 (houses 1, 3 and 5; no two are adjacent)
+```
+
+After the last house `prev1 = 12`, which the method returns.
+
+**Edge cases.** `null` or an empty array returns `0` immediately. A single house (`[5]`) gives `max(0, 0 + 5) = 5`. Two houses give the larger of the two amounts.
+
+**Result:** `12` for the traced input, matching the class output (`4`, `12`, `5`, `0` for its four samples).

@@ -129,34 +129,6 @@ public static boolean checkInclusion(String s1, String s2) {
 | 3 | Sliding Window with a HashMap (Any Alphabet) | O(|s2|) | O(alphabet size) |
 | 4 | Sliding Window with a Matches Counter (Optimized) | O(|s2|) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: a permutation of `s1` is a window of `s2` of the same length with the same letter counts. Two 26-slot arrays hold the counts (`need` for `s1`, `window` for the current window), and `matches` is how many of the 26 letters have equal counts. Sliding by one letter changes only two counts, so `matches` is updated in O(1) instead of comparing arrays. When `matches == 26` the window is a permutation.
-
-**Input:** `s1 = "ab"`, `s2 = "eidbaooo"`. Initial window is `"ei"`.
-
-Initial: `need` has a=1, b=1; window `"ei"` has e=1, i=1. Letters whose counts are equal: 22 of 26 (all except a, b, e, i), so `matches = 22`.
-
-| Step | `right` | Letter in | Letter out | Window | `matches` after |
-|------|---------|-----------|------------|--------|-----------------|
-| 1 | 2 | `d` | `e` | `id` | 22 (`d` now mismatched -1, `e` matched again +1) |
-| 2 | 3 | `b` | `i` | `db` | 24 (`b` matches, `i` matches) |
-| 3 | 4 | `a` | `d` | `ba` | 26 (`a` matches, `d` matches) |
-| 4 | 5 | - | - | - | check at loop start: `matches == 26` -> **return true** |
-
-```text
-s2:      e i d b o a o o   (positions 0..7, window "ba" is at 3..4)
-step 3:        [b a]       counts equal to "ab"
-```
-
-**Edge cases.** If `s1` is longer than `s2` the method returns `false` at once (`{"abc","ab"}`). The check `matches == 26` is also made after the last slide (the final `return`), so a match in the last window is found. For `s1 = "ab"`, `s2 = "eidboaoo"` no window matches and the result is `false`. Lowercase letters only (26 slots).
-
-**Result:** `true`, matching the class output.
-
 ## Source Code
 
 ### PermutationInString.java
@@ -217,3 +189,29 @@ public class PermutationInString {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: a permutation of `s1` is a window of `s2` of the same length with the same letter counts. Two 26-slot arrays hold the counts (`need` for `s1`, `window` for the current window), and `matches` is how many of the 26 letters have equal counts. Sliding by one letter changes only two counts, so `matches` is updated in O(1) instead of comparing arrays. When `matches == 26` the window is a permutation.
+
+**Input:** `s1 = "ab"`, `s2 = "eidbaooo"`. Initial window is `"ei"`.
+
+Initial: `need` has a=1, b=1; window `"ei"` has e=1, i=1. Letters whose counts are equal: 22 of 26 (all except a, b, e, i), so `matches = 22`.
+
+| Step | `right` | Letter in | Letter out | Window | `matches` after |
+|------|---------|-----------|------------|--------|-----------------|
+| 1 | 2 | `d` | `e` | `id` | 22 (`d` now mismatched -1, `e` matched again +1) |
+| 2 | 3 | `b` | `i` | `db` | 24 (`b` matches, `i` matches) |
+| 3 | 4 | `a` | `d` | `ba` | 26 (`a` matches, `d` matches) |
+| 4 | 5 | - | - | - | check at loop start: `matches == 26` -> **return true** |
+
+```text
+s2:      e i d b o a o o   (positions 0..7, window "ba" is at 3..4)
+step 3:        [b a]       counts equal to "ab"
+```
+
+**Edge cases.** If `s1` is longer than `s2` the method returns `false` at once (`{"abc","ab"}`). The check `matches == 26` is also made after the last slide (the final `return`), so a match in the last window is found. For `s1 = "ab"`, `s2 = "eidboaoo"` no window matches and the result is `false`. Lowercase letters only (26 slots).
+
+**Result:** `true`, matching the class output.

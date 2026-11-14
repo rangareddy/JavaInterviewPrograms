@@ -110,11 +110,46 @@ public static List<String> fizzBuzzStream(int n) {
 | 3 | Counters Instead of Modulo | O(n) | O(n) |
 | 4 | Streams | O(n) | O(n) |
 
-### Optimized Solution
+## Source Code
+
+### FizzBuzz.java
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+public class FizzBuzz {
+
+    public static void main(String[] args) {
+        int[] inputs = {1, 5, 15};
+        for (int n : inputs) {
+            System.out.println("Input  : n = " + n);
+            System.out.println("Output : " + fizzBuzz(n));
+            System.out.println();
+        }
+    }
+
+    public static List<String> fizzBuzz(int n) {
+        List<String> words = new ArrayList<>();
+        for (int i = 1; i <= n; i++) {
+            if (i % 15 == 0) {
+                words.add("FizzBuzz");
+            } else if (i % 3 == 0) {
+                words.add("Fizz");
+            } else if (i % 5 == 0) {
+                words.add("Buzz");
+            } else {
+                words.add(String.valueOf(i));
+            }
+        }
+        return words;
+    }
+}
+```
+
+## Solution
 
 The optimized solution is Approach 1 above (divisibility by 15 checked first), which is also the version implemented in this repository.
-
-#### Optimized solution explained
 
 The idea: for each number from 1 to `n`, decide which word it becomes. The order of the checks matters: a multiple of 15 is a multiple of both 3 and 5, so `i % 15 == 0` must be tested **first**, otherwise `15` would be caught by the `% 3` check and wrongly become `Fizz`.
 
@@ -152,40 +187,3 @@ flowchart TD
 ```
 
 **Edge cases.** For `n = 0` or a negative `n` the loop never runs and the method returns an empty list. There is no input to guard against beyond that, and each number costs at most three modulo checks, so the whole method is `O(n)`.
-
-## Source Code
-
-### FizzBuzz.java
-
-```java
-import java.util.ArrayList;
-import java.util.List;
-
-public class FizzBuzz {
-
-    public static void main(String[] args) {
-        int[] inputs = {1, 5, 15};
-        for (int n : inputs) {
-            System.out.println("Input  : n = " + n);
-            System.out.println("Output : " + fizzBuzz(n));
-            System.out.println();
-        }
-    }
-
-    public static List<String> fizzBuzz(int n) {
-        List<String> words = new ArrayList<>();
-        for (int i = 1; i <= n; i++) {
-            if (i % 15 == 0) {
-                words.add("FizzBuzz");
-            } else if (i % 3 == 0) {
-                words.add("Fizz");
-            } else if (i % 5 == 0) {
-                words.add("Buzz");
-            } else {
-                words.add(String.valueOf(i));
-            }
-        }
-        return words;
-    }
-}
-```

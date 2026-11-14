@@ -96,42 +96,6 @@ public static ListNode detectCycle(ListNode head) {
 | 2 | Cycle Length, then Two Pointers | O(n) | O(1) |
 | 3 | Floyd Meeting Point then Restart from Head (Optimized) | O(n) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: first run Floyd's slow/fast pointers to find out whether there is a cycle and where they meet. If they meet, put a second pointer `start` on the head and move `start` and `slow` one node at a time. They meet exactly at the node where the cycle begins (the distance from the head to the entrance equals the distance from the meeting point forward to the entrance, modulo the cycle length). It is O(n) time and O(1) space.
-
-**Input:** `head = [3, 2, 0, -4]` with the tail (`-4`) linked back to the node `2` (cycle entrance value `2`).
-
-Phase 1, find the meeting point:
-
-| Step | `slow` | `fast` | Met? |
-|------|--------|--------|------|
-| start | 3 | 3 | |
-| 1 | 2 | 0 | no |
-| 2 | 0 | 2 | no |
-| 3 | -4 | -4 | yes, go to phase 2 |
-
-Phase 2, find the entrance (`start` begins at the head, `slow` stays at `-4`):
-
-| Step | `start` | `slow` | Equal? |
-|------|---------|--------|--------|
-| start | 3 | -4 | no |
-| 1 | 2 | 2 (`-4.next`) | **yes, return node `2`** |
-
-```mermaid
-flowchart LR
-    n3["3"] --> n2["2 - cycle entrance"] --> n0["0"] --> n4["-4 - meeting point"]
-    n4 --> n2
-```
-
-**Edge cases.** A self-loop (`[1]` pointing to itself): phase 1 meets at the node after one step, `start` already equals `slow`, so the node `1` is returned. With no cycle (`[1, 2]`) the loop ends when `fast` reaches `null` and the method returns `null` (the class prints `none`).
-
-**Result:** the node with value `2`, matching the class output (`cycle starts at value 2`).
-
 ## Source Code
 
 Uses the shared helper [`ListNode`](../../src/main/java/com/ranga/linkedlist/ListNode.java) (a small `ListNode` with `of(...)` and `toString(...)` helpers for building and printing test data).
@@ -185,3 +149,37 @@ public class LinkedListCycleII {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+
+The idea: first run Floyd's slow/fast pointers to find out whether there is a cycle and where they meet. If they meet, put a second pointer `start` on the head and move `start` and `slow` one node at a time. They meet exactly at the node where the cycle begins (the distance from the head to the entrance equals the distance from the meeting point forward to the entrance, modulo the cycle length). It is O(n) time and O(1) space.
+
+**Input:** `head = [3, 2, 0, -4]` with the tail (`-4`) linked back to the node `2` (cycle entrance value `2`).
+
+Phase 1, find the meeting point:
+
+| Step | `slow` | `fast` | Met? |
+|------|--------|--------|------|
+| start | 3 | 3 | |
+| 1 | 2 | 0 | no |
+| 2 | 0 | 2 | no |
+| 3 | -4 | -4 | yes, go to phase 2 |
+
+Phase 2, find the entrance (`start` begins at the head, `slow` stays at `-4`):
+
+| Step | `start` | `slow` | Equal? |
+|------|---------|--------|--------|
+| start | 3 | -4 | no |
+| 1 | 2 | 2 (`-4.next`) | **yes, return node `2`** |
+
+```mermaid
+flowchart LR
+    n3["3"] --> n2["2 - cycle entrance"] --> n0["0"] --> n4["-4 - meeting point"]
+    n4 --> n2
+```
+
+**Edge cases.** A self-loop (`[1]` pointing to itself): phase 1 meets at the node after one step, `start` already equals `slow`, so the node `1` is returned. With no cycle (`[1, 2]`) the loop ends when `fast` reaches `null` and the method returns `null` (the class prints `none`).
+
+**Result:** the node with value `2`, matching the class output (`cycle starts at value 2`).

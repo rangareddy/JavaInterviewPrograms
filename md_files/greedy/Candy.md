@@ -115,34 +115,6 @@ public static int candy(int[] ratings) {
 | 2 | One Pass with Slopes (Constant Space) | O(n) | O(1) |
 | 3 | Two Passes (Optimized) | O(n) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: every child gets 1 candy, then two passes enforce the "higher rating than a neighbour gets more" rule one side at a time. The left-to-right pass fixes children who out-rate their left neighbour (`candies[i] = candies[i-1] + 1`). The right-to-left pass fixes children who out-rate their right neighbour, using `Math.max` so the left-pass result is never lowered. The sum is the minimum total.
-
-**Input:** `ratings = [1, 3, 2, 2, 1]`.
-
-| Step | Pass | i | Compare | candies after |
-|------|------|---|---------|---------------|
-| 0 | fill | - | - | [1, 1, 1, 1, 1] |
-| 1 | left to right | 1 | 3 > 1: candies[1] = 1 + 1 = 2 | [1, 2, 1, 1, 1] |
-| 2 | left to right | 2 | 2 > 3 no | [1, 2, 1, 1, 1] |
-| 3 | left to right | 3 | 2 > 2 no | [1, 2, 1, 1, 1] |
-| 4 | left to right | 4 | 1 > 2 no | [1, 2, 1, 1, 1] |
-| 5 | right to left | 3 | 2 > 1: max(1, 1 + 1) = 2 | [1, 2, 1, 2, 1] |
-| 6 | right to left | 2 | 2 > 2 no | [1, 2, 1, 2, 1] |
-| 7 | right to left | 1 | 3 > 2: max(2, 1 + 1) = 2 | [1, 2, 1, 2, 1] |
-| 8 | right to left | 0 | 1 > 3 no | [1, 2, 1, 2, 1] |
-
-Sum of `[1, 2, 1, 2, 1]` is 7. Equal neighbours (the two 2s) do not force a difference.
-
-**Edge cases:** a single child (`[5]`) skips both loops and returns `1`. Equal ratings stay at 1 candy each (`[1, 2, 2]` gives `[1, 2, 1]`, total 4).
-
-**Result:** returns `7`, matching the class output.
-
 ## Source Code
 
 ### Candy.java
@@ -183,3 +155,29 @@ public class Candy {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+
+The idea: every child gets 1 candy, then two passes enforce the "higher rating than a neighbour gets more" rule one side at a time. The left-to-right pass fixes children who out-rate their left neighbour (`candies[i] = candies[i-1] + 1`). The right-to-left pass fixes children who out-rate their right neighbour, using `Math.max` so the left-pass result is never lowered. The sum is the minimum total.
+
+**Input:** `ratings = [1, 3, 2, 2, 1]`.
+
+| Step | Pass | i | Compare | candies after |
+|------|------|---|---------|---------------|
+| 0 | fill | - | - | [1, 1, 1, 1, 1] |
+| 1 | left to right | 1 | 3 > 1: candies[1] = 1 + 1 = 2 | [1, 2, 1, 1, 1] |
+| 2 | left to right | 2 | 2 > 3 no | [1, 2, 1, 1, 1] |
+| 3 | left to right | 3 | 2 > 2 no | [1, 2, 1, 1, 1] |
+| 4 | left to right | 4 | 1 > 2 no | [1, 2, 1, 1, 1] |
+| 5 | right to left | 3 | 2 > 1: max(1, 1 + 1) = 2 | [1, 2, 1, 2, 1] |
+| 6 | right to left | 2 | 2 > 2 no | [1, 2, 1, 2, 1] |
+| 7 | right to left | 1 | 3 > 2: max(2, 1 + 1) = 2 | [1, 2, 1, 2, 1] |
+| 8 | right to left | 0 | 1 > 3 no | [1, 2, 1, 2, 1] |
+
+Sum of `[1, 2, 1, 2, 1]` is 7. Equal neighbours (the two 2s) do not force a difference.
+
+**Edge cases:** a single child (`[5]`) skips both loops and returns `1`. Equal ratings stay at 1 candy each (`[1, 2, 2]` gives `[1, 2, 1]`, total 4).
+
+**Result:** returns `7`, matching the class output.

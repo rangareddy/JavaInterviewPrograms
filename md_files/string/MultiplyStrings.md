@@ -118,34 +118,6 @@ public static String multiply(String num1, String num2) {
 | 2 | Add Shifted Partial Products | O(m * n) | O(m + n) |
 | 3 | Digit Array with Carry (Optimized) | O(m * n) | O(m + n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: an `m`-digit number times an `n`-digit number has at most `m + n` digits, so keep one `int[m + n]` array. The digits `num1[i]` and `num2[j]` always land at positions `i + j` (carry) and `i + j + 1` (units). Each product is added into the units cell, its last digit stays there, and the carry is pushed into the cell on the left, so no partial-product strings are ever built.
-
-**Input:** `num1 = "12"`, `num2 = "34"`. `result = [0, 0, 0, 0]` (length 2 + 2).
-
-| Step | `i` | `j` | Digits | `product` | `sum = product + result[i+j+1]` | `result[i+j+1]` (sum % 10) | `result[i+j]` (+= sum / 10) | `result` afterwards |
-|------|-----|-----|--------|-----------|-------------------------------|---------------------------|---------------------------|---------------------|
-| 1 | 1 | 1 | 2 x 4 | 8 | 8 + 0 = 8 | 8 | +0 | `[0, 0, 0, 8]` |
-| 2 | 1 | 0 | 2 x 3 | 6 | 6 + 0 = 6 | 6 | +0 | `[0, 0, 6, 8]` |
-| 3 | 0 | 1 | 1 x 4 | 4 | 4 + 6 = 10 | 0 | +1 | `[0, 1, 0, 8]` |
-| 4 | 0 | 0 | 1 x 3 | 3 | 3 + 1 = 4 | 4 | +0 | `[0, 4, 0, 8]` |
-
-The final loop skips leading zeros (the first `0`) and appends `4`, `0`, `8`.
-
-```text
-result index :  0  1  2  3
-after step 4 :  0  4  0  8   -> skip leading 0 -> "408"
-```
-
-**Edge cases.** If either input is `"0"` the method returns `"0"` immediately (otherwise the result array would be all zeros and the builder would return an empty string). Because the carry is added with `+=` into a cell that is only turned into a digit when it is later used as a units cell, every cell ends up in the range 0-9.
-
-**Result:** `"408"`, which matches the output of `MultiplyStrings.multiply("12", "34")`.
-
 ## Source Code
 
 ### MultiplyStrings.java
@@ -188,3 +160,29 @@ public class MultiplyStrings {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+
+The idea: an `m`-digit number times an `n`-digit number has at most `m + n` digits, so keep one `int[m + n]` array. The digits `num1[i]` and `num2[j]` always land at positions `i + j` (carry) and `i + j + 1` (units). Each product is added into the units cell, its last digit stays there, and the carry is pushed into the cell on the left, so no partial-product strings are ever built.
+
+**Input:** `num1 = "12"`, `num2 = "34"`. `result = [0, 0, 0, 0]` (length 2 + 2).
+
+| Step | `i` | `j` | Digits | `product` | `sum = product + result[i+j+1]` | `result[i+j+1]` (sum % 10) | `result[i+j]` (+= sum / 10) | `result` afterwards |
+|------|-----|-----|--------|-----------|-------------------------------|---------------------------|---------------------------|---------------------|
+| 1 | 1 | 1 | 2 x 4 | 8 | 8 + 0 = 8 | 8 | +0 | `[0, 0, 0, 8]` |
+| 2 | 1 | 0 | 2 x 3 | 6 | 6 + 0 = 6 | 6 | +0 | `[0, 0, 6, 8]` |
+| 3 | 0 | 1 | 1 x 4 | 4 | 4 + 6 = 10 | 0 | +1 | `[0, 1, 0, 8]` |
+| 4 | 0 | 0 | 1 x 3 | 3 | 3 + 1 = 4 | 4 | +0 | `[0, 4, 0, 8]` |
+
+The final loop skips leading zeros (the first `0`) and appends `4`, `0`, `8`.
+
+```text
+result index :  0  1  2  3
+after step 4 :  0  4  0  8   -> skip leading 0 -> "408"
+```
+
+**Edge cases.** If either input is `"0"` the method returns `"0"` immediately (otherwise the result array would be all zeros and the builder would return an empty string). Because the carry is added with `+=` into a cell that is only turned into a digit when it is later used as a units cell, every cell ends up in the range 0-9.
+
+**Result:** `"408"`, which matches the output of `MultiplyStrings.multiply("12", "34")`.

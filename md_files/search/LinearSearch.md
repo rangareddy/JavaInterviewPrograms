@@ -103,31 +103,6 @@ public static int linearSearchSentinel(int[] arr, int element) {
 | 3 | Streams | O(n) | O(1) |
 | 4 | Sentinel Linear Search (Optimized) | O(n) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above. The version implemented in this repository is Approach 1.
-
-#### Optimized solution explained
-
-The idea: the array may be in any order, so there is nothing to exploit except looking at the elements one by one from index 0. The first element equal to the target ends the search at once, so the first occurrence is returned; reaching the end means the target is absent. The page names the sentinel variant as the optimized one (it saves the `i < n` check and is still O(n)), but the class in this repository implements the plain loop, and that loop is what is explained here.
-
-**Input:** `arr = [12, 4, 5, 7, 9, 20, 30, 6, 15]`, element `20`.
-
-| Step | i | arr[i] | arr[i] == 20 ? | Action |
-|------|---|--------|----------------|--------|
-| 1 | 0 | 12 | no | continue |
-| 2 | 1 | 4 | no | continue |
-| 3 | 2 | 5 | no | continue |
-| 4 | 3 | 7 | no | continue |
-| 5 | 4 | 9 | no | continue |
-| 6 | 5 | 20 | yes | return 5 |
-
-Elements at indices 6 to 8 are never looked at. Searching `8` would compare all 9 elements, fall out of the loop and return `-1`.
-
-**Edge cases.** A `null` array returns `-1` through the guard clause; an empty array skips the loop and also returns `-1`. With duplicates the lowest index is returned because the scan goes left to right and stops at the first match. The best case is O(1) (target at index 0, e.g. `12`), the worst case is O(n).
-
-**Result:** `5` for element 20 (`found at index 5`), `-1` for element 8, matching the class output.
-
 ## Source Code
 
 ### LinearSearch.java
@@ -170,3 +145,26 @@ public class LinearSearch {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above. The version implemented in this repository is Approach 1.
+
+The idea: the array may be in any order, so there is nothing to exploit except looking at the elements one by one from index 0. The first element equal to the target ends the search at once, so the first occurrence is returned; reaching the end means the target is absent. The page names the sentinel variant as the optimized one (it saves the `i < n` check and is still O(n)), but the class in this repository implements the plain loop, and that loop is what is explained here.
+
+**Input:** `arr = [12, 4, 5, 7, 9, 20, 30, 6, 15]`, element `20`.
+
+| Step | i | arr[i] | arr[i] == 20 ? | Action |
+|------|---|--------|----------------|--------|
+| 1 | 0 | 12 | no | continue |
+| 2 | 1 | 4 | no | continue |
+| 3 | 2 | 5 | no | continue |
+| 4 | 3 | 7 | no | continue |
+| 5 | 4 | 9 | no | continue |
+| 6 | 5 | 20 | yes | return 5 |
+
+Elements at indices 6 to 8 are never looked at. Searching `8` would compare all 9 elements, fall out of the loop and return `-1`.
+
+**Edge cases.** A `null` array returns `-1` through the guard clause; an empty array skips the loop and also returns `-1`. With duplicates the lowest index is returned because the scan goes left to right and stops at the first match. The best case is O(1) (target at index 0, e.g. `12`), the worst case is O(n).
+
+**Result:** `5` for element 20 (`found at index 5`), `-1` for element 8, matching the class output.

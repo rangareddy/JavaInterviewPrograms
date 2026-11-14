@@ -103,29 +103,6 @@ public static BigInteger bigFactorial(int n) {
 | 3 | Memoized Table | O(1) per query after O(20) setup | O(1) |
 | 4 | Iterative Loop (Optimized) | O(n) | O(1) for long, O(n) digits for BigInteger |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: `n! = 1 * 2 * 3 * ... * n`, so start with `result = 1` and multiply by each `i` from 2 up to `n`. One loop, constant extra memory, no recursion depth and no table. Starting at 2 is enough because multiplying by 1 changes nothing, and the empty loop for `n = 0` or `n = 1` leaves the correct `1`.
-
-**Input:** `n = 5`. `result` starts at `1`.
-
-| Step | `i` | `result` before | `result *= i` | `result` after |
-|------|-----|-----------------|---------------|----------------|
-| 1 | 2 | 1 | 1 * 2 | 2 |
-| 2 | 3 | 2 | 2 * 3 | 6 |
-| 3 | 4 | 6 | 6 * 4 | 24 |
-| 4 | 5 | 24 | 24 * 5 | 120 |
-
-After `i = 5` the condition `i <= n` fails and the loop ends. The diagram is omitted because this is pure arithmetic and the table shows every step.
-
-**Edge cases.** `n = 0` and `n = 1` never enter the loop and return `1`. `long` holds `20! = 2432902008176640000` but would overflow at `21!`, so `factorial` throws `IllegalArgumentException("n must be between 0 and 20 for a long result: ...")` for `n < 0` or `n > 20` instead of returning a wrong number. For larger `n`, `bigFactorial` uses the same loop with `BigInteger`; it only rejects negative `n` (`bigFactorial(25)` is `15511210043330985984000000`).
-
-**Result:** `factorial(5)` returns `120`; the class prints `1, 1, 120, 3628800, 2432902008176640000` for `0, 1, 5, 10, 20`, which matches.
-
 ## Source Code
 
 ### Factorial.java
@@ -172,3 +149,24 @@ public class Factorial {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: `n! = 1 * 2 * 3 * ... * n`, so start with `result = 1` and multiply by each `i` from 2 up to `n`. One loop, constant extra memory, no recursion depth and no table. Starting at 2 is enough because multiplying by 1 changes nothing, and the empty loop for `n = 0` or `n = 1` leaves the correct `1`.
+
+**Input:** `n = 5`. `result` starts at `1`.
+
+| Step | `i` | `result` before | `result *= i` | `result` after |
+|------|-----|-----------------|---------------|----------------|
+| 1 | 2 | 1 | 1 * 2 | 2 |
+| 2 | 3 | 2 | 2 * 3 | 6 |
+| 3 | 4 | 6 | 6 * 4 | 24 |
+| 4 | 5 | 24 | 24 * 5 | 120 |
+
+After `i = 5` the condition `i <= n` fails and the loop ends. The diagram is omitted because this is pure arithmetic and the table shows every step.
+
+**Edge cases.** `n = 0` and `n = 1` never enter the loop and return `1`. `long` holds `20! = 2432902008176640000` but would overflow at `21!`, so `factorial` throws `IllegalArgumentException("n must be between 0 and 20 for a long result: ...")` for `n < 0` or `n > 20` instead of returning a wrong number. For larger `n`, `bigFactorial` uses the same loop with `BigInteger`; it only rejects negative `n` (`bigFactorial(25)` is `15511210043330985984000000`).
+
+**Result:** `factorial(5)` returns `120`; the class prints `1, 1, 120, 3628800, 2432902008176640000` for `0, 1, 5, 10, 20`, which matches.

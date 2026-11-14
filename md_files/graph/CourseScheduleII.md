@@ -155,39 +155,6 @@ public static int[] findOrder(int numCourses, int[][] prerequisites) {
 | 3 | Repeated Scan for Free Courses | O(V * (V + E)) | O(V) |
 | 4 | Kahn's Algorithm (Optimized) | O(V + E) | O(V + E) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: Kahn's algorithm. Build an adjacency list `prerequisite -> course` and an `inDegree` array (how many prerequisites each course still waits for). Courses with in-degree 0 can be taken now, so they go in a queue. Taking a course appends it to `order` and lowers the in-degree of the courses that depend on it; any that reach 0 join the queue. If every course was taken the order is valid; if a cycle blocks some courses, `taken < numCourses` and an empty array is returned. O(V + E) time and space.
-
-**Input:** `numCourses = 4`, `prerequisites = [[1,0],[2,0],[3,1],[3,2]]` (pair `[a, b]` means take `b` before `a`).
-
-```mermaid
-flowchart LR
-    C0(["0"]) --> C1(["1"])
-    C0 --> C2(["2"])
-    C1 --> C3(["3"])
-    C2 --> C3
-```
-
-Setup: `graph = {0:[1,2], 1:[3], 2:[3], 3:[]}`, `inDegree = [0,1,1,2]`, queue = [0].
-
-| Step | Polled | `order` | In-degree changes | Queue after |
-|------|--------|---------|-------------------|-------------|
-| 1 | 0 | [0] | 1: 1 -> 0 (added), 2: 1 -> 0 (added) | [1, 2] |
-| 2 | 1 | [0, 1] | 3: 2 -> 1 | [2] |
-| 3 | 2 | [0, 1, 2] | 3: 1 -> 0 (added) | [3] |
-| 4 | 3 | [0, 1, 2, 3] | none | [] |
-
-`taken = 4 = numCourses`, so `order` is returned.
-
-**Edge cases:** with `prerequisites = [[1,0],[0,1]]` both courses have in-degree 1, the queue starts empty, `taken = 0 != 2`, so `new int[0]` is returned (cycle). With no prerequisites every course starts in the queue and comes out in index order (`numCourses = 1` gives `[0]`).
-
-**Result:** returns `[0, 1, 2, 3]`, matching the class output.
-
 ## Source Code
 
 ### CourseScheduleII.java
@@ -244,3 +211,34 @@ public class CourseScheduleII {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: Kahn's algorithm. Build an adjacency list `prerequisite -> course` and an `inDegree` array (how many prerequisites each course still waits for). Courses with in-degree 0 can be taken now, so they go in a queue. Taking a course appends it to `order` and lowers the in-degree of the courses that depend on it; any that reach 0 join the queue. If every course was taken the order is valid; if a cycle blocks some courses, `taken < numCourses` and an empty array is returned. O(V + E) time and space.
+
+**Input:** `numCourses = 4`, `prerequisites = [[1,0],[2,0],[3,1],[3,2]]` (pair `[a, b]` means take `b` before `a`).
+
+```mermaid
+flowchart LR
+    C0(["0"]) --> C1(["1"])
+    C0 --> C2(["2"])
+    C1 --> C3(["3"])
+    C2 --> C3
+```
+
+Setup: `graph = {0:[1,2], 1:[3], 2:[3], 3:[]}`, `inDegree = [0,1,1,2]`, queue = [0].
+
+| Step | Polled | `order` | In-degree changes | Queue after |
+|------|--------|---------|-------------------|-------------|
+| 1 | 0 | [0] | 1: 1 -> 0 (added), 2: 1 -> 0 (added) | [1, 2] |
+| 2 | 1 | [0, 1] | 3: 2 -> 1 | [2] |
+| 3 | 2 | [0, 1, 2] | 3: 1 -> 0 (added) | [3] |
+| 4 | 3 | [0, 1, 2, 3] | none | [] |
+
+`taken = 4 = numCourses`, so `order` is returned.
+
+**Edge cases:** with `prerequisites = [[1,0],[0,1]]` both courses have in-degree 1, the queue starts empty, `taken = 0 != 2`, so `new int[0]` is returned (cycle). With no prerequisites every course starts in the queue and comes out in index order (`numCourses = 1` gives `[0]`).
+
+**Result:** returns `[0, 1, 2, 3]`, matching the class output.

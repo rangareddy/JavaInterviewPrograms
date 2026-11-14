@@ -108,36 +108,6 @@ public static boolean canJump(int[] nums) {
 | 3 | Greedy from the End | O(n) | O(1) |
 | 4 | Greedy: Farthest Reachable Index (Optimized) | O(n) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: sweep left to right and keep `farthest`, the furthest index reachable from any position visited so far. If the sweep arrives at an index `i` greater than `farthest`, that index is unreachable, so the answer is `false`. As soon as `farthest` reaches the last index the answer is `true`. One pass, no backtracking.
-
-**Input:** `nums = [3, 2, 1, 0, 4]` (the failing example in `main()`).
-
-| i | nums[i] | i > farthest? | farthest = max(farthest, i + nums[i]) | farthest >= 4? |
-|---|---------|---------------|----------------------------------------|----------------|
-| 0 | 3 | 0 > 0 no | max(0, 3) = 3 | no |
-| 1 | 2 | 1 > 3 no | max(3, 3) = 3 | no |
-| 2 | 1 | 2 > 3 no | max(3, 3) = 3 | no |
-| 3 | 0 | 3 > 3 no | max(3, 3) = 3 | no |
-| 4 | 4 | 4 > 3 yes | stop, **return `false`** | - |
-
-```text
-index:    0  1  2  3  4
-nums:     3  2  1  0  4
-reach:    every position reaches at most index 3, the 0 at index 3 is a wall
-```
-
-For `[2, 3, 1, 1, 4]`: `i = 0` gives `farthest = 2`; `i = 1` gives `max(2, 4) = 4`, which is `>= 4`, so it returns `true` after two steps.
-
-**Edge cases:** `null` or an empty array returns `false`. `[0]` has `farthest = 0 >= 0` at `i = 0`, so it returns `true` (already at the end). `[2, 0, 0]` reaches `farthest = 2 >= 2` at `i = 0` and returns `true`.
-
-**Result:** `[3, 2, 1, 0, 4]` returns `false`, `[2, 3, 1, 1, 4]` returns `true`, matching the class output.
-
 ## Source Code
 
 ### JumpGame.java
@@ -175,3 +145,31 @@ public class JumpGame {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: sweep left to right and keep `farthest`, the furthest index reachable from any position visited so far. If the sweep arrives at an index `i` greater than `farthest`, that index is unreachable, so the answer is `false`. As soon as `farthest` reaches the last index the answer is `true`. One pass, no backtracking.
+
+**Input:** `nums = [3, 2, 1, 0, 4]` (the failing example in `main()`).
+
+| i | nums[i] | i > farthest? | farthest = max(farthest, i + nums[i]) | farthest >= 4? |
+|---|---------|---------------|----------------------------------------|----------------|
+| 0 | 3 | 0 > 0 no | max(0, 3) = 3 | no |
+| 1 | 2 | 1 > 3 no | max(3, 3) = 3 | no |
+| 2 | 1 | 2 > 3 no | max(3, 3) = 3 | no |
+| 3 | 0 | 3 > 3 no | max(3, 3) = 3 | no |
+| 4 | 4 | 4 > 3 yes | stop, **return `false`** | - |
+
+```text
+index:    0  1  2  3  4
+nums:     3  2  1  0  4
+reach:    every position reaches at most index 3, the 0 at index 3 is a wall
+```
+
+For `[2, 3, 1, 1, 4]`: `i = 0` gives `farthest = 2`; `i = 1` gives `max(2, 4) = 4`, which is `>= 4`, so it returns `true` after two steps.
+
+**Edge cases:** `null` or an empty array returns `false`. `[0]` has `farthest = 0 >= 0` at `i = 0`, so it returns `true` (already at the end). `[2, 0, 0]` reaches `farthest = 2 >= 2` at `i = 0` and returns `true`.
+
+**Result:** `[3, 2, 1, 0, 4]` returns `false`, `[2, 3, 1, 1, 4]` returns `true`, matching the class output.

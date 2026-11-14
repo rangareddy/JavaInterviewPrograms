@@ -203,11 +203,50 @@ public static boolean isValid(String s) {
 | 6 | StringBuilder as the Stack | O(n) | O(n) |
 | 7 | Stack of Expected Closing Brackets (Optimized) | O(n) | O(n) |
 
-### Optimized Solution
+## Source Code
+
+### ValidParentheses.java
+
+```java
+import java.util.ArrayDeque;
+import java.util.Deque;
+
+public class ValidParentheses {
+
+    public static void main(String[] args) {
+        String[] inputs = {"()", "()[]{}", "(]", "([)]", "{[]}"};
+        for (String s : inputs) {
+            System.out.println("Input  : s = \"" + s + "\"");
+            System.out.println("Output : " + isValid(s));
+            System.out.println();
+        }
+    }
+
+    public static boolean isValid(String s) {
+        if (s == null || s.length() % 2 != 0) {
+            return false;
+        }
+
+        Deque<Character> stack = new ArrayDeque<>();
+        for (char c : s.toCharArray()) {
+            if (c == '(') {
+                stack.push(')');
+            } else if (c == '{') {
+                stack.push('}');
+            } else if (c == '[') {
+                stack.push(']');
+            } else if (stack.isEmpty() || stack.pop() != c) {
+                return false;
+            }
+        }
+        return stack.isEmpty();
+    }
+}
+```
+
+## Solution
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
 
 The idea: every opening bracket must be closed by the matching bracket, in the reverse order it was opened. So when an opening bracket is read, the stack stores the closing bracket that will be expected; when a closing bracket is read, it must equal the top of the stack.
 
@@ -250,44 +289,3 @@ flowchart TD
 All characters are read and the stack is empty, so the method returns `true`.
 
 **Quick rejections.** An odd length such as `"(()"` returns `false` before any character is read, because brackets come in pairs. A string that starts with a closing bracket (`"]"`) finds an empty stack at the first character and returns `false` at once. A string such as `"(("` is read completely but leaves `)` `)` on the stack, so the final `stack.isEmpty()` check returns `false`.
-
-## Source Code
-
-### ValidParentheses.java
-
-```java
-import java.util.ArrayDeque;
-import java.util.Deque;
-
-public class ValidParentheses {
-
-    public static void main(String[] args) {
-        String[] inputs = {"()", "()[]{}", "(]", "([)]", "{[]}"};
-        for (String s : inputs) {
-            System.out.println("Input  : s = \"" + s + "\"");
-            System.out.println("Output : " + isValid(s));
-            System.out.println();
-        }
-    }
-
-    public static boolean isValid(String s) {
-        if (s == null || s.length() % 2 != 0) {
-            return false;
-        }
-
-        Deque<Character> stack = new ArrayDeque<>();
-        for (char c : s.toCharArray()) {
-            if (c == '(') {
-                stack.push(')');
-            } else if (c == '{') {
-                stack.push('}');
-            } else if (c == '[') {
-                stack.push(']');
-            } else if (stack.isEmpty() || stack.pop() != c) {
-                return false;
-            }
-        }
-        return stack.isEmpty();
-    }
-}
-```

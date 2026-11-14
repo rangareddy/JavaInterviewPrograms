@@ -87,30 +87,6 @@ public static int singleNumber(int[] nums) {
 | 2 | Count Each Bit Modulo 3 | O(32 * n) | O(1) |
 | 3 | Two-Integer State Machine (Optimized) | O(n) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: every number but one appears three times, so each bit position is set a multiple of 3 times, except where the single number has a 1. Two integers form a per-bit counter that cycles 0 -> 1 -> 2 -> 0: for each bit, `ones` holds bit 0 of the count and `twos` holds bit 1. For each `x`, `ones = (ones ^ x) & ~twos` toggles the low counter bit unless the count is already 2, then `twos = (twos ^ x) & ~ones` toggles the high bit unless the low bit just became 1. After a third occurrence both bits are 0 again, so only the single number is left in `ones`. One pass, O(1) space.
-
-**Input:** `nums = [2, 2, 3, 2]` (binary 10, 10, 11, 10).
-
-| Step | x | ones = (ones ^ x) & ~twos | twos = (twos ^ x) & ~ones | Meaning |
-|------|---|----------------------------|----------------------------|---------|
-| start | - | 0 | 0 | all counts 0 |
-| 1 | 2 | (0 ^ 2) & ~0 = 2 | (0 ^ 2) & ~2 = 0 | bit 1 count is 1 (`ones` holds it) |
-| 2 | 2 | (2 ^ 2) & ~0 = 0 | (0 ^ 2) & ~0 = 2 | bit 1 count is 2 (`twos` holds it) |
-| 3 | 3 | (0 ^ 3) & ~2 = 1 | (2 ^ 3) & ~1 = 0 | bit 1 reaches its third occurrence and wraps to 0; bit 0 count becomes 1 |
-| 4 | 2 | (1 ^ 2) & ~0 = 3 | (0 ^ 2) & ~3 = 0 | bit 1 count becomes 1 again; bit 0 count stays 1 |
-
-Bit 0 is set only by the number 3, so its count ends at 1. Bit 1 is set by 2, 2, 3, 2, which is 4 occurrences, and 4 mod 3 = 1. Both bit counts end at 1, so `ones` is binary 11 = 3 and `twos` is 0.
-
-**Edge cases:** a single element (`[7]`) leaves `ones = 7`. Negative numbers work because the logic is per bit on the 32-bit two's complement value (`[-2, -2, 1, 1, 4, 1, 4, 4, -4, -2]` gives -4). The method assumes every other value appears exactly three times.
-
-**Result:** returns `3`, matching the class output.
-
 ## Source Code
 
 ### SingleNumberII.java
@@ -140,3 +116,25 @@ public class SingleNumberII {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+
+The idea: every number but one appears three times, so each bit position is set a multiple of 3 times, except where the single number has a 1. Two integers form a per-bit counter that cycles 0 -> 1 -> 2 -> 0: for each bit, `ones` holds bit 0 of the count and `twos` holds bit 1. For each `x`, `ones = (ones ^ x) & ~twos` toggles the low counter bit unless the count is already 2, then `twos = (twos ^ x) & ~ones` toggles the high bit unless the low bit just became 1. After a third occurrence both bits are 0 again, so only the single number is left in `ones`. One pass, O(1) space.
+
+**Input:** `nums = [2, 2, 3, 2]` (binary 10, 10, 11, 10).
+
+| Step | x | ones = (ones ^ x) & ~twos | twos = (twos ^ x) & ~ones | Meaning |
+|------|---|----------------------------|----------------------------|---------|
+| start | - | 0 | 0 | all counts 0 |
+| 1 | 2 | (0 ^ 2) & ~0 = 2 | (0 ^ 2) & ~2 = 0 | bit 1 count is 1 (`ones` holds it) |
+| 2 | 2 | (2 ^ 2) & ~0 = 0 | (0 ^ 2) & ~0 = 2 | bit 1 count is 2 (`twos` holds it) |
+| 3 | 3 | (0 ^ 3) & ~2 = 1 | (2 ^ 3) & ~1 = 0 | bit 1 reaches its third occurrence and wraps to 0; bit 0 count becomes 1 |
+| 4 | 2 | (1 ^ 2) & ~0 = 3 | (0 ^ 2) & ~3 = 0 | bit 1 count becomes 1 again; bit 0 count stays 1 |
+
+Bit 0 is set only by the number 3, so its count ends at 1. Bit 1 is set by 2, 2, 3, 2, which is 4 occurrences, and 4 mod 3 = 1. Both bit counts end at 1, so `ones` is binary 11 = 3 and `twos` is 0.
+
+**Edge cases:** a single element (`[7]`) leaves `ones = 7`. Negative numbers work because the logic is per bit on the 32-bit two's complement value (`[-2, -2, 1, 1, 4, 1, 4, 4, -4, -2]` gives -4). The method assumes every other value appears exactly three times.
+
+**Result:** returns `3`, matching the class output.

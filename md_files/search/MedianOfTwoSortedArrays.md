@@ -121,33 +121,6 @@ public static double findMedianSortedArrays(int[] nums1, int[] nums2) {
 | 3 | k-th Smallest Element by Halving k | O(log(m + n)) | O(log(m + n)) recursion stack |
 | 4 | Partition Binary Search on the Shorter Array (Optimized) | O(log(min(m, n))) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: the median splits all `m + n` numbers into a left half and a right half of nearly equal size. Instead of merging, binary search how many numbers `i` the left half takes from the shorter array `nums1`; the rest `j = half - i` (with `half = (m + n + 1) / 2`) come from `nums2`. A split is correct when every number on the left is `<=` every number on the right, which only needs two checks: `left1 <= right2` and `left2 <= right1`. If `left1 > right2`, `i` is too big (`high = i - 1`); otherwise `i` is too small (`low = i + 1`). Missing neighbours at the array edges count as `MIN_VALUE` / `MAX_VALUE`. Searching only the shorter array makes it O(log(min(m, n))).
-
-**Input:** `nums1 = [1, 2]`, `nums2 = [3, 4]`. Here `m = n = 2`, `half = 2`, search `i` in `0 .. 2`.
-
-| Step | low | high | i | j | left1 | right1 | left2 | right2 | Valid ? | Action |
-|------|-----|------|---|---|-------|--------|-------|--------|---------|--------|
-| 1 | 0 | 2 | 1 | 1 | 1 | 2 | 3 | 4 | `left2 = 3 <= right1 = 2` fails | low = 2 |
-| 2 | 2 | 2 | 2 | 0 | 2 | MAX | MIN | 3 | `2 <= 3` and `MIN <= MAX` | partition found |
-
-```text
-nums1 : [ 1  2 ] | (end)
-nums2 : (start)  | [ 3  4 ]
-          left half = {1, 2}      right half = {3, 4}
-```
-
-The total count 4 is even, so the median is `(max(left1, left2) + min(right1, right2)) / 2 = (max(2, MIN) + min(MAX, 3)) / 2 = (2 + 3) / 2 = 2.5`. For an odd total the answer is just `max(left1, left2)`: `[1, 3]` and `[2]` give `2.0`.
-
-**Edge cases.** If `nums1` is longer, the method calls itself with the arrays swapped. One empty array works (`[]` and `[1]` give `1.0`) because `i = 0` and the `MIN`/`MAX` sentinels handle the missing side. Sorted input is required; if no valid split is found an `IllegalArgumentException("Input arrays are not sorted.")` is thrown. Both arrays empty is not guarded: the code returns `-0.5` (the sentinels `Integer.MIN_VALUE` and `Integer.MAX_VALUE` averaged).
-
-**Result:** `2.5`, matching the class output.
-
 ## Source Code
 
 ### MedianOfTwoSortedArrays.java
@@ -201,3 +174,28 @@ public class MedianOfTwoSortedArrays {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: the median splits all `m + n` numbers into a left half and a right half of nearly equal size. Instead of merging, binary search how many numbers `i` the left half takes from the shorter array `nums1`; the rest `j = half - i` (with `half = (m + n + 1) / 2`) come from `nums2`. A split is correct when every number on the left is `<=` every number on the right, which only needs two checks: `left1 <= right2` and `left2 <= right1`. If `left1 > right2`, `i` is too big (`high = i - 1`); otherwise `i` is too small (`low = i + 1`). Missing neighbours at the array edges count as `MIN_VALUE` / `MAX_VALUE`. Searching only the shorter array makes it O(log(min(m, n))).
+
+**Input:** `nums1 = [1, 2]`, `nums2 = [3, 4]`. Here `m = n = 2`, `half = 2`, search `i` in `0 .. 2`.
+
+| Step | low | high | i | j | left1 | right1 | left2 | right2 | Valid ? | Action |
+|------|-----|------|---|---|-------|--------|-------|--------|---------|--------|
+| 1 | 0 | 2 | 1 | 1 | 1 | 2 | 3 | 4 | `left2 = 3 <= right1 = 2` fails | low = 2 |
+| 2 | 2 | 2 | 2 | 0 | 2 | MAX | MIN | 3 | `2 <= 3` and `MIN <= MAX` | partition found |
+
+```text
+nums1 : [ 1  2 ] | (end)
+nums2 : (start)  | [ 3  4 ]
+          left half = {1, 2}      right half = {3, 4}
+```
+
+The total count 4 is even, so the median is `(max(left1, left2) + min(right1, right2)) / 2 = (max(2, MIN) + min(MAX, 3)) / 2 = (2 + 3) / 2 = 2.5`. For an odd total the answer is just `max(left1, left2)`: `[1, 3]` and `[2]` give `2.0`.
+
+**Edge cases.** If `nums1` is longer, the method calls itself with the arrays swapped. One empty array works (`[]` and `[1]` give `1.0`) because `i = 0` and the `MIN`/`MAX` sentinels handle the missing side. Sorted input is required; if no valid split is found an `IllegalArgumentException("Input arrays are not sorted.")` is thrown. Both arrays empty is not guarded: the code returns `-0.5` (the sentinels `Integer.MIN_VALUE` and `Integer.MAX_VALUE` averaged).
+
+**Result:** `2.5`, matching the class output.

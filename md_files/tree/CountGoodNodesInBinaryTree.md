@@ -125,11 +125,43 @@ public static int goodNodesBfs(TreeNode root) {
 | 3 | Iterative DFS with a Stack of (node, maximum) | O(n) | O(h) |
 | 4 | BFS with a Queue of (node, maximum) | O(n) | O(w) |
 
-### Optimized Solution
+## Source Code
+
+Uses the shared helper [`TreeNode`](../../src/main/java/com/ranga/tree/TreeNode.java) (a small `TreeNode` with `of(...)` and `toString(...)` helpers for building and printing test data).
+
+### CountGoodNodesInBinaryTree.java
+
+```java
+public class CountGoodNodesInBinaryTree {
+
+    public static void main(String[] args) {
+        Integer[][] inputs = {{3, 1, 4, 3, null, 1, 5}, {3, 3, null, 4, 2}, {1}, {}, {2, null, 4, 10, 8, null, null, 4}};
+        for (Integer[] values : inputs) {
+            TreeNode root = TreeNode.of(values);
+            System.out.println("Input  : root = " + TreeNode.toString(root));
+            System.out.println("Output : " + goodNodes(root));
+            System.out.println();
+        }
+    }
+
+    public static int goodNodes(TreeNode root) {
+        return count(root, Integer.MIN_VALUE);
+    }
+
+    private static int count(TreeNode node, int maxSoFar) {
+        if (node == null) {
+            return 0;
+        }
+        int good = node.val >= maxSoFar ? 1 : 0;
+        int newMax = Math.max(maxSoFar, node.val);
+        return good + count(node.left, newMax) + count(node.right, newMax);
+    }
+}
+```
+
+## Solution
 
 The optimized solution is Approach 2 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
 
 The idea: a node is good when no node on the path from the root to it has a larger value, i.e. its value is at least the maximum seen so far on that path. The recursion carries that maximum down as a parameter, counts the current node if `val >= maxSoFar`, and passes the updated maximum to both children. Nothing is stored besides the parameter.
 
@@ -164,37 +196,3 @@ The total is `1 + 0 + 1 + 1 + 0 + 1 = 4`.
 **Edge cases.** An empty tree returns `0`. The root is always good because it starts against `Integer.MIN_VALUE`. A value equal to the maximum counts as good (`>=`), which is why visit 3 is counted. Time is `O(n)`, recursion space `O(h)`.
 
 **Result:** `4` for the traced tree; the class output for the five inputs in `main` is `4`, `3`, `1`, `0`, `4`.
-
-## Source Code
-
-Uses the shared helper [`TreeNode`](../../src/main/java/com/ranga/tree/TreeNode.java) (a small `TreeNode` with `of(...)` and `toString(...)` helpers for building and printing test data).
-
-### CountGoodNodesInBinaryTree.java
-
-```java
-public class CountGoodNodesInBinaryTree {
-
-    public static void main(String[] args) {
-        Integer[][] inputs = {{3, 1, 4, 3, null, 1, 5}, {3, 3, null, 4, 2}, {1}, {}, {2, null, 4, 10, 8, null, null, 4}};
-        for (Integer[] values : inputs) {
-            TreeNode root = TreeNode.of(values);
-            System.out.println("Input  : root = " + TreeNode.toString(root));
-            System.out.println("Output : " + goodNodes(root));
-            System.out.println();
-        }
-    }
-
-    public static int goodNodes(TreeNode root) {
-        return count(root, Integer.MIN_VALUE);
-    }
-
-    private static int count(TreeNode node, int maxSoFar) {
-        if (node == null) {
-            return 0;
-        }
-        int good = node.val >= maxSoFar ? 1 : 0;
-        int newMax = Math.max(maxSoFar, node.val);
-        return good + count(node.left, newMax) + count(node.right, newMax);
-    }
-}
-```

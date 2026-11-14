@@ -202,11 +202,40 @@ public static TreeNode invertTree(TreeNode root) {
 | 6 | Parallel Fork/Join | O(n) work | O(h) |
 | 7 | Recursive Swap (Optimized) | O(n) | O(h) |
 
-### Optimized Solution
+## Source Code
+
+Uses the shared helper [`TreeNode`](../../src/main/java/com/ranga/tree/TreeNode.java) (a small `TreeNode` with `of(...)` and `toString(...)` helpers for building and printing test data).
+
+### InvertBinaryTree.java
+
+```java
+public class InvertBinaryTree {
+
+    public static void main(String[] args) {
+        TreeNode[] inputs = {TreeNode.of(4, 2, 7, 1, 3, 6, 9), TreeNode.of(2, 1, 3), TreeNode.of()};
+        for (TreeNode root : inputs) {
+            System.out.println("Input  : root = " + TreeNode.toString(root));
+            System.out.println("Output : " + TreeNode.toString(invertTree(root)));
+            System.out.println();
+        }
+    }
+
+    public static TreeNode invertTree(TreeNode root) {
+        if (root == null) {
+            return null;
+        }
+        TreeNode left = invertTree(root.left);
+        TreeNode right = invertTree(root.right);
+        root.left = right;
+        root.right = left;
+        return root;
+    }
+}
+```
+
+## Solution
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
 
 The idea: inverting a tree means every node swaps its left and right subtrees. The method first inverts both children (each call returns its own already-inverted root), then assigns them to the opposite sides of the current node. Because each node is touched once, no extra structure is needed and the tree is changed in place.
 
@@ -249,34 +278,3 @@ Reading the final tree level by level gives `[4, 7, 2, 9, 6, 3, 1]`.
 **Edge cases.** An empty tree returns `null`, which is also the base case under every leaf. Both children are saved in local variables before they are reassigned, so a swap never loses a subtree. The returned root is the same object that was passed in. The recursion depth equals the tree height, so extra space is `O(h)`.
 
 **Result:** `[4, 7, 2, 9, 6, 3, 1]` here, `[2, 3, 1]` for `[2, 1, 3]` and `[]` for the empty tree, matching the class output.
-
-## Source Code
-
-Uses the shared helper [`TreeNode`](../../src/main/java/com/ranga/tree/TreeNode.java) (a small `TreeNode` with `of(...)` and `toString(...)` helpers for building and printing test data).
-
-### InvertBinaryTree.java
-
-```java
-public class InvertBinaryTree {
-
-    public static void main(String[] args) {
-        TreeNode[] inputs = {TreeNode.of(4, 2, 7, 1, 3, 6, 9), TreeNode.of(2, 1, 3), TreeNode.of()};
-        for (TreeNode root : inputs) {
-            System.out.println("Input  : root = " + TreeNode.toString(root));
-            System.out.println("Output : " + TreeNode.toString(invertTree(root)));
-            System.out.println();
-        }
-    }
-
-    public static TreeNode invertTree(TreeNode root) {
-        if (root == null) {
-            return null;
-        }
-        TreeNode left = invertTree(root.left);
-        TreeNode right = invertTree(root.right);
-        root.left = right;
-        root.right = left;
-        return root;
-    }
-}
-```

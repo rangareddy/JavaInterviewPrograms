@@ -139,43 +139,6 @@ public static int[] shortestDistances(int n, int[][] edges, int source, int[] pa
 | 3 | TreeSet Dijkstra | O((V + E) log V) | O(V + E) |
 | 4 | Min-Heap with Lazy Deletion (Optimized) | O((V + E) log V) | O(V + E) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: Dijkstra's algorithm repeatedly settles the unfinished vertex that is closest to the source. `dist[]` holds the best known distances, `parent[]` the previous vertex on the best path, and a min-heap of `{distance, vertex}` gives the next closest candidate. Heaps cannot update an entry in place, so when a shorter distance is found a new entry is pushed ("lazy deletion") and the old one is skipped when it is polled later (`current[0] > dist[u]`). With non-negative weights the first time a vertex is polled with its current distance, that distance is final. Time O(E log V).
-
-**Input:** `vertices = 5`, `edges (from, to, weight) = [[0,1,4],[0,2,1],[2,1,2],[1,3,1],[2,3,5]]`, `source = 0`. Start: `dist = [0,INF,INF,INF,INF]`, `parent = [-1,-1,-1,-1,-1]`, heap = `{0,0}`.
-
-| Step | Polled `{dist, vertex}` | Stale? | Relaxations | `dist` afterwards | `parent` afterwards |
-|------|-------------------------|--------|-------------|-------------------|---------------------|
-| 1 | `{0, 0}` | no | `0->1`: 4 < INF, push `{4,1}`; `0->2`: 1 < INF, push `{1,2}` | `[0,4,1,INF,INF]` | `[-1,0,0,-1,-1]` |
-| 2 | `{1, 2}` | no | `2->1`: 1+2 = 3 < 4, push `{3,1}`; `2->3`: 1+5 = 6 < INF, push `{6,3}` | `[0,3,1,6,INF]` | `[-1,2,0,2,-1]` |
-| 3 | `{3, 1}` | no | `1->3`: 3+1 = 4 < 6, push `{4,3}` | `[0,3,1,4,INF]` | `[-1,2,0,1,-1]` |
-| 4 | `{4, 1}` | yes (4 > 3), skipped | | unchanged | unchanged |
-| 5 | `{4, 3}` | no | vertex 3 has no outgoing edges | unchanged | unchanged |
-| 6 | `{6, 3}` | yes (6 > 4), skipped | | unchanged | unchanged |
-
-(The two entries with distance 4 are polled in either order; both lead to the same final arrays.)
-
-```mermaid
-flowchart LR
-    V0(["0 dist 0"]) -->|"4"| V1(["1 dist 3"])
-    V0 -->|"1"| V2(["2 dist 1"])
-    V2 -->|"2"| V1
-    V1 -->|"1"| V3(["3 dist 4"])
-    V2 -->|"5"| V3
-    V4(["4 unreachable"])
-```
-
-Following `parent` back from 3 gives `3 <- 1 <- 2 <- 0`, so the path is `[0, 2, 1, 3]` with cost 4. Vertex 4 has no incoming edge, so it stays at `INF` and is reported as `unreachable`.
-
-**Edge cases.** `path(parent, 0, 4)` walks from 4 to `parent[4] = -1`, finds that the first vertex is 4 and not the source, and returns an empty list. The source has distance 0 and `parent = -1`. The algorithm assumes non-negative weights.
-
-**Result:** `distances = [0, 3, 1, 4, unreachable]`, path to 3 = `[0, 2, 1, 3]` (cost 4), path to 4 = `[]`, identical to the class output.
-
 ## Source Code
 
 ### DijkstraShortestPath.java
@@ -257,3 +220,38 @@ public class DijkstraShortestPath {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: Dijkstra's algorithm repeatedly settles the unfinished vertex that is closest to the source. `dist[]` holds the best known distances, `parent[]` the previous vertex on the best path, and a min-heap of `{distance, vertex}` gives the next closest candidate. Heaps cannot update an entry in place, so when a shorter distance is found a new entry is pushed ("lazy deletion") and the old one is skipped when it is polled later (`current[0] > dist[u]`). With non-negative weights the first time a vertex is polled with its current distance, that distance is final. Time O(E log V).
+
+**Input:** `vertices = 5`, `edges (from, to, weight) = [[0,1,4],[0,2,1],[2,1,2],[1,3,1],[2,3,5]]`, `source = 0`. Start: `dist = [0,INF,INF,INF,INF]`, `parent = [-1,-1,-1,-1,-1]`, heap = `{0,0}`.
+
+| Step | Polled `{dist, vertex}` | Stale? | Relaxations | `dist` afterwards | `parent` afterwards |
+|------|-------------------------|--------|-------------|-------------------|---------------------|
+| 1 | `{0, 0}` | no | `0->1`: 4 < INF, push `{4,1}`; `0->2`: 1 < INF, push `{1,2}` | `[0,4,1,INF,INF]` | `[-1,0,0,-1,-1]` |
+| 2 | `{1, 2}` | no | `2->1`: 1+2 = 3 < 4, push `{3,1}`; `2->3`: 1+5 = 6 < INF, push `{6,3}` | `[0,3,1,6,INF]` | `[-1,2,0,2,-1]` |
+| 3 | `{3, 1}` | no | `1->3`: 3+1 = 4 < 6, push `{4,3}` | `[0,3,1,4,INF]` | `[-1,2,0,1,-1]` |
+| 4 | `{4, 1}` | yes (4 > 3), skipped | | unchanged | unchanged |
+| 5 | `{4, 3}` | no | vertex 3 has no outgoing edges | unchanged | unchanged |
+| 6 | `{6, 3}` | yes (6 > 4), skipped | | unchanged | unchanged |
+
+(The two entries with distance 4 are polled in either order; both lead to the same final arrays.)
+
+```mermaid
+flowchart LR
+    V0(["0 dist 0"]) -->|"4"| V1(["1 dist 3"])
+    V0 -->|"1"| V2(["2 dist 1"])
+    V2 -->|"2"| V1
+    V1 -->|"1"| V3(["3 dist 4"])
+    V2 -->|"5"| V3
+    V4(["4 unreachable"])
+```
+
+Following `parent` back from 3 gives `3 <- 1 <- 2 <- 0`, so the path is `[0, 2, 1, 3]` with cost 4. Vertex 4 has no incoming edge, so it stays at `INF` and is reported as `unreachable`.
+
+**Edge cases.** `path(parent, 0, 4)` walks from 4 to `parent[4] = -1`, finds that the first vertex is 4 and not the source, and returns an empty list. The source has distance 0 and `parent = -1`. The algorithm assumes non-negative weights.
+
+**Result:** `distances = [0, 3, 1, 4, unreachable]`, path to 3 = `[0, 2, 1, 3]` (cost 4), path to 4 = `[]`, identical to the class output.

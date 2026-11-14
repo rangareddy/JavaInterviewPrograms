@@ -209,42 +209,6 @@ public static int kthSmallest(TreeNode root, int k) {
 | 6 | Max-Heap of the k Smallest Values | O(n log k) | O(k + h) |
 | 7 | Iterative In-order with Early Stop (Optimized) | O(h + k) | O(h) |
 
-### Optimized Solution
-
-The optimized solution is Approach 7 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: an in-order walk (left, node, right) of a BST visits the values in ascending order, so the k-th node visited is the k-th smallest. The code does that walk iteratively with a stack and counts down `k` each time a node is visited, so it stops at the answer without visiting the rest of the tree.
-
-**Input:** `root = [5, 3, 6, 2, 4, null, null, 1]`, `k = 3`. Tree: `5` has children `3` and `6`; `3` has children `2` and `4`; `2` has the left child `1`. The in-order order is `1, 2, 3, 4, 5, 6`.
-
-```mermaid
-flowchart TD
-    n5((5)) --> n3((3))
-    n5 --> n6((6))
-    n3 --> n2((2))
-    n3 --> n4((4))
-    n2 --> n1((1))
-    classDef ans fill:#dcfce7,stroke:#22c55e
-    class n3 ans
-```
-
-| Step | Action | `curr` | Stack (top first) | `k` after | Result |
-|------|--------|--------|-------------------|-----------|--------|
-| 1 | go left, pushing `5`, `3`, `2`, `1` | null (left of `1`) | `[1, 2, 3, 5]` | 3 | |
-| 2 | pop `1`, `--k` | `1`, then its right child (null) | `[2, 3, 5]` | 2 | `k != 0` |
-| 3 | pop `2`, `--k` | `2`, then its right child (null) | `[3, 5]` | 1 | `k != 0` |
-| 4 | pop `3`, `--k` | `3` | `[5]` | 0 | return `3` |
-
-The method returns `3` while `4`, `5` and `6` have not been touched.
-
-**Another input.** For `[3, 1, 4, null, 2]` with `k = 1` the walk pushes `3` and `1`, pops `1` and `--k` makes `k` zero, so the result is `1`.
-
-**Edge cases.** If `k` is larger than the number of nodes (or the tree is empty) the loop finishes and the method throws `IllegalArgumentException("k is larger than the number of nodes.")`. Time is `O(h + k)`: the first descent costs the height and then each pop is one step. The stack holds at most `h` nodes, so space is `O(h)`.
-
-**Result:** `1` and `3` for the two inputs in `main`, matching the class output.
-
 ## Source Code
 
 Uses the shared helper [`TreeNode`](../../src/main/java/com/ranga/tree/TreeNode.java) (a small `TreeNode` with `of(...)` and `toString(...)` helpers for building and printing test data).
@@ -285,3 +249,37 @@ public class KthSmallestElementInBST {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
+
+The idea: an in-order walk (left, node, right) of a BST visits the values in ascending order, so the k-th node visited is the k-th smallest. The code does that walk iteratively with a stack and counts down `k` each time a node is visited, so it stops at the answer without visiting the rest of the tree.
+
+**Input:** `root = [5, 3, 6, 2, 4, null, null, 1]`, `k = 3`. Tree: `5` has children `3` and `6`; `3` has children `2` and `4`; `2` has the left child `1`. The in-order order is `1, 2, 3, 4, 5, 6`.
+
+```mermaid
+flowchart TD
+    n5((5)) --> n3((3))
+    n5 --> n6((6))
+    n3 --> n2((2))
+    n3 --> n4((4))
+    n2 --> n1((1))
+    classDef ans fill:#dcfce7,stroke:#22c55e
+    class n3 ans
+```
+
+| Step | Action | `curr` | Stack (top first) | `k` after | Result |
+|------|--------|--------|-------------------|-----------|--------|
+| 1 | go left, pushing `5`, `3`, `2`, `1` | null (left of `1`) | `[1, 2, 3, 5]` | 3 | |
+| 2 | pop `1`, `--k` | `1`, then its right child (null) | `[2, 3, 5]` | 2 | `k != 0` |
+| 3 | pop `2`, `--k` | `2`, then its right child (null) | `[3, 5]` | 1 | `k != 0` |
+| 4 | pop `3`, `--k` | `3` | `[5]` | 0 | return `3` |
+
+The method returns `3` while `4`, `5` and `6` have not been touched.
+
+**Another input.** For `[3, 1, 4, null, 2]` with `k = 1` the walk pushes `3` and `1`, pops `1` and `--k` makes `k` zero, so the result is `1`.
+
+**Edge cases.** If `k` is larger than the number of nodes (or the tree is empty) the loop finishes and the method throws `IllegalArgumentException("k is larger than the number of nodes.")`. Time is `O(h + k)`: the first descent costs the height and then each pop is one step. The stack holds at most `h` nodes, so space is `O(h)`.
+
+**Result:** `1` and `3` for the two inputs in `main`, matching the class output.

@@ -139,35 +139,6 @@ public static int swimInWater(int[][] grid) {
 | 3 | Union-Find, Adding Cells in Order of Elevation | O(n^2 log n) | O(n^2) |
 | 4 | Dijkstra on the Path Maximum (Optimized) | O(n^2 log n) | O(n^2) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: water at time `t` lets you stand on any cell with height `<= t`, so the answer is the smallest `t` for which a path from the top-left to the bottom-right exists using only cells `<= t`. Equivalently, find the path whose **maximum cell value** is minimal. That is Dijkstra with a different "distance": the cost of reaching a cell is `max(cost of the cell we came from, the cell's own height)`. A min-heap of `{time, row, col}` always expands the cheapest frontier cell; a `visited` array skips entries for cells already settled (a cell polled first is polled with its best time). The first time the bottom-right cell is polled, its time is the answer. Time O(n^2 log n).
-
-**Input:** `grid = [[0,2],[1,3]]` (the first sample). Start: heap = `{0,0,0}` (the time at the start is `grid[0][0] = 0`). Neighbours are tried in the order down, up, right, left.
-
-| Step | Polled `{time, r, c}` | Visited before? | Pushed neighbours `{max(time, height), r, c}` |
-|------|-----------------------|-----------------|------------------------------------------------|
-| 1 | `{0, 0, 0}` | no, mark `(0,0)` | down `(1,0)` height 1: `{1,1,0}`; right `(0,1)` height 2: `{2,0,1}` |
-| 2 | `{1, 1, 0}` | no, mark `(1,0)` | right `(1,1)` height 3: `{3,1,1}` (up `(0,0)` is visited) |
-| 3 | `{2, 0, 1}` | no, mark `(0,1)` | down `(1,1)` height 3: `{3,1,1}` |
-| 4 | `{3, 1, 1}` | no, mark `(1,1)` | this is the bottom-right corner, **return 3** |
-
-```text
-grid        path chosen        time needed
-0 2         0 . 2 ...          max(0, 1, 3) = 3 (down then right)
-1 3         1 -> 3             max(0, 2, 3) = 3 (right then down)
-```
-
-Both routes need the water to reach 3, because the target cell itself has height 3. The method returns `3`.
-
-**Edge cases.** A 1 x 1 grid `[[0]]` polls `(0,0)`, which is already the bottom-right corner, and returns its own height `0`. The start cell's height counts: `[[3,2],[0,1]]` returns `3`, because you cannot even start before time 3. If the heap emptied without reaching the corner the method would return `-1` (cannot happen for a valid grid).
-
-**Result:** `3` for the traced input, matching the class output (`3`, `16`, `0`, `3` for its four samples).
-
 ## Source Code
 
 ### SwimInRisingWater.java
@@ -223,3 +194,30 @@ public class SwimInRisingWater {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: water at time `t` lets you stand on any cell with height `<= t`, so the answer is the smallest `t` for which a path from the top-left to the bottom-right exists using only cells `<= t`. Equivalently, find the path whose **maximum cell value** is minimal. That is Dijkstra with a different "distance": the cost of reaching a cell is `max(cost of the cell we came from, the cell's own height)`. A min-heap of `{time, row, col}` always expands the cheapest frontier cell; a `visited` array skips entries for cells already settled (a cell polled first is polled with its best time). The first time the bottom-right cell is polled, its time is the answer. Time O(n^2 log n).
+
+**Input:** `grid = [[0,2],[1,3]]` (the first sample). Start: heap = `{0,0,0}` (the time at the start is `grid[0][0] = 0`). Neighbours are tried in the order down, up, right, left.
+
+| Step | Polled `{time, r, c}` | Visited before? | Pushed neighbours `{max(time, height), r, c}` |
+|------|-----------------------|-----------------|------------------------------------------------|
+| 1 | `{0, 0, 0}` | no, mark `(0,0)` | down `(1,0)` height 1: `{1,1,0}`; right `(0,1)` height 2: `{2,0,1}` |
+| 2 | `{1, 1, 0}` | no, mark `(1,0)` | right `(1,1)` height 3: `{3,1,1}` (up `(0,0)` is visited) |
+| 3 | `{2, 0, 1}` | no, mark `(0,1)` | down `(1,1)` height 3: `{3,1,1}` |
+| 4 | `{3, 1, 1}` | no, mark `(1,1)` | this is the bottom-right corner, **return 3** |
+
+```text
+grid        path chosen        time needed
+0 2         0 . 2 ...          max(0, 1, 3) = 3 (down then right)
+1 3         1 -> 3             max(0, 2, 3) = 3 (right then down)
+```
+
+Both routes need the water to reach 3, because the target cell itself has height 3. The method returns `3`.
+
+**Edge cases.** A 1 x 1 grid `[[0]]` polls `(0,0)`, which is already the bottom-right corner, and returns its own height `0`. The start cell's height counts: `[[3,2],[0,1]]` returns `3`, because you cannot even start before time 3. If the heap emptied without reaching the corner the method would return `-1` (cannot happen for a valid grid).
+
+**Result:** `3` for the traced input, matching the class output (`3`, `16`, `0`, `3` for its four samples).

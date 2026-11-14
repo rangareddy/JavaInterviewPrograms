@@ -176,83 +176,6 @@ public static Character firstNonRepeatingStream(String text) {
 | 2 | Sort the Whole List | O(n log n) | O(n) |
 | 3 | Streams with Collectors (Optimized) | O(n log n) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 3 above, which is also the version implemented in this repository. The walkthrough below runs each pipeline on the sample input and shows what every step produces.
-
-**Input** (the six employees in `main()`):
-
-| Name | Department | Salary |
-|------|------------|--------|
-| Asha | Engineering | 100000 |
-| Ravi | Engineering | 90000 |
-| Meena | Engineering | 75000 |
-| John | Sales | 60000 |
-| Priya | Sales | 65000 |
-| Kiran | HR | 55000 |
-
-**Step 0, the safeguard (`validEmployees`).** The list is not `null` and not empty, so its stream is used. The filter keeps an employee only when the employee, its name and its department are all non-`null`. All six pass, so the six employees flow into every pipeline below.
-
-#### 1. Second highest salary
-
-| Step | Operation | Result |
-|------|-----------|--------|
-| 1 | `map(e -> e.salary)` | `100000, 90000, 75000, 60000, 65000, 55000` |
-| 2 | `distinct()` | no duplicates, so the same six values |
-| 3 | `sorted(reverseOrder())` | `100000, 90000, 75000, 65000, 60000, 55000` |
-| 4 | `skip(1)` drops the highest | `90000, 75000, 65000, 60000, 55000` |
-| 5 | `findFirst()` takes the first value | `Optional[90000]` |
-| 6 | `orElse(null)` resolves the `Optional` | `90000` |
-
-With only one distinct salary (or no employees) step 4 leaves nothing, `findFirst()` is empty and `orElse(null)` returns `null`.
-
-#### 2. Average salary per department
-
-| Step | Operation | Result |
-|------|-----------|--------|
-| 1 | `groupingBy(department, TreeMap::new, ...)` creates one bucket per department, in sorted key order | `Engineering`, `HR`, `Sales` |
-| 2 | each employee is added to its bucket | `Engineering: 100000, 90000, 75000`; `HR: 55000`; `Sales: 60000, 65000` |
-| 3 | `averagingInt(salary)` sums and divides per bucket | `Engineering: 265000 / 3`; `HR: 55000 / 1`; `Sales: 125000 / 2` |
-| 4 | the result map | `{Engineering=88333.33333333333, HR=55000.0, Sales=62500.0}` |
-
-#### 3. Highest paid employee per department
-
-| Step | Operation | Result |
-|------|-----------|--------|
-| 1 | `groupingBy(department, TreeMap::new, ...)` | the same three buckets as above |
-| 2 | `maxBy(comparingInt(salary))` keeps the best employee of each bucket (an `Optional`, never empty because a bucket has at least one employee) | `Engineering: Asha`; `HR: Kiran`; `Sales: Priya (65000 beats John 60000)` |
-| 3 | `collectingAndThen(..., best -> best.map(e -> e.name).orElse(null))` turns each `Optional` into the name | `Asha`, `Kiran`, `Priya` |
-| 4 | the result map | `{Engineering=Asha, HR=Kiran, Sales=Priya}` |
-
-#### 4. Names per department
-
-| Step | Operation | Result |
-|------|-----------|--------|
-| 1 | `groupingBy(department, TreeMap::new, ...)` | the same three buckets |
-| 2 | `mapping(e -> e.name, toList())` collects the names in input order | `Engineering: [Asha, Ravi, Meena]`; `HR: [Kiran]`; `Sales: [John, Priya]` |
-| 3 | the result map | `{Engineering=[Asha, Ravi, Meena], HR=[Kiran], Sales=[John, Priya]}` |
-
-#### 5. First non-repeating character, input `"swiss"`
-
-| Step | Operation | Result |
-|------|-----------|--------|
-| 0 | safeguard: `null` or empty text returns `null` | `"swiss"` is neither, so continue |
-| 1 | `chars().mapToObj(c -> (char) c)` | `s, w, i, s, s` |
-| 2 | `groupingBy(identity, LinkedHashMap::new, counting())` counts and keeps first-seen order | `{s=3, w=1, i=1}` |
-| 3 | `filter(count == 1)` | `w=1, i=1` |
-| 4 | `map(Map.Entry::getKey)` | `w, i` |
-| 5 | `findFirst()` then `orElse(null)` | `'w'` |
-
-#### Safeguards at work
-
-| Input | Second highest | Maps | First non-repeating |
-|-------|----------------|------|---------------------|
-| `[null, Zoe(no department), Sam(Sales, 70000)]` | `null` (only one valid salary) | `{Sales=...}` built from Sam alone | n/a |
-| `[]` (empty list) | `null` | `{}` | n/a |
-| `null` list | `null` | `{}` | n/a |
-| text `"aabb"` | n/a | n/a | `null` (every character repeats) |
-| text `null` | n/a | n/a | `null` |
-
 ## Source Code
 
 ### StreamsInterviewQuestions.java
@@ -385,3 +308,80 @@ public class StreamsInterviewQuestions {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 3 above, which is also the version implemented in this repository. The walkthrough below runs each pipeline on the sample input and shows what every step produces.
+
+**Input** (the six employees in `main()`):
+
+| Name | Department | Salary |
+|------|------------|--------|
+| Asha | Engineering | 100000 |
+| Ravi | Engineering | 90000 |
+| Meena | Engineering | 75000 |
+| John | Sales | 60000 |
+| Priya | Sales | 65000 |
+| Kiran | HR | 55000 |
+
+**Step 0, the safeguard (`validEmployees`).** The list is not `null` and not empty, so its stream is used. The filter keeps an employee only when the employee, its name and its department are all non-`null`. All six pass, so the six employees flow into every pipeline below.
+
+#### 1. Second highest salary
+
+| Step | Operation | Result |
+|------|-----------|--------|
+| 1 | `map(e -> e.salary)` | `100000, 90000, 75000, 60000, 65000, 55000` |
+| 2 | `distinct()` | no duplicates, so the same six values |
+| 3 | `sorted(reverseOrder())` | `100000, 90000, 75000, 65000, 60000, 55000` |
+| 4 | `skip(1)` drops the highest | `90000, 75000, 65000, 60000, 55000` |
+| 5 | `findFirst()` takes the first value | `Optional[90000]` |
+| 6 | `orElse(null)` resolves the `Optional` | `90000` |
+
+With only one distinct salary (or no employees) step 4 leaves nothing, `findFirst()` is empty and `orElse(null)` returns `null`.
+
+#### 2. Average salary per department
+
+| Step | Operation | Result |
+|------|-----------|--------|
+| 1 | `groupingBy(department, TreeMap::new, ...)` creates one bucket per department, in sorted key order | `Engineering`, `HR`, `Sales` |
+| 2 | each employee is added to its bucket | `Engineering: 100000, 90000, 75000`; `HR: 55000`; `Sales: 60000, 65000` |
+| 3 | `averagingInt(salary)` sums and divides per bucket | `Engineering: 265000 / 3`; `HR: 55000 / 1`; `Sales: 125000 / 2` |
+| 4 | the result map | `{Engineering=88333.33333333333, HR=55000.0, Sales=62500.0}` |
+
+#### 3. Highest paid employee per department
+
+| Step | Operation | Result |
+|------|-----------|--------|
+| 1 | `groupingBy(department, TreeMap::new, ...)` | the same three buckets as above |
+| 2 | `maxBy(comparingInt(salary))` keeps the best employee of each bucket (an `Optional`, never empty because a bucket has at least one employee) | `Engineering: Asha`; `HR: Kiran`; `Sales: Priya (65000 beats John 60000)` |
+| 3 | `collectingAndThen(..., best -> best.map(e -> e.name).orElse(null))` turns each `Optional` into the name | `Asha`, `Kiran`, `Priya` |
+| 4 | the result map | `{Engineering=Asha, HR=Kiran, Sales=Priya}` |
+
+#### 4. Names per department
+
+| Step | Operation | Result |
+|------|-----------|--------|
+| 1 | `groupingBy(department, TreeMap::new, ...)` | the same three buckets |
+| 2 | `mapping(e -> e.name, toList())` collects the names in input order | `Engineering: [Asha, Ravi, Meena]`; `HR: [Kiran]`; `Sales: [John, Priya]` |
+| 3 | the result map | `{Engineering=[Asha, Ravi, Meena], HR=[Kiran], Sales=[John, Priya]}` |
+
+#### 5. First non-repeating character, input `"swiss"`
+
+| Step | Operation | Result |
+|------|-----------|--------|
+| 0 | safeguard: `null` or empty text returns `null` | `"swiss"` is neither, so continue |
+| 1 | `chars().mapToObj(c -> (char) c)` | `s, w, i, s, s` |
+| 2 | `groupingBy(identity, LinkedHashMap::new, counting())` counts and keeps first-seen order | `{s=3, w=1, i=1}` |
+| 3 | `filter(count == 1)` | `w=1, i=1` |
+| 4 | `map(Map.Entry::getKey)` | `w, i` |
+| 5 | `findFirst()` then `orElse(null)` | `'w'` |
+
+#### Safeguards at work
+
+| Input | Second highest | Maps | First non-repeating |
+|-------|----------------|------|---------------------|
+| `[null, Zoe(no department), Sam(Sales, 70000)]` | `null` (only one valid salary) | `{Sales=...}` built from Sam alone | n/a |
+| `[]` (empty list) | `null` | `{}` | n/a |
+| `null` list | `null` | `{}` | n/a |
+| text `"aabb"` | n/a | n/a | `null` (every character repeats) |
+| text `null` | n/a | n/a | `null` |

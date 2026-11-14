@@ -124,36 +124,6 @@ public static ListNode reverseKGroup(ListNode head, int k) {
 | 3 | Array of Nodes, Reverse Ranges | O(n) | O(n) |
 | 4 | Iterative In-Place Reversal (Optimized) | O(n) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: handle the list one group of k nodes at a time. For each group, first check that k nodes really exist (walk `kth` k steps from `groupPrev`); if not, stop and leave the tail alone. Otherwise reverse the group with the usual three-pointer loop, but start `prev` at the node after the group so the reversed group is already linked to the rest. The old first node of the group is now its last node and becomes the next `groupPrev`. Each node is touched a constant number of times: O(n) time, O(1) space.
-
-**Input:** `head = [1, 2, 3, 4, 5]`, `k = 2`. A `dummy` node sits before the head; `D` below means the dummy.
-
-| Round | groupPrev | kth | groupNext | Reversal steps | List afterwards | New groupPrev |
-|-------|-----------|-----|-----------|----------------|-----------------|---------------|
-| 1 | D | 2 | 3 | 1.next = 3, then 2.next = 1; D.next = 2 | `D -> 2 -> 1 -> 3 -> 4 -> 5` | 1 |
-| 2 | 1 | 4 | 5 | 3.next = 5, then 4.next = 3; 1.next = 4 | `D -> 2 -> 1 -> 4 -> 3 -> 5` | 3 |
-| 3 | 3 | null (only node 5 left, 1 < k) | | | unchanged | loop breaks |
-
-```mermaid
-flowchart LR
-    subgraph s1["After round 1"]
-        D1["D"] --> N2["2"] --> N1["1"] --> N3["3"] --> N4["4"] --> N5["5"]
-    end
-    subgraph s2["After round 2"]
-        D2["D"] --> M2["2"] --> M1["1"] --> M4["4"] --> M3["3"] --> M5["5"]
-    end
-```
-
-**Edge cases.** If fewer than k nodes remain (node 5 above), `kth` becomes `null` and the loop breaks, so the left-over nodes keep their order. With `k = 1` every group is one node, reversal does nothing, and `[1, 2]` comes back unchanged. When the length is an exact multiple (`[1..6]`, `k = 3`) every group is reversed, giving `[3, 2, 1, 6, 5, 4]`. An empty list never enters a group (kth becomes `null` on the first step). The dummy node removes the special case of reversing the first group.
-
-**Result:** `[2, 1, 4, 3, 5]`, matching the class output (for `k = 3` it prints `[3, 2, 1, 4, 5]`).
-
 ## Source Code
 
 Uses the shared helper [`ListNode`](../../src/main/java/com/ranga/linkedlist/ListNode.java) (a small `ListNode` with `of(...)` and `toString(...)` helpers for building and printing test data).
@@ -208,3 +178,31 @@ public class ReverseNodesInKGroup {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: handle the list one group of k nodes at a time. For each group, first check that k nodes really exist (walk `kth` k steps from `groupPrev`); if not, stop and leave the tail alone. Otherwise reverse the group with the usual three-pointer loop, but start `prev` at the node after the group so the reversed group is already linked to the rest. The old first node of the group is now its last node and becomes the next `groupPrev`. Each node is touched a constant number of times: O(n) time, O(1) space.
+
+**Input:** `head = [1, 2, 3, 4, 5]`, `k = 2`. A `dummy` node sits before the head; `D` below means the dummy.
+
+| Round | groupPrev | kth | groupNext | Reversal steps | List afterwards | New groupPrev |
+|-------|-----------|-----|-----------|----------------|-----------------|---------------|
+| 1 | D | 2 | 3 | 1.next = 3, then 2.next = 1; D.next = 2 | `D -> 2 -> 1 -> 3 -> 4 -> 5` | 1 |
+| 2 | 1 | 4 | 5 | 3.next = 5, then 4.next = 3; 1.next = 4 | `D -> 2 -> 1 -> 4 -> 3 -> 5` | 3 |
+| 3 | 3 | null (only node 5 left, 1 < k) | | | unchanged | loop breaks |
+
+```mermaid
+flowchart LR
+    subgraph s1["After round 1"]
+        D1["D"] --> N2["2"] --> N1["1"] --> N3["3"] --> N4["4"] --> N5["5"]
+    end
+    subgraph s2["After round 2"]
+        D2["D"] --> M2["2"] --> M1["1"] --> M4["4"] --> M3["3"] --> M5["5"]
+    end
+```
+
+**Edge cases.** If fewer than k nodes remain (node 5 above), `kth` becomes `null` and the loop breaks, so the left-over nodes keep their order. With `k = 1` every group is one node, reversal does nothing, and `[1, 2]` comes back unchanged. When the length is an exact multiple (`[1..6]`, `k = 3`) every group is reversed, giving `[3, 2, 1, 6, 5, 4]`. An empty list never enters a group (kth becomes `null` on the first step). The dummy node removes the special case of reversing the first group.
+
+**Result:** `[2, 1, 4, 3, 5]`, matching the class output (for `k = 3` it prints `[3, 2, 1, 4, 5]`).

@@ -100,40 +100,6 @@ public static String minRemoveToMakeValid(String s) {
 | 1 | Two Passes with a Counter | O(n) | O(n) |
 | 2 | Stack of Unmatched Indices (Optimized) | O(n) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 2 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: a bracket is invalid only if it has no partner. A single pass with a stack of the indexes of unmatched `(` finds them: a `(` is pushed; a `)` either pops a waiting `(` (a match) or, if the stack is empty, has nothing to match and is marked for removal. After the pass, the `(` still on the stack are unmatched too, so they are marked. A second pass copies every character that is not marked. This removes the fewest characters and keeps all others in order. O(n) time and space.
-
-**Input:** `s = "lee(t(c)o)de)"` (indexes: `l0 e1 e2 (3 t4 (5 c6 )7 o8 )9 d10 e11 )12`).
-
-| Step | Index, char | What happens | Stack of open indexes | Marked for removal |
-|------|-------------|--------------|-----------------------|--------------------|
-| 1 | 3 `(` | push 3 | 3 | |
-| 2 | 5 `(` | push 5 | 3 5 | |
-| 3 | 7 `)` | stack not empty: pop 5 (matches) | 3 | |
-| 4 | 9 `)` | pop 3 (matches) | empty | |
-| 5 | 12 `)` | stack is empty: no partner, mark | empty | 12 |
-| 6 | after the loop | stack empty, nothing left to mark | empty | 12 |
-| 7 | build result | copy all characters except index 12 | | |
-
-Letters (`l e e t c o d`) are never touched by the first pass.
-
-```text
-l e e ( t ( c ) o ) d e )
-      |   | +-+   |     |
-      |   +-pair--+     |   (5 with 7)
-      +-----pair--+     |   (3 with 9)
-                        +-- no partner: removed
-```
-
-**Edge cases.** For `"))(("` both `)` find an empty stack and are marked, both `(` stay on the stack after the loop and are marked by the `while` loop, so the result is `""`. For `"a)b(c)d"` only index 1 is marked, giving `"ab(c)d"`. A string without brackets (`"abc"`) is copied unchanged. Which unmatched bracket is removed is fixed by the algorithm (an extra `)` is removed where it appears, an extra `(` is the one left on the stack), so the output is deterministic.
-
-**Result:** `"lee(t(c)o)de"`, matching the class output.
-
 ## Source Code
 
 ### MinimumRemoveToMakeValidParentheses.java
@@ -181,3 +147,35 @@ public class MinimumRemoveToMakeValidParentheses {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+
+The idea: a bracket is invalid only if it has no partner. A single pass with a stack of the indexes of unmatched `(` finds them: a `(` is pushed; a `)` either pops a waiting `(` (a match) or, if the stack is empty, has nothing to match and is marked for removal. After the pass, the `(` still on the stack are unmatched too, so they are marked. A second pass copies every character that is not marked. This removes the fewest characters and keeps all others in order. O(n) time and space.
+
+**Input:** `s = "lee(t(c)o)de)"` (indexes: `l0 e1 e2 (3 t4 (5 c6 )7 o8 )9 d10 e11 )12`).
+
+| Step | Index, char | What happens | Stack of open indexes | Marked for removal |
+|------|-------------|--------------|-----------------------|--------------------|
+| 1 | 3 `(` | push 3 | 3 | |
+| 2 | 5 `(` | push 5 | 3 5 | |
+| 3 | 7 `)` | stack not empty: pop 5 (matches) | 3 | |
+| 4 | 9 `)` | pop 3 (matches) | empty | |
+| 5 | 12 `)` | stack is empty: no partner, mark | empty | 12 |
+| 6 | after the loop | stack empty, nothing left to mark | empty | 12 |
+| 7 | build result | copy all characters except index 12 | | |
+
+Letters (`l e e t c o d`) are never touched by the first pass.
+
+```text
+l e e ( t ( c ) o ) d e )
+      |   | +-+   |     |
+      |   +-pair--+     |   (5 with 7)
+      +-----pair--+     |   (3 with 9)
+                        +-- no partner: removed
+```
+
+**Edge cases.** For `"))(("` both `)` find an empty stack and are marked, both `(` stay on the stack after the loop and are marked by the `while` loop, so the result is `""`. For `"a)b(c)d"` only index 1 is marked, giving `"ab(c)d"`. A string without brackets (`"abc"`) is copied unchanged. Which unmatched bracket is removed is fixed by the algorithm (an extra `)` is removed where it appears, an extra `(` is the one left on the stack), so the output is deterministic.
+
+**Result:** `"lee(t(c)o)de"`, matching the class output.

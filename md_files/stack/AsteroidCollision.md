@@ -97,30 +97,6 @@ public static int[] asteroidCollision(int[] asteroids) {
 | 1 | Repeat Until Stable | O(n^2) in the worst case | O(n) |
 | 2 | Stack (Optimized) | O(n) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 2 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: asteroids only collide when a right-moving one (positive) is followed by a left-moving one (negative). The stack holds the survivors so far. A positive or an empty-stack case is simply pushed. For a negative asteroid the code compares it with the positive on top: a smaller top explodes (pop, keep fighting), an equal top destroys both, and a larger top destroys the newcomer. If the newcomer survives all fights it is pushed. Each asteroid is pushed and popped at most once: O(n).
-
-**Input:** `asteroids = [10, 2, -5]`. The stack is written bottom to top.
-
-| Step | Asteroid | What happens | Stack |
-|------|----------|--------------|-------|
-| 1 | 10 | positive, no fight; pushed | 10 |
-| 2 | 2 | positive, pushed | 10 2 |
-| 3a | -5 | top 2 < 5: the 2 explodes, pop | 10 |
-| 3b | -5 | top 10 > 5: the -5 explodes, `alive = false` | 10 |
-| 3c | -5 | not alive, so it is not pushed | 10 |
-
-The stack is copied into the result array from the top down into the last slot, which restores left-to-right order: `[10]`.
-
-**Edge cases.** Equal sizes destroy each other: `[8, -8]` pops the 8, sets `alive = false` and returns `[]`. Negatives that come before any positive never collide, since the loop needs `stack.peek() > 0`: `[-2, -1, 1, 2]` is returned unchanged. A negative that wins all fights (for example `[5, 10, -15]` pops 10 then 5) is pushed onto an empty stack. For `[5, 10, -5]` the -5 meets 10 and dies, giving `[5, 10]`.
-
-**Result:** `[10]`, matching the class output.
-
 ## Source Code
 
 ### AsteroidCollision.java
@@ -168,3 +144,25 @@ public class AsteroidCollision {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+
+The idea: asteroids only collide when a right-moving one (positive) is followed by a left-moving one (negative). The stack holds the survivors so far. A positive or an empty-stack case is simply pushed. For a negative asteroid the code compares it with the positive on top: a smaller top explodes (pop, keep fighting), an equal top destroys both, and a larger top destroys the newcomer. If the newcomer survives all fights it is pushed. Each asteroid is pushed and popped at most once: O(n).
+
+**Input:** `asteroids = [10, 2, -5]`. The stack is written bottom to top.
+
+| Step | Asteroid | What happens | Stack |
+|------|----------|--------------|-------|
+| 1 | 10 | positive, no fight; pushed | 10 |
+| 2 | 2 | positive, pushed | 10 2 |
+| 3a | -5 | top 2 < 5: the 2 explodes, pop | 10 |
+| 3b | -5 | top 10 > 5: the -5 explodes, `alive = false` | 10 |
+| 3c | -5 | not alive, so it is not pushed | 10 |
+
+The stack is copied into the result array from the top down into the last slot, which restores left-to-right order: `[10]`.
+
+**Edge cases.** Equal sizes destroy each other: `[8, -8]` pops the 8, sets `alive = false` and returns `[]`. Negatives that come before any positive never collide, since the loop needs `stack.peek() > 0`: `[-2, -1, 1, 2]` is returned unchanged. A negative that wins all fights (for example `[5, 10, -15]` pops 10 then 5) is pushed onto an empty stack. For `[5, 10, -5]` the -5 meets 10 and dies, giving `[5, 10]`.
+
+**Result:** `[10]`, matching the class output.

@@ -235,36 +235,6 @@ public static int[][] insert(int[][] intervals, int[] newInterval) {
 | 6 | Insert in Sorted Position, Then Merge with a Stack | O(n) | O(n) |
 | 7 | Three Phases in One Pass (Optimized) | O(n) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 7 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: the input is sorted and non-overlapping, so the new interval touches a contiguous block of it. One left-to-right pass with three phases handles it: (1) copy every interval that ends before the new one starts (`intervals[i][1] < newInterval[0]`); (2) while the next interval starts at or before the merged `end`, absorb it by taking the smaller start and larger end; then add the merged interval; (3) copy all remaining intervals, which start after it. No sorting is needed, so it is O(n) time.
-
-**Input:** `intervals = [[1, 2], [3, 5], [6, 7], [8, 10], [12, 16]]`, `newInterval = [4, 8]`.
-
-| Phase | Interval looked at | Test | Action | start, end | Result so far |
-|-------|--------------------|------|--------|------------|---------------|
-| 1 | `[1, 2]` | ends at 2 < 4 | copy | - | `[1,2]` |
-| 1 | `[3, 5]` | ends at 5 < 4 is false | stop phase 1 | 4, 8 | `[1,2]` |
-| 2 | `[3, 5]` | starts at 3 <= 8 | merge | 3, 8 | `[1,2]` |
-| 2 | `[6, 7]` | starts at 6 <= 8 | merge | 3, 8 | `[1,2]` |
-| 2 | `[8, 10]` | starts at 8 <= 8 | merge | 3, 10 | `[1,2]` |
-| 2 | `[12, 16]` | starts at 12 <= 10 is false | stop phase 2, add `[3, 10]` | 3, 10 | `[1,2] [3,10]` |
-| 3 | `[12, 16]` | rest | copy | - | `[1,2] [3,10] [12,16]` |
-
-```text
-existing : 1-2   3--5  6-7  8--10      12---16
-new      :         4--------8
-merged   : 1-2   3-----------10        12---16
-```
-
-**Edge cases.** An empty `intervals` array skips phases 1 and 3, and phase 2 just adds the new interval: `[]` with `[5, 7]` gives `[[5, 7]]`. A new interval that lies before everything is added first, one after everything is added last. Touching intervals merge (the test uses `<=`). Without any overlap the new interval is simply placed in order, e.g. `[[1, 3], [6, 9]]` with `[2, 5]` gives `[[1, 5], [6, 9]]`.
-
-**Result:** `[[1, 2], [3, 10], [12, 16]]`, matching the class output.
-
 ## Source Code
 
 ### InsertInterval.java
@@ -314,3 +284,31 @@ public class InsertInterval {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
+
+The idea: the input is sorted and non-overlapping, so the new interval touches a contiguous block of it. One left-to-right pass with three phases handles it: (1) copy every interval that ends before the new one starts (`intervals[i][1] < newInterval[0]`); (2) while the next interval starts at or before the merged `end`, absorb it by taking the smaller start and larger end; then add the merged interval; (3) copy all remaining intervals, which start after it. No sorting is needed, so it is O(n) time.
+
+**Input:** `intervals = [[1, 2], [3, 5], [6, 7], [8, 10], [12, 16]]`, `newInterval = [4, 8]`.
+
+| Phase | Interval looked at | Test | Action | start, end | Result so far |
+|-------|--------------------|------|--------|------------|---------------|
+| 1 | `[1, 2]` | ends at 2 < 4 | copy | - | `[1,2]` |
+| 1 | `[3, 5]` | ends at 5 < 4 is false | stop phase 1 | 4, 8 | `[1,2]` |
+| 2 | `[3, 5]` | starts at 3 <= 8 | merge | 3, 8 | `[1,2]` |
+| 2 | `[6, 7]` | starts at 6 <= 8 | merge | 3, 8 | `[1,2]` |
+| 2 | `[8, 10]` | starts at 8 <= 8 | merge | 3, 10 | `[1,2]` |
+| 2 | `[12, 16]` | starts at 12 <= 10 is false | stop phase 2, add `[3, 10]` | 3, 10 | `[1,2] [3,10]` |
+| 3 | `[12, 16]` | rest | copy | - | `[1,2] [3,10] [12,16]` |
+
+```text
+existing : 1-2   3--5  6-7  8--10      12---16
+new      :         4--------8
+merged   : 1-2   3-----------10        12---16
+```
+
+**Edge cases.** An empty `intervals` array skips phases 1 and 3, and phase 2 just adds the new interval: `[]` with `[5, 7]` gives `[[5, 7]]`. A new interval that lies before everything is added first, one after everything is added last. Touching intervals merge (the test uses `<=`). Without any overlap the new interval is simply placed in order, e.g. `[[1, 3], [6, 9]]` with `[2, 5]` gives `[[1, 5], [6, 9]]`.
+
+**Result:** `[[1, 2], [3, 10], [12, 16]]`, matching the class output.

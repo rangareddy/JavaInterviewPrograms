@@ -107,36 +107,6 @@ public static int calculate(String s) {
 | 1 | Recursive Descent | O(n) | O(n) recursion depth |
 | 2 | Iterative with a Stack (Optimized) | O(n) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 2 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: scan the string once, keeping the value so far (`result`), the sign that applies to the number being read (`sign`) and the number being built digit by digit (`number`). A `+` or `-` first adds `sign * number` to `result`, then sets the new sign. A `(` saves the outer `result` and `sign` on the stack and starts a fresh sub-expression (`result = 0`, `sign = 1`); a `)` finishes the inner value and combines it as `savedResult + savedSign * inner`. So a minus in front of a group flips the whole group without any special case, and everything is done in one O(n) pass.
-
-**Input:** `s = "1 - (4 - (5 - 1))"` (spaces are ignored). The stack is written from bottom to top and holds pairs `result, sign` pushed in the order `result` then `sign`.
-
-| Step | Character | What happens | number | result | sign | Stack (bottom → top) |
-|------|-----------|--------------|--------|--------|------|----------------------|
-| 1 | `1` | digit | 1 | 0 | +1 | (empty) |
-| 2 | `-` | add `+1*1` to result, new sign `-1` | 0 | 1 | -1 | (empty) |
-| 3 | `(` | push result 1 and sign -1, restart | 0 | 0 | +1 | `1` `-1` |
-| 4 | `4` | digit | 4 | 0 | +1 | `1` `-1` |
-| 5 | `-` | add `+1*4`, new sign `-1` | 0 | 4 | -1 | `1` `-1` |
-| 6 | `(` | push result 4 and sign -1, restart | 0 | 0 | +1 | `1` `-1` `4` `-1` |
-| 7 | `5` | digit | 5 | 0 | +1 | `1` `-1` `4` `-1` |
-| 8 | `-` | add `+1*5`, new sign `-1` | 0 | 5 | -1 | `1` `-1` `4` `-1` |
-| 9 | `1` | digit | 1 | 5 | -1 | `1` `-1` `4` `-1` |
-| 10 | `)` | add `-1*1` gives 4; pop sign -1 and result 4: `-1*4 + 4` | 0 | 0 | -1 | `1` `-1` |
-| 11 | `)` | add `-1*0`; pop sign -1 and result 1: `-1*0 + 1` | 0 | 1 | -1 | (empty) |
-
-After the loop the code returns `result + sign * number = 1 + (-1)*0 = 1`. The `sign` left over after a `)` is stale but harmless, because `number` is 0 and the next `+` or `-` overwrites it.
-
-**Edge cases.** Spaces match no branch and are skipped. A leading `-` or a `-` right after `(` works because `result` is 0 there: `-(2 + 3)` returns `-5`. An empty string returns 0. The code assumes a valid expression (no `--`, balanced parentheses); an unbalanced `)` would pop an empty stack.
-
-**Result:** `1`, the same as the class output for this input.
-
 ## Source Code
 
 ### BasicCalculator.java
@@ -184,3 +154,31 @@ public class BasicCalculator {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+
+The idea: scan the string once, keeping the value so far (`result`), the sign that applies to the number being read (`sign`) and the number being built digit by digit (`number`). A `+` or `-` first adds `sign * number` to `result`, then sets the new sign. A `(` saves the outer `result` and `sign` on the stack and starts a fresh sub-expression (`result = 0`, `sign = 1`); a `)` finishes the inner value and combines it as `savedResult + savedSign * inner`. So a minus in front of a group flips the whole group without any special case, and everything is done in one O(n) pass.
+
+**Input:** `s = "1 - (4 - (5 - 1))"` (spaces are ignored). The stack is written from bottom to top and holds pairs `result, sign` pushed in the order `result` then `sign`.
+
+| Step | Character | What happens | number | result | sign | Stack (bottom → top) |
+|------|-----------|--------------|--------|--------|------|----------------------|
+| 1 | `1` | digit | 1 | 0 | +1 | (empty) |
+| 2 | `-` | add `+1*1` to result, new sign `-1` | 0 | 1 | -1 | (empty) |
+| 3 | `(` | push result 1 and sign -1, restart | 0 | 0 | +1 | `1` `-1` |
+| 4 | `4` | digit | 4 | 0 | +1 | `1` `-1` |
+| 5 | `-` | add `+1*4`, new sign `-1` | 0 | 4 | -1 | `1` `-1` |
+| 6 | `(` | push result 4 and sign -1, restart | 0 | 0 | +1 | `1` `-1` `4` `-1` |
+| 7 | `5` | digit | 5 | 0 | +1 | `1` `-1` `4` `-1` |
+| 8 | `-` | add `+1*5`, new sign `-1` | 0 | 5 | -1 | `1` `-1` `4` `-1` |
+| 9 | `1` | digit | 1 | 5 | -1 | `1` `-1` `4` `-1` |
+| 10 | `)` | add `-1*1` gives 4; pop sign -1 and result 4: `-1*4 + 4` | 0 | 0 | -1 | `1` `-1` |
+| 11 | `)` | add `-1*0`; pop sign -1 and result 1: `-1*0 + 1` | 0 | 1 | -1 | (empty) |
+
+After the loop the code returns `result + sign * number = 1 + (-1)*0 = 1`. The `sign` left over after a `)` is stale but harmless, because `number` is 0 and the next `+` or `-` overwrites it.
+
+**Edge cases.** Spaces match no branch and are skipped. A leading `-` or a `-` right after `(` works because `result` is 0 there: `-(2 + 3)` returns `-5`. An empty string returns 0. The code assumes a valid expression (no `--`, balanced parentheses); an unbalanced `)` would pop an empty stack.
+
+**Result:** `1`, the same as the class output for this input.

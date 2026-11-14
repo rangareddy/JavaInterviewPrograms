@@ -105,34 +105,6 @@ public static int[] twoSum(int[] numbers, int target) {
 | 3 | Hash Map | O(n) | O(n) |
 | 4 | Two Pointers (Optimized) | O(n) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: the array is sorted, so two pointers can replace the hash map. Put `left` at the smallest and `right` at the largest value. If the sum is too small, only moving `left` right can raise it; if too large, only moving `right` left can lower it. Each step discards one element that cannot be part of any answer, so the search is O(n) time and O(1) space. Indices returned are 1-based.
-
-**Input:** `numbers = [2, 7, 11, 15]`, `target = 9`. Start: `left = 0`, `right = 3`.
-
-| Step | `left` | `right` | `numbers[left] + numbers[right]` | Compared to 9 | Action |
-|------|--------|---------|----------------------------------|---------------|--------|
-| 1 | 0 | 3 | 2 + 15 = 17 | too big | `right--` |
-| 2 | 0 | 2 | 2 + 11 = 13 | too big | `right--` |
-| 3 | 0 | 1 | 2 + 7 = 9 | equal | return `[left + 1, right + 1]` = `[1, 2]` |
-
-```text
-index:   0   1   2   3
-value:   2   7  11  15
-         L           R     17 > 9  -> move R
-         L       R         13 > 9  -> move R
-         L   R             9 == 9  -> answer
-```
-
-**Edge cases.** If the pointers meet with no match the loop ends and `[-1, -1]` is returned. For `[1, 2, 3, 4, 4, 9, 56, 90]` with target `8` the pointers move to `left = 3`, `right = 4` (`4 + 4`) and return `[4, 5]`, so equal values at different positions are allowed. With two elements (`[-1, 0]`, target `-1`) the answer `[1, 2]` is found at once. The class does not check for `null`.
-
-**Result:** `[1, 2]`, matching the class output.
-
 ## Source Code
 
 ### TwoSumII.java
@@ -169,3 +141,29 @@ public class TwoSumII {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: the array is sorted, so two pointers can replace the hash map. Put `left` at the smallest and `right` at the largest value. If the sum is too small, only moving `left` right can raise it; if too large, only moving `right` left can lower it. Each step discards one element that cannot be part of any answer, so the search is O(n) time and O(1) space. Indices returned are 1-based.
+
+**Input:** `numbers = [2, 7, 11, 15]`, `target = 9`. Start: `left = 0`, `right = 3`.
+
+| Step | `left` | `right` | `numbers[left] + numbers[right]` | Compared to 9 | Action |
+|------|--------|---------|----------------------------------|---------------|--------|
+| 1 | 0 | 3 | 2 + 15 = 17 | too big | `right--` |
+| 2 | 0 | 2 | 2 + 11 = 13 | too big | `right--` |
+| 3 | 0 | 1 | 2 + 7 = 9 | equal | return `[left + 1, right + 1]` = `[1, 2]` |
+
+```text
+index:   0   1   2   3
+value:   2   7  11  15
+         L           R     17 > 9  -> move R
+         L       R         13 > 9  -> move R
+         L   R             9 == 9  -> answer
+```
+
+**Edge cases.** If the pointers meet with no match the loop ends and `[-1, -1]` is returned. For `[1, 2, 3, 4, 4, 9, 56, 90]` with target `8` the pointers move to `left = 3`, `right = 4` (`4 + 4`) and return `[4, 5]`, so equal values at different positions are allowed. With two elements (`[-1, 0]`, target `-1`) the answer `[1, 2]` is found at once. The class does not check for `null`.
+
+**Result:** `[1, 2]`, matching the class output.
