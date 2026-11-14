@@ -30,7 +30,7 @@ Selection sorting is a sorting algorithm where we select the minimum element fro
 
 The same problem can be solved in several ways. They are listed from the simplest to the most efficient.
 
-### Approach 1: Basic Selection Sort
+### Approach 1: Basic Selection Sort (Implemented)
 
 For each position find the minimum of the unsorted suffix and swap it into place. This is the version implemented in the repository.
 
@@ -197,7 +197,7 @@ public static void selectionSortDouble(int[] arr) {
 
 | # | Approach | Time | Space |
 |---|----------|------|-------|
-| 1 | Basic Selection Sort | O(n^2) in every case | O(1) |
+| 1 | Basic Selection Sort (Implemented) | O(n^2) in every case | O(1) |
 | 2 | Stable Selection Sort | O(n^2) | O(1) |
 | 3 | Recursive Selection Sort | O(n^2) | O(n) recursion stack |
 | 4 | Select the Maximum and Fill from the End | O(n^2) | O(1) |
@@ -256,7 +256,7 @@ public class SelectionSort {
 
 ## Solution
 
-The optimized solution is Approach 7 above. The version implemented in this repository is Approach 1.
+This repository implements Approach 1 (Basic Selection Sort), marked `(Implemented)` in the Approaches section. The optimized approach on this page, Approach 7 (Double Selection: Min and Max per Pass), is not implemented in the class.
 
 The idea: split the array into a sorted prefix on the left and an unsorted rest. In each pass, scan the unsorted rest to find the index of its smallest value (`min_index`), then swap that value into the first unsorted position. After pass `i` the first `i + 1` positions hold the smallest values in order. It makes at most one swap per pass (n - 1 swaps overall). The page names a "min and max per pass" variant as the optimized one, but the class implements this basic version, which is traced here.
 

@@ -54,7 +54,7 @@ private static String sorted(String word) {
 - **Time Complexity:** O(n^2 * k log k)
 - **Space Complexity:** O(n * k)
 
-### Approach 2: Hash Map Keyed by the Sorted Word
+### Approach 2: Hash Map Keyed by the Sorted Word (Implemented)
 
 Anagrams have the same sorted letters, so the sorted word is a canonical key. This is the version implemented in the repository.
 
@@ -182,7 +182,7 @@ public static List<List<String>> groupAnagramsCounts(String[] strs) {
 | # | Approach | Time | Space |
 |---|----------|------|-------|
 | 1 | Brute Force (Pairwise Comparison) | O(n^2 * k log k) | O(n * k) |
-| 2 | Hash Map Keyed by the Sorted Word | O(n * k log k) | O(n * k) |
+| 2 | Hash Map Keyed by the Sorted Word (Implemented) | O(n * k log k) | O(n * k) |
 | 3 | Prime-Product Key | O(n * k) | O(n * k) |
 | 4 | Sort by Signature, Then Read the Runs | O(n * k log k + n log n * k) | O(n * k) |
 | 5 | Streams groupingBy | O(n * k log k) | O(n * k) |
@@ -229,7 +229,7 @@ public class GroupAnagrams {
 
 ## Solution
 
-The optimized solution is Approach 7 above. The version implemented in this repository is Approach 2.
+This repository implements Approach 2 (Hash Map Keyed by the Sorted Word), marked `(Implemented)` in the Approaches section. The optimized approach on this page, Approach 7 (Hash Map Keyed by the Letter Counts), is not implemented in the class.
 
 **Note:** the page names Approach 7 (letter-count key) as the optimized one, but the version coded in `GroupAnagrams.java` is Approach 2, the sorted-word key. The walkthrough below follows the class; Approach 7 differs only in how the key is built (a 26-slot count instead of the sorted letters).
 

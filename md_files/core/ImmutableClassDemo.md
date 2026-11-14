@@ -51,7 +51,7 @@ static class MutablePerson {
 - **Time Complexity:** n/a
 - **Space Complexity:** n/a
 
-### Approach 2: Final Class with Defensive Copies
+### Approach 2: Final Class with Defensive Copies (Implemented)
 
 Make the class `final`, all fields `private final`, no setters, and copy mutable fields (`Date`) both in the constructor and in the getter. This is the version implemented in the repository.
 
@@ -125,7 +125,7 @@ record PersonRecord(int id, String name, LocalDate dob) {
 | # | Approach | Time | Space |
 |---|----------|------|-------|
 | 1 | Mutable Class (What to Avoid) | n/a | n/a |
-| 2 | Final Class with Defensive Copies | O(1) | O(1) |
+| 2 | Final Class with Defensive Copies (Implemented) | O(1) | O(1) |
 | 3 | Immutable Types Only (java.time) (Optimized) | O(1) | O(1) |
 | 4 | Record (Java 16+) | O(1) | O(1) |
 
@@ -188,9 +188,7 @@ final class ImmutablePerson implements Serializable {
 
 ## Solution
 
-The optimized solution is Approach 3 above. The version implemented in this repository is Approach 2.
-
-Note: the page names Approach 3 (java.time types) as the optimized one, but the class in this repository implements Approach 2, an immutable class with **defensive copies** of the mutable `Date`, so that is what is traced here.
+This repository implements Approach 2 (Final Class with Defensive Copies), marked `(Implemented)` in the Approaches section. The optimized approach on this page, Approach 3 (Immutable Types Only (java.time)), is not implemented in the class.
 
 The idea: an object is immutable if nothing can change it after construction. `ImmutablePerson` is `final` (no subclass can add mutable behaviour), all fields are `private final`, there are no setters, and the one mutable field, `Date dob`, is protected on both sides: the constructor stores a **copy** (`new Date(dob.getTime())`) so the caller's own `Date` object is not shared, and `getDob()` returns a **new copy** each time so the caller never receives the internal reference. `int` and `String` are already immutable and need no copy.
 

@@ -56,7 +56,7 @@ public static int uniquePathsTable(int m, int n) {
 - **Time Complexity:** O(m * n)
 - **Space Complexity:** O(m * n)
 
-### Approach 3: Single Row DP
+### Approach 3: Single Row DP (Implemented)
 
 A row only depends on the previous row, so one array updated left to right is enough. This is the version implemented in the repository.
 
@@ -98,7 +98,7 @@ public static int uniquePathsMath(int m, int n) {
 |---|----------|------|-------|
 | 1 | Plain Recursion | O(2^(m + n)) | O(m + n) |
 | 2 | 2D DP Table | O(m * n) | O(m * n) |
-| 3 | Single Row DP | O(m * n) | O(n) |
+| 3 | Single Row DP (Implemented) | O(m * n) | O(n) |
 | 4 | Combinatorics (Optimized) | O(min(m, n)) | O(1) |
 
 ## Source Code
@@ -134,7 +134,7 @@ public class UniquePaths {
 
 ## Solution
 
-The optimized solution is Approach 4 above. The version implemented in this repository is Approach 3.
+This repository implements Approach 3 (Single Row DP), marked `(Implemented)` in the Approaches section. The optimized approach on this page, Approach 4 (Combinatorics), is not implemented in the class.
 
 **Note:** the page names the combinatorics formula (Approach 4) as the optimized one, but the class in this repository implements Approach 3 (single-row DP). This block explains the code as written.
 

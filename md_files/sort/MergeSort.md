@@ -32,7 +32,7 @@
 
 The same problem can be solved in several ways. They are listed from the simplest to the most efficient.
 
-### Approach 1: Top-Down with New Arrays
+### Approach 1: Top-Down with New Arrays (Implemented)
 
 Copy each half into new arrays, sort them recursively and merge. Easy to read; allocates many short-lived arrays. This is the version implemented in the repository.
 
@@ -259,7 +259,7 @@ private static void mergeSortBuffer(int[] arr, int[] buffer, int low, int high) 
 
 | # | Approach | Time | Space |
 |---|----------|------|-------|
-| 1 | Top-Down with New Arrays | O(n log n) | O(n) with many temporary arrays |
+| 1 | Top-Down with New Arrays (Implemented) | O(n log n) | O(n) with many temporary arrays |
 | 2 | Bottom-Up (Iterative) | O(n log n) | O(n) |
 | 3 | Natural Merge Sort | Best O(n), worst O(n log n) | O(n) |
 | 4 | In-Place Merge with Rotations | O(n log^2 n) | O(log n) |
@@ -344,7 +344,7 @@ public class MergeSort {
 
 ## Solution
 
-The optimized solution is Approach 7 above. The version implemented in this repository is Approach 1.
+This repository implements Approach 1 (Top-Down with New Arrays), marked `(Implemented)` in the Approaches section. The optimized approach on this page, Approach 7 (Top-Down with One Shared Buffer), is not implemented in the class.
 
 The idea: divide and conquer. An array of 0 or 1 elements is already sorted; otherwise copy the left half (`n / 2` elements) and the right half into new arrays, sort each recursively, and `merge` the two sorted halves by repeatedly taking the smaller front element (`<=` takes the left one on ties, which keeps the sort stable). Every level of recursion does O(n) merging work and there are about log n levels, so the time is O(n log n) for any input order. The page names a "single shared buffer" variant as the optimized one, but the class in this repository is the simple version that allocates new arrays for each split and merge, and that is what is traced.
 

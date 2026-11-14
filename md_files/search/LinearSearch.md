@@ -25,7 +25,7 @@ Utility class to search an element in an array using Linear Search.
 
 The same problem can be solved in several ways. They are listed from the simplest to the most efficient.
 
-### Approach 1: Simple Loop
+### Approach 1: Simple Loop (Implemented)
 
 Check the elements one by one from the start. This is the version implemented in the repository.
 
@@ -98,7 +98,7 @@ public static int linearSearchSentinel(int[] arr, int element) {
 
 | # | Approach | Time | Space |
 |---|----------|------|-------|
-| 1 | Simple Loop | O(n) | O(1) |
+| 1 | Simple Loop (Implemented) | O(n) | O(1) |
 | 2 | Recursive | O(n) | O(n) recursion stack |
 | 3 | Streams | O(n) | O(1) |
 | 4 | Sentinel Linear Search (Optimized) | O(n) | O(1) |
@@ -148,7 +148,7 @@ public class LinearSearch {
 
 ## Solution
 
-The optimized solution is Approach 4 above. The version implemented in this repository is Approach 1.
+This repository implements Approach 1 (Simple Loop), marked `(Implemented)` in the Approaches section. The optimized approach on this page, Approach 4 (Sentinel Linear Search), is not implemented in the class.
 
 The idea: the array may be in any order, so there is nothing to exploit except looking at the elements one by one from index 0. The first element equal to the target ends the search at once, so the first occurrence is returned; reaching the end means the target is absent. The page names the sentinel variant as the optimized one (it saves the `i < n` check and is still O(n)), but the class in this repository implements the plain loop, and that loop is what is explained here.
 

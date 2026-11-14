@@ -70,7 +70,7 @@ public static int countSubstringsDp(String s) {
 - **Time Complexity:** O(n^2)
 - **Space Complexity:** O(n^2)
 
-### Approach 3: Expand Around Every Center
+### Approach 3: Expand Around Every Center (Implemented)
 
 Expand from each of the `2n - 1` centers and count every successful step. This is the version implemented in the repository.
 
@@ -126,7 +126,7 @@ public static int countSubstringsManacher(String s) {
 |---|----------|------|-------|
 | 1 | Brute Force | O(n^3) | O(1) |
 | 2 | Dynamic Programming Table | O(n^2) | O(n^2) |
-| 3 | Expand Around Every Center | O(n^2) | O(1) |
+| 3 | Expand Around Every Center (Implemented) | O(n^2) | O(1) |
 | 4 | Manacher's Algorithm (Optimized) | O(n) | O(n) |
 
 ## Source Code
@@ -172,9 +172,7 @@ public class PalindromicSubstrings {
 
 ## Solution
 
-The optimized solution is Approach 4 above. The version implemented in this repository is Approach 3.
-
-Note: the Approaches section marks Approach 4 (Manacher's algorithm), but the class in this repository implements Approach 3, expanding around every center. This block explains the code as it is written.
+This repository implements Approach 3 (Expand Around Every Center), marked `(Implemented)` in the Approaches section. The optimized approach on this page, Approach 4 (Manacher's Algorithm), is not implemented in the class.
 
 The idea: every palindromic substring has a center, either one character (odd length) or the gap between two (even length). For every index, expand outward from `(c, c)` and `(c, c+1)`; every step where the two ends match is one more palindromic substring, so the number of successful steps is added to `count`.
 

@@ -15,7 +15,7 @@ import java.util.Arrays;
  *
  * <p><b>Example walkthrough</b>
  * <ul>
- *   <li>For {@code [[1, 1, 1], [1, 1, 0], [1, 0, 1]]}, {@code (sr, sc) = (1, 1)}, {@code color = 2}: the connected region of 1s is the five pixels around the center.</li>
+ *   <li>For {@code [[1, 1, 1], [1, 1, 0], [1, 0, 1]]}, {@code (sr, sc) = (1, 1)}, {@code color = 2}: the connected region of 1s is the six pixels reachable from the center; the 1 in the bottom-right corner is not connected and stays 1.</li>
  *   <li>Result: {@code [[2, 2, 2], [2, 2, 0], [2, 0, 1]]}; the bottom-right 1 is not connected 4-directionally, so it keeps its color.</li>
  * </ul>
  *

@@ -11,7 +11,7 @@ An `image` is an `m x n` grid of pixel colors. Starting at pixel `(sr, sc)`, cha
 
 ## Example walkthrough
 
-- For `[[1, 1, 1], [1, 1, 0], [1, 0, 1]]`, `(sr, sc) = (1, 1)`, `color = 2`: the connected region of 1s is the five pixels around the center.
+- For `[[1, 1, 1], [1, 1, 0], [1, 0, 1]]`, `(sr, sc) = (1, 1)`, `color = 2`: the connected region of 1s is the six pixels reachable from the center; the 1 in the bottom-right corner is not connected and stays 1.
 - Result: `[[2, 2, 2], [2, 2, 0], [2, 0, 1]]`; the bottom-right 1 is not connected 4-directionally, so it keeps its color.
 
 ## Complexity Analysis
@@ -154,6 +154,6 @@ start            after fill
 1 0 1            2 0 1      <- (2,2) is only diagonal to the region, so it stays 1
 ```
 
-**Edge cases:** if the start pixel already has the target color (`[[0,0,0],[0,0,0]]`, color 0) nothing changes and the same image is returned. Pixels outside the grid or with another color end the recursion. Note: the page and the Javadoc call the region "five pixels", but the trace shows six pixels are recolored (the output has six 2s).
+**Edge cases:** if the start pixel already has the target color (`[[0,0,0],[0,0,0]]`, color 0) nothing changes and the same image is returned. Pixels outside the grid or with another color end the recursion.
 
 **Result:** `[[2, 2, 2], [2, 2, 0], [2, 0, 1]]`, the same as the class output.
