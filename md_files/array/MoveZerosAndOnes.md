@@ -173,6 +173,38 @@ public static void sortColors(int[] arr) {
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea (Dutch national flag): one pass with three pointers splits the array into four regions: `0`s before `low`, `1`s between `low` and `mid`, unknown values from `mid` to `high`, and `2`s after `high`. The element at `mid` decides: `0` is swapped to `low` (both `low` and `mid` advance), `1` is already in the right zone (`mid` advances), `2` is swapped to `high` (only `high` shrinks, because the swapped-in value is unchecked).
+
+**Input:** `[0, 1, 2, 0, 1, 0, 1, 2, 1, 0, 2]`. Start: `low = 0`, `mid = 0`, `high = 10`.
+
+| Step | `low`, `mid`, `high` | `arr[mid]` | Action | Array afterwards |
+|------|----------------------|------------|--------|------------------|
+| 1 | 0, 0, 10 | 0 | swap(low, mid); low++, mid++ | [0, 1, 2, 0, 1, 0, 1, 2, 1, 0, 2] |
+| 2 | 1, 1, 10 | 1 | mid++ | unchanged |
+| 3 | 1, 2, 10 | 2 | swap(mid, high) with the same value; high-- | [0, 1, 2, 0, 1, 0, 1, 2, 1, 0, 2] |
+| 4 | 1, 2, 9 | 2 | swap(mid, high); high-- | [0, 1, 0, 0, 1, 0, 1, 2, 1, 2, 2] |
+| 5 | 1, 2, 8 | 0 | swap(low, mid); low++, mid++ | [0, 0, 1, 0, 1, 0, 1, 2, 1, 2, 2] |
+| 6 | 2, 3, 8 | 0 | swap(low, mid); low++, mid++ | [0, 0, 0, 1, 1, 0, 1, 2, 1, 2, 2] |
+| 7 | 3, 4, 8 | 1 | mid++ | unchanged |
+| 8 | 3, 5, 8 | 0 | swap(low, mid); low++, mid++ | [0, 0, 0, 0, 1, 1, 1, 2, 1, 2, 2] |
+| 9 | 4, 6, 8 | 1 | mid++ | unchanged |
+| 10 | 4, 7, 8 | 2 | swap(mid, high); high-- | [0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2] |
+| 11 | 4, 7, 7 | 1 | mid++ | unchanged |
+
+Now `mid = 8 > high = 7`, so the loop ends.
+
+```text
+index: 0 1 2 3 | 4 5 6 7 | 8 9 10
+value: 0 0 0 0 | 1 1 1 1 | 2 2 2
+       ^low=4 (0s end)   ^high=7 (2s start at 8)
+```
+
+**Edge cases.** `null` or length `<= 1` returns at once. Any value other than `0`, `1`, `2` throws `IllegalArgumentException`. The array is sorted in one pass with no counting arrays.
+
+**Result:** `[0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2]`, matching the class output.
+
 ## Source Code
 
 ### MoveZerosAndOnes.java

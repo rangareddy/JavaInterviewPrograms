@@ -307,6 +307,35 @@ private static void search(char[][] board, int i, int j, TrieNode parent, List<S
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: put all the words into a trie (the last node of each word stores the whole word in `word`), then start a depth-first search from every board cell. The DFS only moves into a neighbour when the trie has a child for that letter, so a path that is not a prefix of any word is cut at once, and all words are searched together in one pass. When a node holds a `word`, it is added to the result and cleared (`node.word = null`) so it is reported once. A visited cell is marked `'#'` and restored afterwards (backtracking). The result is sorted at the end.
+
+**Input:** `board = [[o,a,a,n],[e,t,a,e],[i,h,k,r],[i,f,l,v]]`, `words = [oath, pea, eat, rain]`. The root of the trie has children `o`, `p`, `e`, `r`. Neighbours are tried in the order down, up, right, left.
+
+| Start cell | Letter | What the DFS does | Result list |
+|-----------|--------|-------------------|-------------|
+| (0,0) | o | trie has `o`; down (1,0) `e`: no `oe` branch; right (0,1) `a` ok; down (1,1) `t` ok; down (2,1) `h` ok, node holds "oath" | [oath] |
+| (0,1), (0,2) | a | the root has no child `a`, return | [oath] |
+| (0,3) | n | the root has no child `n` | [oath] |
+| (1,0) | e | trie has `e`; neighbours i, o, t are not `ea`, return | [oath] |
+| (1,1), (1,2) | t, a | the root has neither `t` nor `a` | [oath] |
+| (1,3) | e | trie has `e`; down r and up n are not `ea`; left (1,2) `a` ok; from there down k and up a fail, right is marked `#`, left (1,1) `t` ok, node holds "eat" | [oath, eat] |
+| (2,3) | r | trie has `r`; neighbours v, e, k are not `ra`; stop. "rain" is never completed | [oath, eat] |
+| other cells | - | no word starts with i, h, k, f, l, v | [oath, eat] |
+
+```mermaid
+flowchart LR
+    A["(0,0) o"] --> B["(0,1) a"] --> C["(1,1) t"] --> D["(2,1) h<br/>found oath"]
+    E["(1,3) e"] --> F["(1,2) a"] --> G["(1,1) t<br/>found eat"]
+```
+
+After the scan the list `[oath, eat]` is sorted, giving `[eat, oath]`. "pea" has no `p` on the board and "rain" breaks after `r`, so they are not found.
+
+**Edge cases:** a `null` or empty board, or `null` words, returns an empty list. A word that appears twice on the board is reported once because the stored `word` is cleared. For the second sample `words = [abcb]` the DFS never gets past `a`-`b` (no `b` on the board), so the result is `[]`.
+
+**Result:** returns `[eat, oath]`, matching the class output.
+
 ## Source Code
 
 ### WordSearchII.java

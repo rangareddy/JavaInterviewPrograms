@@ -138,6 +138,35 @@ private static int find(int[] parent, int x) {
 
 The optimized solution is Approach 3 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: sort the edges from cheapest to dearest and walk through them once. Keep a union-find forest (`parent[]`) that says which vertices are already connected. An edge is taken only when its two ends have different roots (so it cannot close a cycle); taking it merges the two sets. Because the cheapest edge between two different components always belongs to some minimum spanning tree, this greedy choice is correct. At the end, `n - 1` taken edges mean a spanning tree; fewer means the graph is disconnected.
+
+**Input:** `n = 4`, `edges = [[0,1,1], [1,2,2], [0,2,3], [2,3,4], [1,3,5]]` (already sorted by weight). `parent = [0, 1, 2, 3]`, `total = 0`, `taken = 0`.
+
+| Step | Edge `(u, v, w)` | `find(u)`, `find(v)` | Decision | `parent` afterwards | `total` | `taken` |
+|------|------------------|----------------------|----------|---------------------|---------|---------|
+| 1 | (0, 1, 1) | 0, 1 | different - take, `parent[0] = 1` | `[1, 1, 2, 3]` | 1 | 1 |
+| 2 | (1, 2, 2) | 1, 2 | different - take, `parent[1] = 2` | `[1, 2, 2, 3]` | 3 | 2 |
+| 3 | (0, 2, 3) | 2, 2 | same root - cycle, skip | `[2, 2, 2, 3]` | 3 | 2 |
+| 4 | (2, 3, 4) | 2, 3 | different - take, `parent[2] = 3` | `[2, 2, 3, 3]` | 7 | 3 |
+| 5 | (1, 3, 5) | 3, 3 | same root - cycle, skip | `[2, 3, 3, 3]` | 7 | 3 |
+
+In steps 3 and 5 `find` also shortens the paths it walks (path halving), which is why `parent[0]` and `parent[1]` change even though the edge is skipped. The loop does not stop early after `n - 1` edges; the remaining edges are simply skipped as cycles.
+
+```mermaid
+flowchart LR
+    V0(("0")) ---|"1 taken"| V1(("1"))
+    V1 ---|"2 taken"| V2(("2"))
+    V2 ---|"4 taken"| V3(("3"))
+    V0 -.-|"3 skipped"| V2
+    V1 -.-|"5 skipped"| V3
+```
+
+**Edge cases.** For a disconnected graph, e.g. `n = 4`, `edges = [[0,1,1], [2,3,1]]`, only 2 edges can be taken, `taken (2) != n - 1 (3)`, so the method returns `-1`. With `n = 1` and no edges, `taken = 0 = n - 1` and the total is `0`. The input array is cloned before sorting, so the caller's order is not changed.
+
+**Result:** the method returns `total = 7` for the sample input and `-1` for the disconnected one, which is exactly what the class prints.
+
 ## Source Code
 
 ### MinimumSpanningTree.java

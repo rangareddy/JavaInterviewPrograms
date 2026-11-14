@@ -119,6 +119,34 @@ private static void swap(int[] nums, int i, int j) {
 
 The optimized solution is Approach 3 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: the next permutation keeps the longest possible prefix and makes the smallest possible increase after it. (1) Scan from the right for the first index `i` where `nums[i] < nums[i+1]`; everything right of `i` is in descending order (already the largest arrangement). (2) Find the rightmost `j` with `nums[j] > nums[i]` and swap `i` and `j`. (3) Reverse the suffix after `i` so it becomes the smallest (ascending) arrangement.
+
+**Input:** `nums = [1, 3, 2]`.
+
+| Step | Action | Values | Array afterwards |
+|------|--------|--------|------------------|
+| 1 | start with `i = 1`; `nums[1]=3 >= nums[2]=2`, so `i--` | `i = 0` | [1, 3, 2] |
+| 2 | `nums[0]=1 >= nums[1]=3`? no, stop: pivot is `i = 0` | pivot value 1 | [1, 3, 2] |
+| 3 | `j` starts at 2: `nums[2]=2 <= 1`? no, so `j = 2` | `j = 2` | [1, 3, 2] |
+| 4 | swap `nums[0]` and `nums[2]` | | [2, 3, 1] |
+| 5 | reverse the suffix from `i + 1 = 1` to the end | `[3, 1]` becomes `[1, 3]` | [2, 1, 3] |
+
+```mermaid
+flowchart TD
+    A["find pivot i from the right<br/>first nums i less than nums i+1"] --> B{"i found?"}
+    B -->|"yes"| C["find rightmost j<br/>with nums j greater than nums i"]
+    C --> D["swap nums i and nums j"]
+    D --> E["reverse the suffix after i"]
+    B -->|"no, array is descending"| E
+    E --> F(["next permutation"])
+```
+
+**Edge cases.** A fully descending array such as `[3, 2, 1]` has no pivot (`i` ends at `-1`), the swap is skipped and the whole array is reversed to `[1, 2, 3]`, the smallest permutation. Equal neighbours are skipped by the `>=` test, so `[1, 1, 5]` becomes `[1, 5, 1]`. A single element is unchanged.
+
+**Result:** `[2, 1, 3]`, matching the class output.
+
 ## Source Code
 
 ### NextPermutation.java

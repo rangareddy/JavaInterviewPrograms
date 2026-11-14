@@ -201,6 +201,33 @@ public static ListNode mergeTwoLists(ListNode list1, ListNode list2) {
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: both lists are already sorted, so the smallest remaining value is always at the front of one of them. Keep a `dummy` node and a `tail` pointer. Repeatedly compare the two fronts, link the smaller node after `tail` and advance that list. The dummy node removes the "first node" special case, and no new nodes are created (the existing nodes are re-linked), so space is O(1). When one list runs out, the rest of the other, already sorted, is attached in one step.
+
+**Input:** `list1 = [1, 2, 4]`, `list2 = [1, 3, 4]`. (`1a`/`1b` and `4a`/`4b` tell the equal values apart: `a` from `list1`, `b` from `list2`.)
+
+| Step | `list1` front | `list2` front | Compare | Linked after `tail` | Merged so far |
+|------|---------------|---------------|---------|---------------------|---------------|
+| 1 | 1a | 1b | `1 <= 1` true | node from `list1` | `1a` |
+| 2 | 2 | 1b | `2 <= 1` false | node from `list2` | `1a, 1b` |
+| 3 | 2 | 3 | `2 <= 3` true | node from `list1` | `1a, 1b, 2` |
+| 4 | 4a | 3 | `4 <= 3` false | node from `list2` | `1a, 1b, 2, 3` |
+| 5 | 4a | 4b | `4 <= 4` true | node from `list1` | `1a, 1b, 2, 3, 4a` |
+
+Now `list1` is `null`, the loop ends, and `tail.next = list2`, which attaches the remaining `4b`.
+
+```mermaid
+flowchart LR
+    D["dummy"] --> a["1 from list1"] --> b["1 from list2"] --> c["2"] --> d["3"] --> e["4 from list1"] --> f["4 from list2"]
+```
+
+Using `<=` takes the node from `list1` on ties, so the merge is stable.
+
+**Edge cases.** If both lists are empty, the loop never runs, `tail.next` becomes `null` and the result is empty. If one list is empty, the other is returned as it is (`[]` and `[0]` give `[0]`).
+
+**Result:** `[1, 1, 2, 3, 4, 4]`, matching the class output.
+
 ## Source Code
 
 Uses the shared helper [`ListNode`](../../src/main/java/com/ranga/linkedlist/ListNode.java) (a small `ListNode` with `of(...)` and `toString(...)` helpers for building and printing test data).

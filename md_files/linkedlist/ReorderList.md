@@ -216,6 +216,29 @@ public static void reorderList(ListNode head) {
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: the target order takes nodes alternately from the front and from the back. A singly linked list cannot be read from the back, so the code splits the list in the middle, reverses the second half in place, and then weaves the two halves together one node at a time. Only `next` links change, so it uses O(1) extra space and three linear passes.
+
+**Input:** `head = [1, 2, 3, 4]`.
+
+| Step | What the code does | Result |
+|------|--------------------|--------|
+| 1 | slow = 1, fast = 1; fast.next and fast.next.next exist, so slow = 2, fast = 3 | next test fails (fast.next.next is null), slow stays at 2 |
+| 2 | cut after slow: `slow.next = null`, reverse `3 -> 4` | first half `1 -> 2`, reversed second half `4 -> 3` |
+| 3a | first = 1, second = 4: save 2 and 3, link `1 -> 4 -> 2` | first = 2, second = 3 |
+| 3b | first = 2, second = 3: save null and null, link `2 -> 3 -> null` | second = null, loop ends |
+
+```text
+first half : 1 -> 2
+second half: 4 -> 3        (reversed)
+woven      : 1 -> 4 -> 2 -> 3
+```
+
+**Edge cases.** `null` or a single node returns at once, leaving the list as is (`[1]`). The middle search uses `fast.next.next`, so for an odd length the first half gets the extra node: for `[1, 2, 3, 4, 5]` slow stops at `3`, the halves are `1 -> 2 -> 3` and `5 -> 4`, and the result is `[1, 5, 2, 4, 3]`. The loop runs while the second half has nodes, and the first half is never shorter, so no node is lost.
+
+**Result:** the list becomes `[1, 4, 2, 3]`, matching the class output; the method itself returns nothing because it reorders in place.
+
 ## Source Code
 
 Uses the shared helper [`ListNode`](../../src/main/java/com/ranga/linkedlist/ListNode.java) (a small `ListNode` with `of(...)` and `toString(...)` helpers for building and printing test data).

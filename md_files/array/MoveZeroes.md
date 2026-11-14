@@ -91,6 +91,30 @@ public static void moveZeroes(int[] nums) {
 
 The optimized solution is Approach 3 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: two pointers. `fast` reads every element; `slow` marks the next position where a non-zero value belongs. Each time `fast` finds a non-zero, it is swapped with `slow`, and `slow` advances. Everything before `slow` is non-zero in original order; zeros are pushed behind it. One pass, in place.
+
+**Input:** `nums = [0, 1, 0, 3, 12]`. Start: `slow = 0`.
+
+| Step | `fast` | `nums[fast]` | Action | `slow` afterwards | Array afterwards |
+|------|--------|--------------|--------|-------------------|------------------|
+| 1 | 0 | 0 | zero, skip | 0 | [0, 1, 0, 3, 12] |
+| 2 | 1 | 1 | swap `nums[0]` and `nums[1]` | 1 | [1, 0, 0, 3, 12] |
+| 3 | 2 | 0 | zero, skip | 1 | [1, 0, 0, 3, 12] |
+| 4 | 3 | 3 | swap `nums[1]` and `nums[3]` | 2 | [1, 3, 0, 0, 12] |
+| 5 | 4 | 12 | swap `nums[2]` and `nums[4]` | 3 | [1, 3, 12, 0, 0] |
+
+```text
+slow:   0  1  1  2  3
+fast:   0  1  2  3  4
+array: [1, 3, 12, 0, 0]   non-zeros first (order kept), zeros last
+```
+
+**Edge cases.** With no zeros (`[1, 2, 3]`) `slow` equals `fast` every time, so each swap is an element with itself and the array is unchanged. `[0, 0, 1]` becomes `[1, 0, 0]`; `[0]` stays `[0]`. An empty array does nothing. The class does not check for `null`.
+
+**Result:** `[1, 3, 12, 0, 0]`, matching the class output.
+
 ## Source Code
 
 ### MoveZeroes.java

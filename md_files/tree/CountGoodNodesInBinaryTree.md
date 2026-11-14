@@ -129,6 +129,42 @@ public static int goodNodesBfs(TreeNode root) {
 
 The optimized solution is Approach 2 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: a node is good when no node on the path from the root to it has a larger value, i.e. its value is at least the maximum seen so far on that path. The recursion carries that maximum down as a parameter, counts the current node if `val >= maxSoFar`, and passes the updated maximum to both children. Nothing is stored besides the parameter.
+
+**Input:** the tree `[3, 1, 4, 3, null, 1, 5]`.
+
+```mermaid
+flowchart TD
+    n3(("3")) --> n1(("1"))
+    n3 --> n4(("4"))
+    n1 --> m3(("3"))
+    n4 --> m1(("1"))
+    n4 --> n5(("5"))
+    classDef good fill:#dcfce7,stroke:#22c55e
+    classDef bad fill:#fee2e2,stroke:#ef4444
+    class n3,n4,m3,n5 good
+    class n1,m1 bad
+```
+
+Green nodes are good, red nodes are not.
+
+| Visit | Node | `maxSoFar` on entry | `val >= maxSoFar` | Counts | `newMax` passed down |
+|-------|------|---------------------|-------------------|--------|----------------------|
+| 1 | `3` (root) | `Integer.MIN_VALUE` | yes | 1 | 3 |
+| 2 | `1` | 3 | no | 0 | 3 |
+| 3 | `3` (child of 1) | 3 | yes (equal counts) | 1 | 3 |
+| 4 | `4` | 3 | yes | 1 | 4 |
+| 5 | `1` (child of 4) | 4 | no | 0 | 4 |
+| 6 | `5` | 4 | yes | 1 | 5 |
+
+The total is `1 + 0 + 1 + 1 + 0 + 1 = 4`.
+
+**Edge cases.** An empty tree returns `0`. The root is always good because it starts against `Integer.MIN_VALUE`. A value equal to the maximum counts as good (`>=`), which is why visit 3 is counted. Time is `O(n)`, recursion space `O(h)`.
+
+**Result:** `4` for the traced tree; the class output for the five inputs in `main` is `4`, `3`, `1`, `0`, `4`.
+
 ## Source Code
 
 Uses the shared helper [`TreeNode`](../../src/main/java/com/ranga/tree/TreeNode.java) (a small `TreeNode` with `of(...)` and `toString(...)` helpers for building and printing test data).

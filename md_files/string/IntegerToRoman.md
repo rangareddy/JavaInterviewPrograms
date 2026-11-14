@@ -73,6 +73,31 @@ public static String intToRoman(int num) {
 
 The optimized solution is Approach 2 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: keep a fixed table of the 13 values from largest to smallest, including the subtractive ones (900, 400, 90, 40, 9, 4), with their symbols. Go through the table once; at each entry, append the symbol and subtract the value as long as the remaining number is at least that value. The loop also stops as soon as `num` reaches 0.
+
+**Input:** `num = 1994`.
+
+| Table entry | Symbol | `num` before | Times used | `num` after | Output so far |
+|-------------|--------|--------------|-----------|-------------|---------------|
+| 1000 | M | 1994 | 1 | 994 | `M` |
+| 900 | CM | 994 | 1 | 94 | `MCM` |
+| 500, 400, 100 | D, CD, C | 94 | 0 | 94 | `MCM` |
+| 90 | XC | 94 | 1 | 4 | `MCMXC` |
+| 50, 40, 10, 9, 5 | L, XL, X, IX, V | 4 | 0 | 4 | `MCMXC` |
+| 4 | IV | 4 | 1 | 0 | `MCMXCIV` |
+
+After the `IV` entry `num > 0` is false, so the remaining entry (1) is not visited.
+
+```text
+1994 -> M (1000) -> 994 -> CM (900) -> 94 -> XC (90) -> 4 -> IV (4) -> 0
+```
+
+**Edge cases.** Repeats come from the `while`: `3` gives `III` (entry 1 used three times), `58` gives `L` + `V` + `III` = `LVIII`. `4` and `9` give `IV` and `IX` straight from the table. `3999` gives `MMMCMXCIX`. A number of 0 or less returns `""` (no checks for the valid range 1..3999; larger numbers just get more `M`s).
+
+**Result:** `"MCMXCIV"`, matching the class output.
+
 ## Source Code
 
 ### IntegerToRoman.java

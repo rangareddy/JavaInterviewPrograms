@@ -116,6 +116,50 @@ public static List<Integer> partitionLabels(String s) {
 
 The optimized solution is Approach 3 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: first record, for each letter, the index of its last occurrence. Then sweep with a growing end: `end` is the furthest last-occurrence of any letter seen in the current part. When the index `i` reaches `end`, every letter in the part has finished, so the part can be cut there, its size is `end - start + 1`, and the next part starts at `i + 1`. Two linear passes.
+
+**Input:** `s = "ababcbacadefegdehijhklij"`.
+
+Last indices: a=8, b=5, c=7, d=14, e=15, f=11, g=13, h=19, i=22, j=23, k=20, l=21.
+
+| i | char | last[char] | end | cut here? |
+|---|------|-----------|-----|-----------|
+| 0 | a | 8 | 8 | no |
+| 1 | b | 5 | 8 | no |
+| 2 | a | 8 | 8 | no |
+| 3 | b | 5 | 8 | no |
+| 4 | c | 7 | 8 | no |
+| 5 | b | 5 | 8 | no |
+| 6 | a | 8 | 8 | no |
+| 7 | c | 7 | 8 | no |
+| 8 | a | 8 | 8 | yes: size 9 (start 0), next start 9 |
+| 9 | d | 14 | 14 | no |
+| 10 | e | 15 | 15 | no |
+| 11 | f | 11 | 15 | no |
+| 12 | e | 15 | 15 | no |
+| 13 | g | 13 | 15 | no |
+| 14 | d | 14 | 15 | no |
+| 15 | e | 15 | 15 | yes: size 7 (start 9), next start 16 |
+| 16 | h | 19 | 19 | no |
+| 17 | i | 22 | 22 | no |
+| 18 | j | 23 | 23 | no |
+| 19 | h | 19 | 23 | no |
+| 20 | k | 20 | 23 | no |
+| 21 | l | 21 | 23 | no |
+| 22 | i | 22 | 23 | no |
+| 23 | j | 23 | 23 | yes: size 8 (start 16) |
+
+```text
+ababcbaca | defegde | hijhklij
+    9     |    7    |    8
+```
+
+**Edge cases:** `"eccbbbbdec"` is one part because `e` starts at 0 and ends at 9, giving `[10]`. `"abc"` cuts after each letter, giving `[1, 1, 1]`. An empty string gives an empty list.
+
+**Result:** returns `[9, 7, 8]`, matching the class output.
+
 ## Source Code
 
 ### PartitionLabels.java

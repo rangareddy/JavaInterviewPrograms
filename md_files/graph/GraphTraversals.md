@@ -23,7 +23,7 @@ Traverse an undirected graph given as a list of edges, starting from a source ve
 
 The same problem can be solved in several ways. The approach marked (Optimized) is the one to use in practice.
 
-### Approach 1: BFS with a Queue
+### Approach 1: BFS with a Queue (Optimized)
 
 Visit the vertices level by level; the first time a vertex is reached is its shortest distance in an unweighted graph. This is the BFS implemented in the repository.
 
@@ -93,7 +93,7 @@ public static List<Integer> dfsStack(List<List<Integer>> graph, int source) {
 - **Time Complexity:** O(V + E)
 - **Space Complexity:** O(V)
 
-### Approach 4: Shortest Distances with BFS
+### Approach 4: Shortest Distances with BFS (Optimized)
 
 Store `distance[next] = distance[vertex] + 1` the first time a vertex is reached.
 
@@ -126,6 +126,64 @@ public static int[] bfsDistances(List<List<Integer>> graph, int source) {
 | 4 | Shortest Distances with BFS | O(V + E) | O(V) |
 
 ### Optimized Solution
+
+The optimized solution is Approach 1 (BFS with a queue) with Approach 4 (shortest distances from the same BFS), plus the two DFS versions (Approaches 2 and 3); all four are implemented in this repository.
+
+#### Optimized solution explained
+
+The idea: BFS explores a graph in rings around the source (all vertices one edge away, then two edges away, ...) using a **queue**; DFS goes as deep as possible along one path before backing up, using the call stack (or an explicit stack). Marking a vertex *visited* when it is first discovered stops either search from going in circles.
+
+**Input:** `vertices = 6`, `edges = [[0,1], [0,2], [1,3], [2,3], [3,4]]`, `source = 0`. The undirected graph's adjacency lists are `0: [1, 2]`, `1: [0, 3]`, `2: [0, 3]`, `3: [1, 2, 4]`, `4: [3]`, `5: []`.
+
+```mermaid
+flowchart LR
+    v0((0)) --- v1((1))
+    v0 --- v2((2))
+    v1 --- v3((3))
+    v2 --- v3
+    v3 --- v4((4))
+    v5((5))
+    classDef d0 fill:#dbeafe,stroke:#3b82f6
+    classDef d1 fill:#dcfce7,stroke:#22c55e
+    classDef d2 fill:#fef9c3,stroke:#eab308
+    classDef d3 fill:#fee2e2,stroke:#ef4444
+    classDef off fill:#f3f4f6,stroke:#9ca3af
+    class v0 d0
+    class v1,v2 d1
+    class v3 d2
+    class v4 d3
+    class v5 off
+```
+
+Colours show the BFS distance from `0`: blue 0, green 1, yellow 2, red 3. Vertex `5` is not connected, so it is never reached.
+
+**BFS with a queue** (marks a vertex visited when it is added to the queue):
+
+| Step | Queue before | Vertex polled | Newly discovered | Queue after | `order` |
+|------|--------------|---------------|------------------|-------------|---------|
+| start | `[0]` (0 marked visited) | | | | `[ ]` |
+| 1 | `[0]` | `0` | `1`, `2` | `[1, 2]` | `[0]` |
+| 2 | `[1, 2]` | `1` | `3` (`0` already visited) | `[2, 3]` | `[0, 1]` |
+| 3 | `[2, 3]` | `2` | none (`0` and `3` already marked) | `[3]` | `[0, 1, 2]` |
+| 4 | `[3]` | `3` | `4` | `[4]` | `[0, 1, 2, 3]` |
+| 5 | `[4]` | `4` | none | `[ ]` | `[0, 1, 2, 3, 4]` |
+
+The queue is empty, so `bfs` returns `[0, 1, 2, 3, 4]`. The distance version does the same walk and sets `distance[next] = distance[vertex] + 1` when it first discovers a vertex, giving `[0, 1, 1, 2, 3, -1]` (the `-1` is vertex `5`, unreachable).
+
+**Recursive DFS** follows the first unvisited neighbour as deep as it can:
+
+| Call | Visits | Next unvisited neighbour tried |
+|------|--------|--------------------------------|
+| `dfs(0)` | `0` | `1` |
+| `dfs(1)` | `1` | `3` (`0` is visited) |
+| `dfs(3)` | `3` | `2` (`1` is visited) |
+| `dfs(2)` | `2` | none (`0` and `3` visited), return to `3` |
+| back in `dfs(3)` | | `4` |
+| `dfs(4)` | `4` | none, every call returns |
+
+The visit order is `[0, 1, 3, 2, 4]`. The iterative DFS pushes the neighbours in reverse, so the first neighbour is popped first, and produces the same `[0, 1, 3, 2, 4]`.
+
+**Edge cases.** A source vertex with no neighbours returns just `[source]`; vertices in other components are never reached (their distance stays `-1`). Every vertex is queued or visited at most once and every edge is looked at twice, so both searches are `O(V + E)`.
 
 ## Source Code
 

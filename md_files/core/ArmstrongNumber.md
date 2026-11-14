@@ -114,6 +114,25 @@ public static boolean isArmstrongTable(int number) {
 
 The optimized solution is Approach 3 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: a number with `d` digits is an Armstrong number when the sum of each digit raised to the power `d` equals the number. The code first gets `d` from the length of `String.valueOf(number)`, then peels digits off arithmetically: `n % 10` is the last digit and `n /= 10` drops it. Each digit is raised to `d` by a small multiplication loop (`power`), so no floating-point `Math.pow` rounding is involved and the sum is kept in a `long`.
+
+**Input:** `number = 153`, so `digits = 3`, `sum = 0`.
+
+| Step | `n` | Last digit `n % 10` | `digit^3` | `sum` after |
+|------|-----|---------------------|-----------|-------------|
+| 1 | 153 | 3 | 27 | 27 |
+| 2 | 15 | 5 | 125 | 152 |
+| 3 | 1 | 1 | 1 | 153 |
+| 4 | 0 | loop ends | | |
+
+`sum == number` (`153 == 153`), so the number is an Armstrong number. For `154` the digits 4, 5, 1 give `64 + 125 + 1 = 190`, which is not 154, so the result is `false`. No diagram is added because the table is the whole computation.
+
+**Edge cases.** A negative number returns `false` immediately. `0` has one digit, the loop body never runs, `sum` stays `0` and `0 == 0` gives `true` (the class prints Armstrong for 0). `armstrongNumbers(from, to)` just tests each number in the range; for `1..1000` it returns `[1, 2, 3, 4, 5, 6, 7, 8, 9, 153, 370, 371, 407]`.
+
+**Result:** the class prints Armstrong for 153, 9474, 370, 0 and 1634, and Not Armstrong for 154, matching the trace.
+
 ## Source Code
 
 ### ArmstrongNumber.java

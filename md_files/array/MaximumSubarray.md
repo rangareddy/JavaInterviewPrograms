@@ -182,6 +182,33 @@ public static int maxSubArray(int[] nums) {
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea (Kadane's algorithm): keep `current`, the best sum of a subarray that must end at the current element. At each element there are only two choices: extend the previous subarray (`current + nums[i]`) or start fresh at `nums[i]`. A running total that has gone negative can only hurt, so the `max` drops it. `best` remembers the largest `current` ever seen.
+
+**Input:** `nums = [-2, 1, -3, 4, -1, 2, 1, -5, 4]`. Start: `current = -2`, `best = -2`.
+
+| Step | `i` | `nums[i]` | Extend (`current + nums[i]`) | `current` = max(`nums[i]`, extend) | `best` |
+|------|-----|-----------|------------------------------|------------------------------------|--------|
+| 1 | 1 | 1 | -2 + 1 = -1 | 1 (start fresh) | 1 |
+| 2 | 2 | -3 | 1 - 3 = -2 | -2 (extend) | 1 |
+| 3 | 3 | 4 | -2 + 4 = 2 | 4 (start fresh) | 4 |
+| 4 | 4 | -1 | 4 - 1 = 3 | 3 | 4 |
+| 5 | 5 | 2 | 3 + 2 = 5 | 5 | 5 |
+| 6 | 6 | 1 | 5 + 1 = 6 | 6 | 6 |
+| 7 | 7 | -5 | 6 - 5 = 1 | 1 | 6 |
+| 8 | 8 | 4 | 1 + 4 = 5 | 5 | 6 |
+
+```text
+index:  0   1   2   3   4   5   6   7   8
+nums:  -2   1  -3   4  -1   2   1  -5   4
+                    [------------]        best subarray 4, -1, 2, 1 = 6
+```
+
+**Edge cases.** The two variables start at `nums[0]`, not `0`, so an all-negative array such as `[-3, -2, -5]` correctly returns `-2` (the least negative element). A single element returns itself. `null` or empty input throws `IllegalArgumentException`.
+
+**Result:** `6`, matching the class output.
+
 ## Source Code
 
 ### MaximumSubarray.java

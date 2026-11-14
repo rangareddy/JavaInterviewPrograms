@@ -162,6 +162,34 @@ public static int minCostConnectPoints(int[][] points) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: the points form a complete graph (every pair has a Manhattan-distance edge), so Prim's algorithm with plain arrays beats a heap. `minCost[i]` holds the cheapest known edge from point `i` to the tree built so far and `inTree[i]` marks the points already joined. Each round picks the outside point with the smallest `minCost`, adds that cost to the total, and then lowers `minCost` of the remaining points using their distance to the newly added point.
+
+**Input:** `points = [[0,0], [2,2], [3,10], [5,2], [7,0]]`. Start: `minCost = [0, inf, inf, inf, inf]`, `total = 0`.
+
+| Round | Picked point | Cost added | `total` | `minCost` after the update (`-` = already in the tree) |
+|-------|--------------|------------|---------|--------------------------------------------------------|
+| 1 | 0 = (0,0) | 0 | 0 | `[-, 4, 13, 7, 7]` |
+| 2 | 1 = (2,2) | 4 | 4 | `[-, -, 9, 3, 7]` |
+| 3 | 3 = (5,2) | 3 | 7 | `[-, -, 9, -, 4]` |
+| 4 | 4 = (7,0) | 4 | 11 | `[-, -, 9, -, -]` |
+| 5 | 2 = (3,10) | 9 | 20 | `[-, -, -, -, -]` |
+
+Example of an update: in round 2 point 3 had cost 7 (distance from (0,0)); its distance to the new point (2,2) is `3 + 0 = 3`, so `minCost[3]` drops to 3. Point 4 stays at 7 because its distance to (2,2) is `5 + 2 = 7`.
+
+```mermaid
+flowchart LR
+    P0["0: (0,0)"] -->|"4"| P1["1: (2,2)"]
+    P1 -->|"3"| P3["3: (5,2)"]
+    P3 -->|"4"| P4["4: (7,0)"]
+    P1 -->|"9"| P2["2: (3,10)"]
+```
+
+**Edge cases.** A single point (`[[0,0]]`) runs one round, adds `minCost[0] = 0` and returns `0`. Each round scans all points twice, giving `O(n^2)` time with no heap and only two arrays of extra space. An empty `points` array is not handled (`minCost[0]` would fail), so the class expects at least one point.
+
+**Result:** the tree edges cost 4 + 3 + 4 + 9, so the method returns `20`, matching the class output. The other sample inputs print `18`, `0` and `4`.
+
 ## Source Code
 
 ### MinCostToConnectAllPoints.java

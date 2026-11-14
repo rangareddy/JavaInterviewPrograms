@@ -110,6 +110,28 @@ public static int majorityElement(int[] nums) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea (Boyer-Moore voting): pair off each occurrence of the candidate with a different number; every such pair cancels out. The majority element appears more than `n/2` times, so it cannot be fully cancelled and is the candidate left at the end. `count` is the number of uncancelled votes: when it is `0` the next number becomes the new candidate.
+
+**Input:** `nums = [2, 2, 1, 2, 1, 1, 2]`. Start: `count = 0`, `candidate = 2`.
+
+| Step | `num` | `count` was 0? | `candidate` | `count` afterwards |
+|------|-------|----------------|-------------|--------------------|
+| 1 | 2 | yes, candidate = 2 | 2 | 1 |
+| 2 | 2 | no | 2 | 2 |
+| 3 | 1 | no (cancels one vote) | 2 | 1 |
+| 4 | 2 | no | 2 | 2 |
+| 5 | 1 | no | 2 | 1 |
+| 6 | 1 | no | 2 | 0 |
+| 7 | 2 | yes, candidate = 2 | 2 | 1 |
+
+At step 6 all votes are cancelled; the candidate is simply re-elected at step 7.
+
+**Edge cases.** One element returns itself. `null` or empty throws `IllegalArgumentException`. The class does not run a second verification pass, so it relies on the problem guarantee that a majority element exists; for input without one it just returns whatever candidate is left.
+
+**Result:** `2`, matching the class output (`[3, 2, 3]` gives `3`).
+
 ## Source Code
 
 ### MajorityElement.java

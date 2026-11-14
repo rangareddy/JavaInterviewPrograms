@@ -146,6 +146,30 @@ public static int findCheapestPrice(int n, int[][] flights, int src, int dst, in
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: Bellman-Ford with a limit on the number of edges. A route with at most `k` stops uses at most `k + 1` flights, so the code runs exactly `k + 1` rounds. `prices[c]` is the cheapest price known to reach city `c` using at most `round + 1` flights. In every round the whole flight list is scanned, but reads come from the previous round's `prices` and writes go to a copy `next`; this stops a round from chaining several flights in one pass, which would break the stops limit. After the last round, `prices[dst]` is the answer, or `-1` if it is still infinity. Time O(k * E), space O(n).
+
+**Input:** `n = 4`, `flights = [[0,1,100],[1,2,100],[2,0,100],[1,3,600],[2,3,200]]`, `src = 0`, `dst = 3`, `k = 1`, so there are `k + 1 = 2` rounds. Start: `prices = [0, INF, INF, INF]`.
+
+| Round | Flights that improve `next` (using the previous `prices`) | `prices` afterwards |
+|-------|-------------------------------------------------------------|---------------------|
+| 0 | `0->1`: 0 + 100 = 100 | `[0, 100, INF, INF]` |
+| 1 | `0->1`: 100 is not better than 100; `1->2`: 100 + 100 = 200; `1->3`: 100 + 600 = 700; `2->0` and `2->3` are skipped because `prices[2]` was `INF` at the start of the round | `[0, 100, 200, 700]` |
+
+The cheaper route `0 -> 1 -> 2 -> 3` (cost 400) needs two stops, i.e. three flights, which would need a third round, so it is not allowed with `k = 1`. After 2 rounds `prices[3] = 700`, and the method returns `700`.
+
+**Effect of the limit:** with `flights = [[0,1,100],[1,2,100],[0,2,500]]`, `src = 0`, `dst = 2`:
+
+| `k` | Rounds | `prices` after each round | Result |
+|-----|--------|---------------------------|--------|
+| 1 | 2 | round 0: `[0, 100, 500]`; round 1: `[0, 100, 200]` | `200` |
+| 0 | 1 | round 0: `[0, 100, 500]` | `500` |
+
+**Edge cases.** If the destination is not reachable within the limit, `prices[dst]` stays `Integer.MAX_VALUE` and the method returns `-1`. The check `prices[from] != INFINITY` prevents integer overflow from adding a price to `MAX_VALUE`. If `src == dst` the answer is `0`.
+
+**Result:** `700` for the traced input, matching the class output (`700`, `200`, `500` for its three samples).
+
 ## Source Code
 
 ### CheapestFlightsWithinKStops.java

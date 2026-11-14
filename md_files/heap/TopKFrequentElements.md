@@ -204,6 +204,32 @@ public static int[] topKFrequent(int[] nums, int k) {
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: count how often each number occurs, then use bucket sort on the counts. A count can only be between 1 and `n`, so an array of `n + 1` buckets (index = frequency) holds the numbers with that frequency. Reading the buckets from the highest index down gives the most frequent numbers first, in `O(n)` with no heap or sort.
+
+**Input:** `nums = [1, 1, 1, 2, 2, 3]`, `k = 2`.
+
+Counting: `frequency = {1=3, 2=2, 3=1}`. Buckets have length 7 (indices 0..6): `buckets[3] = [1]`, `buckets[2] = [2]`, `buckets[1] = [3]`, the rest are `null`.
+
+| Step | `count` | Bucket | `index` before | Action | `result` |
+|------|---------|--------|----------------|--------|----------|
+| 1-3 | 6, 5, 4 | `null` | 0 | skip | `[_, _]` |
+| 4 | 3 | `[1]` | 0 | `result[0] = 1` | `[1, _]` |
+| 5 | 2 | `[2]` | 1 | `result[1] = 2`, `index == k`, loop ends | `[1, 2]` |
+
+The bucket for count 1 (holding `3`) is never read.
+
+```text
+bucket index:  0     1     2     3     4     5     6
+content:       -    [3]   [2]   [1]    -     -     -
+scan:                          <-------------------- from 6 down, stop after k = 2 numbers
+```
+
+**Edge cases:** one element (`[1]`, `k = 1`) gives `buckets[1] = [1]` and returns `[1]`. If several numbers share a frequency, they come out in the bucket's (hash map) order and extra ones beyond `k` are cut off. Another run: `[4, 4, 4, 5, 5, 6, 6, 6, 6]`, `k = 2` returns `[6, 4]`.
+
+**Result:** `[1, 2]`, the same as the class output.
+
 ## Source Code
 
 ### TopKFrequentElements.java

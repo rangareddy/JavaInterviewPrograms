@@ -138,6 +138,39 @@ public static boolean isPalindrome(int x) {
 
 The optimized solution is Approach 5 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: for text, put one pointer at each end, skip characters that are not letters or digits, and compare the two remaining characters ignoring case; any mismatch means "not a palindrome". For a number, no string is built: reverse only the second half of the digits and compare it with the first half, which also avoids integer overflow.
+
+**Input (text):** `"No lemon, no melon"` (18 characters; indices 2, 8, 9 and 12 are a space or comma).
+
+| Step | `left` | `right` | Characters | Action |
+|------|--------|---------|------------|--------|
+| 1 | 0 | 17 | `N`, `n` | equal ignoring case, move both: 1, 16 |
+| 2 | 1 | 16 | `o`, `o` | equal, move: 2, 15 |
+| 3 | 2 | 15 | space | not alphanumeric, `left++` |
+| 4 | 3 | 15 | `l`, `l` | equal, move: 4, 14 |
+| 5 | 4 | 14 | `e`, `e` | equal, move: 5, 13 |
+| 6 | 5 | 13 | `m`, `m` | equal, move: 6, 12 |
+| 7 | 6 | 12 | `right` is a space | `right--` |
+| 8 | 6 | 11 | `o`, `o` | equal, move: 7, 10 |
+| 9 | 7 | 10 | `n`, `n` | equal, move: 8, 9 |
+| 10 | 8 | 9 | `left` is a comma | `left++`; now `left == right`, loop ends |
+
+**Input (number):** `12321`. Loop while `x > reversed`:
+
+| Step | `x` before | `reversed` after | `x` after |
+|------|-----------|------------------|-----------|
+| 1 | 12321 | 1 | 1232 |
+| 2 | 1232 | 12 | 123 |
+| 3 | 123 | 123 | 12 |
+
+Now `x (12) > reversed (123)` is false. For an odd number of digits the middle digit is in `reversed`, so the final test `x == reversed || x == reversed / 10` compares 12 with `123 / 10 = 12`, which is true.
+
+**Edge cases.** For text, `""` and a string with no letters or digits return `true`; `"race a car"` returns `false`. For numbers, negatives (`-121`) and numbers that end in 0 (`10`) return `false` at once, but `0` is `true`. For `1221`, the loop stops at `x = 12`, `reversed = 12`, so `x == reversed`.
+
+**Result:** `true` for both `"No lemon, no melon"` and `12321`, matching the class output.
+
 ## Source Code
 
 ### PalindromeCheck.java

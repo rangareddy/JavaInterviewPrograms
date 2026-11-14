@@ -149,6 +149,36 @@ private static long[] fastDoubling(int n) {
 
 The optimized solution is Approach 4 and 5 above. The version implemented in this repository is Approach 4.
 
+#### Optimized solution explained
+
+This page names Approach 4 and 5 as optimized; the class implements Approach 4 (iterative with two variables), which is what is explained here.
+
+The idea: every Fibonacci number is the sum of the two before it, so only the last two numbers need to be kept. `first` and `second` hold two consecutive numbers; each loop step prints `third = first + second` and slides the pair one position forward (`first = second; second = third`). No array is needed: O(n) time, O(1) space.
+
+**Input:** `n = 10`. The first two numbers `0` and `1` are printed before the loop starts, with `first = 0`, `second = 1`. The loop runs for `i = 2 .. 9` (8 times).
+
+| `i` | `third = first + second` | Printed | `first` after | `second` after |
+|-----|--------------------------|---------|---------------|----------------|
+| 2 | 0 + 1 = 1 | `1` | 1 | 1 |
+| 3 | 1 + 1 = 2 | `2` | 1 | 2 |
+| 4 | 1 + 2 = 3 | `3` | 2 | 3 |
+| 5 | 2 + 3 = 5 | `5` | 3 | 5 |
+| 6 | 3 + 5 = 8 | `8` | 5 | 8 |
+| 7 | 5 + 8 = 13 | `13` | 8 | 13 |
+| 8 | 8 + 13 = 21 | `21` | 13 | 21 |
+| 9 | 13 + 21 = 34 | `34` | 21 | 34 |
+
+```text
+0  1  1  2  3  5  8  13  21  34      <- 10 numbers, each one is the sum of the two before it
+[first second] slides one step right after every print
+```
+
+The problem is pure arithmetic with a two-value window, so the table above is the whole trace.
+
+**Edge cases.** For `n <= 0` the guard clause returns without printing anything. For `n == 1` only `0` is printed. For `n == 2` the loop body never runs and `0 1` is printed. The values are `int`, so the numbers overflow from the 48th number onward (F(47) = 2971215073 does not fit in an `int`).
+
+**Result:** the method prints `0 1 1 2 3 5 8 13 21 34` (it returns nothing), the same as the class output.
+
 ## Source Code
 
 ### Fibonacci.java

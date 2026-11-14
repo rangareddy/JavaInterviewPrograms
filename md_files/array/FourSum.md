@@ -103,6 +103,34 @@ public static List<List<Integer>> fourSum(int[] nums, int target) {
 
 The optimized solution is Approach 2 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: sort a copy, fix two numbers `sorted[i]` and `sorted[j]` with two nested loops, and find the last two with two pointers (`left` after `j`, `right` at the end). A sum below the target moves `left` right, a sum above it moves `right` left. Duplicate values are skipped for `i`, `j`, `left` and `right`, so each quadruplet appears once. The sum is computed as a `long` to avoid `int` overflow.
+
+**Input:** `nums = [1, 0, -1, 0, -2, 2]`, `target = 0`; sorted copy `[-2, -1, 0, 0, 1, 2]`.
+
+| Step | `i` | `j` | `left` | `right` | Four values | Sum | Action |
+|------|-----|-----|--------|---------|-------------|-----|--------|
+| 1 | 0 | 1 | 2 | 5 | -2, -1, 0, 2 | -1 | sum < 0, `left++` |
+| 2 | 0 | 1 | 3 | 5 | -2, -1, 0, 2 | -1 | sum < 0, `left++` |
+| 3 | 0 | 1 | 4 | 5 | -2, -1, 1, 2 | 0 | **add `[-2, -1, 1, 2]`**, pointers cross |
+| 4 | 0 | 2 | 3 | 5 | -2, 0, 0, 2 | 0 | **add `[-2, 0, 0, 2]`**, pointers cross |
+| 5 | 0 | 3 | - | - | - | - | `sorted[3] == sorted[2]`, duplicate `j`, skipped |
+| 6 | 1 | 2 | 3 | 5 | -1, 0, 0, 2 | 1 | sum > 0, `right--` |
+| 7 | 1 | 2 | 3 | 4 | -1, 0, 0, 1 | 0 | **add `[-1, 0, 0, 1]`**, pointers cross |
+| 8 | 1 | 3 | - | - | - | - | duplicate `j`, skipped |
+| 9 | 2 | 3 | 4 | 5 | 0, 0, 1, 2 | 3 | sum > 0, `right--`, pointers meet, end |
+
+```text
+index:   0   1   2   3   4   5
+sorted: -2  -1   0   0   1   2
+step 3:  i   j       L        R   -> [-2,-1,1,2]
+```
+
+**Edge cases.** The outer loops stop at `n - 3` and `n - 2`, so arrays shorter than 4 give an empty list. `[2, 2, 2, 2, 2]` with target 8 gives one quadruplet because duplicates are skipped. With `{1000000000 x4}` and target -294967296 the `long` sum (4000000000) is compared with the target correctly, so no false match from overflow. The class does not check for `null` (a `null` array would throw `NullPointerException`).
+
+**Result:** `[[-2, -1, 1, 2], [-2, 0, 0, 2], [-1, 0, 0, 1]]`, matching the class output.
+
 ## Source Code
 
 ### FourSum.java

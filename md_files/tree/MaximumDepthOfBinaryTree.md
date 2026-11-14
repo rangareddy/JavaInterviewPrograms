@@ -209,6 +209,40 @@ public static int maxDepth(TreeNode root) {
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: the depth of a tree is 1 (for the root) plus the depth of its deeper subtree, and an empty tree has depth 0. The method simply asks both children for their depth, keeps the larger answer and adds one on the way back up.
+
+**Input:** the tree `[3, 9, 20, null, null, 15, 7]`.
+
+```mermaid
+flowchart TD
+    n3((3)) --> n9((9))
+    n3 --> n20((20))
+    n20 --> n15((15))
+    n20 --> n7((7))
+    classDef l0 fill:#dbeafe,stroke:#3b82f6
+    classDef l1 fill:#dcfce7,stroke:#22c55e
+    classDef l2 fill:#fef9c3,stroke:#eab308
+    class n3 l0
+    class n9,n20 l1
+    class n15,n7 l2
+```
+
+Calls happen top-down, left child first; values come back bottom-up. The order in which each call finishes:
+
+| Step | Call finishes | Left result | Right result | Returns `1 + max(left, right)` |
+|------|---------------|-------------|--------------|-------------------------------|
+| 1 | `maxDepth(9)` | `0` (null) | `0` (null) | `1` |
+| 2 | `maxDepth(15)` | `0` | `0` | `1` |
+| 3 | `maxDepth(7)` | `0` | `0` | `1` |
+| 4 | `maxDepth(20)` | `1` (from 15) | `1` (from 7) | `2` |
+| 5 | `maxDepth(3)` | `1` (from 9) | `2` (from 20) | `3` |
+
+**Edge cases.** An empty tree (`root == null`) returns `0`; this is also the base case that stops the recursion below every leaf. For `[1, null, 2]` the left result is `0` and the right is `1`, so the answer is `2` (a skewed tree makes the recursion as deep as the tree, so the stack use is `O(h)`).
+
+**Result:** `3` for the traced tree, `2` for `[1, null, 2]` and `0` for the empty tree, matching the class output.
+
 ## Source Code
 
 Uses the shared helper [`TreeNode`](../../src/main/java/com/ranga/tree/TreeNode.java) (a small `TreeNode` with `of(...)` and `toString(...)` helpers for building and printing test data).

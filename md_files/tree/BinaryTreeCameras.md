@@ -93,6 +93,32 @@ private static int state(TreeNode node, int[] cameras) {
 
 The optimized solution is Approach 2 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: decide bottom-up, greedily. Each node reports a state: `0` not monitored, `1` holds a camera, `2` monitored. A missing child counts as `2`. If a child is `0` this node must hold a camera (count +1, return `1`); else if a child has a camera the node is covered (return `2`); else it is not covered yet (return `0`) and its parent will handle it. Cameras therefore land on parents of leaves, covering the most nodes. After the traversal a root that is still `0` needs one extra camera.
+
+**Input:** `root = [0, 0, null, 0, 0]` (root, its left child `a`, and two leaves `b`, `c` under `a`). Cameras = 0.
+
+| Step | Node | Left state | Right state | Rule applied | Cameras | Returns |
+|------|------|-----------|-------------|--------------|---------|---------|
+| 1 | `b` (leaf) | 2 (null) | 2 (null) | both children monitored | 0 | 0 |
+| 2 | `c` (leaf) | 2 | 2 | both children monitored | 0 | 0 |
+| 3 | `a` | 0 | 0 | a child is not monitored, place camera | 1 | 1 |
+| 4 | root | 1 | 2 (null) | a child has a camera | 1 | 2 |
+
+The root returns `2`, so no extra camera is added.
+
+```mermaid
+flowchart TD
+    R["root<br/>state 2: monitored"] --> A["a<br/>state 1: camera"]
+    A --> B["b<br/>state 0"]
+    A --> C["c<br/>state 0"]
+```
+
+**Edge cases:** a single node `[0]` returns state 0 at the root, so the final check adds one camera. An empty tree returns state 2 and needs 0. For the 5-node path `[0, 0, null, 0, null, 0, null, null, 0]` the camera goes on the parent of the bottom leaf, the next node up is covered (2), the one above it is uncovered (0), so the root gets the second camera: 2 in total.
+
+**Result:** `1`, the same as the class output (the path example prints `2`).
+
 ## Source Code
 
 ### BinaryTreeCameras.java

@@ -263,6 +263,35 @@ public static String semaphores(int max) throws InterruptedException {
 
 The optimized solution is Approach 7 above. The version implemented in this repository is Approach 1.
 
+#### Optimized solution explained
+
+Note: the page's text calls Approach 7 (two semaphores) the optimized one, but the class in this repository implements Approach 1, `wait()` / `notify()` on a shared monitor, so that is what is traced here.
+
+The idea: two threads share one `Printer` object. A flag `isOdd` says who goes next: `false` means "an odd number is printed next" (the initial state), `true` means "an even number". `printOdd` waits in a `while (isOdd)` loop, prints, sets `isOdd = true` and calls `notify()`; `printEven` waits in `while (!isOdd)`, prints, sets `isOdd = false` and calls `notify()`. Because the flag strictly alternates and both methods are `synchronized`, the output is always in numeric order, however the threads are scheduled. Each thread just loops its own numbers: Odd runs `1, 3, 5, ...`, Even runs `2, 4, 6, ...`.
+
+**Input:** `max = 10`. Start state `isOdd = false`.
+
+| Step | Thread | Call | Flag seen | Action | `isOdd` afterwards | Printed so far |
+|------|--------|------|-----------|--------|--------------------|----------------|
+| 1 | Odd | `printOdd(1)` | `false`, may proceed | print, notify | `true` | `1` |
+| 2 | Even | `printEven(2)` | `true`, may proceed | print, notify | `false` | `1 2` |
+| 3 | Odd | `printOdd(3)` | `false` | print, notify | `true` | `1 2 3` |
+| 4 | Even | `printEven(4)` | `true` | print, notify | `false` | `1 2 3 4` |
+| 5-10 | alternate | `5, 6, 7, 8, 9, 10` | same pattern | print, notify | flips each time | `1 2 3 4 5 6 7 8 9 10` |
+
+If a thread arrives when it is not its turn (for example Even starts first and sees `isOdd == false`), it calls `wait()`, which releases the lock, and sleeps until the other thread's `notify()` wakes it; it re-checks the flag and only then prints.
+
+```mermaid
+stateDiagram-v2
+    [*] --> OddTurn
+    OddTurn --> EvenTurn: "printOdd prints, sets isOdd = true, notify"
+    EvenTurn --> OddTurn: "printEven prints, sets isOdd = false, notify"
+```
+
+**Edge cases.** `notify()` (not `notifyAll()`) is enough because only two threads exist and only the other one can be waiting. When Odd prints its last number (9) Even still has 10; after Even prints 10 both loops end (`number > max`) and `main` joins both threads. If `max` is 1, the Even loop body never runs, so only `1` is printed. An interrupt while waiting restores the interrupt flag and returns without printing.
+
+**Result:** the output line is `1 2 3 4 5 6 7 8 9 10 ` (with a trailing space), identical in every run, and matches the class output.
+
 ## Source Code
 
 ### PrintEvenOddUsingThreads.java

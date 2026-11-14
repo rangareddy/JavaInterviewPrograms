@@ -241,6 +241,43 @@ public static String alienOrder(String[] words) {
 
 The optimized solution is Approach 5 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: the sorted word list reveals letter order only at the first position where two neighbouring words differ: that pair gives an edge `from -> to` (from comes before to in the alien alphabet). Collect every letter that appears, add those edges (a `Set` per letter so a repeated edge is counted once in `inDegree`), then run Kahn's topological sort over the letters. If not all letters are output, the rules contradict each other (a cycle) and `""` is returned. A longer word directly before its own prefix (`["abc","ab"]`) is invalid and returns `""` immediately.
+
+**Input:** `words = ["wrt", "wrf", "er", "ett", "rftt"]`. Letters in first-seen order: w, r, t, f, e.
+
+| Pair compared | First difference | Edge added |
+|---------------|------------------|------------|
+| wrt, wrf | position 2: t vs f | t -> f |
+| wrf, er | position 0: w vs e | w -> e |
+| er, ett | position 1: r vs t | r -> t |
+| ett, rftt | position 0: e vs r | e -> r |
+
+```mermaid
+flowchart LR
+    W(["w"]) --> E(["e"])
+    E --> R(["r"])
+    R --> T(["t"])
+    T --> F(["f"])
+```
+
+In-degrees: w 0, r 1, t 1, f 1, e 1. The queue starts with [w].
+
+| Step | Polled | `order` | In-degree changes | Queue after |
+|------|--------|---------|-------------------|-------------|
+| 1 | w | w | e: 1 -> 0 (added) | [e] |
+| 2 | e | we | r: 1 -> 0 (added) | [r] |
+| 3 | r | wer | t: 1 -> 0 (added) | [t] |
+| 4 | t | wert | f: 1 -> 0 (added) | [f] |
+| 5 | f | wertf | none | [] |
+
+`order.length() = 5 = graph.size()`, so the string is returned.
+
+**Edge cases:** `["z","x","z"]` yields z -> x and x -> z, a cycle, so no letter has in-degree 0 and the result is `""`. `["abc","ab"]` returns `""` at the prefix check. A single letter or pair like `["z","x"]` returns `"zx"`. Letters that never take part in an edge still appear in the output (they start with in-degree 0), in first-seen order.
+
+**Result:** returns `"wertf"`, matching the class output.
+
 ## Source Code
 
 ### AlienDictionary.java

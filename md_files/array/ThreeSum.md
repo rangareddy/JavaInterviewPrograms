@@ -240,6 +240,36 @@ public static List<List<Integer>> threeSum(int[] nums) {
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: sort a copy of the array, then fix the first number `sorted[i]` and look for two more numbers after it that add up to `-sorted[i]` using two pointers (`left` just after `i`, `right` at the end). A sum that is too small moves `left` right (larger values), a sum that is too big moves `right` left. Equal neighbours are skipped so each triple is reported once.
+
+**Input:** `nums = [-1, 0, 1, 2, -1, -4]`, sorted copy: `[-4, -1, -1, 0, 1, 2]`.
+
+| Step | `i` | `left` | `right` | Values | Sum | Action |
+|------|-----|--------|---------|--------|-----|--------|
+| 1 | 0 | 1 | 5 | -4, -1, 2 | -3 | sum < 0, `left++` |
+| 2 | 0 | 2 | 5 | -4, -1, 2 | -3 | sum < 0, `left++` |
+| 3 | 0 | 3 | 5 | -4, 0, 2 | -2 | sum < 0, `left++` |
+| 4 | 0 | 4 | 5 | -4, 1, 2 | -1 | sum < 0, `left++` (now `left == right`, inner loop ends) |
+| 5 | 1 | 2 | 5 | -1, -1, 2 | 0 | **add `[-1, -1, 2]`**, `left=3`, `right=4` (no duplicates to skip) |
+| 6 | 1 | 3 | 4 | -1, 0, 1 | 0 | **add `[-1, 0, 1]`**, pointers cross, inner loop ends |
+| 7 | 2 | - | - | - | - | `sorted[2] == sorted[1]`, duplicate first number, skipped |
+| 8 | 3 | 4 | 5 | 0, 1, 2 | 3 | sum > 0, `right--`, pointers meet, end |
+
+The outer loop stops at `i = n - 3`, because a triple needs two more elements after `i`.
+
+```text
+index:   0   1   2   3   4   5
+sorted: -4  -1  -1   0   1   2
+i=1:         i   L           R    sum 0 -> add [-1,-1,2]
+i=1:         i       L   R        sum 0 -> add [-1,0,1]
+```
+
+**Edge cases.** `null` or fewer than 3 numbers returns an empty list. If `sorted[i] > 0` the loop breaks, since all later numbers are positive too and no sum can be 0. `[0, 0, 0]` gives `[[0, 0, 0]]`, `[0, 1, 1]` gives `[]`. The input array is not changed (a clone is sorted).
+
+**Result:** `[[-1, -1, 2], [-1, 0, 1]]`, which is what the class prints for this input.
+
 ## Source Code
 
 ### ThreeSum.java

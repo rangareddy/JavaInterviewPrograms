@@ -103,6 +103,30 @@ public static void merge(int[] nums1, int m, int[] nums2, int n) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: merge from the back. `nums1` has free space at its end, so filling it from the largest value down never overwrites an unread element of `nums1`. Three pointers: `i` (last real element of `nums1`), `j` (last element of `nums2`), `k` (write position, the last cell). Each step writes the larger of `nums1[i]` and `nums2[j]` at `k`. The loop ends when `nums2` is used up; the rest of `nums1` is already in place.
+
+**Input:** `nums1 = [1, 2, 3, 0, 0, 0]`, `m = 3`, `nums2 = [2, 5, 6]`. Start: `i = 2`, `j = 2`, `k = 5`.
+
+| Step | Compare | Written at `k` | `i`, `j`, `k` afterwards | `nums1` afterwards |
+|------|---------|----------------|--------------------------|--------------------|
+| 1 | `nums1[2]=3 > nums2[2]=6`? no | 6 from `nums2` | 2, 1, 4 | [1, 2, 3, 0, 0, 6] |
+| 2 | `3 > nums2[1]=5`? no | 5 from `nums2` | 2, 0, 3 | [1, 2, 3, 0, 5, 6] |
+| 3 | `3 > nums2[0]=2`? yes | 3 from `nums1` | 1, 0, 2 | [1, 2, 3, 3, 5, 6] |
+| 4 | `nums1[1]=2 > 2`? no (tie goes to `nums2`) | 2 from `nums2` | 1, -1, 1 | [1, 2, 2, 3, 5, 6] |
+
+`j` is now `-1`, so the loop stops. `nums1[0]` and `nums1[1]` (`1, 2`) were already in the right place.
+
+```text
+nums1: [1, 2, 3, _, _, _]     nums2: [2, 5, 6]
+fill from the right:  6, 5, 3, 2  ->  [1, 2, 2, 3, 5, 6]
+```
+
+**Edge cases.** `n = 0` (`nums2` empty) never enters the loop and leaves `nums1` unchanged. `m = 0` (`nums1 = [0]`, `nums2 = [1]`): `i = -1`, so every step copies from `nums2`, giving `[1]`. When `nums2` holds all the smaller values (`[4, 5, 6, 0, 0, 0]` with `[1, 2, 3]`), the `nums1` elements are moved right first, then `nums2` fills the front.
+
+**Result:** `[1, 2, 2, 3, 5, 6]`, matching the class output.
+
 ## Source Code
 
 ### MergeSortedArray.java

@@ -127,6 +127,38 @@ public static int diameterIterative(TreeNode root) {
 
 The optimized solution is Approach 2 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: the longest path in a tree bends at exactly one node (its top), and its length in edges is the height of that node's left subtree plus the height of its right subtree. One post-order walk computes the height of every node and, at each node, updates a running best with `left + right`. The height is measured in nodes, so a null child is `0`, a leaf is `1`, and `left + right` is already the number of edges.
+
+**Input:** the tree `[1, 2, 3, 4, 5]`.
+
+```mermaid
+flowchart TD
+    n1((1)) --> n2((2))
+    n1 --> n3((3))
+    n2 --> n4((4))
+    n2 --> n5((5))
+    classDef path fill:#dcfce7,stroke:#22c55e
+    class n4,n2,n1,n3 path
+```
+
+The green nodes `4 - 2 - 1 - 3` form one longest path (the path `5 - 2 - 1 - 3` is just as long).
+
+| Step | Node finished | `left` height | `right` height | `left + right` | `best[0]` after | Returns `1 + max` |
+|------|---------------|---------------|----------------|----------------|-----------------|-------------------|
+| 1 | `4` | 0 | 0 | 0 | 0 | 1 |
+| 2 | `5` | 0 | 0 | 0 | 0 | 1 |
+| 3 | `2` | 1 | 1 | 2 | 2 | 2 |
+| 4 | `3` | 0 | 0 | 0 | 2 | 1 |
+| 5 | `1` | 2 | 1 | 3 | 3 | 3 |
+
+The diameter is `best[0] = 3` edges.
+
+**Edge cases.** An empty tree never updates `best`, so the result is `0`; a single node has `left + right = 0`, so also `0`. The best bend can be at any node: for `[1, 2, 3, 4, null, null, 5, 6, null, null, 7]` the path `6 - 4 - 2 - 1 - 3 - 5 - 7` bends at the root and has `6` edges, which is what the class returns. Each node is visited once: time `O(n)`, recursion space `O(h)`. The result is carried in a one-element array `best` because Java passes `int` by value.
+
+**Result:** `3` for the traced tree; the class output for the five inputs in `main` is `3`, `1`, `0`, `6`, `0`.
+
 ## Source Code
 
 Uses the shared helper [`TreeNode`](../../src/main/java/com/ranga/tree/TreeNode.java) (a small `TreeNode` with `of(...)` and `toString(...)` helpers for building and printing test data).

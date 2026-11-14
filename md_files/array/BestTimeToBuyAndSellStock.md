@@ -178,6 +178,32 @@ public static int maxProfit(int[] prices) {
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: the best profit for selling on day `i` is `prices[i]` minus the cheapest price seen on any earlier day. So one pass keeps two numbers: `minPrice` (cheapest price so far) and `maxProfit` (best profit so far). No pair of days is ever compared explicitly.
+
+**Input:** `prices = [7, 1, 5, 3, 6, 4]`. Start: `minPrice = 7`, `maxProfit = 0`, loop begins at `i = 1`.
+
+| Step | `i` | `prices[i]` | Profit if sold today (`prices[i] - minPrice`) | `maxProfit` afterwards | `minPrice` afterwards |
+|------|-----|-------------|----------------------------------------------|------------------------|-----------------------|
+| 1 | 1 | 1 | 1 - 7 = -6 | 0 | 1 |
+| 2 | 2 | 5 | 5 - 1 = 4 | 4 | 1 |
+| 3 | 3 | 3 | 3 - 1 = 2 | 4 | 1 |
+| 4 | 4 | 6 | 6 - 1 = 5 | 5 | 1 |
+| 5 | 5 | 4 | 4 - 1 = 3 | 5 | 1 |
+
+```text
+price:   7   1   5   3   6   4
+day:     0   1   2   3   4   5
+              ^buy at 1       ^ ^ sell at 6 (day 4): profit 6 - 1 = 5
+```
+
+The profit is computed before `minPrice` is updated, so a day can never be both the buy and the sell day.
+
+**Edge cases.** `null` or fewer than 2 prices returns `0`. A falling series such as `[7, 6, 4, 3, 1]` never gives a positive profit, so `maxProfit` stays `0` (the class prints `0`).
+
+**Result:** `maxProfit = 5` (buy at 1, sell at 6), matching the class output `5`.
+
 ## Source Code
 
 ### BestTimeToBuyAndSellStock.java

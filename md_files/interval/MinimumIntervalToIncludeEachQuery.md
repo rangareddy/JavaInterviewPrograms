@@ -126,6 +126,27 @@ public static int[] minInterval(int[][] intervals, int[] queries) {
 
 The optimized solution is Approach 3 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: answer the queries offline, from smallest to largest, while sweeping the intervals sorted by left end. For each query, every interval whose left end is not past the query is pushed into a min-heap keyed by size. Heap tops whose right end is before the query are discarded for good, since all later queries are at least as large. What is left on top is the smallest interval that starts at or before `q` and ends at or after `q`.
+
+**Input:** `intervals = [[1,4],[2,4],[3,6],[4,4]]`, `queries = [2,3,4,5]`. Sorted intervals are the same order. Heap entries are `{size, right}`; the queries are already in increasing order.
+
+| Query `q` | Pushed (left `<= q`) | Heap after pushing (by size) | Popped (right `< q`) | Heap top | `answer` |
+|-----------|----------------------|------------------------------|----------------------|----------|----------|
+| 2 | `[1,4]`, `[2,4]` | `{3,4}`, `{4,4}` | none | `{3,4}` | 3 |
+| 3 | `[3,6]` | `{3,4}`, `{4,4}`, `{4,6}` | none | `{3,4}` | 3 |
+| 4 | `[4,4]` | `{1,4}`, `{3,4}`, `{4,4}`, `{4,6}` | none | `{1,4}` | 1 |
+| 5 | none | the four above | `{1,4}`, `{3,4}` (right 4 is below 5); a size-4 entry is then on top and `{4,6}` is the only one with right `>= 5` | size 4 | 4 |
+
+Results are stored at each query's original index (`order` remembers it), so the output order matches the input order even when queries are unsorted. The answer is `[3, 3, 1, 4]`.
+
+**Second input** `intervals = [[2,3],[2,5],[1,8],[20,25]]`, `queries = [2,19,5,22]` is processed in the order 2, 5, 19, 22: for 2 the heap holds sizes 2, 4, 8 and the top is 2; for 5 the interval `[2,3]` is popped and the top is 4; for 19 the intervals `[2,5]` and then `[1,8]` are popped, leaving the heap empty, so `-1`; for 22 `[20,25]` is pushed and gives 6. The answer is `[2, -1, 4, 6]`.
+
+**Edge cases.** A query with an empty heap after popping gets `-1`. Intervals with `left > q` are not pushed yet. The pop only removes the top, but a buried expired interval is harmless: it is removed when it reaches the top, and it can never be returned before that because only the top is read.
+
+**Result:** `[3, 3, 1, 4]`, `[2, -1, 4, 6]` and `[-1]` for the three inputs in `main`, matching the class output.
+
 ## Source Code
 
 ### MinimumIntervalToIncludeEachQuery.java

@@ -170,6 +170,42 @@ public static ListNode reverseList(ListNode head) {
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: walk the list once and turn every `next` pointer around, so each node points at the node before it. Three variables do all the work: `prev` (the already reversed part), `curr` (the node being turned) and `next` (saved first, because turning `curr.next` would otherwise lose the rest of the list).
+
+**Input:** `1 -> 2 -> 3 -> null`. Start with `prev = null`, `curr = 1`.
+
+| Iteration | Save `next` | Turn the pointer (`curr.next = prev`) | Advance (`prev = curr`, `curr = next`) | Reversed part (`prev`) | Remaining (`curr`) |
+|-----------|-------------|----------------------------------------|----------------------------------------|------------------------|--------------------|
+| 1 | `next = 2` | `1.next = null` | `prev = 1`, `curr = 2` | `1 -> null` | `2 -> 3 -> null` |
+| 2 | `next = 3` | `2.next = 1` | `prev = 2`, `curr = 3` | `2 -> 1 -> null` | `3 -> null` |
+| 3 | `next = null` | `3.next = 2` | `prev = 3`, `curr = null` | `3 -> 2 -> 1 -> null` | empty |
+
+`curr` is now `null`, so the loop ends and the method returns `prev`, the new head `3`: `3 -> 2 -> 1 -> null`.
+
+```text
+start:    prev = null    curr -> 1 -> 2 -> 3 -> null
+iter 1:   null <- 1      curr -> 2 -> 3 -> null
+iter 2:   null <- 1 <- 2 curr -> 3 -> null
+iter 3:   null <- 1 <- 2 <- 3     curr = null   =>  return prev (3)
+```
+
+```mermaid
+flowchart LR
+    subgraph before["Before"]
+        direction LR
+        a1((1)) --> a2((2)) --> a3((3)) --> an["null"]
+    end
+    subgraph after["After"]
+        direction LR
+        b3((3)) --> b2((2)) --> b1((1)) --> bn["null"]
+    end
+    before ==>|"flip every pointer in one pass"| after
+```
+
+**Edge cases.** An empty list (`head == null`) never enters the loop and returns `prev = null`; a one-node list is turned once (`1.next = null`) and returns itself. Only three pointers are kept, so the extra space is `O(1)`.
+
 ## Source Code
 
 Uses the shared helper [`ListNode`](../../src/main/java/com/ranga/linkedlist/ListNode.java) (a small `ListNode` with `of(...)` and `toString(...)` helpers for building and printing test data).

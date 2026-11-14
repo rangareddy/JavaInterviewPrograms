@@ -90,6 +90,34 @@ public static List<Integer> findAnagrams(String s, String p) {
 
 The optimized solution is Approach 2 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: an anagram of `p` is a window of `s` of length `m = p.length()` with identical letter counts. Keep a 26-slot count array for `p` (`need`) and one for the current window. Slide the window one step: add the new right letter, remove the letter that left, and compare the two arrays (26 numbers, a constant). Each equal window records its start index.
+
+**Input:** `s = "cbaebabacd"`, `p = "abc"` (so `m = 3`, `need` = a:1, b:1, c:1).
+
+| Step | Window start | Window | Letter in | Letter out | Counts equal `need`? | Result list |
+|------|--------------|--------|-----------|------------|----------------------|-------------|
+| 0 | 0 | `cba` | (first 3 letters) | - | yes | [0] |
+| 1 | 1 | `bae` | `e` | `c` | no | [0] |
+| 2 | 2 | `aeb` | `b` | `b` | no | [0] |
+| 3 | 3 | `eba` | `a` | `a` | no | [0] |
+| 4 | 4 | `bab` | `b` | `e` | no | [0] |
+| 5 | 5 | `aba` | `a` | `b` | no | [0] |
+| 6 | 6 | `bac` | `c` | `a` | yes | [0, 6] |
+| 7 | 7 | `acd` | `d` | `b` | no | [0, 6] |
+
+```text
+index: 0 1 2 3 4 5 6 7 8 9
+s:     c b a e b a b a c d
+       [c b a]                 start 0  anagram
+                   [b a c]     start 6  anagram
+```
+
+**Edge cases.** If `p` is longer than `s` the list is empty (`{"a","ab"}`). Overlapping matches are all reported (`"abab"`, `"ab"` gives `[0, 1, 2]`, `"aaaaa"`, `"aa"` gives `[0, 1, 2, 3]`). Lowercase letters only.
+
+**Result:** `[0, 6]`, matching the class output.
+
 ## Source Code
 
 ### FindAllAnagramsInAString.java

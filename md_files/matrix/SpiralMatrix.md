@@ -171,6 +171,37 @@ public static List<Integer> spiralOrder(int[][] matrix) {
 
 The optimized solution is Approach 5 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: peel the matrix layer by layer with four boundaries `top`, `bottom`, `left`, `right`. Each round reads the top row left to right, the right column top to bottom, the bottom row right to left and the left column bottom to top, shrinking the matching boundary after each side. Two guards (`top <= bottom`, `left <= right`) stop the last two sides from re-reading a single remaining row or column.
+
+**Input:** `[[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]` (3 rows, 4 columns). Start: `top = 0`, `bottom = 2`, `left = 0`, `right = 3`.
+
+| Round | Side | Cells read | Boundary afterwards | `result` so far |
+|-------|------|------------|---------------------|-----------------|
+| 1 | top row | row 0, cols 0..3: 1, 2, 3, 4 | `top = 1` | 1 2 3 4 |
+| 1 | right column | col 3, rows 1..2: 8, 12 | `right = 2` | 1 2 3 4 8 12 |
+| 1 | bottom row (`top <= bottom`) | row 2, cols 2..0: 11, 10, 9 | `bottom = 1` | 1 2 3 4 8 12 11 10 9 |
+| 1 | left column (`left <= right`) | col 0, rows 1..1: 5 | `left = 1` | ... 9 5 |
+| 2 | top row | row 1, cols 1..2: 6, 7 | `top = 2` | ... 5 6 7 |
+| 2 | right column | col 2, rows 2 down to 1: nothing (`top = 2 > bottom = 1`) | `right = 1` | unchanged |
+| 2 | bottom row | skipped, `top = 2 > bottom = 1` | | unchanged |
+| 2 | left column (`left <= right`: 1 <= 1) | col 1, rows 1 down to 2: nothing (`bottom = 1 < top = 2`) | `left = 2` | unchanged |
+
+Now `left = 2 > right = 1`, so the `while` condition fails.
+
+```text
+ 1 -> 2 -> 3 -> 4
+                |
+ 5 -> 6 -> 7    8        order: 1 2 3 4 8 12 11 10 9 5 6 7
+ ^              |
+ 9 <- 10 <- 11 <- 12
+```
+
+**Edge cases.** `null` or an empty matrix returns `[]`. A single row or single column is read by the top-row or right-column step, and the guards prevent reading it again. The 3x3 sample returns `[1, 2, 3, 6, 9, 8, 7, 4, 5]`.
+
+**Result:** `[1, 2, 3, 4, 8, 12, 11, 10, 9, 5, 6, 7]`, matching the class output.
+
 ## Source Code
 
 ### SpiralMatrix.java

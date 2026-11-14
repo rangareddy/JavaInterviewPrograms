@@ -125,6 +125,40 @@ private static void backtrack(int[] nums, int start, List<Integer> current, List
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: every call to `backtrack` records the current path as one subset, then tries each later element `nums[i]` (from `start` on) as the next member: add it, recurse with `start = i + 1`, then remove it (backtrack). Starting after the chosen index means each element is used at most once and subsets are never built in two different orders, so every one of the `2^n` subsets is produced exactly once.
+
+**Input:** `nums = [1, 2, 3]`.
+
+| Call | `start` | Path recorded | Next moves from here |
+|------|---------|---------------|----------------------|
+| 1 | 0 | `[]` | try 1, then 2, then 3 |
+| 2 | 1 | `[1]` | try 2, then 3 |
+| 3 | 2 | `[1, 2]` | try 3 |
+| 4 | 3 | `[1, 2, 3]` | no elements left, return; remove 3 |
+| 5 | 3 | `[1, 3]` | no elements left, return; remove 3, then back to `[1]`, remove 1 |
+| 6 | 2 | `[2]` | try 3 |
+| 7 | 3 | `[2, 3]` | return; remove 3 and 2 |
+| 8 | 3 | `[3]` | return; remove 3 |
+
+```mermaid
+graph TD
+    A["[ ]"] --> B["[1]"]
+    A --> C["[2]"]
+    A --> D["[3]"]
+    B --> E["[1,2]"]
+    B --> F["[1,3]"]
+    E --> G["[1,2,3]"]
+    C --> H["[2,3]"]
+```
+
+Every node in the tree is one recorded subset, so the result list is the tree read in depth-first order.
+
+**Edge cases.** An empty array makes only the first call, so the result is `[[]]`. A copy (`new ArrayList<>(current)`) is stored each time, so later add/remove steps do not change recorded subsets.
+
+**Result:** `subsets([1, 2, 3])` returns `[[], [1], [1, 2], [1, 2, 3], [1, 3], [2], [2, 3], [3]]`, matching the class output.
+
 ## Source Code
 
 ### Subsets.java

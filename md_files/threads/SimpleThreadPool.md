@@ -182,6 +182,37 @@ private void runWorker() {
 
 The optimized solution is Approach 3 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: the pool starts `threads` worker threads in the constructor. Each worker runs the same loop: `tasks.take()` (a `LinkedBlockingQueue`, which blocks while the queue is empty), run the task, repeat. `execute` just adds a task to the queue. To stop, `shutdown` sets a flag and adds one "poison pill" (a special do-nothing `Runnable`) per worker; a worker that takes the pill returns. Because the queue is first in, first out, every pill sits behind all tasks submitted earlier, so all earlier tasks are started before any worker stops, and each worker consumes exactly one pill and exits. `awaitTermination` joins every worker.
+
+**Input:** 3 workers, 10 tasks, where task `i` does `sum.addAndGet(i)`.
+
+| Step | Action | Queue contents (front to back) | Notes |
+|------|--------|-------------------------------|-------|
+| 1 | constructor | empty | workers `pool-worker-0..2` start and block in `take()` |
+| 2 | `execute` x 10 | tasks 1..10 | idle workers wake and each takes the next task; which worker runs which task is not fixed |
+| 3 | `shutdown()` | tasks (those not yet taken), then `pill, pill, pill` | `shutdown = true`; 3 pills added after the tasks |
+| 4 | workers keep taking | tasks first, then the pills | a worker finishes its current task before calling `take()` again |
+| 5 | a worker takes a pill | | it returns, and its thread ends; after 3 pills all workers have ended |
+| 6 | `awaitTermination()` | empty | `join()` on all 3 workers returns |
+| 7 | `execute(...)` after shutdown | | throws `IllegalStateException("Pool is shut down")` |
+
+```mermaid
+flowchart LR
+    M["main: execute 1..10"] --> Q["LinkedBlockingQueue<br/>tasks 1..10, then 3 pills"]
+    Q --> W0["worker 0"]
+    Q --> W1["worker 1"]
+    Q --> W2["worker 2"]
+    W0 -->|"pill taken"| X(["thread ends"])
+```
+
+Because every task is taken before the pills, and `join()` waits for each worker to finish its last task, the counter holds the full total when `main` reads it, so the sum is deterministic even though the task-to-worker assignment is not.
+
+**Edge cases.** The constructor rejects `threads <= 0`; `execute(null)` throws `NullPointerException`; `shutdown()` called twice does nothing the second time (so no extra pills). A task that throws a `RuntimeException` is caught, reported on `System.err`, and the worker keeps running. An interrupt while waiting in `take()` restores the flag and ends that worker. `execute` and `shutdown` are `synchronized` so a task cannot be queued after the pills.
+
+**Result:** the class prints `sum = 55` (1 + 2 + ... + 10) and then `After shutdown : Pool is shut down`, identical in all three runs checked.
+
 ## Source Code
 
 ### SimpleThreadPool.java

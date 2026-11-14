@@ -146,6 +146,34 @@ public static int maxArea(int[] height) {
 
 The optimized solution is Approach 5 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: start with the widest container (`left = 0`, `right = n - 1`). The area is `(right - left) * min(height[left], height[right])`. Moving the taller line inward can only shrink the width without raising the limiting (shorter) height, so it can never help; the shorter line is the only one worth moving. Move it inward and keep the best area seen.
+
+**Input:** `height = [1, 8, 6, 2, 5, 4, 8, 3, 7]`.
+
+| Step | `left` | `right` | `height[left]`, `height[right]` | Area | `best` | Move |
+|------|--------|---------|---------------------------------|------|--------|------|
+| 1 | 0 | 8 | 1, 7 | 8 * 1 = 8 | 8 | left is shorter, `left++` |
+| 2 | 1 | 8 | 8, 7 | 7 * 7 = 49 | 49 | right is shorter or equal, `right--` |
+| 3 | 1 | 7 | 8, 3 | 6 * 3 = 18 | 49 | `right--` |
+| 4 | 1 | 6 | 8, 8 | 5 * 8 = 40 | 49 | equal heights, `right--` |
+| 5 | 1 | 5 | 8, 4 | 4 * 4 = 16 | 49 | `right--` |
+| 6 | 1 | 4 | 8, 5 | 3 * 5 = 15 | 49 | `right--` |
+| 7 | 1 | 3 | 8, 2 | 2 * 2 = 4 | 49 | `right--` |
+| 8 | 1 | 2 | 8, 6 | 1 * 6 = 6 | 49 | `right--`, pointers meet, end |
+
+```text
+index:  0  1  2  3  4  5  6  7  8
+height: 1  8  6  2  5  4  8  3  7
+        L                       R    area 8
+           L                    R    area 49  <- best (lines 8 and 7, width 7)
+```
+
+**Edge cases.** `null` or fewer than 2 lines returns `0`. `[1, 1]` gives one step with area `1 * 1 = 1`. Each step moves one pointer, so the loop runs at most `n - 1` times.
+
+**Result:** `49`, matching the class output.
+
 ## Source Code
 
 ### ContainerWithMostWater.java

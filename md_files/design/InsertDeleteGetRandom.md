@@ -98,6 +98,28 @@ public int getRandom() {
 
 The optimized solution is Approach 2 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: an `ArrayList` makes `getRandom` O(1) (pick a random index), and a `HashMap` (`value -> index in the list`) makes `insert` and `remove` find the element in O(1). Deleting from the middle of a list would shift elements, so `remove` uses swap-remove: take the **last** element, write it into the removed element's slot, update its index in the map, and drop the last slot.
+
+**Input:** `insert(1)`, `remove(2)`, `insert(2)`, `getRandom()`, `remove(1)`, `insert(2)`, `getRandom()`.
+
+| Step | Operation | What happens | `values` | `indexOf` | Result |
+|------|-----------|--------------|----------|-----------|--------|
+| 1 | `insert(1)` | not present: map 1 -> 0, append | `[1]` | `{1=0}` | `true` |
+| 2 | `remove(2)` | `indexOf.remove(2)` is `null` | `[1]` | `{1=0}` | `false` |
+| 3 | `insert(2)` | map 2 -> 1, append | `[1, 2]` | `{1=0, 2=1}` | `true` |
+| 4 | `getRandom()` | random index 0 or 1 | `[1, 2]` | unchanged | 1 or 2 |
+| 5 | `remove(1)` | index = 0; remove the last element (2); 2 != 1, so `values.set(0, 2)` and `2 -> 0` | `[2]` | `{2=0}` | `true` |
+| 6 | `insert(2)` | already in the map | `[2]` | `{2=0}` | `false` |
+| 7 | `getRandom()` | only index 0 exists | `[2]` | unchanged | `2` |
+
+Step 4 is random (either value can come back), so the class prints only whether the value is 1 or 2, which is always `true`; step 7 is deterministic.
+
+**Edge cases.** Removing the last element (`last == val`) skips the swap, since the slot is already gone. Inserting a duplicate or removing a missing value returns `false`. `getRandom` on an empty set throws `IllegalArgumentException` (`random.nextInt(0)`); the problem guarantees it is never called then. All three operations are O(1). No diagram is added; the table is the picture.
+
+**Result:** `true, false, true, true, true, false, 2`, as printed by the class (the fourth item is the check that the random value was 1 or 2).
+
 ## Source Code
 
 ### InsertDeleteGetRandom.java

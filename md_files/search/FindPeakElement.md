@@ -102,6 +102,30 @@ public static int findPeakElement(int[] nums) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: a peak is an element larger than both neighbours (the ends count as having a smaller neighbour outside the array). Look at the slope at `mid`: if `nums[mid] < nums[mid + 1]` the array is climbing, so a peak must exist on the right (keep climbing until it turns down or hits the end), and `low = mid + 1`. Otherwise `nums[mid] > nums[mid + 1]` (values are distinct between neighbours), so `mid` or something on its left is a peak, and `high = mid`. The window shrinks until `low == high`, which is a peak. This is O(log n) and returns one valid peak, not necessarily the largest.
+
+**Input:** `nums = [1, 2, 1, 3, 5, 6, 4]`.
+
+| Step | low | high | mid | nums[mid] | nums[mid + 1] | Slope | Next |
+|------|-----|------|-----|-----------|---------------|-------|------|
+| 1 | 0 | 6 | 3 | 3 | 5 | rising | low = 4 |
+| 2 | 4 | 6 | 5 | 6 | 4 | falling | high = 5 |
+| 3 | 4 | 5 | 4 | 5 | 6 | rising | low = 5 |
+| 4 | 5 | 5 | - | - | - | `low == high`, stop | return 5 |
+
+```text
+step 1: window 0..6  [1 2 1 (3) 5 6 4]   mid=3: 3 < 5 rising  -> go right
+step 2: window 4..6  [5 (6) 4]           mid=5: 6 > 4 falling -> keep mid
+step 3: window 4..5  [(5) 6]             mid=4: 5 < 6 rising  -> go right
+done  : window 5..5  [6]                 peak at index 5
+```
+
+**Edge cases.** A single element returns index 0 with no comparison. A strictly decreasing array `[3, 2, 1]` keeps `high = mid` and returns 0; a strictly increasing one `[1, 2, 3]` keeps moving right and returns 2. `mid + 1` is always valid because `mid < high` inside the loop. An empty array is not handled: `high = -1`, the loop is skipped and the method returns `low = 0`, which is not a valid index.
+
+**Result:** index `5` (value 6), matching the class output. Index 1 (value 2) is also a valid peak, which the search does not report.
+
 ## Source Code
 
 ### FindPeakElement.java

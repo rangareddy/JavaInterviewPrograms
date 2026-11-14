@@ -185,6 +185,33 @@ public static ListNode removeNthFromEnd(ListNode head, int n) {
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: delete the n-th node from the end in one pass, without knowing the length. Start `slow` and `fast` on a dummy node in front of the head. Move `fast` ahead `n + 1` times so that exactly `n` nodes lie between `slow` and `fast`. Then move both together until `fast` falls off the end (`null`); at that moment `slow` is the node just before the one to delete, so `slow.next = slow.next.next`. The dummy node makes deleting the head work like any other node.
+
+**Input:** `head = [1, 2, 3, 4, 5]`, `n = 2` (remove `4`).
+
+Gap phase: `fast` moves `n + 1 = 3` times, from `dummy` to `1`, `2`, `3`.
+
+| Step | `slow` | `fast` | Action |
+|------|--------|--------|--------|
+| gap done | dummy | 3 | `fast` is 3 nodes ahead |
+| 1 | 1 | 4 | both move |
+| 2 | 2 | 5 | both move |
+| 3 | 3 | null | both move, `fast` is `null`, stop |
+
+`slow` is node `3`; `slow.next = slow.next.next` links `3` to `5`.
+
+```mermaid
+flowchart LR
+    D["dummy"] --> a["1"] --> b["2"] --> c["3 - slow"] --> d["4 - removed"] --> e["5"]
+    c -.->|"new link"| e
+```
+
+**Edge cases.** Removing the head (`[1]` with `n = 1`): `fast` moves twice (to `1` then `null`), the second loop does not run, `slow` stays on `dummy`, `dummy.next` becomes `null` and the result is `[]`. Removing the tail (`[1, 2]` with `n = 1`) gives `[1]`. The code assumes `1 <= n <= length`; a larger `n` would hit a `NullPointerException` while advancing `fast`.
+
+**Result:** `[1, 2, 3, 5]`, matching the class output.
+
 ## Source Code
 
 Uses the shared helper [`ListNode`](../../src/main/java/com/ranga/linkedlist/ListNode.java) (a small `ListNode` with `of(...)` and `toString(...)` helpers for building and printing test data).

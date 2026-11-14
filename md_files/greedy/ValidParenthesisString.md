@@ -129,6 +129,27 @@ public static boolean checkValidString(String s) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: instead of trying every meaning of `*`, track the range of possible counts of unmatched `(`. `low` is the fewest possible (every `*` used as `)` when it helps), `high` is the most possible (every `*` used as `(`). `(` raises both, `)` lowers both, `*` lowers `low` and raises `high`. If `high` ever goes negative there are too many `)` even in the best case, so the string is invalid. `low` is clamped to 0 because a negative count just means some `*` were not used as `)`. At the end the string is valid when 0 is achievable, i.e. `low == 0`.
+
+**Input:** `s = "(*))"`.
+
+| Char | Action | low | high | high < 0? | low after max(low, 0) |
+|------|--------|-----|------|-----------|-----------------------|
+| `(` | both +1 | 1 | 1 | no | 1 |
+| `*` | low -1, high +1 | 0 | 2 | no | 0 |
+| `)` | both -1 | -1 | 1 | no | 0 |
+| `)` | both -1 | -1 | 0 | no | 0 |
+
+End: `low == 0`, so `true` (read as `( ( ) )` with the `*` as `(`).
+
+**Second input:** `s = "(((*)"`: after `(((` low = high = 3; `*` gives low 2, high 4; `)` gives low 1, high 3. At the end `low = 1 != 0`, so it returns `false` (at least one `(` stays open).
+
+**Edge cases:** `")("` hits `high = -1` on the first character and returns `false` at once. `"*"` ends with `low = max(-1, 0) = 0` and returns `true`. An empty string returns `true`.
+
+**Result:** returns `true` for `"(*))"` and `false` for `"(((*)"`, matching the class output.
+
 ## Source Code
 
 ### ValidParenthesisString.java

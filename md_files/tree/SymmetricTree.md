@@ -108,6 +108,39 @@ private static boolean isMirror(TreeNode a, TreeNode b) {
 
 The optimized solution is Approach 3 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: a tree is symmetric when its left subtree is the mirror image of its right subtree. Two subtrees `a` and `b` are mirrors if their roots have the same value, `a`'s left mirrors `b`'s right, and `a`'s right mirrors `b`'s left. So the code compares two nodes at a time, crossing over at each level, and the whole check is a single recursion with no copy of the tree.
+
+**Input:** `[1, 2, 2, 3, 4, 4, 3]`.
+
+```mermaid
+flowchart TD
+    n1((1)) --> L2((2))
+    n1 --> R2((2))
+    L2 --> L3((3))
+    L2 --> L4((4))
+    R2 --> R4((4))
+    R2 --> R3((3))
+    L3 -.mirror.- R3
+    L4 -.mirror.- R4
+```
+
+| Step | Call `isMirror(a, b)` | Values | Result |
+|------|-----------------------|--------|--------|
+| 1 | `(root.left, root.right)` | `2` and `2` | equal, so check the crossed children |
+| 2 | `(a.left, b.right)` | `3` and `3` | equal; its children pairs are `(null, null)` twice, both `true` |
+| 3 | `(a.right, b.left)` | `4` and `4` | equal; children pairs `(null, null)` twice, both `true` |
+| 4 | back at step 1 | | `true && true && true` |
+
+The class returns `true`.
+
+**Asymmetric input.** For `[1, 2, 2, null, 3, null, 3]` the pair at step 1 is `(2, 2)` and the crossed pair is `(a.left, b.right) = (null, 3)`. One side is null, so the method returns `a == b`, which is `false`, and the other crossed pair is never examined. For `[1, 2, 3]` the first pair is `(2, 3)`: different values, `false`.
+
+**Edge cases.** An empty tree (`root == null`) and a single node (both children null, so `isMirror(null, null)` is `true`) are symmetric. The null test `a == null || b == null` returns `a == b`, which is `true` only when both are null. Recursion depth is the tree height, so extra space is `O(h)`.
+
+**Result:** `true`, `false`, `true`, `false` for the four inputs in `main`, matching the class output.
+
 ## Source Code
 
 ### SymmetricTree.java

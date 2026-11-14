@@ -174,6 +174,31 @@ public static int[] removeDuplicates(int[] arr) {
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: in a sorted array duplicates sit next to each other. Two pointers: `i` marks the last unique element kept, `j` scans ahead. Whenever `arr[j]` differs from `arr[i]`, a new unique value was found: move `i` forward and copy `arr[j]` there. The unique values end up packed at the front and the method returns that prefix.
+
+**Input:** `arr = [1, 2, 2, 3, 3, 3, 4]`. Start: `i = 0`.
+
+| Step | `j` | `arr[j]` | `arr[i]` | Different? | `i` afterwards | Array afterwards |
+|------|-----|----------|----------|------------|----------------|------------------|
+| 1 | 1 | 2 | 1 | yes, `arr[1] = 2` | 1 | [1, 2, 2, 3, 3, 3, 4] |
+| 2 | 2 | 2 | 2 | no | 1 | unchanged |
+| 3 | 3 | 3 | 2 | yes, `arr[2] = 3` | 2 | [1, 2, 3, 3, 3, 3, 4] |
+| 4 | 4 | 3 | 3 | no | 2 | unchanged |
+| 5 | 5 | 3 | 3 | no | 2 | unchanged |
+| 6 | 6 | 4 | 3 | yes, `arr[3] = 4` | 3 | [1, 2, 3, 4, 3, 3, 4] |
+
+The result is `Arrays.copyOf(arr, i + 1)` with `i + 1 = 4`: the first four cells.
+
+```text
+[1, 2, 3, 4 | 3, 3, 4]   keep the first i + 1 = 4 cells, the tail is leftover
+```
+
+**Edge cases.** `null` or fewer than 2 elements returns the same array. An array with all equal values (`[5, 5, 5]`) never moves `i`, so the result is `[5]`. The input must be sorted; on unsorted input only neighbouring repeats are removed.
+
+**Result:** `[1, 2, 3, 4]`, matching the class output.
+
 ## Source Code
 
 ### RemoveDuplicates.java

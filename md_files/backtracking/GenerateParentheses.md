@@ -150,6 +150,39 @@ private static void backtrack(List<String> result, StringBuilder current, int op
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: build the string one character at a time with two counters, `open` and `close`. A `(` may be added while `open < n`; a `)` may be added only while `close < open`, so the string can never have a closing bracket without a matching open one. Every string of length `2n` reached this way is valid, so nothing has to be checked or filtered afterwards.
+
+**Input:** `n = 2` (to keep the tree small). Each row is one call; the check order is `(` first, then `)`.
+
+| Step | String | `open` / `close` | What happens |
+|------|--------|------------------|--------------|
+| 1 | `` (empty) | 0 / 0 | `open < 2`: add `(`; `close < open` is false |
+| 2 | `(` | 1 / 0 | add `(` |
+| 3 | `((` | 2 / 0 | `open == n`, cannot add `(`; add `)` |
+| 4 | `(()` | 2 / 1 | add `)` |
+| 5 | `(())` | 2 / 2 | length 4: record `(())` |
+| 6 | `(` | 1 / 0 | back here, now try `)` (`0 < 1`) |
+| 7 | `()` | 1 / 1 | add `(` |
+| 8 | `()(` | 2 / 1 | add `)` |
+| 9 | `()()` | 2 / 2 | length 4: record `()()` |
+
+```mermaid
+graph TD
+    A["empty"] --> B["("]
+    B --> C["(("]
+    B --> D["()"]
+    C --> E["(()"]
+    E --> F["(())"]
+    D --> G["()("]
+    G --> H["()()"]
+```
+
+**Edge cases.** `n = 1` returns `[()]`. `n = 0` has length `2n = 0` at the first call, so it returns `[""]` (a list containing the empty string). For `n = 3` the same rules give five strings.
+
+**Result:** `generateParenthesis(2)` returns `[(()), ()()]` and `generateParenthesis(3)` returns `[((())), (()()), (())(), ()(()), ()()()]`, matching the class output.
+
 ## Source Code
 
 ### GenerateParentheses.java

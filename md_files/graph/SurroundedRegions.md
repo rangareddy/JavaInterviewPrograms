@@ -159,6 +159,37 @@ public static void solveRegions(char[][] board) {
 
 The optimized solution is Approach 1 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: an `O` can be saved only if it connects, through other `O` cells, to an `O` on the border. So instead of searching for surrounded regions, start a DFS from every border `O` and mark everything it reaches with a temporary `T`. Then one scan finishes the job: each remaining `O` is surrounded and becomes `X`, and each `T` is turned back into `O`.
+
+**Input:** `board = [XXXX, XOOX, XXOX, XOXX]`, modified in place.
+
+```text
+XXXX
+XOOX
+XXOX
+XOXX
+```
+
+| Phase | Cell(s) | Action | Board afterwards |
+|-------|---------|--------|------------------|
+| 1. border DFS | columns 0 and 3, rows 0 and 3 are checked; only (3,1) is an `O` | mark (3,1) as `T`; its neighbours (2,1), (3,0), (3,2) are `X`, so the DFS stops | `XXXX / XOOX / XXOX / XTXX` |
+| 2. scan | (1,1), (1,2), (2,2) are `O` | not reached from the border, flip to `X` | `XXXX / XXXX / XXXX / XTXX` |
+| 2. scan | (3,1) is `T` | restore to `O` | `XXXX / XXXX / XXXX / XOXX` |
+
+```text
+ before          after phase 1      after phase 2
+ X X X X         X X X X            X X X X
+ X O O X         X O O X            X X X X
+ X X O X         X X O X            X X X X
+ X O X X         X T X X            X O X X
+```
+
+**Edge cases:** a `null` or empty board returns without change. `[X]` stays `X`; `[OOO, OXO, OOO]` has every `O` connected to the border, so nothing flips; `[XXX, XOX, XXX]` has a lone inner `O` that flips to `X`.
+
+**Result:** `[XXXX, XXXX, XXXX, XOXX]`, the same as the class output.
+
 ## Source Code
 
 ### SurroundedRegions.java

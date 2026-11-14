@@ -249,6 +249,29 @@ static class MedianTwoHeaps {
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: keep the smaller half of the numbers in a max-heap `low` and the larger half in a min-heap `high`, so the middle values are on the two tops. Every `addNum` pushes into `low`, moves `low`'s top to `high` (so each number ends in the right half), and if `high` became larger, moves its top back. `low` is therefore never smaller than `high` and at most one element bigger. The median is `low.peek()` for an odd count, or the average of both tops for an even count: `O(log n)` per add, `O(1)` per median.
+
+**Input:** `addNum` for `1, 2, 3, 10, -5`, calling `findMedian()` after each.
+
+| Add | `low` (max-heap) after push and move | `high` (min-heap) | Rebalance | `low` / `high` finally | `findMedian()` |
+|-----|--------------------------------------|-------------------|-----------|------------------------|----------------|
+| 1 | `{}` | `{1}` | `high` bigger, move 1 back | `{1}` / `{}` | 1 (low larger) -> **1.0** |
+| 2 | `{1}` | `{2}` | none | `{1}` / `{2}` | (1 + 2) / 2 = **1.5** |
+| 3 | `{1}` | `{2, 3}` | `high` bigger, move 2 back | `{2, 1}` / `{3}` | 2 (low larger) -> **2.0** |
+| 10 | `{2, 1}` | `{3, 10}` | none | `{2, 1}` / `{3, 10}` | (2 + 3) / 2 = **2.5** |
+| -5 | `{1, -5}` | `{2, 3, 10}` | `high` bigger, move 2 back | `{2, 1, -5}` / `{3, 10}` | 2 (low larger) -> **2.0** |
+
+```text
+after 10:   low (max-heap): 2 1   |   high (min-heap): 3 10      median = (2 + 3) / 2
+                            ^top                      ^top
+```
+
+**Edge cases:** `findMedian()` before any number was added throws `IllegalStateException`. A single number is the median itself.
+
+**Result:** the medians `1.0, 1.5, 2.0, 2.5, 2.0`, the same as the class output.
+
 ## Source Code
 
 ### FindMedianFromDataStream.java

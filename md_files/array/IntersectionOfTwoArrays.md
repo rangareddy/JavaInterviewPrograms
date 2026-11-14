@@ -119,6 +119,34 @@ public static int[] intersectionWithDuplicates(int[] nums1, int[] nums2) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: the class has two methods. `intersectionUnique` puts `nums1` in a set and scans `nums2`; `seen.remove(num)` returns `true` only the first time a common value is met, so each value is reported once. `intersectionWithDuplicates` counts the values of the shorter array in a map and, while scanning the other array, reports a value only while its remaining count is above 0 and decrements it, so a value appears as many times as it occurs in both arrays. Both are O(m + n).
+
+**Input:** `nums1 = [1, 2, 2, 1]`, `nums2 = [2, 2]`.
+
+Unique version, `seen = {1, 2}` after the first loop:
+
+| Step | `num` (from `nums2`) | `seen.remove(num)` | `seen` afterwards | `result` |
+|------|----------------------|--------------------|-------------------|----------|
+| 1 | 2 | `true` | `{1}` | `[2]` |
+| 2 | 2 | `false` (already removed) | `{1}` | `[2]` |
+
+Duplicates version: `nums1` (length 4) is longer than `nums2` (length 2), so the method calls itself with the arrays swapped. Now `nums1 = [2, 2]`, `nums2 = [1, 2, 2, 1]`, and `counts = {2=2}`.
+
+| Step | `num` | `count` (`getOrDefault`) | Action | `counts` | `result` |
+|------|-------|--------------------------|--------|----------|----------|
+| 1 | 1 | 0 | skip | `{2=2}` | `[]` |
+| 2 | 2 | 2 | add, count to 1 | `{2=1}` | `[2]` |
+| 3 | 2 | 1 | add, count to 0 | `{2=0}` | `[2, 2]` |
+| 4 | 1 | 0 | skip | `{2=0}` | `[2, 2]` |
+
+Swapping first keeps the map as small as possible, which gives the O(min(m, n)) space.
+
+**Edge cases.** If there is no common value both methods return an empty array (the real class gives `[]` for `[1, 2, 3]` and `[4, 5, 6]`). An empty input also gives an empty array. The result order follows `nums2` (after the swap, the array that was scanned second).
+
+**Result:** unique `[2]`, with duplicates `[2, 2]`, matching the real class. For `[4, 9, 5]` and `[9, 4, 9, 8, 4]` the class gives `[9, 4]` for both methods.
+
 ## Source Code
 
 ### IntersectionOfTwoArrays.java

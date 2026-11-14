@@ -97,6 +97,40 @@ private static ListNode merge(ListNode a, ListNode b) {
 
 The optimized solution is Approach 2 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: merge sort suits linked lists, because splitting needs only pointer changes and merging two sorted lists needs no extra array. The code finds the middle with slow and fast pointers, cuts the list in two, sorts each half recursively, and merges the two sorted halves with a dummy-head merge. Every level of recursion does O(n) work and there are O(log n) levels, so the time is O(n log n).
+
+**Input:** `head = [4, 2, 1, 3]`.
+
+| Step | Call | slow stops at | Split | Result |
+|------|------|---------------|-------|--------|
+| 1 | sortList `[4, 2, 1, 3]` | 1 (prev = 2) | `[4, 2]` and `[1, 3]` | sort both, then merge |
+| 2 | sortList `[4, 2]` | 2 (prev = 4) | `[4]` and `[2]` | each returns itself (one node) |
+| 3 | merge `[4]`, `[2]` | | 2 <= 4 is false, so 2 first | `[2, 4]` |
+| 4 | sortList `[1, 3]` | 3 (prev = 1) | `[1]` and `[3]` | merge gives `[1, 3]` |
+| 5 | merge `[2, 4]`, `[1, 3]` | | takes 1, then 2, then 3, then the rest (4) | `[1, 2, 3, 4]` |
+
+```mermaid
+flowchart TD
+    R["4, 2, 1, 3"] --> L["4, 2"]
+    R --> RR["1, 3"]
+    L --> L1["4"]
+    L --> L2["2"]
+    RR --> R1["1"]
+    RR --> R2["3"]
+    L1 --> M1["merge: 2, 4"]
+    L2 --> M1
+    R1 --> M2["merge: 1, 3"]
+    R2 --> M2
+    M1 --> M3["merge: 1, 2, 3, 4"]
+    M2 --> M3
+```
+
+**Edge cases.** `null` and a single node are returned as they are, which is also the recursion base case, so `prev.next = null` is never reached with `prev == null`. For two nodes the fast pointer jumps past the end, so slow is the second node and each half gets one node. The merge uses `a.val <= b.val`, so equal values keep their original order: `[3, 3, 1]` gives `[1, 3, 3]`. When one half runs out, the rest of the other half is linked in one step.
+
+**Result:** `[1, 2, 3, 4]`, matching the class output.
+
 ## Source Code
 
 ### SortList.java

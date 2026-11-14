@@ -97,6 +97,27 @@ private static int daysNeeded(int[] weights, int capacity) {
 
 The optimized solution is Approach 2 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: search the ship capacity. A bigger capacity never needs more days, so "can ship within `days`" flips from false to true at one capacity; binary search finds that smallest capacity. The lowest possible capacity is the heaviest package (`lo`, or that package could never ship) and the highest is the sum of all weights (`hi`, everything in one day). `daysNeeded` simulates loading in order: when the next package does not fit, start a new day. The loop keeps `hi = mid` when feasible (mid may be the answer) and `lo = mid + 1` otherwise.
+
+**Input:** `weights = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]`, `days = 5`. Range: `lo = 10` (max), `hi = 55` (sum).
+
+| Step | lo | hi | mid (capacity) | Days needed | <= 5 ? | Action |
+|------|----|----|----------------|-------------|--------|--------|
+| 1 | 10 | 55 | 32 | 2 | yes | hi = 32 |
+| 2 | 10 | 32 | 21 | 3 | yes | hi = 21 |
+| 3 | 10 | 21 | 15 | 5 | yes | hi = 15 |
+| 4 | 10 | 15 | 12 | 6 | no | lo = 13 |
+| 5 | 13 | 15 | 14 | 6 | no | lo = 15 |
+| 6 | 15 | 15 | - | - | `lo == hi`, stop | return 15 |
+
+With capacity 15 the packages split as `1..5` (15), `6, 7` (13), `8`, `9`, `10`: exactly 5 days. With 14 it needs 6 days, so 15 is the minimum.
+
+**Edge cases.** One package `[5]` with `days = 1` starts with `lo = hi = 5` and returns 5 without looping. When `days` is at least the number of packages the answer is the heaviest package (the same `[1, 2, 3, 1, 1]` with `days = 5` also gives 3). Packages must ship in the given order, which is why `daysNeeded` never reorders.
+
+**Result:** `15`, matching the class output.
+
 ## Source Code
 
 ### CapacityToShipPackages.java

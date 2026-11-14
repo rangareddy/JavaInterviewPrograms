@@ -142,6 +142,39 @@ public static List<Integer> topologicalSort(int n, int[][] edges) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: Kahn's algorithm with a min-heap in place of a plain queue. A vertex is ready when its in-degree is 0. The heap always releases the smallest ready vertex, which makes the answer the lexicographically smallest valid order and therefore deterministic. Removing a vertex lowers the in-degree of its successors; those reaching 0 enter the heap. If fewer than `n` vertices come out, there is a cycle and the method returns an empty list. O((V + E) log V).
+
+**Input:** `n = 6`, `edges = [[5,2],[5,0],[4,0],[4,1],[2,3],[3,1]]` (edge `[u, v]` means u before v).
+
+```mermaid
+flowchart LR
+    V5(["5"]) --> V2(["2"])
+    V5 --> V0(["0"])
+    V4(["4"]) --> V0
+    V4 --> V1(["1"])
+    V2 --> V3(["3"])
+    V3 --> V1
+```
+
+Setup: `inDegree = [2,2,1,1,0,0]` (vertices 0 to 5), heap = {4, 5}.
+
+| Step | Polled (smallest) | `order` | In-degree changes | Heap after |
+|------|-------------------|---------|-------------------|------------|
+| 1 | 4 | [4] | 0: 2 -> 1, 1: 2 -> 1 | {5} |
+| 2 | 5 | [4, 5] | 2: 1 -> 0 (added), 0: 1 -> 0 (added) | {0, 2} |
+| 3 | 0 | [4, 5, 0] | none | {2} |
+| 4 | 2 | [4, 5, 0, 2] | 3: 1 -> 0 (added) | {3} |
+| 5 | 3 | [4, 5, 0, 2, 3] | 1: 1 -> 0 (added) | {1} |
+| 6 | 1 | [4, 5, 0, 2, 3, 1] | none | {} |
+
+`order.size() = 6 = n`, so the order is returned.
+
+**Edge cases:** the cycle `0 -> 1 -> 2 -> 0` (`n = 3`) leaves every in-degree at 1, the heap starts empty, the size check fails and the empty list is returned (the demo prints "cycle detected"). `n = 1` with no edges gives `[0]`. When several vertices are ready (`{0,1,2,3}` diamond) the smaller index goes first, giving `[0, 1, 2, 3]`.
+
+**Result:** returns `[4, 5, 0, 2, 3, 1]`, matching the class output.
+
 ## Source Code
 
 ### TopologicalSort.java

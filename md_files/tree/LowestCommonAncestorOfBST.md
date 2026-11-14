@@ -212,6 +212,42 @@ public static TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode 
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: in a BST, the lowest common ancestor of `p` and `q` is the first node, going down from the root, whose value lies between the two (inclusive) - the point where the paths to `p` and `q` split. If both values are smaller than the current node, the answer is in the left subtree; if both are larger, it is in the right subtree; otherwise the current node is the answer. It is one loop with no recursion and no extra memory.
+
+**Input:** `root = [6, 2, 8, 0, 4, 7, 9, null, null, 3, 5]`, `p = 3`, `q = 5`.
+
+```mermaid
+flowchart TD
+    n6((6)) --> n2((2))
+    n6 --> n8((8))
+    n2 --> n0((0))
+    n2 --> n4((4))
+    n8 --> n7((7))
+    n8 --> n9((9))
+    n4 --> n3((3))
+    n4 --> n5((5))
+    classDef target fill:#dbeafe,stroke:#3b82f6
+    classDef ans fill:#dcfce7,stroke:#22c55e
+    class n3,n5 target
+    class n4 ans
+```
+
+| Step | `curr` | `p = 3`, `q = 5` compared with `curr` | Action |
+|------|--------|---------------------------------------|--------|
+| 1 | `6` | both `< 6` | move left |
+| 2 | `2` | both `> 2` | move right |
+| 3 | `4` | `3 < 4` and `5 > 4`, so neither "both smaller" nor "both larger" | return `4` |
+
+The paths to `3` and `5` split at `4`, so `4` is the answer. The class prints `4`.
+
+**Other pairs.** For `p = 2, q = 8` the root `6` has `2 < 6 < 8`, so it is returned immediately: `6`. For `p = 2, q = 4` the walk goes left to `2`: `p` equals the current node, so neither strict test holds and `2` is returned (a node can be its own ancestor).
+
+**Edge cases.** Only the values `p.val` and `q.val` are read, so the nodes passed in need not be nodes of the tree (the demo creates new `TreeNode` objects). The method assumes both values exist in the BST; if the loop falls off the tree it returns `null`. Time is `O(h)`, space `O(1)`.
+
+**Result:** `4` for the traced pair; the class output for the three pairs in `main` is `6`, `2`, `4`.
+
 ## Source Code
 
 Uses the shared helper [`TreeNode`](../../src/main/java/com/ranga/tree/TreeNode.java) (a small `TreeNode` with `of(...)` and `toString(...)` helpers for building and printing test data).

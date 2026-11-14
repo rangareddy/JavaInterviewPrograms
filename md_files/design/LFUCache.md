@@ -138,6 +138,31 @@ private void touch(int key) {
 
 The optimized solution is Approach 2 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: evict the key used least often, and among equals the one used longest ago. Three maps do it in O(1): `values` (key -> value), `freq` (key -> use count) and `buckets` (count -> `LinkedHashSet` of keys, in insertion order, so the first element is the oldest). `minFreq` is the lowest count currently present. Every access (`touch`) moves the key from bucket `f` to bucket `f + 1`, and bumps `minFreq` when bucket `minFreq` becomes empty. A new key goes into bucket 1 and sets `minFreq = 1`; eviction removes the first key of bucket `minFreq`.
+
+**Input:** `LFUCache(2)`, then `put(1,1)`, `put(2,2)`, `get(1)`, `put(3,3)`, `get(2)`, `get(3)`, `put(4,4)`, `get(1)`, `get(3)`, `get(4)`.
+
+| Step | Operation | Buckets afterwards (count: keys, oldest first) | `minFreq` | Result |
+|------|-----------|------------------------------------------------|-----------|--------|
+| 1 | `put(1,1)` | 1: [1] | 1 | |
+| 2 | `put(2,2)` | 1: [1, 2] | 1 | |
+| 3 | `get(1)` | 1: [2], 2: [1] | 1 | `1` |
+| 4 | `put(3,3)` | full: evict first of bucket 1 = key 2; then 1: [3], 2: [1] | 1 | |
+| 5 | `get(2)` | unchanged (2 is not in `values`) | 1 | `-1` |
+| 6 | `get(3)` | bucket 1 empties and `f == minFreq`: 2: [1, 3] | 2 | `3` |
+| 7 | `put(4,4)` | full: evict first of bucket 2 = key 1; then 1: [4], 2: [3] | 1 | |
+| 8 | `get(1)` | unchanged | 1 | `-1` |
+| 9 | `get(3)` | 1: [4], 3: [3] (bucket 2 empties but `minFreq` is 1, no change) | 1 | `3` |
+| 10 | `get(4)` | bucket 1 empties and `f == minFreq`: 2: [4], 3: [3] | 2 | `4` |
+
+Step 7 shows the tie-break: keys 1 and 3 both had count 2, and key 1 sat in front of the bucket (used earlier), so it is evicted.
+
+**Edge cases.** Capacity `0` makes `put` return immediately. `get` of a missing key returns `-1` without touching any bucket. `put` of an existing key updates the value and counts as a use (`touch`) without evicting. Everything is O(1) per operation.
+
+**Result:** the gets return `1, -1, 3, -1, 3, 4`, exactly what the class prints. No diagram is added; the bucket table is the picture.
+
 ## Source Code
 
 ### LFUCache.java

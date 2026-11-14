@@ -149,6 +149,40 @@ public static List<List<Integer>> zigzagLevelOrder(TreeNode root) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: process the tree level by level with a queue, exactly as in a normal level-order traversal, but keep a flag `leftToRight` that flips after every level. The queue always receives children left then right, so the order the nodes leave the queue never changes; only the way each value is placed into the level's list changes: appended at the end when going left to right, inserted at the front when going right to left.
+
+**Input:** the tree `[3, 9, 20, null, null, 15, 7]`.
+
+```mermaid
+flowchart TD
+    n3((3)) --> n9((9))
+    n3 --> n20((20))
+    n20 --> n15((15))
+    n20 --> n7((7))
+    classDef l0 fill:#dbeafe,stroke:#3b82f6
+    classDef l1 fill:#dcfce7,stroke:#22c55e
+    classDef l2 fill:#fef9c3,stroke:#eab308
+    class n3 l0
+    class n9,n20 l1
+    class n15,n7 l2
+```
+
+| Round | `leftToRight` | Queue at start (`size`) | Nodes polled and how they are placed | `level` list | Queue at end |
+|-------|---------------|-------------------------|--------------------------------------|--------------|--------------|
+| 1 | true | `[3]` (1) | `3` addLast | `[3]` | `[9, 20]` |
+| 2 | false | `[9, 20]` (2) | `9` addFirst gives `[9]`; `20` addFirst gives `[20, 9]` | `[20, 9]` | `[15, 7]` |
+| 3 | true | `[15, 7]` (2) | `15` addLast, `7` addLast | `[15, 7]` | `[ ]` |
+
+The queue is empty, so the loop ends. The result is `[[3], [20, 9], [15, 7]]`.
+
+**Another input.** For `[1, 2, 3, 4, null, null, 5]` the rounds give `[1]`, then `2` and `3` placed at the front one after the other giving `[3, 2]`, then `4` and `5` going left to right giving `[4, 5]`: `[[1], [3, 2], [4, 5]]`.
+
+**Edge cases.** An empty tree returns an empty list before the queue is built. A single node returns `[[1]]`. The level size is read once per round (`for (int size = queue.size(); size > 0; size--)`), so children added during the round are left for the next one. `addFirst` on a `LinkedList` is `O(1)`, so reversing costs nothing extra: total time `O(n)`, space `O(w)` for the widest level plus the output.
+
+**Result:** matches the class output for all four inputs in `main`.
+
 ## Source Code
 
 Uses the shared helper [`TreeNode`](../../src/main/java/com/ranga/tree/TreeNode.java) (a small `TreeNode` with `of(...)` and `toString(...)` helpers for building and printing test data).

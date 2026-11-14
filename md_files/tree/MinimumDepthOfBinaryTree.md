@@ -84,6 +84,35 @@ public static int minDepth(TreeNode root) {
 
 The optimized solution is Approach 2 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: the minimum depth is the number of nodes on the shortest path from the root to a leaf (a node with no children). A level-by-level search (BFS) reaches the shallowest leaf first, so it can return as soon as it meets any leaf instead of visiting the whole tree. A node with only one child is not a leaf, which is why checking "both children are null" matters.
+
+**Input:** the tree `[3, 9, 20, null, null, 15, 7]`.
+
+```mermaid
+flowchart TD
+    n3((3)) --> n9((9))
+    n3 --> n20((20))
+    n20 --> n15((15))
+    n20 --> n7((7))
+    classDef leaf fill:#dcfce7,stroke:#22c55e
+    class n9,n15,n7 leaf
+```
+
+| `depth` | Queue at the start of the level | Node removed | Leaf? | Action |
+|---------|---------------------------------|--------------|-------|--------|
+| 1 | `[3]` | `3` | no (children 9 and 20) | add `9`, `20` |
+| 2 | `[9, 20]` | `9` | yes (no children) | return `2` |
+
+`20` is never removed from the queue, and `15` and `7` are never even added. The class returns `2`.
+
+**Other inputs.** `[2, null, 3, null, 4, null, 5, null, 6]` is a chain: every node has exactly one child, so no node is a leaf until the fifth level, and the answer is `5`. `[1, 2]` returns `2`: the root `1` is not a leaf because it has a child.
+
+**Edge cases.** An empty tree returns `0` before the queue is created. A single node is a leaf at `depth = 1`, so it returns `1`. The final `return depth` after the loop is only a fallback; every non-empty finite tree has a leaf, so the loop always returns from inside.
+
+**Result:** `2`, `5`, `0` and `2` for the four inputs in `main`, matching the class output.
+
 ## Source Code
 
 ### MinimumDepthOfBinaryTree.java

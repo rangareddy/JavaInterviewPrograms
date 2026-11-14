@@ -104,6 +104,33 @@ public static int minPathSum(int[][] grid) {
 
 The optimized solution is Approach 3 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: the cheapest cost to reach a cell is its own value plus the cheaper of the cell above and the cell to the left. Only the previous row is needed, so one array `dp` is reused: before `dp[j]` is overwritten it still holds the value from the row above, and `dp[j-1]` already holds the new value to the left.
+
+**Input:** `grid = [[1, 3, 1], [1, 5, 1], [4, 2, 1]]`.
+
+| Step | Computation | `dp` after |
+|------|-------------|------------|
+| row 0 | running sums: `1`, `1+3 = 4`, `4+1 = 5` | `[1, 4, 5]` |
+| row 1, col 0 | `dp[0] += 1` (only from above) | `[2, 4, 5]` |
+| row 1, col 1 | `5 + min(above 4, left 2) = 7` | `[2, 7, 5]` |
+| row 1, col 2 | `1 + min(above 5, left 7) = 6` | `[2, 7, 6]` |
+| row 2, col 0 | `dp[0] += 4` | `[6, 7, 6]` |
+| row 2, col 1 | `2 + min(above 7, left 6) = 8` | `[6, 8, 6]` |
+| row 2, col 2 | `1 + min(above 6, left 8) = 7` | `[6, 8, 7]` |
+
+```text
+grid          min cost grid
+1 3 1         1 4 5
+1 5 1    ->   2 7 6
+4 2 1         6 8 7   <- bottom-right = 7  (path 1 -> 3 -> 1 -> 1 -> 1)
+```
+
+**Edge cases.** A `1 x 1` grid returns its only value (`7` for `[[7]]`) because both loops are skipped. A single row or column reduces to a running sum. The code assumes a non-empty grid (it reads `grid[0][0]` directly).
+
+**Result:** `minPathSum(...)` returns `7`, matching the class output.
+
 ## Source Code
 
 ### MinimumPathSum.java

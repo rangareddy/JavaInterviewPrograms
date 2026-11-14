@@ -130,6 +130,28 @@ static class DifferenceMin {
 
 The optimized solution is Approach 2 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: a single stack where every entry is a pair `{value, minimum of the stack up to this value}`. When a value is pushed, the new minimum is `min(value, minimum stored in the current top)` (or the value itself on an empty stack). Because each entry remembers the minimum at the time it was pushed, popping simply exposes the previous entry with its own correct minimum. All four operations are O(1), no scan is ever needed.
+
+**Input:** `push(-2), push(0), push(-3), getMin(), pop(), top(), getMin()`. The stack is written bottom to top as `(value, min)`.
+
+| Step | Operation | How it is computed | Stack (bottom → top) | Returns |
+|------|-----------|--------------------|----------------------|---------|
+| 1 | push(-2) | stack empty, min = -2 | (-2,-2) | |
+| 2 | push(0) | min(0, -2) = -2 | (-2,-2) (0,-2) | |
+| 3 | push(-3) | min(-3, -2) = -3 | (-2,-2) (0,-2) (-3,-3) | |
+| 4 | getMin() | second number of the top | unchanged | -3 |
+| 5 | pop() | remove the top pair | (-2,-2) (0,-2) | |
+| 6 | top() | first number of the top | unchanged | 0 |
+| 7 | getMin() | second number of the top | unchanged | -2 |
+
+After the pop the minimum goes back from -3 to -2 with no recomputation, because the pair `(0,-2)` already stored it.
+
+**Edge cases.** The first push has no previous minimum, so the value is its own minimum. Duplicates of the minimum are fine, since each pair stores its own copy. `pop`, `top` and `getMin` on an empty stack are not guarded: `ArrayDeque.pop()` throws `NoSuchElementException` and `peek()` returns `null`, which makes `top()` and `getMin()` fail with `NullPointerException`; the problem guarantees these calls are made on a non-empty stack.
+
+**Result:** `getMin() = -3`, then after `pop()` `top() = 0` and `getMin() = -2`, matching the class output.
+
 ## Source Code
 
 ### MinStack.java

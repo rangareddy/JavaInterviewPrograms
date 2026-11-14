@@ -118,6 +118,38 @@ enum EnumSingleton { INSTANCE }
 
 The optimized solution is Approach 3 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: a singleton must hand out one shared instance even when many threads ask at once, while avoiding a lock on every call. Double-checked locking does this lazily: the field `instance` is `volatile`; `getInstance()` first checks `instance == null` **without** a lock (the fast path once it exists), and only when it is null enters `synchronized (DoubleCheckedSingleton.class)`, checks null **again**, and then creates the object. The second check matters because several threads may have passed the first check before the first of them finished creating the object. `volatile` guarantees that other threads never see the reference before the object is fully constructed.
+
+**Input:** two threads T1 and T2 call `DoubleCheckedSingleton.getInstance()` at about the same time on a fresh class (`instance == null`). The rows show the steps that the code allows in this order.
+
+| Step | Thread | Code reached | `instance` | Result |
+|------|--------|--------------|------------|--------|
+| 1 | T1 | first check: `instance == null` is true | null | goes to lock |
+| 2 | T2 | first check: `instance == null` is true | null | goes to lock |
+| 3 | T1 | takes the class lock, second check is null, `new DoubleCheckedSingleton()` | object X | T1 leaves the block |
+| 4 | T2 | gets the lock, second check: `instance` is X, not null | X | skips creation, leaves the block |
+| 5 | T1, T2 | `return instance` | X | both receive the same X |
+| 6 | any later call | first check: `instance` is not null | X | returns X with no locking |
+
+```mermaid
+flowchart TD
+    A["getInstance()"] --> B{"instance null?"}
+    B -->|"no"| R(["return instance"])
+    B -->|"yes"| L["lock the class"]
+    L --> C{"instance null again?"}
+    C -->|"yes"| N["create the object"]
+    C -->|"no"| R
+    N --> R
+```
+
+The class also holds the other styles for comparison: eager (a `static final` field created at class load), initialization-on-demand holder (a nested `Holder` class loaded on first use) and an `enum` with one constant (also safe against serialization and reflection). `main` compares `getInstance() == getInstance()` for each and then starts 8 threads that all call the double-checked version and collects the results in a concurrent set.
+
+**Edge cases.** The private constructors stop `new` from outside the class. Without `volatile`, another thread could see a non-null but partly constructed object. Creation happens at most once, so the set of results holds exactly one element.
+
+**Result:** the class prints `eager = true, double-checked = true, holder = true, enum = true` and `distinct instances = 1`, the same in all three runs checked.
+
 ## Source Code
 
 ### SingletonPattern.java

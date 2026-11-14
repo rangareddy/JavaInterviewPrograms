@@ -106,6 +106,36 @@ public static ListNode getIntersectionNode(ListNode headA, ListNode headB) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: if the lists have different lengths, two pointers started together never line up. Each pointer therefore walks its own list and, on reaching the end (`null`), jumps to the head of the other list. Both pointers then travel the same total distance (list A plus list B), so any length difference cancels and they arrive at the shared tail at the same moment. If there is no shared node they reach `null` together, which is also the answer.
+
+**Input:** A = `[4, 1, 8, 4, 5]`, B = `[5, 6, 1, 8, 4, 5]`, where the last three nodes `8 -> 4 -> 5` are the same nodes in both lists. Private nodes are written `a4`, `a1`, `b5`, `b6`, `b1`; shared nodes `s8`, `s4`, `s5`.
+
+| Move | a | b | a == b? |
+|------|---|---|---------|
+| 0 | a4 | b5 | no |
+| 1 | a1 | b6 | no |
+| 2 | s8 | b1 | no |
+| 3 | s4 | s8 | no |
+| 4 | s5 | s4 | no |
+| 5 | null (end of A) | s5 | no |
+| 6 | b5 (head of B) | null (end of B) | no |
+| 7 | b6 | a4 (head of A) | no |
+| 8 | b1 | a1 | no |
+| 9 | s8 | s8 | yes, return `s8` |
+
+```mermaid
+flowchart LR
+    A4["a4"] --> A1["a1"] --> S8["s8: 8"]
+    B5["b5"] --> B6["b6"] --> B1["b1"] --> S8
+    S8 --> S4["s4: 4"] --> S5["s5: 5"]
+```
+
+**Edge cases.** The comparison is by node identity (`a != b`), not by value, so the equal values `4` and `5` met earlier are not mistaken for the intersection. With no shared node (`[2, 6, 4]` and `[1, 5]`) both pointers become `null` after lenA + lenB moves and the loop ends with `null`. If either head is `null`, the pointers switch once and both become `null`, which is returned.
+
+**Result:** the node with value `8`, matching the class output (`intersect at value 8`); the disjoint example prints `none`.
+
 ## Source Code
 
 Uses the shared helper [`ListNode`](../../src/main/java/com/ranga/linkedlist/ListNode.java) (a small `ListNode` with `of(...)` and `toString(...)` helpers for building and printing test data).

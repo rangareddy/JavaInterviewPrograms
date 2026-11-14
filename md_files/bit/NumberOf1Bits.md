@@ -86,6 +86,24 @@ public static int hammingWeight(int n) {
 
 The optimized solution is Approach 3 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: `n & (n - 1)` clears the lowest set bit of `n`, because subtracting 1 flips that bit to 0 and turns all the zeros below it into ones, so the AND wipes exactly that bit and leaves the rest. Repeating until `n` is 0 and counting the repetitions gives the number of 1 bits; the loop runs once per set bit, not once per bit position.
+
+**Input:** `n = 11`, binary `1011` (three set bits).
+
+| Step | n before | n - 1 | n & (n - 1) | count |
+|------|----------|-------|-------------|-------|
+| 1 | 1011 (11) | 1010 (10) | 1010 (10) | 1 |
+| 2 | 1010 (10) | 1001 (9) | 1000 (8) | 2 |
+| 3 | 1000 (8) | 0111 (7) | 0000 (0) | 3 |
+
+`n` is now 0, so the loop stops. The table is enough; no diagram is added.
+
+**Edge cases:** `0` skips the loop and returns `0`. A power of two such as `128` takes one step and returns `1`. Negative numbers need no special handling because there is no shifting: `-3` (`1111...1101`) returns 31 and `2147483645` returns 30.
+
+**Result:** returns `3` for `11`, matching the class output.
+
 ## Source Code
 
 ### NumberOf1Bits.java

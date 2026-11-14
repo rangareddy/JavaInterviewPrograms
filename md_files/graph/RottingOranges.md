@@ -168,6 +168,34 @@ public static int orangesRotting(int[][] grid) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: rot spreads outwards from all rotten oranges at the same time, one step per minute, which is exactly a breadth-first search that starts from many sources. Every initially rotten orange goes into the queue and the fresh oranges are counted. Each loop iteration of the `while` handles one whole "round" of the queue (`size = queue.size()` is fixed before the round starts), i.e. one minute: every fresh neighbour is turned into 2 on the copy of the grid, `fresh` is decreased and the neighbour is queued for the next minute. When `fresh` reaches 0 the loop stops and `minutes` is the answer. Each cell is queued at most once, so the time is O(m * n). The input grid is copied (`clone()`), so the caller's array is not modified.
+
+**Input:** `grid = [[2,1,1],[1,1,0],[0,1,1]]`. Start: queue = `[(0,0)]`, `fresh = 6`. Neighbours are tried in the order down, up, right, left.
+
+| Minute | Queue at start of round | Oranges that rot this minute | `fresh` after | Queue after |
+|--------|-------------------------|------------------------------|---------------|-------------|
+| 1 | `(0,0)` | `(1,0)`, `(0,1)` | 4 | `(1,0) (0,1)` |
+| 2 | `(1,0) (0,1)` | `(1,1)`, `(0,2)` | 2 | `(1,1) (0,2)` |
+| 3 | `(1,1) (0,2)` | `(2,1)` | 1 | `(2,1)` |
+| 4 | `(2,1)` | `(2,2)` | 0 | `(2,2)` |
+
+After minute 4 `fresh == 0`, the loop condition fails and the method returns `minutes = 4`.
+
+```text
+minute 0     minute 1     minute 2     minute 3     minute 4
+2 1 1        2 2 1        2 2 2        2 2 2        2 2 2
+1 1 .        2 1 .        2 2 .        2 2 .        2 2 .
+. 1 1        . 1 1        . 1 1        . 2 1        . 2 2
+```
+
+**Unreachable orange.** For `[[2,1,1],[0,1,1],[1,0,1]]` the rot spreads (minute 1: `(0,1)`; 2: `(1,1)`, `(0,2)`; 3: `(1,2)`; 4: `(2,2)`) but the orange at `(2,0)` is cut off by empty cells. In round 5 the queue holds `(2,2)`, nothing new rots, the queue becomes empty with `fresh = 1`, and the method returns `-1`.
+
+**Edge cases.** No fresh orange at all (`[[0,2]]` or `[[0]]`) gives `fresh == 0` before the loop, so the answer is `0`. Fresh oranges but no rotten one (`[[1]]`) leave the queue empty with `fresh = 1`, so the answer is `-1`.
+
+**Result:** `4` for the traced grid and `-1` for the isolated-orange grid, matching the class output (`0`, `-1`, `0` for `[[0,2]]`, `[[1]]`, `[[0]]`).
+
 ## Source Code
 
 ### RottingOranges.java

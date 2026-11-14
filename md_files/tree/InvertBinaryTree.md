@@ -206,6 +206,50 @@ public static TreeNode invertTree(TreeNode root) {
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: inverting a tree means every node swaps its left and right subtrees. The method first inverts both children (each call returns its own already-inverted root), then assigns them to the opposite sides of the current node. Because each node is touched once, no extra structure is needed and the tree is changed in place.
+
+**Input:** the tree `[4, 2, 7, 1, 3, 6, 9]`.
+
+```mermaid
+flowchart LR
+    subgraph s1["Before"]
+        a4((4)) --> a2((2))
+        a4 --> a7((7))
+        a2 --> a1((1))
+        a2 --> a3((3))
+        a7 --> a6((6))
+        a7 --> a9((9))
+    end
+    subgraph s2["After"]
+        b4((4)) --> b7((7))
+        b4 --> b2((2))
+        b7 --> b9((9))
+        b7 --> b6((6))
+        b2 --> b3((3))
+        b2 --> b1((1))
+    end
+```
+
+Order in which the calls finish (children before parent):
+
+| Step | Node finished | `left` after recursion | `right` after recursion | Assignment | Subtree now |
+|------|---------------|------------------------|-------------------------|------------|-------------|
+| 1 | `1` | null | null | swap two nulls | `1` |
+| 2 | `3` | null | null | swap two nulls | `3` |
+| 3 | `2` | `1` | `3` | `left = 3`, `right = 1` | `2 (3, 1)` |
+| 4 | `6` | null | null | swap two nulls | `6` |
+| 5 | `9` | null | null | swap two nulls | `9` |
+| 6 | `7` | `6` | `9` | `left = 9`, `right = 6` | `7 (9, 6)` |
+| 7 | `4` | `2` | `7` | `left = 7`, `right = 2` | `4 (7 (9, 6), 2 (3, 1))` |
+
+Reading the final tree level by level gives `[4, 7, 2, 9, 6, 3, 1]`.
+
+**Edge cases.** An empty tree returns `null`, which is also the base case under every leaf. Both children are saved in local variables before they are reassigned, so a swap never loses a subtree. The returned root is the same object that was passed in. The recursion depth equals the tree height, so extra space is `O(h)`.
+
+**Result:** `[4, 7, 2, 9, 6, 3, 1]` here, `[2, 3, 1]` for `[2, 1, 3]` and `[]` for the empty tree, matching the class output.
+
 ## Source Code
 
 Uses the shared helper [`TreeNode`](../../src/main/java/com/ranga/tree/TreeNode.java) (a small `TreeNode` with `of(...)` and `toString(...)` helpers for building and printing test data).

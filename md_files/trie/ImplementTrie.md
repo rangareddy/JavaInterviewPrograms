@@ -248,6 +248,34 @@ static class ArrayTrie {
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: store words as paths in a tree where each node has 26 child slots (one per letter) and an `isWord` flag. Inserting walks down the word creating missing nodes and sets `isWord` on the last node. `search` and `startsWith` share the helper `find`, which walks the letters and returns the node at the end (or `null` on a missing child). `search` additionally needs `isWord`; `startsWith` only needs the node to exist. Every operation costs O(length of the word).
+
+**Input:** `insert("apple")`, `search("apple")`, `search("app")`, `startsWith("app")`, `insert("app")`, `search("app")`.
+
+| Operation | What the code does | Structure afterwards | Returns |
+|-----------|--------------------|----------------------|---------|
+| `insert("apple")` | creates nodes a, p, p, l, e; sets `isWord` on the final e | root - a - p - p - l - e (word) | - |
+| `search("apple")` | `find` reaches node e, `isWord` is true | unchanged | `true` |
+| `search("app")` | `find` reaches the second p, but `isWord` is false | unchanged | `false` |
+| `startsWith("app")` | `find` reaches the second p, node exists | unchanged | `true` |
+| `insert("app")` | all three nodes exist; sets `isWord` on the second p | root - a - p - p (word) - l - e (word) | - |
+| `search("app")` | `find` reaches the second p, `isWord` is now true | unchanged | `true` |
+
+```mermaid
+flowchart LR
+    R(["root"]) --> A["a"]
+    A --> P1["p"]
+    P1 --> P2["p<br/>isWord after insert app"]
+    P2 --> L["l"]
+    L --> E["e<br/>isWord after insert apple"]
+```
+
+**Edge cases:** a word whose path hits a missing child makes `find` return `null`, so `search` and `startsWith` return `false` (for example `search("apply")` stops after `l`). The empty prefix returns the root, so `startsWith("")` is `true` while `search("")` is `false` unless the empty word was inserted. The code assumes lowercase letters `a` to `z`.
+
+**Result:** the outputs are `true`, `false`, `true`, `true`, matching the class output.
+
 ## Source Code
 
 ### ImplementTrie.java

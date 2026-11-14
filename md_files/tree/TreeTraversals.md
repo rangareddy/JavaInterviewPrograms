@@ -23,7 +23,7 @@ Print the nodes of a binary tree in the three depth-first orders: preorder (node
 
 The same problem can be solved in several ways. The approach marked (Optimized) is the one to use in practice.
 
-### Approach 1: Recursive Traversals
+### Approach 1: Recursive Traversals (Optimized)
 
 Visit the node before, between or after the recursive calls on its children. This is the version implemented in the repository.
 
@@ -53,7 +53,7 @@ public static void postorder(TreeNode node, List<Integer> out) {
 - **Time Complexity:** O(n)
 - **Space Complexity:** O(h)
 
-### Approach 2: Iterative with an Explicit Stack
+### Approach 2: Iterative with an Explicit Stack (Optimized)
 
 Replace the call stack by a `Deque`: inorder pushes the left spine, preorder pushes right then left, postorder reverses a modified preorder.
 
@@ -144,6 +144,56 @@ public static List<Integer> inorderMorris(TreeNode root) {
 | 3 | Morris Inorder Traversal | O(n) | O(1) |
 
 ### Optimized Solution
+
+The optimized solution is Approach 1 (recursive preorder, inorder and postorder) together with Approach 2 (the iterative inorder with an explicit stack), which are the versions implemented in this repository. Approach 3 (Morris traversal) is the `O(1)`-space variant and is not implemented in the class.
+
+#### Optimized solution explained
+
+The idea: the three depth-first orders differ only in *when* a node is written down relative to its two subtrees. Preorder writes the node before both subtrees, inorder between them, postorder after both. The recursive methods express that directly; the iterative inorder uses an explicit stack instead of the call stack.
+
+**Input:** the tree `[1, 2, 3, 4, 5, null, 6]`.
+
+```mermaid
+flowchart TD
+    n1((1)) --> n2((2))
+    n1 --> n3((3))
+    n2 --> n4((4))
+    n2 --> n5((5))
+    n3 -.->|"no left child"| nl["null"]
+    n3 --> n6((6))
+```
+
+**Recursive orders: when each node is written down.**
+
+| Node | Preorder position (before subtrees) | Inorder position (between subtrees) | Postorder position (after subtrees) |
+|------|-------------------------------------|-------------------------------------|-------------------------------------|
+| 1 | 1 | 4 | 6 |
+| 2 | 2 | 2 | 3 |
+| 4 | 3 | 1 | 1 |
+| 5 | 4 | 3 | 2 |
+| 3 | 5 | 5 | 5 |
+| 6 | 6 | 6 | 4 |
+
+Reading each column in position order gives `preorder = [1, 2, 4, 5, 3, 6]`, `inorder = [4, 2, 5, 1, 3, 6]` and `postorder = [4, 5, 2, 6, 3, 1]`. A `null` child returns immediately, which is the base case that stops the recursion.
+
+**Iterative inorder with a stack.** `current` walks left, pushing every node it passes; when it cannot go further left it pops a node, writes it down and moves to its right child. The stack is written from bottom to top.
+
+| Step | `current` | Action | Stack | `result` |
+|------|-----------|--------|-------|----------|
+| 1 | `1` | go left, pushing `1`, `2`, `4`; `4` has no left child | `1 2 4` | `[ ]` |
+| 2 | `null` | pop `4`, write it, move to its right child (`null`) | `1 2` | `[4]` |
+| 3 | `null` | pop `2`, write it, move to its right child `5` | `1` | `[4, 2]` |
+| 4 | `5` | push `5`; `5` has no left child | `1 5` | `[4, 2]` |
+| 5 | `null` | pop `5`, write it, right child is `null` | `1` | `[4, 2, 5]` |
+| 6 | `null` | pop `1`, write it, move to its right child `3` | (empty) | `[4, 2, 5, 1]` |
+| 7 | `3` | push `3`; no left child | `3` | `[4, 2, 5, 1]` |
+| 8 | `null` | pop `3`, write it, move to its right child `6` | (empty) | `[4, 2, 5, 1, 3]` |
+| 9 | `6` | push `6`; no left child | `6` | `[4, 2, 5, 1, 3]` |
+| 10 | `null` | pop `6`, write it, right child is `null` | (empty) | `[4, 2, 5, 1, 3, 6]` |
+
+`current` is `null` and the stack is empty, so the loop ends. The result equals the recursive inorder `[4, 2, 5, 1, 3, 6]`.
+
+**Edge cases.** An empty tree (`root == null`) returns an empty list from all four methods; a single node `5` gives `[5]` in every order. The recursion is as deep as the tree is tall, and so is the explicit stack, which is why both use `O(h)` extra space.
 
 ## Source Code
 

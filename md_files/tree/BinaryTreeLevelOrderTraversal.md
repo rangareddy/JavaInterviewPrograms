@@ -230,6 +230,40 @@ public static List<List<Integer>> levelOrder(TreeNode root) {
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: a queue holds the nodes of the level that is about to be visited. Before each round, `queue.size()` says how many nodes belong to the current level, so exactly that many are taken out and their children are added behind them for the next round.
+
+**Input:** the tree `[3, 9, 20, null, null, 15, 7]`.
+
+```mermaid
+flowchart TD
+    n3((3)) --> n9((9))
+    n3 --> n20((20))
+    n20 --> n15((15))
+    n20 --> n7((7))
+    classDef l0 fill:#dbeafe,stroke:#3b82f6
+    classDef l1 fill:#dcfce7,stroke:#22c55e
+    classDef l2 fill:#fef9c3,stroke:#eab308
+    class n3 l0
+    class n9,n20 l1
+    class n15,n7 l2
+```
+
+Level 0 is blue, level 1 green and level 2 yellow. The queue starts as `[3]`.
+
+| Round | Queue at the start | `size` | Nodes taken out (in order) | Children added | `level` list | Queue at the end |
+|-------|--------------------|--------|----------------------------|----------------|--------------|------------------|
+| 1 | `[3]` | 1 | `3` | `9`, `20` | `[3]` | `[9, 20]` |
+| 2 | `[9, 20]` | 2 | `9`, then `20` | none for `9`; `15`, `7` for `20` | `[9, 20]` | `[15, 7]` |
+| 3 | `[15, 7]` | 2 | `15`, then `7` | none | `[15, 7]` | `[ ]` |
+
+The queue is empty, so the loop ends and the result is `[[3], [9, 20], [15, 7]]`.
+
+**Why `size` is read first.** The loop `for (int i = queue.size(); i > 0; i--)` fixes the number of nodes in the level *before* any children are added. Children added during the round sit behind those nodes and are handled in the next round, so levels never mix.
+
+**Edge cases.** An empty tree (`root == null`) returns an empty list before the queue is created. The queue never holds more than one level, so the extra space is `O(w)` where `w` is the widest level.
+
 ## Source Code
 
 Uses the shared helper [`TreeNode`](../../src/main/java/com/ranga/tree/TreeNode.java) (a small `TreeNode` with `of(...)` and `toString(...)` helpers for building and printing test data).

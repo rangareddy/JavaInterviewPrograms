@@ -111,6 +111,28 @@ public int getHits(int timestamp) {
 
 The optimized solution is Approach 3 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: hits arrive in time order, so a queue of timestamps keeps them sorted for free. `hit` just appends the timestamp. `getHits(t)` first removes ("lazy expiry") every timestamp at the front that is `<= t - 300`, because those are outside the window of the last 300 seconds, and then the queue size is the answer. Old hits are only discarded when someone asks.
+
+**Input:** `hit(1)`, `hit(2)`, `hit(3)`, `getHits(4)`, `hit(300)`, `getHits(300)`, `getHits(301)`.
+
+| Step | Operation | Cutoff `t - 300` | Removed from the front | Queue afterwards | Result |
+|------|-----------|------------------|------------------------|------------------|--------|
+| 1 | `hit(1)` | | | `[1]` | |
+| 2 | `hit(2)` | | | `[1, 2]` | |
+| 3 | `hit(3)` | | | `[1, 2, 3]` | |
+| 4 | `getHits(4)` | -296 | none | `[1, 2, 3]` | `3` |
+| 5 | `hit(300)` | | | `[1, 2, 3, 300]` | |
+| 6 | `getHits(300)` | 0 | none | `[1, 2, 3, 300]` | `4` |
+| 7 | `getHits(301)` | 1 | `1` (1 <= 1), then 2 <= 1 is false, stop | `[2, 3, 300]` | `3` |
+
+The window is `(t - 300, t]`: at time 301 a hit at time 1 is exactly 300 seconds old and no longer counts.
+
+**Edge cases.** With no hits, `getHits` returns `0` (the loop condition checks `isEmpty`). Several hits with the same timestamp are stored separately and all counted. Timestamps are assumed to be non-decreasing; the queue is not sorted by the class. Space grows with the hits inside the window plus those not yet expired. No diagram is added; the queue table is the picture.
+
+**Result:** the three `getHits` calls return `3, 4, 3`, exactly what the class prints.
+
 ## Source Code
 
 ### DesignHitCounter.java

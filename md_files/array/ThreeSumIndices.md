@@ -110,6 +110,34 @@ public static int[] threeSum(int[] nums, int target) {
 
 The optimized solution is Approach 3 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: fix one index `i`, then solve Two Sum on the elements after it. For each `j > i` the number needed is `target - nums[i] - nums[j]`; if it is already in the map of values seen after `i`, a triple is found. The lookup happens before `nums[j]` is stored, so an index is never used twice. The map is rebuilt for every `i`. No sorting is done, so the original indices are kept.
+
+**Input:** `nums = [1, 2, 3, 4, 5]`, `target = 9`.
+
+| Step | `i` | `j` | `nums[i]`, `nums[j]` | Needed (`9 - nums[i] - nums[j]`) | Map before lookup | Action |
+|------|-----|-----|----------------------|---------------------------------|-------------------|--------|
+| 1 | 0 | 1 | 1, 2 | 6 | `{}` | not found, store `2 -> 1` |
+| 2 | 0 | 2 | 1, 3 | 5 | `{2=1}` | not found, store `3 -> 2` |
+| 3 | 0 | 3 | 1, 4 | 4 | `{2=1, 3=2}` | not found, store `4 -> 3` |
+| 4 | 0 | 4 | 1, 5 | 3 | `{2=1, 3=2, 4=3}` | `3` is at index 2: **return `[0, 2, 4]`** |
+
+`1 + 3 + 5 = 9`. The loop stops at step 4, so `i = 1, 2` are never tried.
+
+```mermaid
+flowchart LR
+    S(["i = 0, map = { }"]) --> A["j = 1, value 2<br/>need 6"]
+    A -->|"not in map"| B["j = 2, value 3<br/>need 5, map = {2: 1}"]
+    B -->|"not in map"| C["j = 3, value 4<br/>need 4, map = {2: 1, 3: 2}"]
+    C -->|"not in map"| D["j = 4, value 5<br/>need 3, map = {2: 1, 3: 2, 4: 3}"]
+    D -->|"3 is at index 2"| E(["return [0, 2, 4]"])
+```
+
+**Edge cases.** `null` or fewer than 3 numbers returns `[-1, -1, -1]`, and so does an array with no valid triple. `[3, 3, 3]` with target 9 works: at `i = 0, j = 1` the map is empty, `3 -> 1` is stored; at `j = 2` the needed `3` is found at index 1, giving `[0, 1, 2]`.
+
+**Result:** `[0, 2, 4]`, matching the class output.
+
 ## Source Code
 
 ### ThreeSumIndices.java

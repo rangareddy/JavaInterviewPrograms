@@ -23,7 +23,7 @@ For the numbers from 1 to `n` produce `"Fizz"` for multiples of 3, `"Buzz"` for 
 
 The same problem can be solved in several ways. The approach marked (Optimized) is the one to use in practice.
 
-### Approach 1: Divisibility by 15 First
+### Approach 1: Divisibility by 15 First (Optimized)
 
 Check the combined case first, then 3 and 5.
 
@@ -111,6 +111,47 @@ public static List<String> fizzBuzzStream(int n) {
 | 4 | Streams | O(n) | O(n) |
 
 ### Optimized Solution
+
+The optimized solution is Approach 1 above (divisibility by 15 checked first), which is also the version implemented in this repository.
+
+#### Optimized solution explained
+
+The idea: for each number from 1 to `n`, decide which word it becomes. The order of the checks matters: a multiple of 15 is a multiple of both 3 and 5, so `i % 15 == 0` must be tested **first**, otherwise `15` would be caught by the `% 3` check and wrongly become `Fizz`.
+
+**Input:** `n = 15`.
+
+| `i` | `i % 15 == 0` | `i % 3 == 0` | `i % 5 == 0` | Word added |
+|-----|---------------|--------------|--------------|------------|
+| 1 | no | no | no | `1` |
+| 2 | no | no | no | `2` |
+| 3 | no | yes | | `Fizz` |
+| 4 | no | no | no | `4` |
+| 5 | no | no | yes | `Buzz` |
+| 6 | no | yes | | `Fizz` |
+| 7 | no | no | no | `7` |
+| 8 | no | no | no | `8` |
+| 9 | no | yes | | `Fizz` |
+| 10 | no | no | yes | `Buzz` |
+| 11 | no | no | no | `11` |
+| 12 | no | yes | | `Fizz` |
+| 13 | no | no | no | `13` |
+| 14 | no | no | no | `14` |
+| 15 | **yes** | | | `FizzBuzz` |
+
+An empty cell means the check was never evaluated, because an earlier `if` / `else if` already matched. The result is `[1, 2, Fizz, 4, Buzz, Fizz, 7, 8, Fizz, Buzz, 11, Fizz, 13, 14, FizzBuzz]`.
+
+```mermaid
+flowchart TD
+    S(["next i"]) --> A{"i % 15 == 0 ?"}
+    A -->|"yes"| W1(["FizzBuzz"])
+    A -->|"no"| B{"i % 3 == 0 ?"}
+    B -->|"yes"| W2(["Fizz"])
+    B -->|"no"| C{"i % 5 == 0 ?"}
+    C -->|"yes"| W3(["Buzz"])
+    C -->|"no"| W4(["the number itself"])
+```
+
+**Edge cases.** For `n = 0` or a negative `n` the loop never runs and the method returns an empty list. There is no input to guard against beyond that, and each number costs at most three modulo checks, so the whole method is `O(n)`.
 
 ## Source Code
 

@@ -242,6 +242,48 @@ private static void fill(BinaryNode node, int depth, List<List<Integer>> levels)
 
 The optimized solution is Approach 2 and 7 above. The version implemented in this repository is Approach 1, 3, 6 and 8.
 
+#### Optimized solution explained
+
+The page names Approach 2 (iterative insert) and Approach 7 (maintained counter) as the optimized ones, but the class in this repository codes Approaches 1, 3, 6 and 8: a recursive `add`, the `isBST` range check, a stack-based `size()` and a queue-based `levelOrderTraversal()`. This block explains those coded versions; the class wins.
+
+The idea: a BST keeps smaller values on the left and larger values on the right, so each operation follows one path or one traversal. `add` walks down by comparing and attaches a new node at the empty spot it reaches (a duplicate changes nothing). `isBST` passes down the range of values a node may legally hold. `size()` counts nodes with an iterative in-order walk (stack). `levelOrderTraversal()` reads the tree level by level with a queue.
+
+**Input:** `add(20)`, `add(30)`, `add(-3)`, `add(25)`, `add(40)`.
+
+| Step | Operation | Path taken | Result |
+|------|-----------|------------|--------|
+| 1 | `add(20)` | root is null | new root `20` |
+| 2 | `add(30)` | `30 > 20`, go right, empty | `30` is right child of `20` |
+| 3 | `add(-3)` | `-3 < 20`, go left, empty | `-3` is left child of `20` |
+| 4 | `add(25)` | `25 > 20` right, `25 < 30` left, empty | `25` is left child of `30` |
+| 5 | `add(40)` | `40 > 20` right, `40 > 30` right, empty | `40` is right child of `30` |
+
+```mermaid
+flowchart TD
+    n20((20)) --> m3(("-3"))
+    n20 --> n30((30))
+    n30 --> n25((25))
+    n30 --> n40((40))
+```
+
+**isBST** starts with the range `[Long.MIN_VALUE, Long.MAX_VALUE]` and narrows it, so a value must fit the bounds of every ancestor, not just its parent:
+
+| Node | Allowed range | In range? |
+|------|---------------|-----------|
+| `20` | `MIN .. MAX` | yes |
+| `-3` | `MIN .. 19` | yes |
+| `30` | `21 .. MAX` | yes |
+| `25` | `21 .. 29` | yes |
+| `40` | `31 .. MAX` | yes |
+
+**size()** walks in order with a stack (`size++` happens when a node is popped): push `20`, push `-3`, pop `-3` (size 1), pop `20` (size 2), go right and push `30`, push `25`, pop `25` (size 3), pop `30` (size 4), push `40`, pop `40` (size 5). The stack is empty and `current` is null, so `size()` is `5`. Popping in this order also gives the sorted values `-3 20 25 30 40` that `display()` prints.
+
+**Level order** keeps one level in the queue per round: `[20]` prints `20`; then `[-3, 30]` prints `-3 30`; then `[25, 40]` prints `25 40`.
+
+**Edge cases.** `minValue()` and `maxValue()` throw `IllegalStateException("Tree is empty")` on an empty tree; `isBST` of an empty tree is `true`, `size()` is `0`, and `levelOrderTraversal()` prints nothing. Inserting an existing value leaves the tree unchanged. `isBST` uses `long` bounds so that a node holding `Integer.MIN_VALUE` or `Integer.MAX_VALUE` does not overflow when the bound is moved by one. `add` costs `O(h)`; `size()` and `isBST` cost `O(n)`.
+
+**Result:** the class prints size `5`, in-order `-3 20 25 30 40` (and `40 30 25 20 -3` after `mirror()`), `Min: -3, Max: 40`, `IsBST : true`, and levels `20`, `-3 30`, `25 40`, matching the trace.
+
 ## Source Code
 
 ### BinarySearchTree.java

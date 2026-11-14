@@ -126,6 +126,34 @@ public static int minDistance(String word1, String word2) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: `dp[i][j]` is the fewest insert/delete/replace operations to turn the first `i` letters of `word1` into the first `j` letters of `word2`. If the letters match, nothing is spent (`previous[j-1]`); otherwise take `1 +` the cheapest of replace (`previous[j-1]`), delete (`previous[j]`) or insert (`current[j-1]`). Each row depends only on the row above, so two arrays `previous` and `current` are swapped after every row.
+
+**Input:** `word1 = "horse"`, `word2 = "ros"`. Initial `previous = [0, 1, 2, 3]` (turning "" into "", "r", "ro", "ros" takes 0, 1, 2, 3 inserts).
+
+| `i` | Letter | `current[0]` | `current` (cols: "", r, o, s) | Notes |
+|-----|--------|--------------|-------------------------------|-------|
+| 1 | `h` | 1 | `[1, 1, 2, 3]` | no matches; `j=1`: `1 + min(0, 1, 1) = 1` |
+| 2 | `o` | 2 | `[2, 2, 1, 2]` | `o = o` at `j=2`: copy `previous[1] = 1` |
+| 3 | `r` | 3 | `[3, 2, 2, 2]` | `r = r` at `j=1`: copy `previous[0] = 2` |
+| 4 | `s` | 4 | `[4, 3, 3, 2]` | `s = s` at `j=3`: copy `previous[2] = 2` |
+| 5 | `e` | 5 | `[5, 4, 4, 3]` | no match at `j=3`: `1 + min(previous[2] = 3, previous[3] = 2, current[2] = 4) = 3` |
+
+```text
+        ""  r  o  s
+   ""    0  1  2  3
+   h     1  1  2  3
+   o     2  2  1  2
+   r     3  2  2  2
+   s     4  3  3  2
+   e     5  4  4  3   <- answer (the array kept after the last swap)
+```
+
+**Edge cases.** An empty `word1` skips the loop and returns `previous[n] = n` (all inserts); an empty `word2` makes `n = 0`, so after `m` rows the answer is `current[0] = m` (all deletes). Equal words follow the diagonal and return `0`.
+
+**Result:** `minDistance("horse", "ros")` returns `3`, matching the class output (horse -> rorse -> rose -> ros).
+
 ## Source Code
 
 ### EditDistance.java

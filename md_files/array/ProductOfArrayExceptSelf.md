@@ -129,6 +129,34 @@ public static int[] getProductOfArray(int[] nums) {
 
 The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: the answer for index `i` is (product of everything left of `i`) times (product of everything right of `i`). No division is needed, so zeros are safe. Pass 1 writes the left product into `answer[i]`; pass 2 walks from the right and multiplies in the right product, using two running variables `prefix` and `suffix` instead of extra arrays.
+
+**Input:** `nums = [1, 2, 3, 4]`.
+
+Pass 1 (left to right): `answer[i] = prefix`, then `prefix *= nums[i]`, with `prefix = 1` at the start.
+
+| `i` | `nums[i]` | `answer[i] = prefix` | `prefix` afterwards | `answer` |
+|-----|-----------|----------------------|---------------------|----------|
+| 0 | 1 | 1 | 1 | [1, ., ., .] |
+| 1 | 2 | 1 | 2 | [1, 1, ., .] |
+| 2 | 3 | 2 | 6 | [1, 1, 2, .] |
+| 3 | 4 | 6 | 24 | [1, 1, 2, 6] |
+
+Pass 2 (right to left): `answer[i] *= suffix`, then `suffix *= nums[i]`, with `suffix = 1` at the start.
+
+| `i` | `nums[i]` | `answer[i] *= suffix` | `suffix` afterwards | `answer` |
+|-----|-----------|-----------------------|---------------------|----------|
+| 3 | 4 | 6 * 1 = 6 | 4 | [1, 1, 2, 6] |
+| 2 | 3 | 2 * 4 = 8 | 12 | [1, 1, 8, 6] |
+| 1 | 2 | 1 * 12 = 12 | 24 | [1, 12, 8, 6] |
+| 0 | 1 | 1 * 24 = 24 | 24 | [24, 12, 8, 6] |
+
+**Edge cases.** With a zero, e.g. `[1, 2, 3, 4, 0]`, every prefix or suffix that passes the zero becomes `0`, giving `[0, 0, 0, 0, 24]` (class output). `null` or a single element makes the method return the input array itself unchanged (so `[5]` returns `[5]`, not `[1]`).
+
+**Result:** `[24, 12, 8, 6]`, matching the class output, in O(n) time with only the output array as extra space.
+
 ## Source Code
 
 ### ProductOfArrayExceptSelf.java

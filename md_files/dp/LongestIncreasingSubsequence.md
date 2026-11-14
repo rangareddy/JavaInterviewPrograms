@@ -205,6 +205,39 @@ public static int lengthOfLIS(int[] nums) {
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
+#### Optimized solution explained
+
+The idea: keep `tails`, where `tails[k]` is the smallest possible last value of an increasing subsequence of length `k + 1`. It stays sorted, so for each number a binary search finds the first tail `>= num`. If none exists the number extends the longest subsequence (`size++`); otherwise it replaces that tail, leaving a smaller ending value for the same length. The final `size` is the answer (`tails` itself is not the subsequence).
+
+**Input:** `nums = [10, 9, 2, 5, 3, 7, 101, 18]`.
+
+| `num` | Binary search: first tail `>= num` (position) | Action | `tails` (first `size` cells) | `size` |
+|-------|-----------------------------------------------|--------|------------------------------|--------|
+| 10 | position 0 (empty) | append | `[10]` | 1 |
+| 9 | position 0 (`10 >= 9`) | replace | `[9]` | 1 |
+| 2 | position 0 | replace | `[2]` | 1 |
+| 5 | position 1 (end) | append | `[2, 5]` | 2 |
+| 3 | position 1 (`5 >= 3`) | replace | `[2, 3]` | 2 |
+| 7 | position 2 (end) | append | `[2, 3, 7]` | 3 |
+| 101 | position 3 (end) | append | `[2, 3, 7, 101]` | 4 |
+| 18 | position 3 (`101 >= 18`) | replace | `[2, 3, 7, 18]` | 4 |
+
+```text
+tails after each number:
+10 -> [10]
+9  -> [9]
+2  -> [2]
+5  -> [2, 5]
+3  -> [2, 3]          (5 replaced by 3: same length, smaller tail)
+7  -> [2, 3, 7]
+101-> [2, 3, 7, 101]
+18 -> [2, 3, 7, 18]   (101 replaced by 18)
+```
+
+**Edge cases.** `null` or empty input returns `0`. Equal values replace an equal tail (the search uses `tails[mid] < num`), so `[7, 7, 7, 7]` stays at length 1, which keeps the subsequence strictly increasing. A fully increasing array appends every number.
+
+**Result:** `lengthOfLIS(...)` returns `4`, matching the class output (empty array gives `0`).
+
 ## Source Code
 
 ### LongestIncreasingSubsequence.java
