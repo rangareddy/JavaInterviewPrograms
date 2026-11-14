@@ -147,40 +147,6 @@ public static String palindromeManacher(String s) {
 | 3 | Expand Around Center | O(n^2) | O(1) |
 | 4 | Manacher's Algorithm (Optimized) | O(n) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above. The version implemented in this repository is Approach 3.
-
-#### Optimized solution explained
-
-Note: the page's "Optimized Solution" sentence names Approach 4 (Manacher's algorithm), but the class in this repository implements Approach 3, expanding around every center. This block explains the code as it is written.
-
-The idea: every palindrome mirrors around its center, which is either one character (odd length) or the gap between two characters (even length). For each index `i`, expand outward from `(i, i)` and from `(i, i+1)` while the two characters match, and keep the longest palindrome found. A longer one replaces the best only if it is strictly longer.
-
-**Input:** `str = "BBABCBCAB"`; start with `longest = "B"`.
-
-| `i` | Char | Odd expansion `(i, i)` | Even expansion `(i, i+1)` | `longest` |
-|-----|------|------------------------|---------------------------|-----------|
-| 0 | B | `B` | `BB` | `BB` |
-| 1 | B | `B` | `` (B != A) | `BB` |
-| 2 | A | `BAB` | `` | `BAB` |
-| 3 | B | `B` | `` | `BAB` |
-| 4 | C | `BCB` | `` | `BAB` (same length, not longer) |
-| 5 | B | `CBC` | `` | `BAB` |
-| 6 | C | `C` | `` | `BAB` |
-| 7 | A | `A` | `` | `BAB` |
-| 8 | B | `B` | `` (end of string) | `BAB` |
-
-```text
-index: 0 1 2 3 4 5 6 7 8
-str:   B B A B C B C A B
-center i=2: A=A, then s[1]=B vs s[3]=B match, then s[0]=B vs s[4]=C stop -> "BAB"
-```
-
-**Edge cases.** `null` or a string shorter than 2 is returned as it is. With no repeats (`"abc"`) the answer is the first character. On ties the first palindrome found wins. Worst case is O(n^2) time and O(1) extra space (the substrings are created only for returns).
-
-**Result:** `"BAB"`, matching the class output.
-
 ## Source Code
 
 ### LongestPalindrome.java
@@ -248,3 +214,35 @@ public class LongestPalindrome {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above. The version implemented in this repository is Approach 3.
+
+Note: the Approaches section marks Approach 4 (Manacher's algorithm), but the class in this repository implements Approach 3, expanding around every center. This block explains the code as it is written.
+
+The idea: every palindrome mirrors around its center, which is either one character (odd length) or the gap between two characters (even length). For each index `i`, expand outward from `(i, i)` and from `(i, i+1)` while the two characters match, and keep the longest palindrome found. A longer one replaces the best only if it is strictly longer.
+
+**Input:** `str = "BBABCBCAB"`; start with `longest = "B"`.
+
+| `i` | Char | Odd expansion `(i, i)` | Even expansion `(i, i+1)` | `longest` |
+|-----|------|------------------------|---------------------------|-----------|
+| 0 | B | `B` | `BB` | `BB` |
+| 1 | B | `B` | `` (B != A) | `BB` |
+| 2 | A | `BAB` | `` | `BAB` |
+| 3 | B | `B` | `` | `BAB` |
+| 4 | C | `BCB` | `` | `BAB` (same length, not longer) |
+| 5 | B | `CBC` | `` | `BAB` |
+| 6 | C | `C` | `` | `BAB` |
+| 7 | A | `A` | `` | `BAB` |
+| 8 | B | `B` | `` (end of string) | `BAB` |
+
+```text
+index: 0 1 2 3 4 5 6 7 8
+str:   B B A B C B C A B
+center i=2: A=A, then s[1]=B vs s[3]=B match, then s[0]=B vs s[4]=C stop -> "BAB"
+```
+
+**Edge cases.** `null` or a string shorter than 2 is returned as it is. With no repeats (`"abc"`) the answer is the first character. On ties the first palindrome found wins. Worst case is O(n^2) time and O(1) extra space (the substrings are created only for returns).
+
+**Result:** `"BAB"`, matching the class output.

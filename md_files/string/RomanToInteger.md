@@ -132,35 +132,6 @@ private static int valueOf(char symbol) {
 | 3 | HashMap Lookup | O(n) | O(1) |
 | 4 | Left-to-Right Scan with a Switch (Optimized) | O(n) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: read the symbols left to right and add each value, except when a symbol is smaller than the one right after it (as in `IV` or `CM`): then it is subtracted instead. One pass, one running `total`, no table of two-letter combinations.
-
-**Input:** `roman = "MCMXCIV"`.
-
-| Step | `i` | Symbol | Value | Next symbol | Smaller than next? | `total` |
-|------|-----|--------|-------|-------------|--------------------|---------|
-| 1 | 0 | M | 1000 | C (100) | no, add | 1000 |
-| 2 | 1 | C | 100 | M (1000) | yes, subtract | 900 |
-| 3 | 2 | M | 1000 | X (10) | no, add | 1900 |
-| 4 | 3 | X | 10 | C (100) | yes, subtract | 1890 |
-| 5 | 4 | C | 100 | I (1) | no, add | 1990 |
-| 6 | 5 | I | 1 | V (5) | yes, subtract | 1989 |
-| 7 | 6 | V | 5 | none | last symbol, add | 1994 |
-
-```text
-M   CM   XC   IV
-1000 + (1000-100) + (100-10) + (5-1) = 1994
-```
-
-**Edge cases.** The last symbol has no neighbour (`i + 1 < length` is false), so it is always added: `"III"` gives 3, `"IV"` gives 4. An invalid symbol makes `valueOf` throw `IllegalArgumentException`; the empty string returns `0`; a `null` string would throw `NullPointerException`. The class does not check that the numeral is well formed (`"IIII"` returns 4).
-
-**Result:** `1994`, matching the class output.
-
 ## Source Code
 
 ### RomanToInteger.java
@@ -204,3 +175,30 @@ public class RomanToInteger {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: read the symbols left to right and add each value, except when a symbol is smaller than the one right after it (as in `IV` or `CM`): then it is subtracted instead. One pass, one running `total`, no table of two-letter combinations.
+
+**Input:** `roman = "MCMXCIV"`.
+
+| Step | `i` | Symbol | Value | Next symbol | Smaller than next? | `total` |
+|------|-----|--------|-------|-------------|--------------------|---------|
+| 1 | 0 | M | 1000 | C (100) | no, add | 1000 |
+| 2 | 1 | C | 100 | M (1000) | yes, subtract | 900 |
+| 3 | 2 | M | 1000 | X (10) | no, add | 1900 |
+| 4 | 3 | X | 10 | C (100) | yes, subtract | 1890 |
+| 5 | 4 | C | 100 | I (1) | no, add | 1990 |
+| 6 | 5 | I | 1 | V (5) | yes, subtract | 1989 |
+| 7 | 6 | V | 5 | none | last symbol, add | 1994 |
+
+```text
+M   CM   XC   IV
+1000 + (1000-100) + (100-10) + (5-1) = 1994
+```
+
+**Edge cases.** The last symbol has no neighbour (`i + 1 < length` is false), so it is always added: `"III"` gives 3, `"IV"` gives 4. An invalid symbol makes `valueOf` throw `IllegalArgumentException`; the empty string returns `0`; a `null` string would throw `NullPointerException`. The class does not check that the numeral is well formed (`"IIII"` returns 4).
+
+**Result:** `1994`, matching the class output.

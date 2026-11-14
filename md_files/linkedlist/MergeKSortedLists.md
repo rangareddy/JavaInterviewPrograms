@@ -118,40 +118,6 @@ public static ListNode mergeKLists(ListNode[] lists) {
 | 3 | Divide and Conquer (Optimized) | O(N log k) | O(1) |
 | 4 | Min-Heap of the List Heads (Optimized) | O(N log k) | O(k) |
 
-### Optimized Solution
-
-The optimized solution is Approach 3 and 4 above. The version implemented in this repository is Approach 4.
-
-#### Optimized solution explained
-
-The idea: the smallest remaining node overall is always the head of one of the k lists. A min-heap (`PriorityQueue` ordered by node value) holds exactly one node per list - the current head. Pop the smallest, append it to the result, and push its `next` so that list is represented again. The heap never has more than k nodes, so each of the N nodes costs O(log k): O(N log k) time, O(k) space.
-
-**Input:** `lists = [A, B, C]` with A = `[1, 4, 5]`, B = `[1, 3, 4]`, C = `[2, 6]` (nodes named A0, A1, ... for clarity).
-
-| Step | Popped | Pushed (its next) | Heap afterwards | Result so far |
-|------|--------|-------------------|-----------------|---------------|
-| init | | heads A0, B0, C0 | 1(A), 1(B), 2(C) | |
-| 1 | 1 (A0) | A1 = 4 | 1(B), 2(C), 4(A) | 1 |
-| 2 | 1 (B0) | B1 = 3 | 2(C), 3(B), 4(A) | 1, 1 |
-| 3 | 2 (C0) | C1 = 6 | 3(B), 4(A), 6(C) | 1, 1, 2 |
-| 4 | 3 (B1) | B2 = 4 | 4(A), 4(B), 6(C) | 1, 1, 2, 3 |
-| 5 | 4 (A1) | A2 = 5 | 4(B), 5(A), 6(C) | ..., 4 |
-| 6 | 4 (B2) | none | 5(A), 6(C) | ..., 4, 4 |
-| 7 | 5 (A2) | none | 6(C) | ..., 5 |
-| 8 | 6 (C1) | none | empty | ..., 6 |
-
-```text
-heap (one head per list)  ->  poll smallest  ->  tail.next = node
-        ^                                              |
-        +------------- push node.next -----------------+
-```
-
-When two heads are equal (steps 1-2 and 4-6) the heap may pick either; the output values are the same. The popped order above was observed by running the same heap logic on these lists.
-
-**Edge cases.** `null` or an empty array returns `null`. `null` (empty) lists inside the array are skipped when the heap is filled, so `[[]]` leaves an empty heap and returns `null`. A list that runs out simply stops contributing, because nothing is pushed when `next` is `null`. The nodes are relinked, not copied.
-
-**Result:** `[1, 1, 2, 3, 4, 4, 5, 6]`, matching the class output.
-
 ## Source Code
 
 Uses the shared helper [`ListNode`](../../src/main/java/com/ranga/linkedlist/ListNode.java) (a small `ListNode` with `of(...)` and `toString(...)` helpers for building and printing test data).
@@ -208,3 +174,35 @@ public class MergeKSortedLists {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 3 and 4 above. The version implemented in this repository is Approach 4.
+
+The idea: the smallest remaining node overall is always the head of one of the k lists. A min-heap (`PriorityQueue` ordered by node value) holds exactly one node per list - the current head. Pop the smallest, append it to the result, and push its `next` so that list is represented again. The heap never has more than k nodes, so each of the N nodes costs O(log k): O(N log k) time, O(k) space.
+
+**Input:** `lists = [A, B, C]` with A = `[1, 4, 5]`, B = `[1, 3, 4]`, C = `[2, 6]` (nodes named A0, A1, ... for clarity).
+
+| Step | Popped | Pushed (its next) | Heap afterwards | Result so far |
+|------|--------|-------------------|-----------------|---------------|
+| init | | heads A0, B0, C0 | 1(A), 1(B), 2(C) | |
+| 1 | 1 (A0) | A1 = 4 | 1(B), 2(C), 4(A) | 1 |
+| 2 | 1 (B0) | B1 = 3 | 2(C), 3(B), 4(A) | 1, 1 |
+| 3 | 2 (C0) | C1 = 6 | 3(B), 4(A), 6(C) | 1, 1, 2 |
+| 4 | 3 (B1) | B2 = 4 | 4(A), 4(B), 6(C) | 1, 1, 2, 3 |
+| 5 | 4 (A1) | A2 = 5 | 4(B), 5(A), 6(C) | ..., 4 |
+| 6 | 4 (B2) | none | 5(A), 6(C) | ..., 4, 4 |
+| 7 | 5 (A2) | none | 6(C) | ..., 5 |
+| 8 | 6 (C1) | none | empty | ..., 6 |
+
+```text
+heap (one head per list)  ->  poll smallest  ->  tail.next = node
+        ^                                              |
+        +------------- push node.next -----------------+
+```
+
+When two heads are equal (steps 1-2 and 4-6) the heap may pick either; the output values are the same. The popped order above was observed by running the same heap logic on these lists.
+
+**Edge cases.** `null` or an empty array returns `null`. `null` (empty) lists inside the array are skipped when the heap is filled, so `[[]]` leaves an empty heap and returns `null`. A list that runs out simply stops contributing, because nothing is pushed when `next` is `null`. The nodes are relinked, not copied.
+
+**Result:** `[1, 1, 2, 3, 4, 4, 5, 6]`, matching the class output.

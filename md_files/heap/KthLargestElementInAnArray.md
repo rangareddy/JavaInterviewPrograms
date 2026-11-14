@@ -116,31 +116,6 @@ private static void swap(int[] a, int i, int j) { int t = a[i]; a[i] = a[j]; a[j
 | 3 | Counting Array for a Bounded Range | O(n + R) where R is the value range | O(R) |
 | 4 | Quickselect with a Three-Way Partition (Optimized) | O(n) expected | O(n) for the copy |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: the k-th largest is the element at index `n - k` of the sorted array, and quickselect finds it without sorting everything. Pick a random pivot and do a three-way partition into `< pivot`, `== pivot`, `> pivot`. If the target index lies in the `==` block, the pivot is the answer; otherwise continue only in the side that contains the target. Equal values sit together in the middle, so many duplicates do not slow it down. The class works on a clone, so the input is not changed. Average time is `O(n)`.
-
-**Input:** `nums = [3, 2, 1, 5, 6, 4]`, `k = 2`, so `target = 6 - 2 = 4` (sorted would be `1 2 3 4 5 6`, index 4 is `5`). The pivot is random in the real class; the trace below uses pivots `3` and then `5`, which is one possible run (any pivot ends with the same answer).
-
-| Round | Range `low..high` | Pivot | Array after partition | `lt` | `gt` | Decision |
-|-------|-------------------|-------|-----------------------|------|------|----------|
-| 1 | 0..5 | 3 | `[2, 1, 3, 6, 4, 5]` | 2 | 2 | `target 4 > gt 2`, so `low = 3` |
-| 2 | 3..5 | 5 | `[2, 1, 3, 4, 5, 6]` | 4 | 4 | `lt <= 4 <= gt`, return the pivot `5` |
-
-```text
-index:     0  1  2 | 3  4  5
-round 1:   2  1  3 | 6  4  5      <3 | ==3 | >3   (target 4 lies on the right)
-round 2:               4  5  6    <5 | ==5 | >5   (index 4 is the ==5 block)
-```
-
-**Edge cases:** a single element makes `low < high` false, so `a[target]` is returned directly. With `[7, 7, 7, 7]` and `k = 3` the whole array is the `==` block after one partition and `7` is returned.
-
-**Result:** `5`, the same as the class output (verified by running the partition steps above with the fixed pivots; the real class gives `5` for every random choice).
-
 ## Source Code
 
 ### KthLargestElementInAnArray.java
@@ -202,3 +177,26 @@ public class KthLargestElementInAnArray {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: the k-th largest is the element at index `n - k` of the sorted array, and quickselect finds it without sorting everything. Pick a random pivot and do a three-way partition into `< pivot`, `== pivot`, `> pivot`. If the target index lies in the `==` block, the pivot is the answer; otherwise continue only in the side that contains the target. Equal values sit together in the middle, so many duplicates do not slow it down. The class works on a clone, so the input is not changed. Average time is `O(n)`.
+
+**Input:** `nums = [3, 2, 1, 5, 6, 4]`, `k = 2`, so `target = 6 - 2 = 4` (sorted would be `1 2 3 4 5 6`, index 4 is `5`). The pivot is random in the real class; the trace below uses pivots `3` and then `5`, which is one possible run (any pivot ends with the same answer).
+
+| Round | Range `low..high` | Pivot | Array after partition | `lt` | `gt` | Decision |
+|-------|-------------------|-------|-----------------------|------|------|----------|
+| 1 | 0..5 | 3 | `[2, 1, 3, 6, 4, 5]` | 2 | 2 | `target 4 > gt 2`, so `low = 3` |
+| 2 | 3..5 | 5 | `[2, 1, 3, 4, 5, 6]` | 4 | 4 | `lt <= 4 <= gt`, return the pivot `5` |
+
+```text
+index:     0  1  2 | 3  4  5
+round 1:   2  1  3 | 6  4  5      <3 | ==3 | >3   (target 4 lies on the right)
+round 2:               4  5  6    <5 | ==5 | >5   (index 4 is the ==5 block)
+```
+
+**Edge cases:** a single element makes `low < high` false, so `a[target]` is returned directly. With `[7, 7, 7, 7]` and `k = 3` the whole array is the `==` block after one partition and `7` is returned.
+
+**Result:** `5`, the same as the class output (verified by running the partition steps above with the fixed pivots; the real class gives `5` for every random choice).

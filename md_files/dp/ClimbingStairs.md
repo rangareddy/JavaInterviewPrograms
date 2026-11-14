@@ -102,40 +102,6 @@ public static int climbStairs(int n) {
 | 3 | Tabulation (Bottom-Up DP) | O(n) | O(n) |
 | 4 | Two Variables (Optimized) | O(n) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: the number of ways to reach step `i` is the number of ways to reach step `i - 1` (then take one step) plus the ways to reach step `i - 2` (then take two steps). Only those two previous values are ever needed, so two variables replace the whole table.
-
-**Input:** `n = 5`. Start with `previous = 1` (ways to stand on step 0) and `current = 1` (ways to reach step 1).
-
-| `i` (step) | `next = previous + current` | `previous` becomes | `current` becomes | Ways to reach step `i` |
-|------------|-----------------------------|--------------------|-------------------|------------------------|
-| start | | 1 | 1 | step 0: 1, step 1: 1 |
-| 2 | `1 + 1 = 2` | 1 | 2 | 2 |
-| 3 | `1 + 2 = 3` | 2 | 3 | 3 |
-| 4 | `2 + 3 = 5` | 3 | 5 | 5 |
-| 5 | `3 + 5 = 8` | 5 | 8 | 8 |
-
-The loop ends after `i = 5` and the method returns `current = 8`.
-
-```text
-ways:        step 0   step 1   step 2   step 3   step 4   step 5
-             [ 1        1        2        3        5        8 ]
-
-i = 2:       previous current  -> next = 2
-i = 3:                previous current  -> next = 3
-i = 4:                         previous current  -> next = 5
-i = 5:                                  previous current  -> next = 8
-```
-
-The window of two values slides one step to the right each time, which is why the memory use is `O(1)` instead of an array of `n + 1` values.
-
-**Edge cases.** `n = 0` and `n = 1` return `1` immediately (there is one way to do nothing and one way to climb a single step), so the loop only runs for `n >= 2`.
-
 ## Source Code
 
 ### ClimbingStairs.java
@@ -168,3 +134,35 @@ public class ClimbingStairs {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: the number of ways to reach step `i` is the number of ways to reach step `i - 1` (then take one step) plus the ways to reach step `i - 2` (then take two steps). Only those two previous values are ever needed, so two variables replace the whole table.
+
+**Input:** `n = 5`. Start with `previous = 1` (ways to stand on step 0) and `current = 1` (ways to reach step 1).
+
+| `i` (step) | `next = previous + current` | `previous` becomes | `current` becomes | Ways to reach step `i` |
+|------------|-----------------------------|--------------------|-------------------|------------------------|
+| start | | 1 | 1 | step 0: 1, step 1: 1 |
+| 2 | `1 + 1 = 2` | 1 | 2 | 2 |
+| 3 | `1 + 2 = 3` | 2 | 3 | 3 |
+| 4 | `2 + 3 = 5` | 3 | 5 | 5 |
+| 5 | `3 + 5 = 8` | 5 | 8 | 8 |
+
+The loop ends after `i = 5` and the method returns `current = 8`.
+
+```text
+ways:        step 0   step 1   step 2   step 3   step 4   step 5
+             [ 1        1        2        3        5        8 ]
+
+i = 2:       previous current  -> next = 2
+i = 3:                previous current  -> next = 3
+i = 4:                         previous current  -> next = 5
+i = 5:                                  previous current  -> next = 8
+```
+
+The window of two values slides one step to the right each time, which is why the memory use is `O(1)` instead of an array of `n + 1` values.
+
+**Edge cases.** `n = 0` and `n = 1` return `1` immediately (there is one way to do nothing and one way to climb a single step), so the loop only runs for `n >= 2`.

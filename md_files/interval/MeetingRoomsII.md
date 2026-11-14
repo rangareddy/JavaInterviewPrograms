@@ -119,36 +119,6 @@ public static int minMeetingRoomsSweep(int[][] intervals) {
 | 3 | Sorted Starts and Ends with Two Pointers (Optimized) | O(n log n) | O(n) |
 | 4 | Sweep Line over Events | O(n log n) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: the number of rooms needed is the largest number of meetings running at the same moment. Which end belongs to which start does not matter for that count, so starts and ends are sorted separately. Walking through the starts in order, a pointer into the sorted ends points at the earliest meeting that is still running: if a meeting starts before that end, every room is busy and a new one is opened; otherwise that earliest meeting has already finished, so its room is reused and the end pointer moves on.
-
-**Input:** `[[0, 30], [5, 10], [15, 20]]`, giving sorted `starts = [0, 5, 15]` and sorted `ends = [10, 20, 30]`.
-
-| `start` | `end` pointer -> `ends[end]` | Check `start < ends[end]` | Action | `rooms` after |
-|---------|------------------------------|---------------------------|--------|---------------|
-| 0 | 0 -> 10 | `0 < 10` true | open a new room | 1 |
-| 5 | 0 -> 10 | `5 < 10` true | open a new room | 2 |
-| 15 | 0 -> 10 | `15 < 10` false | reuse: `end` becomes 1 | 2 |
-
-```text
-time:  0     5    10    15   20                30
-       [0 -------------------------------------30]   room A
-             [5---10]                                  room B
-                       [15--20]                         reuses room B (free since 10)
-at most 2 meetings overlap at any time -> 2 rooms
-```
-
-All starts are consumed, so the result is `2`. For `[[1,5],[2,6],[3,7],[4,8]]` the starts `[1,2,3,4]` are all below `ends[0] = 5`, so a new room is opened each time and the result is `4`. For `[[7,10],[2,4]]` the starts are `[2,7]` and ends `[4,10]`: `2 < 4` opens room 1, `7 < 4` is false and reuses it, so the result is `1`.
-
-**Edge cases.** `null` or an empty array returns `0`. The `end` pointer never runs past the array: the smallest start is always below the smallest end, so the first meeting always opens a room, and `end` advances at most once per remaining start. A meeting starting exactly when another ends reuses the room (`start < ends[end]` uses a strict `<`).
-
-**Result:** `2`, `1`, `4` for the three inputs in `main`, matching the class output.
-
 ## Source Code
 
 ### MeetingRoomsII.java
@@ -195,3 +165,31 @@ public class MeetingRoomsII {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+
+The idea: the number of rooms needed is the largest number of meetings running at the same moment. Which end belongs to which start does not matter for that count, so starts and ends are sorted separately. Walking through the starts in order, a pointer into the sorted ends points at the earliest meeting that is still running: if a meeting starts before that end, every room is busy and a new one is opened; otherwise that earliest meeting has already finished, so its room is reused and the end pointer moves on.
+
+**Input:** `[[0, 30], [5, 10], [15, 20]]`, giving sorted `starts = [0, 5, 15]` and sorted `ends = [10, 20, 30]`.
+
+| `start` | `end` pointer -> `ends[end]` | Check `start < ends[end]` | Action | `rooms` after |
+|---------|------------------------------|---------------------------|--------|---------------|
+| 0 | 0 -> 10 | `0 < 10` true | open a new room | 1 |
+| 5 | 0 -> 10 | `5 < 10` true | open a new room | 2 |
+| 15 | 0 -> 10 | `15 < 10` false | reuse: `end` becomes 1 | 2 |
+
+```text
+time:  0     5    10    15   20                30
+       [0 -------------------------------------30]   room A
+             [5---10]                                  room B
+                       [15--20]                         reuses room B (free since 10)
+at most 2 meetings overlap at any time -> 2 rooms
+```
+
+All starts are consumed, so the result is `2`. For `[[1,5],[2,6],[3,7],[4,8]]` the starts `[1,2,3,4]` are all below `ends[0] = 5`, so a new room is opened each time and the result is `4`. For `[[7,10],[2,4]]` the starts are `[2,7]` and ends `[4,10]`: `2 < 4` opens room 1, `7 < 4` is false and reuses it, so the result is `1`.
+
+**Edge cases.** `null` or an empty array returns `0`. The `end` pointer never runs past the array: the smallest start is always below the smallest end, so the first meeting always opens a room, and `end` advances at most once per remaining start. A meeting starting exactly when another ends reuses the room (`start < ends[end]` uses a strict `<`).
+
+**Result:** `2`, `1`, `4` for the three inputs in `main`, matching the class output.

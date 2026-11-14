@@ -225,34 +225,6 @@ private static int find(int[] parent, int node) {
 | 6 | Transitive Closure (Floyd-Warshall) | O(V^3) | O(V^2) |
 | 7 | Union-Find (Optimized) | O(n + E * alpha(n)) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 7 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: start by assuming every node is its own component (`components = n`). Every edge that joins two nodes from different components merges them and reduces the count by one; an edge inside a component changes nothing. Union-Find tracks the components: `parent[]` points each node to its parent, `find` follows parents to the root (with path halving), and `parent[rootA] = rootB` merges two components. The answer is the count left after all edges. Time is almost O(n + E).
-
-**Input:** `n = 5`, `edges = [[0,1],[1,2],[3,4]]`. Start: `parent = [0,1,2,3,4]`, `components = 5`.
-
-| Edge | `find(a)` | `find(b)` | Roots differ? | `parent` afterwards | `components` |
-|------|-----------|-----------|---------------|---------------------|--------------|
-| `[0,1]` | 0 | 1 | yes, `parent[0] = 1` | `[1,1,2,3,4]` | 4 |
-| `[1,2]` | 1 | 2 | yes, `parent[1] = 2` | `[1,2,2,3,4]` | 3 |
-| `[3,4]` | 3 | 4 | yes, `parent[3] = 4` | `[1,2,2,4,4]` | 2 |
-
-```text
-{0, 1, 2} root 2        {3, 4} root 4
-```
-
-Two groups remain, so the method returns `2`.
-
-**Second sample:** the chain `[[0,1],[1,2],[2,3],[3,4]]` merges at every edge (`components` 4, 3, 2, 1, final `parent = [1,2,3,4,4]`), so the result is `1`.
-
-**Edge cases.** With no edges the loop does nothing and the result is `n` (for `n = 3` and `[]` it is `3`). An edge repeated or one that closes a cycle finds equal roots and is ignored without changing the count.
-
-**Result:** `2`, `1`, `3` for the three samples, matching the class output.
-
 ## Source Code
 
 ### NumberOfConnectedComponents.java
@@ -303,3 +275,29 @@ public class NumberOfConnectedComponents {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
+
+The idea: start by assuming every node is its own component (`components = n`). Every edge that joins two nodes from different components merges them and reduces the count by one; an edge inside a component changes nothing. Union-Find tracks the components: `parent[]` points each node to its parent, `find` follows parents to the root (with path halving), and `parent[rootA] = rootB` merges two components. The answer is the count left after all edges. Time is almost O(n + E).
+
+**Input:** `n = 5`, `edges = [[0,1],[1,2],[3,4]]`. Start: `parent = [0,1,2,3,4]`, `components = 5`.
+
+| Edge | `find(a)` | `find(b)` | Roots differ? | `parent` afterwards | `components` |
+|------|-----------|-----------|---------------|---------------------|--------------|
+| `[0,1]` | 0 | 1 | yes, `parent[0] = 1` | `[1,1,2,3,4]` | 4 |
+| `[1,2]` | 1 | 2 | yes, `parent[1] = 2` | `[1,2,2,3,4]` | 3 |
+| `[3,4]` | 3 | 4 | yes, `parent[3] = 4` | `[1,2,2,4,4]` | 2 |
+
+```text
+{0, 1, 2} root 2        {3, 4} root 4
+```
+
+Two groups remain, so the method returns `2`.
+
+**Second sample:** the chain `[[0,1],[1,2],[2,3],[3,4]]` merges at every edge (`components` 4, 3, 2, 1, final `parent = [1,2,3,4,4]`), so the result is `1`.
+
+**Edge cases.** With no edges the loop does nothing and the result is `n` (for `n = 3` and `[]` it is `3`). An edge repeated or one that closes a cycle finds equal roots and is ignored without changing the count.
+
+**Result:** `2`, `1`, `3` for the three samples, matching the class output.

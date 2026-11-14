@@ -135,30 +135,6 @@ public static boolean isNStraightHand(int[] hand, int groupSize) {
 | 3 | Min-Heap of Distinct Values | O(n log n) | O(n) |
 | 4 | TreeMap Greedy (Optimized) | O(n log n) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: the smallest card left can only be the start of a group (nothing smaller remains to precede it), so it is forced to start a run of `groupSize` consecutive cards. A `TreeMap` of card to count gives the smallest key in O(log n). Repeatedly take `firstKey()`, remove one copy of each of the next `groupSize` consecutive values, and fail if any is missing. If the hand length is not a multiple of `groupSize`, return `false` immediately.
-
-**Input:** `hand = [1, 2, 3, 6, 2, 3, 4, 7, 8]`, `groupSize = 3` (9 cards, 9 % 3 = 0, so the check passes).
-
-Counts map after building: `{1:1, 2:2, 3:2, 4:1, 6:1, 7:1, 8:1}`.
-
-| Round | start = firstKey | Cards removed | Map afterwards |
-|-------|------------------|---------------|----------------|
-| 1 | 1 | 1, 2, 3 | `{2:1, 3:1, 4:1, 6:1, 7:1, 8:1}` |
-| 2 | 2 | 2, 3, 4 | `{6:1, 7:1, 8:1}` |
-| 3 | 6 | 6, 7, 8 | `{}` |
-
-The map is empty, so the method returns `true`: groups [1,2,3], [2,3,4], [6,7,8].
-
-**Edge cases:** `hand = [1, 2, 3, 4, 5]`, `groupSize = 4` returns `false` straight away (5 % 4 != 0). If a needed card is absent (`counts.get(card) == null`) the method returns `false` at that moment. `groupSize = 1` always succeeds when the length check passes (`[5]` gives `true`). A count of 1 is removed from the map, a larger count is decremented, so the map never holds zero counts.
-
-**Result:** returns `true`, matching the class output.
-
 ## Source Code
 
 ### HandOfStraights.java
@@ -207,3 +183,25 @@ public class HandOfStraights {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: the smallest card left can only be the start of a group (nothing smaller remains to precede it), so it is forced to start a run of `groupSize` consecutive cards. A `TreeMap` of card to count gives the smallest key in O(log n). Repeatedly take `firstKey()`, remove one copy of each of the next `groupSize` consecutive values, and fail if any is missing. If the hand length is not a multiple of `groupSize`, return `false` immediately.
+
+**Input:** `hand = [1, 2, 3, 6, 2, 3, 4, 7, 8]`, `groupSize = 3` (9 cards, 9 % 3 = 0, so the check passes).
+
+Counts map after building: `{1:1, 2:2, 3:2, 4:1, 6:1, 7:1, 8:1}`.
+
+| Round | start = firstKey | Cards removed | Map afterwards |
+|-------|------------------|---------------|----------------|
+| 1 | 1 | 1, 2, 3 | `{2:1, 3:1, 4:1, 6:1, 7:1, 8:1}` |
+| 2 | 2 | 2, 3, 4 | `{6:1, 7:1, 8:1}` |
+| 3 | 6 | 6, 7, 8 | `{}` |
+
+The map is empty, so the method returns `true`: groups [1,2,3], [2,3,4], [6,7,8].
+
+**Edge cases:** `hand = [1, 2, 3, 4, 5]`, `groupSize = 4` returns `false` straight away (5 % 4 != 0). If a needed card is absent (`counts.get(card) == null`) the method returns `false` at that moment. `groupSize = 1` always succeeds when the length check passes (`[5]` gives `true`). A count of 1 is removed from the map, a larger count is decremented, so the map never holds zero counts.
+
+**Result:** returns `true`, matching the class output.

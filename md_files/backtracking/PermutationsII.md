@@ -128,45 +128,6 @@ private static void backtrack(int[] nums, boolean[] used, List<Integer> current,
 | 2 | Frequency Map | O(n * n!) in the worst case, and never builds a duplicate | O(n) plus the map |
 | 3 | Sorted Backtracking with a Skip Rule (Optimized) | O(n * n!) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: the same used-array permutation search as Permutations, on a sorted copy so equal values are neighbours. The skip rule `i > 0 && nums[i] == nums[i - 1] && !used[i - 1]` means: a copy of a value may only be placed if the copy before it is already in the path. That forces equal values to be used left to right, so each distinct arrangement is generated once.
-
-**Input:** `nums = [1, 1, 2]` (sorted indices: 0 = 1, 1 = 1, 2 = 2).
-
-| Step | Action | Path | Result so far |
-|------|--------|------|---------------|
-| 1 | choose idx 0 (1) | `[1]` | |
-| 2 | choose idx 1 (1): previous copy is used, allowed | `[1, 1]` | |
-| 3 | choose idx 2 (2), full | `[1, 1, 2]` | record `[1, 1, 2]` |
-| 4 | undo; choose idx 2 (2) | `[1, 2]` | |
-| 5 | choose idx 1 (1), full | `[1, 2, 1]` | record `[1, 2, 1]` |
-| 6 | undo to `[]`; idx 1 skipped (equals idx 0 and idx 0 unused) | `[]` | |
-| 7 | choose idx 2 (2) | `[2]` | |
-| 8 | choose idx 0 (1), then idx 1 (1), full | `[2, 1, 1]` | record `[2, 1, 1]` |
-| 9 | undo back to `[2]`: idx 1 is skipped (equals idx 0, which is unused again); done | `[2]` | |
-
-```mermaid
-graph TD
-    R["[ ]"] --> A["1 idx0"]
-    R -.-> S1["skip idx1: dup, idx0 unused"]
-    R --> B["2 idx2"]
-    A --> A1["1,1"]
-    A --> A2["1,2"]
-    A1 --> L1["1,1,2"]
-    A2 --> L2["1,2,1"]
-    B --> B1["2,1"]
-    B1 --> L3["2,1,1"]
-```
-
-**Edge cases.** The array is cloned and sorted, so the input is untouched. `[2, 2, 2]` produces the single permutation `[2, 2, 2]`; `[1]` produces `[[1]]`. For an empty array the root already has full length and the result is `[[]]`.
-
-**Result:** `permuteUnique([1, 1, 2])` returns `[[1, 1, 2], [1, 2, 1], [2, 1, 1]]`, matching the class output.
-
 ## Source Code
 
 ### PermutationsII.java
@@ -213,3 +174,40 @@ public class PermutationsII {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+
+The idea: the same used-array permutation search as Permutations, on a sorted copy so equal values are neighbours. The skip rule `i > 0 && nums[i] == nums[i - 1] && !used[i - 1]` means: a copy of a value may only be placed if the copy before it is already in the path. That forces equal values to be used left to right, so each distinct arrangement is generated once.
+
+**Input:** `nums = [1, 1, 2]` (sorted indices: 0 = 1, 1 = 1, 2 = 2).
+
+| Step | Action | Path | Result so far |
+|------|--------|------|---------------|
+| 1 | choose idx 0 (1) | `[1]` | |
+| 2 | choose idx 1 (1): previous copy is used, allowed | `[1, 1]` | |
+| 3 | choose idx 2 (2), full | `[1, 1, 2]` | record `[1, 1, 2]` |
+| 4 | undo; choose idx 2 (2) | `[1, 2]` | |
+| 5 | choose idx 1 (1), full | `[1, 2, 1]` | record `[1, 2, 1]` |
+| 6 | undo to `[]`; idx 1 skipped (equals idx 0 and idx 0 unused) | `[]` | |
+| 7 | choose idx 2 (2) | `[2]` | |
+| 8 | choose idx 0 (1), then idx 1 (1), full | `[2, 1, 1]` | record `[2, 1, 1]` |
+| 9 | undo back to `[2]`: idx 1 is skipped (equals idx 0, which is unused again); done | `[2]` | |
+
+```mermaid
+graph TD
+    R["[ ]"] --> A["1 idx0"]
+    R -.-> S1["skip idx1: dup, idx0 unused"]
+    R --> B["2 idx2"]
+    A --> A1["1,1"]
+    A --> A2["1,2"]
+    A1 --> L1["1,1,2"]
+    A2 --> L2["1,2,1"]
+    B --> B1["2,1"]
+    B1 --> L3["2,1,1"]
+```
+
+**Edge cases.** The array is cloned and sorted, so the input is untouched. `[2, 2, 2]` produces the single permutation `[2, 2, 2]`; `[1]` produces `[[1]]`. For an empty array the root already has full length and the result is `[[]]`.
+
+**Result:** `permuteUnique([1, 1, 2])` returns `[[1, 1, 2], [1, 2, 1], [2, 1, 1]]`, matching the class output.

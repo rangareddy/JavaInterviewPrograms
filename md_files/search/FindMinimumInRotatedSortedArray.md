@@ -154,34 +154,6 @@ public static int findMin(int[] nums) {
 | 6 | Binary Search for the Drop Point | O(log n) | O(1) |
 | 7 | Binary Search (Optimized) | O(log n) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 7 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: compare the middle element with the last element of the window. If `nums[mid] > nums[high]`, the drop from large to small (the rotation point) lies to the right of `mid`, so the minimum is in `mid + 1 .. high`. Otherwise the right part is sorted, so the minimum is `mid` itself or to its left, and `high = mid` keeps `mid` in the window. The window shrinks until `low == high`, which is the minimum. Comparing with `nums[high]` instead of `nums[low]` also handles the not-rotated case without a special check.
-
-**Input:** `nums = [4, 5, 6, 7, 0, 1, 2]`.
-
-| Step | low | high | mid | nums[mid] | nums[high] | nums[mid] > nums[high] ? | Next |
-|------|-----|------|-----|-----------|------------|--------------------------|------|
-| 1 | 0 | 6 | 3 | 7 | 2 | yes, minimum is right of mid | low = 4 |
-| 2 | 4 | 6 | 5 | 1 | 2 | no, minimum is mid or left | high = 5 |
-| 3 | 4 | 5 | 4 | 0 | 1 | no | high = 4 |
-| 4 | 4 | 4 | - | - | - | `low == high`, stop | return `nums[4]` = 0 |
-
-```text
-step 1: [ 4  5  6 (7) 0  1  2 ]  window 0..6, mid=3 (7) > last (2): drop 0..3
-step 2:            [ 0 (1) 2 ]   window 4..6, mid=5 (1) <= last (2): keep 4..5
-step 3:            [ (0) 1 ]     window 4..5, mid=4 (0) <= last (1): keep 4..4
-done  :            [ 0 ]         minimum = 0
-```
-
-**Edge cases.** A `null` or empty array throws `IllegalArgumentException("Array must not be null or empty.")`. A single element returns itself without entering the loop. A not-rotated array such as `[11, 13, 15, 17]` never satisfies `nums[mid] > nums[high]`, so `high` moves left to index 0 and the result is 11. Two elements `[2, 1]`: `mid = 0`, 2 > 1, `low = 1`, result 1. Values must be distinct.
-
-**Result:** `0`, matching the class output (the other sample inputs give 1, 11 and 1).
-
 ## Source Code
 
 ### FindMinimumInRotatedSortedArray.java
@@ -219,3 +191,29 @@ public class FindMinimumInRotatedSortedArray {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
+
+The idea: compare the middle element with the last element of the window. If `nums[mid] > nums[high]`, the drop from large to small (the rotation point) lies to the right of `mid`, so the minimum is in `mid + 1 .. high`. Otherwise the right part is sorted, so the minimum is `mid` itself or to its left, and `high = mid` keeps `mid` in the window. The window shrinks until `low == high`, which is the minimum. Comparing with `nums[high]` instead of `nums[low]` also handles the not-rotated case without a special check.
+
+**Input:** `nums = [4, 5, 6, 7, 0, 1, 2]`.
+
+| Step | low | high | mid | nums[mid] | nums[high] | nums[mid] > nums[high] ? | Next |
+|------|-----|------|-----|-----------|------------|--------------------------|------|
+| 1 | 0 | 6 | 3 | 7 | 2 | yes, minimum is right of mid | low = 4 |
+| 2 | 4 | 6 | 5 | 1 | 2 | no, minimum is mid or left | high = 5 |
+| 3 | 4 | 5 | 4 | 0 | 1 | no | high = 4 |
+| 4 | 4 | 4 | - | - | - | `low == high`, stop | return `nums[4]` = 0 |
+
+```text
+step 1: [ 4  5  6 (7) 0  1  2 ]  window 0..6, mid=3 (7) > last (2): drop 0..3
+step 2:            [ 0 (1) 2 ]   window 4..6, mid=5 (1) <= last (2): keep 4..5
+step 3:            [ (0) 1 ]     window 4..5, mid=4 (0) <= last (1): keep 4..4
+done  :            [ 0 ]         minimum = 0
+```
+
+**Edge cases.** A `null` or empty array throws `IllegalArgumentException("Array must not be null or empty.")`. A single element returns itself without entering the loop. A not-rotated array such as `[11, 13, 15, 17]` never satisfies `nums[mid] > nums[high]`, so `high` moves left to index 0 and the result is 11. Two elements `[2, 1]`: `mid = 0`, 2 > 1, `low = 1`, result 1. Values must be distinct.
+
+**Result:** `0`, matching the class output (the other sample inputs give 1, 11 and 1).

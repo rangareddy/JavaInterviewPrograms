@@ -117,30 +117,6 @@ public static int findTargetSumWays(int[] nums, int target) {
 | 3 | Map of Reachable Sums | O(n * total) | O(total) |
 | 4 | Subset-Sum Reduction (Optimized) | O(n * total) | O(total) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: give every number a plus or minus sign. If `P` is the sum of the numbers with `+` and `N` the sum of those with `-`, then `P - N = target` and `P + N = total`, so `P = (total + target) / 2`. The problem becomes: count the subsets whose sum is `P`. `dp[s]` is the number of subsets of the numbers seen so far with sum `s`, updated from `P` down to the number so each number is used once. If `|target| > total` or `total + target` is odd, no assignment exists.
-
-**Input:** `nums = [1, 1, 1, 1, 1]`, `target = 3`. `total = 5`, `plusSum = (5 + 3) / 2 = 4`. Start: `dp = [1, 0, 0, 0, 0]` (indices 0 to 4).
-
-| Number (one of the five 1s) | Update `dp[s] += dp[s-1]` for `s = 4..1` | `dp` afterwards |
-|-----------------------------|------------------------------------------|-----------------|
-| 1st | `dp[1] += dp[0]` | `[1, 1, 0, 0, 0]` |
-| 2nd | `dp[2] += dp[1]`, `dp[1] += dp[0]` | `[1, 2, 1, 0, 0]` |
-| 3rd | `dp[3] += dp[2]`, `dp[2] += dp[1]`, `dp[1] += dp[0]` | `[1, 3, 3, 1, 0]` |
-| 4th | | `[1, 4, 6, 4, 1]` |
-| 5th | | `[1, 5, 10, 10, 5]` |
-
-The rows are the binomial coefficients: the cell `dp[4] = 5` counts the ways to choose which four of the five 1s get `+` (the remaining one gets `-`): `1+1+1+1-1 = 3`. No diagram is added; the table is the full picture.
-
-**Edge cases.** `nums = [2, 3, 5]`, `target = 0`: `total = 10`, `plusSum = 5`, and two subsets reach 5 (`{5}` and `{2, 3}`), giving 2. With zeros (`[1, 0]`, target 1) each zero can take either sign, so the answer doubles to 2; the inner loop `sum >= num` with `num = 0` handles it. If `|target| > total` or `(total + target)` is odd, the method returns `0` before allocating the array.
-
-**Result:** the method returns `dp[4] = 5`, matching the class output.
-
 ## Source Code
 
 ### TargetSum.java
@@ -181,3 +157,25 @@ public class TargetSum {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: give every number a plus or minus sign. If `P` is the sum of the numbers with `+` and `N` the sum of those with `-`, then `P - N = target` and `P + N = total`, so `P = (total + target) / 2`. The problem becomes: count the subsets whose sum is `P`. `dp[s]` is the number of subsets of the numbers seen so far with sum `s`, updated from `P` down to the number so each number is used once. If `|target| > total` or `total + target` is odd, no assignment exists.
+
+**Input:** `nums = [1, 1, 1, 1, 1]`, `target = 3`. `total = 5`, `plusSum = (5 + 3) / 2 = 4`. Start: `dp = [1, 0, 0, 0, 0]` (indices 0 to 4).
+
+| Number (one of the five 1s) | Update `dp[s] += dp[s-1]` for `s = 4..1` | `dp` afterwards |
+|-----------------------------|------------------------------------------|-----------------|
+| 1st | `dp[1] += dp[0]` | `[1, 1, 0, 0, 0]` |
+| 2nd | `dp[2] += dp[1]`, `dp[1] += dp[0]` | `[1, 2, 1, 0, 0]` |
+| 3rd | `dp[3] += dp[2]`, `dp[2] += dp[1]`, `dp[1] += dp[0]` | `[1, 3, 3, 1, 0]` |
+| 4th | | `[1, 4, 6, 4, 1]` |
+| 5th | | `[1, 5, 10, 10, 5]` |
+
+The rows are the binomial coefficients: the cell `dp[4] = 5` counts the ways to choose which four of the five 1s get `+` (the remaining one gets `-`): `1+1+1+1-1 = 3`. No diagram is added; the table is the full picture.
+
+**Edge cases.** `nums = [2, 3, 5]`, `target = 0`: `total = 10`, `plusSum = 5`, and two subsets reach 5 (`{5}` and `{2, 3}`), giving 2. With zeros (`[1, 0]`, target 1) each zero can take either sign, so the answer doubles to 2; the inner loop `sum >= num` with `num = 0` handles it. If `|target| > total` or `(total + target)` is odd, the method returns `0` before allocating the array.
+
+**Result:** the method returns `dp[4] = 5`, matching the class output.

@@ -118,36 +118,6 @@ public static int jump(int[] nums) {
 | 3 | Greedy: Furthest Landing Spot | O(n * k) worst case | O(1) |
 | 4 | Greedy BFS Window (Optimized) | O(n) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: treat the jumps like breadth-first levels. `end` is the last index reachable with `jumps` jumps, and `farthest` is the furthest index reachable with one more jump from anything seen so far. When the sweep reaches `end`, the current level is used up, so one more jump is needed and the new level ends at `farthest`. The loop stops before the last index, because standing on it needs no further jump.
-
-**Input:** `nums = [2, 3, 1, 1, 4]`.
-
-| i | nums[i] | farthest = max(farthest, i + nums[i]) | i == end? | jumps | end |
-|---|---------|----------------------------------------|-----------|-------|-----|
-| start | - | 0 | - | 0 | 0 |
-| 0 | 2 | max(0, 2) = 2 | yes | 1 | 2 |
-| 1 | 3 | max(2, 4) = 4 | no (end = 2) | 1 | 2 |
-| 2 | 1 | max(4, 3) = 4 | yes | 2 | 4 |
-| 3 | 1 | max(4, 4) = 4 | no (end = 4) | 2 | 4 |
-
-The loop ends (`i < nums.length - 1 = 4`), so `i = 4` is never processed.
-
-```text
-level 0: index 0
-level 1: indices 1..2   (reached by the first jump from index 0)
-level 2: indices 3..4   (reached by the second jump, from index 1 which reaches 4)
-```
-
-**Edge cases:** a single element (`[0]`) never enters the loop and returns `0`. `[5, 1, 1, 1, 1, 1]` jumps once at `i = 0` (`end = 5`) and returns `1`. The code assumes the end is reachable; it does not detect an unreachable end.
-
-**Result:** returns `2` for this input, matching the class output.
-
 ## Source Code
 
 ### JumpGameII.java
@@ -181,3 +151,31 @@ public class JumpGameII {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: treat the jumps like breadth-first levels. `end` is the last index reachable with `jumps` jumps, and `farthest` is the furthest index reachable with one more jump from anything seen so far. When the sweep reaches `end`, the current level is used up, so one more jump is needed and the new level ends at `farthest`. The loop stops before the last index, because standing on it needs no further jump.
+
+**Input:** `nums = [2, 3, 1, 1, 4]`.
+
+| i | nums[i] | farthest = max(farthest, i + nums[i]) | i == end? | jumps | end |
+|---|---------|----------------------------------------|-----------|-------|-----|
+| start | - | 0 | - | 0 | 0 |
+| 0 | 2 | max(0, 2) = 2 | yes | 1 | 2 |
+| 1 | 3 | max(2, 4) = 4 | no (end = 2) | 1 | 2 |
+| 2 | 1 | max(4, 3) = 4 | yes | 2 | 4 |
+| 3 | 1 | max(4, 4) = 4 | no (end = 4) | 2 | 4 |
+
+The loop ends (`i < nums.length - 1 = 4`), so `i = 4` is never processed.
+
+```text
+level 0: index 0
+level 1: indices 1..2   (reached by the first jump from index 0)
+level 2: indices 3..4   (reached by the second jump, from index 1 which reaches 4)
+```
+
+**Edge cases:** a single element (`[0]`) never enters the loop and returns `0`. `[5, 1, 1, 1, 1, 1]` jumps once at `i = 0` (`end = 5`) and returns `1`. The code assumes the end is reachable; it does not detect an unreachable end.
+
+**Result:** returns `2` for this input, matching the class output.

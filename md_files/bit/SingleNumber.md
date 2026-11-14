@@ -81,30 +81,6 @@ public static int singleNumber(int[] nums) {
 | 2 | Sum of Distinct Values | O(n) | O(n) |
 | 3 | XOR (Optimized) | O(n) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: XOR has three properties that do all the work: `a ^ a = 0`, `a ^ 0 = a`, and the order does not matter. XOR-ing every number into one accumulator therefore cancels each pair of equal numbers and leaves only the number that appears once. No set, no sorting, O(1) extra space.
-
-**Input:** `nums = [4, 1, 2, 1, 2]`.
-
-| Step | x | result before | result after (`result ^= x`) | Binary of result |
-|------|---|---------------|------------------------------|------------------|
-| 1 | 4 | 0 | 0 ^ 4 = 4 | 100 |
-| 2 | 1 | 4 | 4 ^ 1 = 5 | 101 |
-| 3 | 2 | 5 | 5 ^ 2 = 7 | 111 |
-| 4 | 1 | 7 | 7 ^ 1 = 6 | 110 |
-| 5 | 2 | 6 | 6 ^ 2 = 4 | 100 |
-
-The two 1s and the two 2s cancelled each other, leaving 4. No diagram is needed; the table shows the whole computation.
-
-**Edge cases:** a single element (`[1]`) gives `0 ^ 1 = 1`. Negative numbers work the same way on their two's complement bits (`[-1, 5, -1]` gives 5). An empty array returns `0`; the method assumes the input has exactly one unpaired number.
-
-**Result:** returns `4`, matching the class output.
-
 ## Source Code
 
 ### SingleNumber.java
@@ -132,3 +108,25 @@ public class SingleNumber {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+
+The idea: XOR has three properties that do all the work: `a ^ a = 0`, `a ^ 0 = a`, and the order does not matter. XOR-ing every number into one accumulator therefore cancels each pair of equal numbers and leaves only the number that appears once. No set, no sorting, O(1) extra space.
+
+**Input:** `nums = [4, 1, 2, 1, 2]`.
+
+| Step | x | result before | result after (`result ^= x`) | Binary of result |
+|------|---|---------------|------------------------------|------------------|
+| 1 | 4 | 0 | 0 ^ 4 = 4 | 100 |
+| 2 | 1 | 4 | 4 ^ 1 = 5 | 101 |
+| 3 | 2 | 5 | 5 ^ 2 = 7 | 111 |
+| 4 | 1 | 7 | 7 ^ 1 = 6 | 110 |
+| 5 | 2 | 6 | 6 ^ 2 = 4 | 100 |
+
+The two 1s and the two 2s cancelled each other, leaving 4. No diagram is needed; the table shows the whole computation.
+
+**Edge cases:** a single element (`[1]`) gives `0 ^ 1 = 1`. Negative numbers work the same way on their two's complement bits (`[-1, 5, -1]` gives 5). An empty array returns `0`; the method assumes the input has exactly one unpaired number.
+
+**Result:** returns `4`, matching the class output.

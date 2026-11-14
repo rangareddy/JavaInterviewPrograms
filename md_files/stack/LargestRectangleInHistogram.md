@@ -124,41 +124,6 @@ public static int largestRectangleArea(int[] heights) {
 | 3 | Nearest Smaller Bars on Both Sides | O(n) | O(n) |
 | 4 | Single Monotonic Stack (Optimized) | O(n) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: for each bar, the widest rectangle using it as the lowest bar stretches left and right until a lower bar. A stack of indexes with increasing heights finds both limits at once: when a bar lower than the top arrives, the top bar's right limit is the current index `i`, and its left limit is the new top below it (or the start of the array). So the popped bar of height `h` gets width `i - below - 1` (or `i` if nothing is below). A virtual bar of height 0 at the end empties the stack. Each index is pushed and popped once: O(n).
-
-**Input:** `heights = [2, 1, 5, 6, 2, 3]`. The stack holds indexes, bottom to top.
-
-| i | Current height | Pops (height x width = area) | Stack after push | best |
-|---|----------------|------------------------------|------------------|------|
-| 0 | 2 | none | 0 | 0 |
-| 1 | 1 | bar 0: 2 x 1 = 2 (stack empty, width = i = 1) | 1 | 2 |
-| 2 | 5 | none | 1 2 | 2 |
-| 3 | 6 | none | 1 2 3 | 2 |
-| 4 | 2 | bar 3: 6 x (4-2-1 = 1) = 6; bar 2: 5 x (4-1-1 = 2) = 10 | 1 4 | 10 |
-| 5 | 3 | none | 1 4 5 | 10 |
-| 6 | 0 (virtual) | bar 5: 3 x (6-4-1 = 1) = 3; bar 4: 2 x (6-1-1 = 4) = 8; bar 1: 1 x 6 = 6 | 6 | 10 |
-
-```text
-6 |       #
-5 |     # #
-4 |     # #
-3 |     # #   #
-2 | #   # # # #
-1 | # # # # # #
-  +-------------
-    2 1 5 6 2 3      best rectangle: the bars 5 and 6, height 5 x width 2 = 10
-```
-
-**Edge cases.** An empty array has only the virtual bar (`i = 0`), nothing to pop, and returns `0`. A single bar `[1]` is popped by the virtual bar with width 1, giving `1`. Equal heights do not pop each other (strict `<`), which is fine because the later bar still computes the full width. The virtual zero guarantees no bar is left on the stack unprocessed.
-
-**Result:** `10`, matching the class output.
-
 ## Source Code
 
 ### LargestRectangleInHistogram.java
@@ -195,3 +160,36 @@ public class LargestRectangleInHistogram {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: for each bar, the widest rectangle using it as the lowest bar stretches left and right until a lower bar. A stack of indexes with increasing heights finds both limits at once: when a bar lower than the top arrives, the top bar's right limit is the current index `i`, and its left limit is the new top below it (or the start of the array). So the popped bar of height `h` gets width `i - below - 1` (or `i` if nothing is below). A virtual bar of height 0 at the end empties the stack. Each index is pushed and popped once: O(n).
+
+**Input:** `heights = [2, 1, 5, 6, 2, 3]`. The stack holds indexes, bottom to top.
+
+| i | Current height | Pops (height x width = area) | Stack after push | best |
+|---|----------------|------------------------------|------------------|------|
+| 0 | 2 | none | 0 | 0 |
+| 1 | 1 | bar 0: 2 x 1 = 2 (stack empty, width = i = 1) | 1 | 2 |
+| 2 | 5 | none | 1 2 | 2 |
+| 3 | 6 | none | 1 2 3 | 2 |
+| 4 | 2 | bar 3: 6 x (4-2-1 = 1) = 6; bar 2: 5 x (4-1-1 = 2) = 10 | 1 4 | 10 |
+| 5 | 3 | none | 1 4 5 | 10 |
+| 6 | 0 (virtual) | bar 5: 3 x (6-4-1 = 1) = 3; bar 4: 2 x (6-1-1 = 4) = 8; bar 1: 1 x 6 = 6 | 6 | 10 |
+
+```text
+6 |       #
+5 |     # #
+4 |     # #
+3 |     # #   #
+2 | #   # # # #
+1 | # # # # # #
+  +-------------
+    2 1 5 6 2 3      best rectangle: the bars 5 and 6, height 5 x width 2 = 10
+```
+
+**Edge cases.** An empty array has only the virtual bar (`i = 0`), nothing to pop, and returns `0`. A single bar `[1]` is popped by the virtual bar with width 1, giving `1`. Equal heights do not pop each other (strict `<`), which is fine because the later bar still computes the full width. The virtual zero guarantees no bar is left on the stack unprocessed.
+
+**Result:** `10`, matching the class output.

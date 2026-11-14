@@ -154,54 +154,6 @@ public static <T> Collector<T, ?, List<T>> topN(int n, Comparator<? super T> com
 | 2 | Built-in summaryStatistics and Sort-then-Limit | O(n) for the statistics, O(n log n) for the top n | O(1) for the statistics, O(n) for the sorted stream |
 | 3 | Collector.of with Mutable Accumulators (Optimized) | O(n) and O(n log k) | O(1) and O(k) |
 
-### Optimized Solution
-
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: a `Collector` is four small functions: a **supplier** that creates an empty mutable container, an **accumulator** that folds one element into it, a **combiner** that merges two containers (used only by parallel streams), and an optional **finisher** that turns the container into the final result. `Collector.of(...)` builds one from those functions, so the stream does one pass and keeps only the small container. The class has two: `summarizing(mapper)` keeps a `Stats` object (count, sum, min, max) updated in place, and `topN(n, comparator)` keeps a **min-heap capped at `n`** (a `PriorityQueue` whose head is the weakest element kept), dropping the head whenever the size passes `n`.
-
-**Input:** `words = [map, collector, stream, on, identity]` (lengths 3, 9, 6, 2, 8).
-
-`summarizing(String::length)`, starting from count 0, sum 0, min `Integer.MAX_VALUE`, max `Integer.MIN_VALUE`:
-
-| Step | Element | Length | count | sum | min | max |
-|------|---------|--------|-------|-----|-----|-----|
-| 1 | map | 3 | 1 | 3 | 3 | 3 |
-| 2 | collector | 9 | 2 | 12 | 3 | 9 |
-| 3 | stream | 6 | 3 | 18 | 3 | 9 |
-| 4 | on | 2 | 4 | 20 | 2 | 9 |
-| 5 | identity | 8 | 5 | 28 | 2 | 9 |
-
-The average is `28 / 5 = 5.6`.
-
-`topN(2, comparingInt(String::length))`, a min-heap by length holding at most 2 words:
-
-| Step | Element | After `add` | Size over 2? | Heap contents afterwards (the set) |
-|------|---------|-------------|--------------|-------------------------------------|
-| 1 | map (3) | 1 element | no | map |
-| 2 | collector (9) | 2 elements | no | map, collector |
-| 3 | stream (6) | 3 elements | yes: `poll()` removes the smallest, map (3) | stream, collector |
-| 4 | on (2) | 3 elements | yes: removes on (2) | stream, collector |
-| 5 | identity (8) | 3 elements | yes: removes stream (6) | identity, collector |
-
-The finisher copies the heap into a list and sorts it with `comparator.reversed()` (longest first): `[collector, identity]`.
-
-```mermaid
-flowchart LR
-    S["stream of words"] --> SUP["supplier<br/>new PriorityQueue"]
-    SUP --> ACC["accumulator<br/>add, poll if size over n"]
-    ACC --> FIN["finisher<br/>sort descending"]
-    FIN --> R(["collector, identity"])
-```
-
-The combiner is used only when the stream is parallel, so it is not exercised by this sequential run; it merges two heaps the same way (add each element, drop the smallest if over `n`). The class also holds a `TriFunction` with a default `andThen`, and `volume.andThen(v -> "volume=" + v).apply(2, 3, 4)` computes `2 * 3 * 4 = 24` and formats it as `volume=24`.
-
-**Edge cases.** An empty stream gives `Stats` with count 0 (and `getAverage()` returns `0.0` instead of dividing by zero, though min and max keep their sentinel values) and an empty list for `topN`. The heap capacity is `Math.max(1, n + 1)`, so `n = 0` still works and keeps nothing. Memory is O(1) for `summarizing` and O(n) for `topN`, and each element costs O(log n).
-
-**Result:** the class prints `count=5, sum=28, min=2, max=9, avg=5.6`, `[collector, identity]` and `volume=24`, matching the traces.
-
 ## Source Code
 
 ### CustomCollectors.java
@@ -308,3 +260,49 @@ public class CustomCollectors {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+
+The idea: a `Collector` is four small functions: a **supplier** that creates an empty mutable container, an **accumulator** that folds one element into it, a **combiner** that merges two containers (used only by parallel streams), and an optional **finisher** that turns the container into the final result. `Collector.of(...)` builds one from those functions, so the stream does one pass and keeps only the small container. The class has two: `summarizing(mapper)` keeps a `Stats` object (count, sum, min, max) updated in place, and `topN(n, comparator)` keeps a **min-heap capped at `n`** (a `PriorityQueue` whose head is the weakest element kept), dropping the head whenever the size passes `n`.
+
+**Input:** `words = [map, collector, stream, on, identity]` (lengths 3, 9, 6, 2, 8).
+
+`summarizing(String::length)`, starting from count 0, sum 0, min `Integer.MAX_VALUE`, max `Integer.MIN_VALUE`:
+
+| Step | Element | Length | count | sum | min | max |
+|------|---------|--------|-------|-----|-----|-----|
+| 1 | map | 3 | 1 | 3 | 3 | 3 |
+| 2 | collector | 9 | 2 | 12 | 3 | 9 |
+| 3 | stream | 6 | 3 | 18 | 3 | 9 |
+| 4 | on | 2 | 4 | 20 | 2 | 9 |
+| 5 | identity | 8 | 5 | 28 | 2 | 9 |
+
+The average is `28 / 5 = 5.6`.
+
+`topN(2, comparingInt(String::length))`, a min-heap by length holding at most 2 words:
+
+| Step | Element | After `add` | Size over 2? | Heap contents afterwards (the set) |
+|------|---------|-------------|--------------|-------------------------------------|
+| 1 | map (3) | 1 element | no | map |
+| 2 | collector (9) | 2 elements | no | map, collector |
+| 3 | stream (6) | 3 elements | yes: `poll()` removes the smallest, map (3) | stream, collector |
+| 4 | on (2) | 3 elements | yes: removes on (2) | stream, collector |
+| 5 | identity (8) | 3 elements | yes: removes stream (6) | identity, collector |
+
+The finisher copies the heap into a list and sorts it with `comparator.reversed()` (longest first): `[collector, identity]`.
+
+```mermaid
+flowchart LR
+    S["stream of words"] --> SUP["supplier<br/>new PriorityQueue"]
+    SUP --> ACC["accumulator<br/>add, poll if size over n"]
+    ACC --> FIN["finisher<br/>sort descending"]
+    FIN --> R(["collector, identity"])
+```
+
+The combiner is used only when the stream is parallel, so it is not exercised by this sequential run; it merges two heaps the same way (add each element, drop the smallest if over `n`). The class also holds a `TriFunction` with a default `andThen`, and `volume.andThen(v -> "volume=" + v).apply(2, 3, 4)` computes `2 * 3 * 4 = 24` and formats it as `volume=24`.
+
+**Edge cases.** An empty stream gives `Stats` with count 0 (and `getAverage()` returns `0.0` instead of dividing by zero, though min and max keep their sentinel values) and an empty list for `topN`. The heap capacity is `Math.max(1, n + 1)`, so `n = 0` still works and keeps nothing. Memory is O(1) for `summarizing` and O(n) for `topN`, and each element costs O(log n).
+
+**Result:** the class prints `count=5, sum=28, min=2, max=9, avg=5.6`, `[collector, identity]` and `volume=24`, matching the traces.

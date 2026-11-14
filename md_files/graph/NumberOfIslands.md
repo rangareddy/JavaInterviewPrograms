@@ -270,43 +270,6 @@ private static void sink(char[][] grid, int i, int j) {
 | 6 | BFS with a Queue of Encoded Cells | O(m * n) | O(m * n) |
 | 7 | Recursive DFS Flood Fill (Optimized) | O(m * n) | O(m * n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 7 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: scan the grid cell by cell. The first time a land cell `'1'` is found it belongs to a new island, so the counter is incremented and a DFS "sinks" the whole island by turning every connected `'1'` into `'0'`. Sunk cells are never counted again, so the number of DFS starts equals the number of islands. The class works on a copy, so the caller's grid is not changed.
-
-**Input:** the 4 x 5 grid
-
-```text
-1 1 0 0 0
-1 1 0 0 0
-0 0 1 0 0
-0 0 0 1 1
-```
-
-| Scan reaches | Cell value | Action | Cells sunk | `islands` |
-|--------------|-----------|--------|------------|-----------|
-| (0,0) | 1 | new island, DFS | (0,0), (1,0), (1,1), (0,1) | 1 |
-| (0,1) .. (1,1) | 0 (already sunk) or water | skip | | 1 |
-| (2,2) | 1 | new island, DFS | (2,2) | 2 |
-| (3,3) | 1 | new island, DFS | (3,3), (3,4) | 3 |
-| the rest | 0 | skip | | 3 |
-
-```text
-after the scan every land cell has become 0:
-0 0 0 0 0
-0 0 0 0 0
-0 0 0 0 0
-0 0 0 0 0
-```
-
-**Edge cases:** `null` or an empty grid returns `0`; an all-water grid never increments the counter. The first sample grid `11110 / 11010 / 11000 / 00000` is one connected island, so a single DFS sinks it all and the answer is `1`. Diagonal cells are not connected (only up, down, left, right).
-
-**Result:** `3`, the same as the class output (the first grid prints `1`).
-
 ## Source Code
 
 ### NumberOfIslands.java
@@ -362,3 +325,38 @@ public class NumberOfIslands {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
+
+The idea: scan the grid cell by cell. The first time a land cell `'1'` is found it belongs to a new island, so the counter is incremented and a DFS "sinks" the whole island by turning every connected `'1'` into `'0'`. Sunk cells are never counted again, so the number of DFS starts equals the number of islands. The class works on a copy, so the caller's grid is not changed.
+
+**Input:** the 4 x 5 grid
+
+```text
+1 1 0 0 0
+1 1 0 0 0
+0 0 1 0 0
+0 0 0 1 1
+```
+
+| Scan reaches | Cell value | Action | Cells sunk | `islands` |
+|--------------|-----------|--------|------------|-----------|
+| (0,0) | 1 | new island, DFS | (0,0), (1,0), (1,1), (0,1) | 1 |
+| (0,1) .. (1,1) | 0 (already sunk) or water | skip | | 1 |
+| (2,2) | 1 | new island, DFS | (2,2) | 2 |
+| (3,3) | 1 | new island, DFS | (3,3), (3,4) | 3 |
+| the rest | 0 | skip | | 3 |
+
+```text
+after the scan every land cell has become 0:
+0 0 0 0 0
+0 0 0 0 0
+0 0 0 0 0
+0 0 0 0 0
+```
+
+**Edge cases:** `null` or an empty grid returns `0`; an all-water grid never increments the counter. The first sample grid `11110 / 11010 / 11000 / 00000` is one connected island, so a single DFS sinks it all and the answer is `1`. Diagonal cells are not connected (only up, down, left, right).
+
+**Result:** `3`, the same as the class output (the first grid prints `1`).

@@ -119,41 +119,6 @@ public static boolean wordBreakBfs(String s, List<String> wordDict) {
 | 3 | Bottom-Up DP over Prefixes (Optimized) | O(n^2 * L) | O(n) |
 | 4 | BFS over the Cut Positions | O(n^2 * L) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: `dp[i]` is true when the first `i` characters can be split into dictionary words. A prefix of length `i` works if some earlier cut `j` already works (`dp[j]` true) and the piece `s[j..i)` is a word. The dictionary is put in a `HashSet` for fast lookups, and the inner loop stops at the first successful `j`.
-
-**Input:** `s = "catsandog"`, `wordDict = [cats, dog, sand, and, cat]` (the failing example, which shows the dead end). `dp[0] = true`.
-
-| `i` | Prefix | Cut `j` that works (`dp[j]` true and `s[j..i)` is a word) | `dp[i]` |
-|-----|--------|-----------------------------------------------------------|---------|
-| 1 | `c` | none | false |
-| 2 | `ca` | none | false |
-| 3 | `cat` | `j = 0`, `"cat"` | true |
-| 4 | `cats` | `j = 0`, `"cats"` | true |
-| 5 | `catsa` | none | false |
-| 6 | `catsan` | none | false |
-| 7 | `catsand` | `j = 3`, `"sand"` (`dp[3]` true) | true |
-| 8 | `catsando` | none | false |
-| 9 | `catsandog` | none (`"og"` from `j = 7`, `"dog"` would need `dp[6]`, which is false) | false |
-
-```text
-index: 0 1 2 3 4 5 6 7 8 9
-dp:    T F F T T F F T F F
-       c a t s a n d o g
-       |-cat-|     |sand|    "og" is not a word, and "dog" needs dp[6] = false
-```
-
-For `"leetcode"` with `[leet, code]` the table is `dp[4]` true (`j = 0`, `"leet"`) and `dp[8]` true (`j = 4`, `"code"`), so the answer is true.
-
-**Edge cases.** An empty string gives `dp[0] = true`, so the method returns `true`. Cuts are only tried where `dp[j]` is true, so impossible prefixes are never extended.
-
-**Result:** `wordBreak("catsandog", ...)` returns `false` and `wordBreak("leetcode", ...)` returns `true`, matching the class output.
-
 ## Source Code
 
 ### WordBreak.java
@@ -195,3 +160,36 @@ public class WordBreak {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+
+The idea: `dp[i]` is true when the first `i` characters can be split into dictionary words. A prefix of length `i` works if some earlier cut `j` already works (`dp[j]` true) and the piece `s[j..i)` is a word. The dictionary is put in a `HashSet` for fast lookups, and the inner loop stops at the first successful `j`.
+
+**Input:** `s = "catsandog"`, `wordDict = [cats, dog, sand, and, cat]` (the failing example, which shows the dead end). `dp[0] = true`.
+
+| `i` | Prefix | Cut `j` that works (`dp[j]` true and `s[j..i)` is a word) | `dp[i]` |
+|-----|--------|-----------------------------------------------------------|---------|
+| 1 | `c` | none | false |
+| 2 | `ca` | none | false |
+| 3 | `cat` | `j = 0`, `"cat"` | true |
+| 4 | `cats` | `j = 0`, `"cats"` | true |
+| 5 | `catsa` | none | false |
+| 6 | `catsan` | none | false |
+| 7 | `catsand` | `j = 3`, `"sand"` (`dp[3]` true) | true |
+| 8 | `catsando` | none | false |
+| 9 | `catsandog` | none (`"og"` from `j = 7`, `"dog"` would need `dp[6]`, which is false) | false |
+
+```text
+index: 0 1 2 3 4 5 6 7 8 9
+dp:    T F F T T F F T F F
+       c a t s a n d o g
+       |-cat-|     |sand|    "og" is not a word, and "dog" needs dp[6] = false
+```
+
+For `"leetcode"` with `[leet, code]` the table is `dp[4]` true (`j = 0`, `"leet"`) and `dp[8]` true (`j = 4`, `"code"`), so the answer is true.
+
+**Edge cases.** An empty string gives `dp[0] = true`, so the method returns `true`. Cuts are only tried where `dp[j]` is true, so impossible prefixes are never extended.
+
+**Result:** `wordBreak("catsandog", ...)` returns `false` and `wordBreak("leetcode", ...)` returns `true`, matching the class output.

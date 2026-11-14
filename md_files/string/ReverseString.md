@@ -106,35 +106,6 @@ public static String reverseWords(String sentence) {
 | 3 | Recursion | O(n^2) because of `substring` copies | O(n^2) |
 | 4 | Two Pointers Swap (Optimized) | O(n) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: strings are immutable, so copy them into a `char[]` and swap characters from both ends toward the middle. `left` starts at the first index, `right` at the last; swap, move both inward, and stop when they meet. Every character is moved once and nothing is built by repeated concatenation.
-
-**Input:** `text = "hello"`, `chars = [h, e, l, l, o]`.
-
-| Step | `left` | `right` | Swap | `chars` afterwards |
-|------|--------|---------|------|--------------------|
-| 1 | 0 | 4 | `h` <-> `o` | `[o, e, l, l, h]` |
-| 2 | 1 | 3 | `e` <-> `l` | `[o, l, l, e, h]` |
-| 3 | 2 | 2 | `left < right` is false, stop | `[o, l, l, e, h]` |
-
-```text
-index:  0 1 2 3 4
-start:  h e l l o
-step 1: o e l l h     (0 and 4 swapped)
-step 2: o l l e h     (1 and 3 swapped; index 2 is the middle, stays)
-```
-
-**Words.** `reverseWords` trims the sentence, splits it on `\s+`, and appends the words from the last to the first separated by one space. For `"the sky is blue"` the words are `[the, sky, is, blue]` and the result is `"blue is sky the"`.
-
-**Edge cases.** `""` has `right = -1`, so the loop never runs and `""` is returned; `"a"` stays `"a"`. For words, an all-space or empty sentence returns `""`, and `"  hello   world  "` becomes `"world hello"`. A `null` argument would throw `NullPointerException` (no guard).
-
-**Result:** `"olleh"`, matching the class output.
-
 ## Source Code
 
 ### ReverseString.java
@@ -188,3 +159,30 @@ public class ReverseString {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: strings are immutable, so copy them into a `char[]` and swap characters from both ends toward the middle. `left` starts at the first index, `right` at the last; swap, move both inward, and stop when they meet. Every character is moved once and nothing is built by repeated concatenation.
+
+**Input:** `text = "hello"`, `chars = [h, e, l, l, o]`.
+
+| Step | `left` | `right` | Swap | `chars` afterwards |
+|------|--------|---------|------|--------------------|
+| 1 | 0 | 4 | `h` <-> `o` | `[o, e, l, l, h]` |
+| 2 | 1 | 3 | `e` <-> `l` | `[o, l, l, e, h]` |
+| 3 | 2 | 2 | `left < right` is false, stop | `[o, l, l, e, h]` |
+
+```text
+index:  0 1 2 3 4
+start:  h e l l o
+step 1: o e l l h     (0 and 4 swapped)
+step 2: o l l e h     (1 and 3 swapped; index 2 is the middle, stays)
+```
+
+**Words.** `reverseWords` trims the sentence, splits it on `\s+`, and appends the words from the last to the first separated by one space. For `"the sky is blue"` the words are `[the, sky, is, blue]` and the result is `"blue is sky the"`.
+
+**Edge cases.** `""` has `right = -1`, so the loop never runs and `""` is returned; `"a"` stays `"a"`. For words, an all-space or empty sentence returns `""`, and `"  hello   world  "` becomes `"world hello"`. A `null` argument would throw `NullPointerException` (no guard).
+
+**Result:** `"olleh"`, matching the class output.

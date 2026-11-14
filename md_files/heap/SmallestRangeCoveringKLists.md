@@ -94,36 +94,6 @@ public static int[] smallestRange(List<List<Integer>> nums) {
 | 1 | Merge All Elements, Then Sliding Window | O(N log N) | O(N) |
 | 2 | Min-Heap over the List Fronts (Optimized) | O(N log k) | O(k) |
 
-### Optimized Solution
-
-The optimized solution is Approach 2 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: a window holds one element from each list; its range is `[smallest, largest]`. Keep the current front element of every list in a min-heap (its top is the window minimum) and track the window maximum `max` separately. Each step compares `max - min` with the best range, then replaces the minimum by the next element of the same list, because only moving the minimum can shrink the range. The scan stops when that list has no next element. Time `O(N log k)`.
-
-**Input:** `A = [4, 10, 15, 24, 26]`, `B = [0, 9, 12, 20]`, `C = [5, 18, 22, 30]`. Start: heap `{4, 0, 5}`, `max = 5`, `best = [0, 5]` (length 5).
-
-| Step | Popped (min) | `max - min` | Better than best? | Next pushed | New `max` | Heap values afterwards |
-|------|--------------|-------------|-------------------|-------------|-----------|------------------------|
-| 1 | 0 (B) | 5 | no (not strictly smaller) | 9 (B) | 9 | 4, 5, 9 |
-| 2 | 4 (A) | 5 | no | 10 (A) | 10 | 5, 9, 10 |
-| 3 | 5 (C) | 5 | no | 18 (C) | 18 | 9, 10, 18 |
-| 4 | 9 (B) | 9 | no | 12 (B) | 18 | 10, 12, 18 |
-| 5 | 10 (A) | 8 | no | 15 (A) | 18 | 12, 15, 18 |
-| 6 | 12 (B) | 6 | no | 20 (B) | 20 | 15, 18, 20 |
-| 7 | 15 (A) | 5 | no | 24 (A) | 24 | 18, 20, 24 |
-| 8 | 18 (C) | 6 | no | 22 (C) | 24 | 20, 22, 24 |
-| 9 | 20 (B) | 4 | **yes, best = `[20, 24]`** | none: B is exhausted, return | | |
-
-```text
-window at step 9:  A: 24   B: 20   C: 22     ->  [20, 24]
-```
-
-**Edge cases:** the best range starts as the first window and is replaced only when strictly smaller, so the earliest start wins ties. `[[10, 10], [11, 11]]` returns `[10, 11]`, and identical lists `[1, 2, 3]` x 3 return `[1, 1]`. Lists are assumed non-empty (the first element of each is read).
-
-**Result:** `[20, 24]`, the same as the class output.
-
 ## Source Code
 
 ### SmallestRangeCoveringKLists.java
@@ -183,3 +153,31 @@ public class SmallestRangeCoveringKLists {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+
+The idea: a window holds one element from each list; its range is `[smallest, largest]`. Keep the current front element of every list in a min-heap (its top is the window minimum) and track the window maximum `max` separately. Each step compares `max - min` with the best range, then replaces the minimum by the next element of the same list, because only moving the minimum can shrink the range. The scan stops when that list has no next element. Time `O(N log k)`.
+
+**Input:** `A = [4, 10, 15, 24, 26]`, `B = [0, 9, 12, 20]`, `C = [5, 18, 22, 30]`. Start: heap `{4, 0, 5}`, `max = 5`, `best = [0, 5]` (length 5).
+
+| Step | Popped (min) | `max - min` | Better than best? | Next pushed | New `max` | Heap values afterwards |
+|------|--------------|-------------|-------------------|-------------|-----------|------------------------|
+| 1 | 0 (B) | 5 | no (not strictly smaller) | 9 (B) | 9 | 4, 5, 9 |
+| 2 | 4 (A) | 5 | no | 10 (A) | 10 | 5, 9, 10 |
+| 3 | 5 (C) | 5 | no | 18 (C) | 18 | 9, 10, 18 |
+| 4 | 9 (B) | 9 | no | 12 (B) | 18 | 10, 12, 18 |
+| 5 | 10 (A) | 8 | no | 15 (A) | 18 | 12, 15, 18 |
+| 6 | 12 (B) | 6 | no | 20 (B) | 20 | 15, 18, 20 |
+| 7 | 15 (A) | 5 | no | 24 (A) | 24 | 18, 20, 24 |
+| 8 | 18 (C) | 6 | no | 22 (C) | 24 | 20, 22, 24 |
+| 9 | 20 (B) | 4 | **yes, best = `[20, 24]`** | none: B is exhausted, return | | |
+
+```text
+window at step 9:  A: 24   B: 20   C: 22     ->  [20, 24]
+```
+
+**Edge cases:** the best range starts as the first window and is replaced only when strictly smaller, so the earliest start wins ties. `[[10, 10], [11, 11]]` returns `[10, 11]`, and identical lists `[1, 2, 3]` x 3 return `[1, 1]`. Lists are assumed non-empty (the first element of each is read).
+
+**Result:** `[20, 24]`, the same as the class output.

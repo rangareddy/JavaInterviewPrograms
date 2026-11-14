@@ -89,46 +89,6 @@ private static void dfs(TreeNode node, int remaining, List<Integer> path, List<L
 | 1 | Collect All Paths, Then Filter | O(n^2) | O(n * h) for all paths |
 | 2 | DFS with Backtracking (Optimized) | O(n^2) worst case | O(h) besides the output |
 
-### Optimized Solution
-
-The optimized solution is Approach 2 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: walk the tree depth first with one shared `path` list and a `remaining` sum. Entering a node adds it to the path and subtracts its value; at a leaf with `remaining == 0` a copy of the path is stored; leaving the node removes it again (backtracking), so the sibling subtree starts from the right path. The path is copied only for real answers.
-
-**Input:** `root = [5, 4, 8, 11, null, 13, 4, 7, 2, null, null, 5, 1]`, `targetSum = 22`.
-
-| Step | Node | `remaining` after subtracting | `path` after adding | Leaf? | Action |
-|------|------|-------------------------------|---------------------|-------|--------|
-| 1 | 5 | 17 | `[5]` | no | go left |
-| 2 | 4 | 13 | `[5, 4]` | no | go left |
-| 3 | 11 | 2 | `[5, 4, 11]` | no | go left |
-| 4 | 7 | -5 | `[5, 4, 11, 7]` | yes | not 0, backtrack to `[5, 4, 11]` |
-| 5 | 2 | 0 | `[5, 4, 11, 2]` | yes | **store copy**, backtrack |
-| 6 | 8 | 9 | `[5, 8]` | no | (4 and 11 are finished, their right children are null) |
-| 7 | 13 | -4 | `[5, 8, 13]` | yes | not 0, backtrack |
-| 8 | 4 | 5 | `[5, 8, 4]` | no | go left |
-| 9 | 5 | 0 | `[5, 8, 4, 5]` | yes | **store copy**, backtrack |
-| 10 | 1 | -1 | `[5, 8, 4, 1]` | yes | not 0, backtrack |
-
-```mermaid
-flowchart TD
-    A["5<br/>rem 17"] --> B["4<br/>rem 13"]
-    A --> C["8<br/>rem 9"]
-    B --> D["11<br/>rem 2"]
-    D --> E["7<br/>rem -5"]
-    D --> F["2<br/>rem 0 : match"]
-    C --> G["13<br/>rem -4"]
-    C --> H["4<br/>rem 5"]
-    H --> I["5<br/>rem 0 : match"]
-    H --> J["1<br/>rem -1"]
-```
-
-**Edge cases:** an empty tree returns an empty list. Only leaves count: for `[1, 2]` with target `0` nothing matches (the path `1, 2` sums to 3, and node `1` is not a leaf), and for `[1, 2, 3]` with target `5` no leaf path sums to 5, so both return `[]`.
-
-**Result:** `[[5, 4, 11, 2], [5, 8, 4, 5]]`, the same as the class output.
-
 ## Source Code
 
 ### PathSumII.java
@@ -175,3 +135,41 @@ public class PathSumII {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+
+The idea: walk the tree depth first with one shared `path` list and a `remaining` sum. Entering a node adds it to the path and subtracts its value; at a leaf with `remaining == 0` a copy of the path is stored; leaving the node removes it again (backtracking), so the sibling subtree starts from the right path. The path is copied only for real answers.
+
+**Input:** `root = [5, 4, 8, 11, null, 13, 4, 7, 2, null, null, 5, 1]`, `targetSum = 22`.
+
+| Step | Node | `remaining` after subtracting | `path` after adding | Leaf? | Action |
+|------|------|-------------------------------|---------------------|-------|--------|
+| 1 | 5 | 17 | `[5]` | no | go left |
+| 2 | 4 | 13 | `[5, 4]` | no | go left |
+| 3 | 11 | 2 | `[5, 4, 11]` | no | go left |
+| 4 | 7 | -5 | `[5, 4, 11, 7]` | yes | not 0, backtrack to `[5, 4, 11]` |
+| 5 | 2 | 0 | `[5, 4, 11, 2]` | yes | **store copy**, backtrack |
+| 6 | 8 | 9 | `[5, 8]` | no | (4 and 11 are finished, their right children are null) |
+| 7 | 13 | -4 | `[5, 8, 13]` | yes | not 0, backtrack |
+| 8 | 4 | 5 | `[5, 8, 4]` | no | go left |
+| 9 | 5 | 0 | `[5, 8, 4, 5]` | yes | **store copy**, backtrack |
+| 10 | 1 | -1 | `[5, 8, 4, 1]` | yes | not 0, backtrack |
+
+```mermaid
+flowchart TD
+    A["5<br/>rem 17"] --> B["4<br/>rem 13"]
+    A --> C["8<br/>rem 9"]
+    B --> D["11<br/>rem 2"]
+    D --> E["7<br/>rem -5"]
+    D --> F["2<br/>rem 0 : match"]
+    C --> G["13<br/>rem -4"]
+    C --> H["4<br/>rem 5"]
+    H --> I["5<br/>rem 0 : match"]
+    H --> J["1<br/>rem -1"]
+```
+
+**Edge cases:** an empty tree returns an empty list. Only leaves count: for `[1, 2]` with target `0` nothing matches (the path `1, 2` sums to 3, and node `1` is not a leaf), and for `[1, 2, 3]` with target `5` no leaf path sums to 5, so both return `[]`.
+
+**Result:** `[[5, 4, 11, 2], [5, 8, 4, 5]]`, the same as the class output.

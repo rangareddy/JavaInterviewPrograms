@@ -189,41 +189,6 @@ public static List<List<String>> groupAnagramsCounts(String[] strs) {
 | 6 | Compact Letter-Count Signature | O(n * k) | O(n * k) |
 | 7 | Hash Map Keyed by the Letter Counts (Optimized) | O(n * k) | O(n * k) |
 
-### Optimized Solution
-
-The optimized solution is Approach 7 above. The version implemented in this repository is Approach 2.
-
-#### Optimized solution explained
-
-**Note:** the page names Approach 7 (letter-count key) as the optimized one, but the version coded in `GroupAnagrams.java` is Approach 2, the sorted-word key. The walkthrough below follows the class; Approach 7 differs only in how the key is built (a 26-slot count instead of the sorted letters).
-
-The idea: all anagrams turn into the same string when their letters are sorted (`eat`, `tea`, `ate` all become `aet`). Use that sorted string as a key in a `LinkedHashMap<String, List<String>>` and add each word to its key's list. The map keeps the groups in the order they first appeared, and the answer is the list of the map's values. Cost: sorting each word, O(n * k log k).
-
-**Input:** `strs = [eat, tea, tan, ate, nat, bat]`.
-
-| Step | `word` | Sorted key | Group action | `groups` afterwards |
-|------|--------|-----------|--------------|---------------------|
-| 1 | `eat` | `aet` | new group | `{aet=[eat]}` |
-| 2 | `tea` | `aet` | append | `{aet=[eat, tea]}` |
-| 3 | `tan` | `ant` | new group | `{aet=[eat, tea], ant=[tan]}` |
-| 4 | `ate` | `aet` | append | `{aet=[eat, tea, ate], ant=[tan]}` |
-| 5 | `nat` | `ant` | append | `{aet=[eat, tea, ate], ant=[tan, nat]}` |
-| 6 | `bat` | `abt` | new group | `{aet=[eat, tea, ate], ant=[tan, nat], abt=[bat]}` |
-
-```mermaid
-flowchart LR
-    W1["eat, tea, ate"] --> K1["key aet"]
-    W2["tan, nat"] --> K2["key ant"]
-    W3["bat"] --> K3["key abt"]
-    K1 --> R(["result = values of the map"])
-    K2 --> R
-    K3 --> R
-```
-
-**Edge cases.** A `null` array returns an empty list. An array with the empty string `[""]` gives one group `[[""]]` (the key is `""`), and `["a"]` gives `[[a]]`; an empty array gives an empty list.
-
-**Result:** `[[eat, tea, ate], [tan, nat], [bat]]`, matching the class output.
-
 ## Source Code
 
 ### GroupAnagrams.java
@@ -261,3 +226,36 @@ public class GroupAnagrams {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 7 above. The version implemented in this repository is Approach 2.
+
+**Note:** the page names Approach 7 (letter-count key) as the optimized one, but the version coded in `GroupAnagrams.java` is Approach 2, the sorted-word key. The walkthrough below follows the class; Approach 7 differs only in how the key is built (a 26-slot count instead of the sorted letters).
+
+The idea: all anagrams turn into the same string when their letters are sorted (`eat`, `tea`, `ate` all become `aet`). Use that sorted string as a key in a `LinkedHashMap<String, List<String>>` and add each word to its key's list. The map keeps the groups in the order they first appeared, and the answer is the list of the map's values. Cost: sorting each word, O(n * k log k).
+
+**Input:** `strs = [eat, tea, tan, ate, nat, bat]`.
+
+| Step | `word` | Sorted key | Group action | `groups` afterwards |
+|------|--------|-----------|--------------|---------------------|
+| 1 | `eat` | `aet` | new group | `{aet=[eat]}` |
+| 2 | `tea` | `aet` | append | `{aet=[eat, tea]}` |
+| 3 | `tan` | `ant` | new group | `{aet=[eat, tea], ant=[tan]}` |
+| 4 | `ate` | `aet` | append | `{aet=[eat, tea, ate], ant=[tan]}` |
+| 5 | `nat` | `ant` | append | `{aet=[eat, tea, ate], ant=[tan, nat]}` |
+| 6 | `bat` | `abt` | new group | `{aet=[eat, tea, ate], ant=[tan, nat], abt=[bat]}` |
+
+```mermaid
+flowchart LR
+    W1["eat, tea, ate"] --> K1["key aet"]
+    W2["tan, nat"] --> K2["key ant"]
+    W3["bat"] --> K3["key abt"]
+    K1 --> R(["result = values of the map"])
+    K2 --> R
+    K3 --> R
+```
+
+**Edge cases.** A `null` array returns an empty list. An array with the empty string `[""]` gives one group `[[""]]` (the key is `""`), and `["a"]` gives `[[a]]`; an empty array gives an empty list.
+
+**Result:** `[[eat, tea, ate], [tan, nat], [bat]]`, matching the class output.

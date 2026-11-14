@@ -112,38 +112,6 @@ public void close() throws Exception {
 | 2 | Nested try-with-resources | O(1) per resource | O(1) |
 | 3 | Closer Stack with addSuppressed (Optimized) | O(r) | O(r) |
 
-### Optimized Solution
-
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: register cleanup actions as you acquire things, and close them all in reverse order (last opened, first closed) the way nested try-with-resources would. `register` pushes a `Closer` onto a `Deque` (a stack). `close()` pops and runs every closer, and a closer that throws does **not** stop the rest: the first failure becomes the `primary` exception, later failures are attached to it with `addSuppressed`, and at the end `primary` is thrown. So every resource gets a chance to close and no failure is lost. Because the manager is `AutoCloseable`, a try-with-resources block calls `close()` for you, and if the block body also threw, Java attaches the thrown close exception to the body's exception as suppressed.
-
-**Input:** register `connection` (closes fine), `statement` (throws `IllegalStateException("statement close failed")`), `cursor` (throws `IllegalArgumentException("cursor close failed")`), then the body throws `RuntimeException("query failed")`.
-
-| Step | Event | Stack top to bottom | `primary` | Output / effect |
-|------|-------|---------------------|-----------|-----------------|
-| 1 | `register` connection | connection | none | |
-| 2 | `register` statement | statement, connection | none | |
-| 3 | `register` cursor | cursor, statement, connection | none | |
-| 4 | body throws `query failed` | cursor, statement, connection | none | try-with-resources now calls `close()` |
-| 5 | `close()` pops cursor, it throws | statement, connection | cursor exception | first failure becomes `primary` |
-| 6 | pops statement, it throws | connection | cursor exception | statement exception added as suppressed to it |
-| 7 | pops connection, runs fine | empty | cursor exception | prints `closed connection` |
-| 8 | `close()` rethrows `primary` | empty | | Java adds it as suppressed to `query failed` |
-| 9 | the catch block prints | | | main exception, its suppressed, and the nested suppressed |
-
-```mermaid
-flowchart TD
-    Q["RuntimeException<br/>query failed"] -->|"suppressed"| CU["IllegalArgumentException<br/>cursor close failed"]
-    CU -->|"suppressed"| ST["IllegalStateException<br/>statement close failed"]
-```
-
-**Edge cases.** `closed` is set at the start of `close()`, so calling `register` afterwards throws `IllegalStateException("ResourceManager is already closed")`; a second `close()` finds an empty stack and does nothing. If no closer fails, `close()` returns normally. Only `Exception` is caught, so an `Error` stops the loop. Cost is O(r) time and space for `r` registered closers.
-
-**Result:** the class prints `closed connection`, then `caught query failed`, `suppressed cursor close failed` and, nested below it, `suppressed statement close failed`, which matches the trace (the output is deterministic, since it is single-threaded).
-
 ## Source Code
 
 ### ResourceManager.java
@@ -213,3 +181,33 @@ public class ResourceManager implements AutoCloseable {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+
+The idea: register cleanup actions as you acquire things, and close them all in reverse order (last opened, first closed) the way nested try-with-resources would. `register` pushes a `Closer` onto a `Deque` (a stack). `close()` pops and runs every closer, and a closer that throws does **not** stop the rest: the first failure becomes the `primary` exception, later failures are attached to it with `addSuppressed`, and at the end `primary` is thrown. So every resource gets a chance to close and no failure is lost. Because the manager is `AutoCloseable`, a try-with-resources block calls `close()` for you, and if the block body also threw, Java attaches the thrown close exception to the body's exception as suppressed.
+
+**Input:** register `connection` (closes fine), `statement` (throws `IllegalStateException("statement close failed")`), `cursor` (throws `IllegalArgumentException("cursor close failed")`), then the body throws `RuntimeException("query failed")`.
+
+| Step | Event | Stack top to bottom | `primary` | Output / effect |
+|------|-------|---------------------|-----------|-----------------|
+| 1 | `register` connection | connection | none | |
+| 2 | `register` statement | statement, connection | none | |
+| 3 | `register` cursor | cursor, statement, connection | none | |
+| 4 | body throws `query failed` | cursor, statement, connection | none | try-with-resources now calls `close()` |
+| 5 | `close()` pops cursor, it throws | statement, connection | cursor exception | first failure becomes `primary` |
+| 6 | pops statement, it throws | connection | cursor exception | statement exception added as suppressed to it |
+| 7 | pops connection, runs fine | empty | cursor exception | prints `closed connection` |
+| 8 | `close()` rethrows `primary` | empty | | Java adds it as suppressed to `query failed` |
+| 9 | the catch block prints | | | main exception, its suppressed, and the nested suppressed |
+
+```mermaid
+flowchart TD
+    Q["RuntimeException<br/>query failed"] -->|"suppressed"| CU["IllegalArgumentException<br/>cursor close failed"]
+    CU -->|"suppressed"| ST["IllegalStateException<br/>statement close failed"]
+```
+
+**Edge cases.** `closed` is set at the start of `close()`, so calling `register` afterwards throws `IllegalStateException("ResourceManager is already closed")`; a second `close()` finds an empty stack and does nothing. If no closer fails, `close()` returns normally. Only `Exception` is caught, so an `Error` stops the loop. Cost is O(r) time and space for `r` registered closers.
+
+**Result:** the class prints `closed connection`, then `caught query failed`, `suppressed cursor close failed` and, nested below it, `suppressed statement close failed`, which matches the trace (the output is deterministic, since it is single-threaded).

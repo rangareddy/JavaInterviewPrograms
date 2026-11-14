@@ -110,44 +110,6 @@ public static void flatten(TreeNode root) {
 | 2 | Reverse Preorder with a Previous Pointer | O(n) | O(h) recursion depth |
 | 3 | Splice Left Subtree into the Right (Optimized) | O(n) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: preorder visits the root, then the whole left subtree, then the right subtree. For a node with a left child, find the rightmost node of the left subtree (`tail`), hang the node's old right subtree from `tail.right`, then move the left subtree to the right and clear `left`. Moving on to `curr.right` repeats this, so the tree turns into the preorder chain in place with no stack and no recursion.
-
-**Input:** `root = [1, 2, 5, 3, 4, null, 6]` (1 has children 2 and 5; 2 has 3 and 4; 5 has only a right child 6).
-
-| Step | `curr` | Left child? | `tail` (rightmost of left subtree) | Rewiring | Chain from the root afterwards |
-|------|--------|-------------|------------------------------------|----------|--------------------------------|
-| 1 | 1 | 2 | 4 | `4.right = 5`, `1.right = 2`, `1.left = null` | 1 -> 2 (3, 4 -> 5 -> 6) |
-| 2 | 2 | 3 | 3 | `3.right = 4`, `2.right = 3`, `2.left = null` | 1 -> 2 -> 3 -> 4 -> 5 -> 6 |
-| 3 | 3 | none | | move to `3.right` | unchanged |
-| 4 | 4 | none | | move to `4.right` | unchanged |
-| 5 | 5 | none | | move to `5.right` | unchanged |
-| 6 | 6 | none | | move to `6.right` = null, loop ends | unchanged |
-
-```mermaid
-flowchart LR
-    subgraph s1["After step 1"]
-        A1["1"] -->|"right"| B1["2"]
-        B1 -->|"left"| C1["3"]
-        B1 -->|"right"| D1["4"]
-        D1 -->|"right"| E1["5"]
-        E1 -->|"right"| F1["6"]
-    end
-    subgraph s2["After step 2"]
-        A2["1"] --> B2["2"] --> C2["3"] --> D2["4"] --> E2["5"] --> F2["6"]
-    end
-    s1 --> s2
-```
-
-**Edge cases:** an empty tree makes the loop never start; a single node `[0]` or a right-only chain `[1, null, 2]` has no left child anywhere, so nothing is rewired.
-
-**Result:** reading the `right` pointers gives `[1, 2, 3, 4, 5, 6]`, the same as the class output.
-
 ## Source Code
 
 ### FlattenBinaryTreeToLinkedList.java
@@ -194,3 +156,39 @@ public class FlattenBinaryTreeToLinkedList {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+
+The idea: preorder visits the root, then the whole left subtree, then the right subtree. For a node with a left child, find the rightmost node of the left subtree (`tail`), hang the node's old right subtree from `tail.right`, then move the left subtree to the right and clear `left`. Moving on to `curr.right` repeats this, so the tree turns into the preorder chain in place with no stack and no recursion.
+
+**Input:** `root = [1, 2, 5, 3, 4, null, 6]` (1 has children 2 and 5; 2 has 3 and 4; 5 has only a right child 6).
+
+| Step | `curr` | Left child? | `tail` (rightmost of left subtree) | Rewiring | Chain from the root afterwards |
+|------|--------|-------------|------------------------------------|----------|--------------------------------|
+| 1 | 1 | 2 | 4 | `4.right = 5`, `1.right = 2`, `1.left = null` | 1 -> 2 (3, 4 -> 5 -> 6) |
+| 2 | 2 | 3 | 3 | `3.right = 4`, `2.right = 3`, `2.left = null` | 1 -> 2 -> 3 -> 4 -> 5 -> 6 |
+| 3 | 3 | none | | move to `3.right` | unchanged |
+| 4 | 4 | none | | move to `4.right` | unchanged |
+| 5 | 5 | none | | move to `5.right` | unchanged |
+| 6 | 6 | none | | move to `6.right` = null, loop ends | unchanged |
+
+```mermaid
+flowchart LR
+    subgraph s1["After step 1"]
+        A1["1"] -->|"right"| B1["2"]
+        B1 -->|"left"| C1["3"]
+        B1 -->|"right"| D1["4"]
+        D1 -->|"right"| E1["5"]
+        E1 -->|"right"| F1["6"]
+    end
+    subgraph s2["After step 2"]
+        A2["1"] --> B2["2"] --> C2["3"] --> D2["4"] --> E2["5"] --> F2["6"]
+    end
+    s1 --> s2
+```
+
+**Edge cases:** an empty tree makes the loop never start; a single node `[0]` or a right-only chain `[1, null, 2]` has no left child anywhere, so nothing is rewired.
+
+**Result:** reading the `right` pointers gives `[1, 2, 3, 4, 5, 6]`, the same as the class output.

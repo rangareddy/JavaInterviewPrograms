@@ -179,41 +179,6 @@ public static boolean canFinish(int numCourses, int[][] prerequisites) {
 | 4 | Transitive Closure (Floyd-Warshall) | O(V^3) | O(V^2) |
 | 5 | Kahn's Topological Sort (Optimized) | O(V + E) | O(V + E) |
 
-### Optimized Solution
-
-The optimized solution is Approach 5 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: courses can all be finished exactly when the prerequisite graph has no cycle, and Kahn's topological sort detects that. Build `graph[p]` = courses unlocked by `p` and `inDegree[c]` = number of prerequisites of `c` still unfinished. Courses with in-degree 0 can be taken now, so they go in the queue. Taking a course (`taken++`) removes one prerequisite from each course it unlocks; a course whose in-degree drops to 0 joins the queue. Courses on a cycle never reach in-degree 0, so if `taken == numCourses` there is no cycle. Time O(V + E).
-
-**Input:** `numCourses = 4`, `prerequisites = [[1,0],[2,0],[3,1],[3,2]]` (`[a, b]` means take `b` before `a`).
-
-Build: `graph = {0:[1,2], 1:[3], 2:[3], 3:[]}`, `inDegree = [0,1,1,2]`, initial queue = `[0]`.
-
-| Step | Course taken | `taken` | In-degree changes | Queue afterwards |
-|------|--------------|---------|-------------------|------------------|
-| 1 | 0 | 1 | `inDegree[1]` 1 -> 0 (queued), `inDegree[2]` 1 -> 0 (queued) | `1 2` |
-| 2 | 1 | 2 | `inDegree[3]` 2 -> 1 | `2` |
-| 3 | 2 | 3 | `inDegree[3]` 1 -> 0 (queued) | `3` |
-| 4 | 3 | 4 | no outgoing edges | empty |
-
-```mermaid
-flowchart LR
-    C0(["0"]) --> C1(["1"])
-    C0 --> C2(["2"])
-    C1 --> C3(["3"])
-    C2 --> C3
-```
-
-The queue is empty and `taken = 4 = numCourses`, so the result is `true`.
-
-**Cycle example:** `numCourses = 2`, `[[1,0],[0,1]]`. Both in-degrees are 1, so the initial queue is empty, the loop never runs, `taken = 0 != 2` and the result is `false`.
-
-**Edge cases.** With no prerequisites every course has in-degree 0, all are queued and taken, so the result is `true`. A course that needs only itself would never reach in-degree 0 and yields `false`.
-
-**Result:** `true` for the traced input and `false` for the cycle, matching the class output (`true`, `false`, `true` for its three samples).
-
 ## Source Code
 
 ### CourseSchedule.java
@@ -269,3 +234,36 @@ public class CourseSchedule {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 5 above, which is also the version implemented in this repository.
+
+The idea: courses can all be finished exactly when the prerequisite graph has no cycle, and Kahn's topological sort detects that. Build `graph[p]` = courses unlocked by `p` and `inDegree[c]` = number of prerequisites of `c` still unfinished. Courses with in-degree 0 can be taken now, so they go in the queue. Taking a course (`taken++`) removes one prerequisite from each course it unlocks; a course whose in-degree drops to 0 joins the queue. Courses on a cycle never reach in-degree 0, so if `taken == numCourses` there is no cycle. Time O(V + E).
+
+**Input:** `numCourses = 4`, `prerequisites = [[1,0],[2,0],[3,1],[3,2]]` (`[a, b]` means take `b` before `a`).
+
+Build: `graph = {0:[1,2], 1:[3], 2:[3], 3:[]}`, `inDegree = [0,1,1,2]`, initial queue = `[0]`.
+
+| Step | Course taken | `taken` | In-degree changes | Queue afterwards |
+|------|--------------|---------|-------------------|------------------|
+| 1 | 0 | 1 | `inDegree[1]` 1 -> 0 (queued), `inDegree[2]` 1 -> 0 (queued) | `1 2` |
+| 2 | 1 | 2 | `inDegree[3]` 2 -> 1 | `2` |
+| 3 | 2 | 3 | `inDegree[3]` 1 -> 0 (queued) | `3` |
+| 4 | 3 | 4 | no outgoing edges | empty |
+
+```mermaid
+flowchart LR
+    C0(["0"]) --> C1(["1"])
+    C0 --> C2(["2"])
+    C1 --> C3(["3"])
+    C2 --> C3
+```
+
+The queue is empty and `taken = 4 = numCourses`, so the result is `true`.
+
+**Cycle example:** `numCourses = 2`, `[[1,0],[0,1]]`. Both in-degrees are 1, so the initial queue is empty, the loop never runs, `taken = 0 != 2` and the result is `false`.
+
+**Edge cases.** With no prerequisites every course has in-degree 0, all are queued and taken, so the result is `true`. A course that needs only itself would never reach in-degree 0 and yields `false`.
+
+**Result:** `true` for the traced input and `false` for the cycle, matching the class output (`true`, `false`, `true` for its three samples).

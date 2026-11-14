@@ -166,11 +166,43 @@ public static ListNode reverseList(ListNode head) {
 | 6 | Collections.reverse on the Values | O(n) | O(n) |
 | 7 | Iterative Pointer Reversal (Optimized) | O(n) | O(1) |
 
-### Optimized Solution
+## Source Code
+
+Uses the shared helper [`ListNode`](../../src/main/java/com/ranga/linkedlist/ListNode.java) (a small `ListNode` with `of(...)` and `toString(...)` helpers for building and printing test data).
+
+### ReverseLinkedList.java
+
+```java
+import com.ranga.linkedlist.ListNode;
+
+public class ReverseLinkedList {
+
+    public static void main(String[] args) {
+        ListNode[] inputs = {ListNode.of(1, 2, 3, 4, 5), ListNode.of(1, 2), ListNode.of()};
+        for (ListNode head : inputs) {
+            System.out.println("Input  : head = " + ListNode.toString(head));
+            System.out.println("Output : " + ListNode.toString(reverseList(head)));
+            System.out.println();
+        }
+    }
+
+    public static ListNode reverseList(ListNode head) {
+        ListNode prev = null;
+        ListNode curr = head;
+        while (curr != null) {
+            ListNode next = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = next;
+        }
+        return prev;
+    }
+}
+```
+
+## Solution
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
 
 The idea: walk the list once and turn every `next` pointer around, so each node points at the node before it. Three variables do all the work: `prev` (the already reversed part), `curr` (the node being turned) and `next` (saved first, because turning `curr.next` would otherwise lose the rest of the list).
 
@@ -205,37 +237,3 @@ flowchart LR
 ```
 
 **Edge cases.** An empty list (`head == null`) never enters the loop and returns `prev = null`; a one-node list is turned once (`1.next = null`) and returns itself. Only three pointers are kept, so the extra space is `O(1)`.
-
-## Source Code
-
-Uses the shared helper [`ListNode`](../../src/main/java/com/ranga/linkedlist/ListNode.java) (a small `ListNode` with `of(...)` and `toString(...)` helpers for building and printing test data).
-
-### ReverseLinkedList.java
-
-```java
-import com.ranga.linkedlist.ListNode;
-
-public class ReverseLinkedList {
-
-    public static void main(String[] args) {
-        ListNode[] inputs = {ListNode.of(1, 2, 3, 4, 5), ListNode.of(1, 2), ListNode.of()};
-        for (ListNode head : inputs) {
-            System.out.println("Input  : head = " + ListNode.toString(head));
-            System.out.println("Output : " + ListNode.toString(reverseList(head)));
-            System.out.println();
-        }
-    }
-
-    public static ListNode reverseList(ListNode head) {
-        ListNode prev = null;
-        ListNode curr = head;
-        while (curr != null) {
-            ListNode next = curr.next;
-            curr.next = prev;
-            prev = curr;
-            curr = next;
-        }
-        return prev;
-    }
-}
-```

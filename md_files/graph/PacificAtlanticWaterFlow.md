@@ -290,65 +290,6 @@ private static void dfs(int[][] h, boolean[][] reachable, int i, int j) {
 | 6 | Recursive DFS with a Bit Mask | O(m * n) | O(m * n) |
 | 7 | Reverse DFS from Both Oceans (Optimized) | O(m * n) | O(m * n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 7 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: instead of asking from every cell "can water get out to both oceans?", walk backwards from the oceans. Water can flow from a cell to a neighbour that is lower or equal, so going backwards from an ocean cell we may step to any neighbour that is **higher or equal** (`heights[x][y] >= heights[i][j]`). One DFS pass from every Pacific border cell marks all cells that can reach the Pacific (`pacific[][]`), another pass from every Atlantic border cell marks the cells that can reach the Atlantic (`atlantic[][]`). A cell in both masks is part of the answer. A cell already marked is never entered again, so each cell is visited at most once per ocean: O(m * n).
-
-**Input:** the 5 x 5 grid
-
-```text
-1 2 2 3 5
-3 2 3 4 4
-2 4 5 3 1
-6 7 1 4 5
-5 1 1 2 4
-```
-
-The code starts a DFS from `(i, 0)` (Pacific) and `(i, 4)` (Atlantic) for every row, then from `(0, j)` (Pacific) and `(rows-1, j)` (Atlantic) for every column. Neighbours are tried in the order down, up, right, left. A start cell that is already marked does nothing.
-
-Pacific searches (cells newly marked, in visiting order):
-
-| Start | Newly marked cells |
-|-------|--------------------|
-| `(0,0)` | `(0,0) (1,0) (0,1) (1,1) (2,1) (3,1) (2,2) (1,2) (1,3) (1,4) (0,4) (0,2) (0,3)` |
-| `(1,0)` | none (already marked) |
-| `(2,0)` | `(2,0) (3,0)` |
-| `(3,0)` | none |
-| `(4,0)` | `(4,0)` |
-| `(0,1)` ... `(0,4)` | none (all already marked) |
-
-Atlantic searches:
-
-| Start | Newly marked cells |
-|-------|--------------------|
-| `(0,4)` | `(0,4)` |
-| `(1,4)` | `(1,4) (1,3)` |
-| `(2,4)` | `(2,4) (3,4) (2,3) (3,3) (2,2)` |
-| `(3,4)` | none |
-| `(4,4)` | `(4,4)` |
-| `(4,0)` | `(4,0) (3,0) (3,1)` |
-| `(4,1)` | `(4,1) (4,2) (3,2) (4,3)` |
-| `(4,2)`, `(4,3)`, `(4,4)` | none |
-
-```text
-pacific (X = reaches)   atlantic (X = reaches)   both
-X X X X X               . . . . X                . . . . X
-X X X X X               . . . X X                . . . X X
-X X X . .               . . X X X                . . X . .
-X X . . .               X X X X X                X X . . .
-X . . . .               X X X X X                X . . . .
-```
-
-The final row-major scan keeps the cells that are `X` in both masks: `(0,4) (1,3) (1,4) (2,2) (3,0) (3,1) (4,0)`.
-
-**Edge cases.** A `null` or empty grid returns an empty list. A 1 x 1 grid `[[1]]` is both a Pacific and an Atlantic border cell, so both searches mark it and the result is `[[0, 0]]`. Single-row or single-column grids work the same way because every cell is then on a border.
-
-**Result:** `[[0, 4], [1, 3], [1, 4], [2, 2], [3, 0], [3, 1], [4, 0]]`, identical to the output of the class (and `[[0, 0]]` for `[[1]]`).
-
 ## Source Code
 
 ### PacificAtlanticWaterFlow.java
@@ -416,3 +357,60 @@ public class PacificAtlanticWaterFlow {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
+
+The idea: instead of asking from every cell "can water get out to both oceans?", walk backwards from the oceans. Water can flow from a cell to a neighbour that is lower or equal, so going backwards from an ocean cell we may step to any neighbour that is **higher or equal** (`heights[x][y] >= heights[i][j]`). One DFS pass from every Pacific border cell marks all cells that can reach the Pacific (`pacific[][]`), another pass from every Atlantic border cell marks the cells that can reach the Atlantic (`atlantic[][]`). A cell in both masks is part of the answer. A cell already marked is never entered again, so each cell is visited at most once per ocean: O(m * n).
+
+**Input:** the 5 x 5 grid
+
+```text
+1 2 2 3 5
+3 2 3 4 4
+2 4 5 3 1
+6 7 1 4 5
+5 1 1 2 4
+```
+
+The code starts a DFS from `(i, 0)` (Pacific) and `(i, 4)` (Atlantic) for every row, then from `(0, j)` (Pacific) and `(rows-1, j)` (Atlantic) for every column. Neighbours are tried in the order down, up, right, left. A start cell that is already marked does nothing.
+
+Pacific searches (cells newly marked, in visiting order):
+
+| Start | Newly marked cells |
+|-------|--------------------|
+| `(0,0)` | `(0,0) (1,0) (0,1) (1,1) (2,1) (3,1) (2,2) (1,2) (1,3) (1,4) (0,4) (0,2) (0,3)` |
+| `(1,0)` | none (already marked) |
+| `(2,0)` | `(2,0) (3,0)` |
+| `(3,0)` | none |
+| `(4,0)` | `(4,0)` |
+| `(0,1)` ... `(0,4)` | none (all already marked) |
+
+Atlantic searches:
+
+| Start | Newly marked cells |
+|-------|--------------------|
+| `(0,4)` | `(0,4)` |
+| `(1,4)` | `(1,4) (1,3)` |
+| `(2,4)` | `(2,4) (3,4) (2,3) (3,3) (2,2)` |
+| `(3,4)` | none |
+| `(4,4)` | `(4,4)` |
+| `(4,0)` | `(4,0) (3,0) (3,1)` |
+| `(4,1)` | `(4,1) (4,2) (3,2) (4,3)` |
+| `(4,2)`, `(4,3)`, `(4,4)` | none |
+
+```text
+pacific (X = reaches)   atlantic (X = reaches)   both
+X X X X X               . . . . X                . . . . X
+X X X X X               . . . X X                . . . X X
+X X X . .               . . X X X                . . X . .
+X X . . .               X X X X X                X X . . .
+X . . . .               X X X X X                X . . . .
+```
+
+The final row-major scan keeps the cells that are `X` in both masks: `(0,4) (1,3) (1,4) (2,2) (3,0) (3,1) (4,0)`.
+
+**Edge cases.** A `null` or empty grid returns an empty list. A 1 x 1 grid `[[1]]` is both a Pacific and an Atlantic border cell, so both searches mark it and the result is `[[0, 0]]`. Single-row or single-column grids work the same way because every cell is then on a border.
+
+**Result:** `[[0, 4], [1, 3], [1, 4], [2, 2], [3, 0], [3, 1], [4, 0]]`, identical to the output of the class (and `[[0, 0]]` for `[[1]]`).

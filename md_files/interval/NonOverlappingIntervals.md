@@ -206,34 +206,6 @@ public static int eraseOverlapIntervals(int[][] intervals) {
 | 6 | Activity Selection with a Min-Heap on End Times | O(n log n) | O(n) |
 | 7 | Greedy: Sort by End (Optimized) | O(n log n) | O(1) besides the sort |
 
-### Optimized Solution
-
-The optimized solution is Approach 7 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: this is the classic greedy choice. To remove as few intervals as possible, keep as many as possible, and the best way to keep many is to always keep the interval that ends earliest, because it leaves the most room for the rest. So sort a copy by end time and scan once: an interval that starts at or after `lastEnd` fits, so keep it and move `lastEnd` to its end; an interval that starts before `lastEnd` overlaps the kept one, and since the kept one ends no later, the new one is the one to remove (`removed++`). The number removed is the answer. Time O(n log n), the sort dominates.
-
-**Input:** `[[1, 2], [2, 3], [3, 4], [1, 3]]`. Sorted by end: `[[1, 2], [2, 3], [1, 3], [3, 4]]` (the sort is stable, so `[2, 3]` stays before `[1, 3]`). Start: `lastEnd = 2` (end of the first), `removed = 0`.
-
-| Step | Interval | start >= lastEnd ? | Action | lastEnd | removed |
-|------|----------|--------------------|--------|---------|---------|
-| 1 | `[2, 3]` | 2 >= 2 yes | keep | 3 | 0 |
-| 2 | `[1, 3]` | 1 >= 3 no | overlap, remove | 3 | 1 |
-| 3 | `[3, 4]` | 3 >= 3 yes | keep | 4 | 1 |
-
-```text
-sorted by end:   1-2
-                   2-3
-                 1---3     <- overlaps the kept 2-3, removed
-                     3-4
-kept: [1,2] [2,3] [3,4]
-```
-
-**Edge cases.** `null` or empty input returns 0. Intervals that only touch (`[1, 2]`, `[2, 3]`) do not overlap because the test is `>=`, so that input returns 0. Identical intervals `[[1, 2], [1, 2], [1, 2]]` keep one and remove two. The input is cloned before sorting, so the caller's array order is unchanged.
-
-**Result:** `1`, matching the class output.
-
 ## Source Code
 
 ### NonOverlappingIntervals.java
@@ -274,3 +246,29 @@ public class NonOverlappingIntervals {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
+
+The idea: this is the classic greedy choice. To remove as few intervals as possible, keep as many as possible, and the best way to keep many is to always keep the interval that ends earliest, because it leaves the most room for the rest. So sort a copy by end time and scan once: an interval that starts at or after `lastEnd` fits, so keep it and move `lastEnd` to its end; an interval that starts before `lastEnd` overlaps the kept one, and since the kept one ends no later, the new one is the one to remove (`removed++`). The number removed is the answer. Time O(n log n), the sort dominates.
+
+**Input:** `[[1, 2], [2, 3], [3, 4], [1, 3]]`. Sorted by end: `[[1, 2], [2, 3], [1, 3], [3, 4]]` (the sort is stable, so `[2, 3]` stays before `[1, 3]`). Start: `lastEnd = 2` (end of the first), `removed = 0`.
+
+| Step | Interval | start >= lastEnd ? | Action | lastEnd | removed |
+|------|----------|--------------------|--------|---------|---------|
+| 1 | `[2, 3]` | 2 >= 2 yes | keep | 3 | 0 |
+| 2 | `[1, 3]` | 1 >= 3 no | overlap, remove | 3 | 1 |
+| 3 | `[3, 4]` | 3 >= 3 yes | keep | 4 | 1 |
+
+```text
+sorted by end:   1-2
+                   2-3
+                 1---3     <- overlaps the kept 2-3, removed
+                     3-4
+kept: [1,2] [2,3] [3,4]
+```
+
+**Edge cases.** `null` or empty input returns 0. Intervals that only touch (`[1, 2]`, `[2, 3]`) do not overlap because the test is `>=`, so that input returns 0. Identical intervals `[[1, 2], [1, 2], [1, 2]]` keep one and remove two. The input is cloned before sorting, so the caller's array order is unchanged.
+
+**Result:** `1`, matching the class output.

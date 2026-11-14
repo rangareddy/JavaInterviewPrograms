@@ -104,32 +104,6 @@ public static String reorganizeString(String s) {
 | 1 | Fill Even Positions, Then Odd Positions | O(n) | O(n) |
 | 2 | Max-Heap (Optimized) | O(n log k) | O(k) |
 
-### Optimized Solution
-
-The optimized solution is Approach 2 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: a string can be rearranged only if no character appears more than `(n + 1) / 2` times. Then use a max-heap of `(character, count)`: repeatedly take the two most frequent characters (always different), append both, decrement their counts and push back the ones that still have copies. Spending the most frequent characters first stops a big group from being left for the end. If one character remains in the heap at the end, append it.
-
-**Input:** `s = "vvvlo"` (length 5, limit `(5 + 1) / 2 = 3`). Counts: `l = 1`, `o = 1`, `v = 3`; `v` is not above 3, so the heap is built: `v(3), l(1), o(1)`.
-
-| Round | Heap before | `first` | `second` | Appended | Pushed back | Result so far |
-|-------|-------------|---------|----------|----------|-------------|---------------|
-| 1 | `v3, l1, o1` | `v` | `l` | `vl` | `v2` | `vl` |
-| 2 | `v2, o1` | `v` | `o` | `vo` | `v1` | `vlvo` |
-| 3 | `v1` (size 1, loop ends) | | | final `v` | | `vlvov` |
-
-In round 1 `l` and `o` have the same count, so which one is second depends on the heap's internal tie handling; the class output shows `l`.
-
-```text
-v l v o v     <- no two equal neighbours
-```
-
-**Edge cases:** `"aaab"` has `a` three times, above `(4 + 1) / 2 = 2`, so it returns `""`. A single character `"a"` skips the loop and returns `"a"`. For `"aab"` the rounds give `ab`, then the leftover `a`: `"aba"`.
-
-**Result:** `"vlvov"`, the same as the class output.
-
 ## Source Code
 
 ### ReorganizeString.java
@@ -181,3 +155,27 @@ public class ReorganizeString {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+
+The idea: a string can be rearranged only if no character appears more than `(n + 1) / 2` times. Then use a max-heap of `(character, count)`: repeatedly take the two most frequent characters (always different), append both, decrement their counts and push back the ones that still have copies. Spending the most frequent characters first stops a big group from being left for the end. If one character remains in the heap at the end, append it.
+
+**Input:** `s = "vvvlo"` (length 5, limit `(5 + 1) / 2 = 3`). Counts: `l = 1`, `o = 1`, `v = 3`; `v` is not above 3, so the heap is built: `v(3), l(1), o(1)`.
+
+| Round | Heap before | `first` | `second` | Appended | Pushed back | Result so far |
+|-------|-------------|---------|----------|----------|-------------|---------------|
+| 1 | `v3, l1, o1` | `v` | `l` | `vl` | `v2` | `vl` |
+| 2 | `v2, o1` | `v` | `o` | `vo` | `v1` | `vlvo` |
+| 3 | `v1` (size 1, loop ends) | | | final `v` | | `vlvov` |
+
+In round 1 `l` and `o` have the same count, so which one is second depends on the heap's internal tie handling; the class output shows `l`.
+
+```text
+v l v o v     <- no two equal neighbours
+```
+
+**Edge cases:** `"aaab"` has `a` three times, above `(4 + 1) / 2 = 2`, so it returns `""`. A single character `"a"` skips the loop and returns `"a"`. For `"aab"` the rounds give `ab`, then the leftover `a`: `"aba"`.
+
+**Result:** `"vlvov"`, the same as the class output.

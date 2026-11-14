@@ -205,11 +205,36 @@ public static int maxDepth(TreeNode root) {
 | 6 | Parallel Fork/Join | O(n) work | O(h) |
 | 7 | Recursive DFS (Optimized) | O(n) | O(h) |
 
-### Optimized Solution
+## Source Code
+
+Uses the shared helper [`TreeNode`](../../src/main/java/com/ranga/tree/TreeNode.java) (a small `TreeNode` with `of(...)` and `toString(...)` helpers for building and printing test data).
+
+### MaximumDepthOfBinaryTree.java
+
+```java
+public class MaximumDepthOfBinaryTree {
+
+    public static void main(String[] args) {
+        TreeNode[] inputs = {TreeNode.of(3, 9, 20, null, null, 15, 7), TreeNode.of(1, null, 2), TreeNode.of()};
+        for (TreeNode root : inputs) {
+            System.out.println("Input  : root = " + TreeNode.toString(root));
+            System.out.println("Output : " + maxDepth(root));
+            System.out.println();
+        }
+    }
+
+    public static int maxDepth(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));
+    }
+}
+```
+
+## Solution
 
 The optimized solution is Approach 7 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
 
 The idea: the depth of a tree is 1 (for the root) plus the depth of its deeper subtree, and an empty tree has depth 0. The method simply asks both children for their depth, keeps the larger answer and adds one on the way back up.
 
@@ -242,30 +267,3 @@ Calls happen top-down, left child first; values come back bottom-up. The order i
 **Edge cases.** An empty tree (`root == null`) returns `0`; this is also the base case that stops the recursion below every leaf. For `[1, null, 2]` the left result is `0` and the right is `1`, so the answer is `2` (a skewed tree makes the recursion as deep as the tree, so the stack use is `O(h)`).
 
 **Result:** `3` for the traced tree, `2` for `[1, null, 2]` and `0` for the empty tree, matching the class output.
-
-## Source Code
-
-Uses the shared helper [`TreeNode`](../../src/main/java/com/ranga/tree/TreeNode.java) (a small `TreeNode` with `of(...)` and `toString(...)` helpers for building and printing test data).
-
-### MaximumDepthOfBinaryTree.java
-
-```java
-public class MaximumDepthOfBinaryTree {
-
-    public static void main(String[] args) {
-        TreeNode[] inputs = {TreeNode.of(3, 9, 20, null, null, 15, 7), TreeNode.of(1, null, 2), TreeNode.of()};
-        for (TreeNode root : inputs) {
-            System.out.println("Input  : root = " + TreeNode.toString(root));
-            System.out.println("Output : " + maxDepth(root));
-            System.out.println();
-        }
-    }
-
-    public static int maxDepth(TreeNode root) {
-        if (root == null) {
-            return 0;
-        }
-        return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));
-    }
-}
-```

@@ -99,35 +99,6 @@ public static int firstUniqueChar(String s) {
 | 3 | LinkedHashMap of Counts | O(n) | O(k) |
 | 4 | Two Passes with a Count Array (Optimized) | O(n) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: a character is the answer only after its total count is known, so use two passes. Pass 1 counts every letter in a 26-slot array. Pass 2 scans the string again from the left and returns the first index whose letter has a count of exactly 1. Two linear passes with a fixed-size array give O(n) time and O(1) space.
-
-**Input:** `s = "loveleetcode"`.
-
-Pass 1 result: `l=2, o=2, v=1, e=4, t=1, c=1, d=1`.
-
-| Step (pass 2) | `i` | `s[i]` | `counts` of that letter | Unique? |
-|---------------|-----|--------|-------------------------|---------|
-| 1 | 0 | `l` | 2 | no |
-| 2 | 1 | `o` | 2 | no |
-| 3 | 2 | `v` | 1 | **yes, return 2** |
-
-```text
-index : 0 1 2 3 4 5 6 7 8 9 10 11
-char  : l o v e l e e t c o d  e
-count : 2 2 1 4 2 4 4 1 1 2 1  4
-                ^ first count of 1
-```
-
-**Edge cases.** If every letter repeats (`"aabb"`) pass 2 ends without a hit and `-1` is returned. The empty string also returns `-1`; `"z"` returns `0`. The array has 26 slots, so the code assumes lowercase letters `a` to `z`.
-
-**Result:** `2` (the letter `v`), matching the class output (`"leetcode"` gives `0`).
-
 ## Source Code
 
 ### FirstNonRepeatingCharacter.java
@@ -160,3 +131,30 @@ public class FirstNonRepeatingCharacter {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: a character is the answer only after its total count is known, so use two passes. Pass 1 counts every letter in a 26-slot array. Pass 2 scans the string again from the left and returns the first index whose letter has a count of exactly 1. Two linear passes with a fixed-size array give O(n) time and O(1) space.
+
+**Input:** `s = "loveleetcode"`.
+
+Pass 1 result: `l=2, o=2, v=1, e=4, t=1, c=1, d=1`.
+
+| Step (pass 2) | `i` | `s[i]` | `counts` of that letter | Unique? |
+|---------------|-----|--------|-------------------------|---------|
+| 1 | 0 | `l` | 2 | no |
+| 2 | 1 | `o` | 2 | no |
+| 3 | 2 | `v` | 1 | **yes, return 2** |
+
+```text
+index : 0 1 2 3 4 5 6 7 8 9 10 11
+char  : l o v e l e e t c o d  e
+count : 2 2 1 4 2 4 4 1 1 2 1  4
+                ^ first count of 1
+```
+
+**Edge cases.** If every letter repeats (`"aabb"`) pass 2 ends without a hit and `-1` is returned. The empty string also returns `-1`; `"z"` returns `0`. The array has 26 slots, so the code assumes lowercase letters `a` to `z`.
+
+**Result:** `2` (the letter `v`), matching the class output (`"leetcode"` gives `0`).

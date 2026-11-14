@@ -144,39 +144,6 @@ private static int findRoot(int[] parent, int node) {
 | 3 | Union-Find with Union by Size | O(n * alpha(n)) | O(n) |
 | 4 | Union-Find (Optimized) | O(n * alpha(n)) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: the input is a tree with one extra edge. Processing the edges in order with Union-Find, the first edge whose two endpoints already have the same root closes the cycle. That edge is the last cycle edge in the input order, which is the one to remove, so it is returned. `parent` has `edges.length + 1` slots because nodes are numbered from 1. Each edge costs one `find` per endpoint (path halving keeps them near-constant).
-
-**Input:** `edges = [[1,2],[2,3],[3,4],[1,4],[1,5]]`. Start: `parent = [0,1,2,3,4,5]`.
-
-| Edge | `find(a)` | `find(b)` | Same root? | `parent` afterwards |
-|------|-----------|-----------|------------|---------------------|
-| `[1,2]` | 1 | 2 | no, `parent[1] = 2` | `[0,2,2,3,4,5]` |
-| `[2,3]` | 2 | 3 | no, `parent[2] = 3` | `[0,2,3,3,4,5]` |
-| `[3,4]` | 3 | 4 | no, `parent[3] = 4` | `[0,2,3,4,4,5]` |
-| `[1,4]` | 4 | 4 | **yes** | return `[1,4]` |
-
-(Finding the root of 1 follows `1 -> 2 -> 3 -> 4`, so both ends of `[1,4]` have root 4: nodes 1 to 4 are already connected through the path 1-2-3-4, and this edge closes that cycle. `[1,5]` is never examined.)
-
-```mermaid
-flowchart LR
-    N1(["1"]) --- N2(["2"])
-    N2 --- N3(["3"])
-    N3 --- N4(["4"])
-    N4 -.->|"redundant edge 1-4"| N1
-```
-
-The method returns the edge itself, `[1, 4]`.
-
-**Edge cases.** For `[[1,2],[1,2]]` the second edge finds equal roots and `[1, 2]` is returned. If no edge closes a cycle (not possible for valid input) the loop ends and an empty array `[]` is returned.
-
-**Result:** `[1, 4]` for the traced input, matching the class output (`[2, 3]`, `[1, 4]`, `[1, 2]`, `[1, 3]` for its four samples).
-
 ## Source Code
 
 ### RedundantConnection.java
@@ -226,3 +193,34 @@ public class RedundantConnection {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: the input is a tree with one extra edge. Processing the edges in order with Union-Find, the first edge whose two endpoints already have the same root closes the cycle. That edge is the last cycle edge in the input order, which is the one to remove, so it is returned. `parent` has `edges.length + 1` slots because nodes are numbered from 1. Each edge costs one `find` per endpoint (path halving keeps them near-constant).
+
+**Input:** `edges = [[1,2],[2,3],[3,4],[1,4],[1,5]]`. Start: `parent = [0,1,2,3,4,5]`.
+
+| Edge | `find(a)` | `find(b)` | Same root? | `parent` afterwards |
+|------|-----------|-----------|------------|---------------------|
+| `[1,2]` | 1 | 2 | no, `parent[1] = 2` | `[0,2,2,3,4,5]` |
+| `[2,3]` | 2 | 3 | no, `parent[2] = 3` | `[0,2,3,3,4,5]` |
+| `[3,4]` | 3 | 4 | no, `parent[3] = 4` | `[0,2,3,4,4,5]` |
+| `[1,4]` | 4 | 4 | **yes** | return `[1,4]` |
+
+(Finding the root of 1 follows `1 -> 2 -> 3 -> 4`, so both ends of `[1,4]` have root 4: nodes 1 to 4 are already connected through the path 1-2-3-4, and this edge closes that cycle. `[1,5]` is never examined.)
+
+```mermaid
+flowchart LR
+    N1(["1"]) --- N2(["2"])
+    N2 --- N3(["3"])
+    N3 --- N4(["4"])
+    N4 -.->|"redundant edge 1-4"| N1
+```
+
+The method returns the edge itself, `[1, 4]`.
+
+**Edge cases.** For `[[1,2],[1,2]]` the second edge finds equal roots and `[1, 2]` is returned. If no edge closes a cycle (not possible for valid input) the loop ends and an empty array `[]` is returned.
+
+**Result:** `[1, 4]` for the traced input, matching the class output (`[2, 3]`, `[1, 4]`, `[1, 2]`, `[1, 3]` for its four samples).

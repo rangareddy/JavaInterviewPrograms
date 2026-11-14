@@ -114,37 +114,6 @@ public static boolean anagramXorWrong(String a, String b) {
 | 3 | Frequency Array (Optimized) | O(n) | O(1) (fixed-size array) |
 | 4 | Pitfall: XOR of All Characters (Incorrect) | O(n) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 3 above. The version implemented in this repository is Approach 2.
-
-#### Optimized solution explained
-
-**Note:** the page names Approach 3 (frequency array) as the optimized one, but the version coded in `Anagram.java` is Approach 2, the `HashMap` frequency count. The walkthrough below follows the class; the array version works the same way with `int[256]` in place of the map.
-
-The idea: two strings are anagrams when they have the same length and the same count of every character. Count the characters of the first string in a map, then for each character of the second string take one away. A character that is missing or already at 0 proves a mismatch. Equal lengths guarantee that, if no mismatch is found, every count ends at 0.
-
-**Input:** `str1 = "listen"`, `str2 = "silent"`. Both have length 6.
-
-Counting `str1`: `counts = {l=1, i=1, s=1, t=1, e=1, n=1}`.
-
-| Step | Char of `str2` | `counts.get` | Action | `counts` afterwards |
-|------|----------------|--------------|--------|---------------------|
-| 1 | `s` | 1 | decrement | `s=0`, others 1 |
-| 2 | `i` | 1 | decrement | `s=0, i=0` |
-| 3 | `l` | 1 | decrement | `s=0, i=0, l=0` |
-| 4 | `e` | 1 | decrement | `s=0, i=0, l=0, e=0` |
-| 5 | `n` | 1 | decrement | `s=0, i=0, l=0, e=0, n=0` |
-| 6 | `t` | 1 | decrement | all counts 0 |
-
-The loop finishes without a mismatch, so the method returns `true`.
-
-**A failing case.** For `"aa"` and `"bb"`: `counts = {a=2}`; the first `b` has `count == null`, so the method returns `false` at once.
-
-**Edge cases.** The guard clause returns `false` for a `null` argument or different lengths before any counting (for example `"bac"` and `"bacd"`, or `"abc"` and `null`).
-
-**Result:** `listen`/`silent` gives `Anagram`, `aa`/`bb` gives `Not an Anagram`, matching the class output.
-
 ## Source Code
 
 ### Anagram.java
@@ -196,3 +165,32 @@ public class Anagram {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 3 above. The version implemented in this repository is Approach 2.
+
+**Note:** the page names Approach 3 (frequency array) as the optimized one, but the version coded in `Anagram.java` is Approach 2, the `HashMap` frequency count. The walkthrough below follows the class; the array version works the same way with `int[256]` in place of the map.
+
+The idea: two strings are anagrams when they have the same length and the same count of every character. Count the characters of the first string in a map, then for each character of the second string take one away. A character that is missing or already at 0 proves a mismatch. Equal lengths guarantee that, if no mismatch is found, every count ends at 0.
+
+**Input:** `str1 = "listen"`, `str2 = "silent"`. Both have length 6.
+
+Counting `str1`: `counts = {l=1, i=1, s=1, t=1, e=1, n=1}`.
+
+| Step | Char of `str2` | `counts.get` | Action | `counts` afterwards |
+|------|----------------|--------------|--------|---------------------|
+| 1 | `s` | 1 | decrement | `s=0`, others 1 |
+| 2 | `i` | 1 | decrement | `s=0, i=0` |
+| 3 | `l` | 1 | decrement | `s=0, i=0, l=0` |
+| 4 | `e` | 1 | decrement | `s=0, i=0, l=0, e=0` |
+| 5 | `n` | 1 | decrement | `s=0, i=0, l=0, e=0, n=0` |
+| 6 | `t` | 1 | decrement | all counts 0 |
+
+The loop finishes without a mismatch, so the method returns `true`.
+
+**A failing case.** For `"aa"` and `"bb"`: `counts = {a=2}`; the first `b` has `count == null`, so the method returns `false` at once.
+
+**Edge cases.** The guard clause returns `false` for a `null` argument or different lengths before any counting (for example `"bac"` and `"bacd"`, or `"abc"` and `null`).
+
+**Result:** `listen`/`silent` gives `Anagram`, `aa`/`bb` gives `Not an Anagram`, matching the class output.

@@ -201,39 +201,6 @@ public static void setZeroes(int[][] matrix) {
 | 6 | Constant Space with matrix[0][0] as a Shared Marker | O(m * n) | O(1) |
 | 7 | First Row and Column as Markers (Optimized) | O(m * n) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 7 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: instead of an extra row and column array, use the matrix's own first row and first column as the markers. If cell `(i, j)` is `0`, set `matrix[i][0] = 0` ("row i must be zeroed") and `matrix[0][j] = 0` ("column j must be zeroed"). Because the first row and column are reused as markers, two booleans remember whether they originally contained a zero. Then the inner cells are zeroed from the markers, and last the first row and column themselves.
-
-**Input:** `[[1, 1, 1], [1, 0, 1], [1, 1, 1]]`.
-
-| Phase | What happens | Matrix afterwards |
-|-------|--------------|-------------------|
-| 1 | check first row and first column for zeros: none, `firstRowZero = firstColZero = false` | [[1,1,1],[1,0,1],[1,1,1]] |
-| 2 | scan inner cells: `(1,1)` is 0, so set `matrix[1][0] = 0` and `matrix[0][1] = 0` | [[1,**0**,1],[**0**,0,1],[1,1,1]] |
-| 3 | inner cell `(1,1)`: marker `matrix[1][0]` is 0 | stays 0 |
-| 3 | inner cell `(1,2)`: marker `matrix[1][0]` is 0 | [[1,0,1],[0,0,**0**],[1,1,1]] |
-| 3 | inner cell `(2,1)`: marker `matrix[0][1]` is 0 | [[1,0,1],[0,0,0],[1,**0**,1]] |
-| 3 | inner cell `(2,2)`: markers `matrix[2][0] = 1` and `matrix[0][2] = 1`, no change | [[1,0,1],[0,0,0],[1,0,1]] |
-| 4 | both flags are false, so the first row and column are left as they are | [[1,0,1],[0,0,0],[1,0,1]] |
-
-```text
-markers (first row/col)         final
- 1 [0] 1                         1  0  1
-[0] 0  1       ------>           0  0  0
- 1  1  1                         1  0  1
-```
-
-**Why the flags matter.** For `[[0, 1, 2, 0], [3, 4, 5, 2], [1, 3, 1, 5]]` the first row and column already contain a `0` (`firstRowZero = firstColZero = true`). No inner cell is zero, but the first-row marker at column 3 zeroes inner cells `(1,3)` and `(2,3)`. Finally the flags zero the whole first row and first column, giving `[[0,0,0,0],[0,4,5,0],[0,3,1,0]]`.
-
-**Edge cases.** `null` or a matrix with no rows returns immediately. All work is in place, O(1) extra space.
-
-**Result:** `[[1, 0, 1], [0, 0, 0], [1, 0, 1]]`, matching the class output.
-
 ## Source Code
 
 ### SetMatrixZeroes.java
@@ -308,3 +275,34 @@ public class SetMatrixZeroes {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
+
+The idea: instead of an extra row and column array, use the matrix's own first row and first column as the markers. If cell `(i, j)` is `0`, set `matrix[i][0] = 0` ("row i must be zeroed") and `matrix[0][j] = 0` ("column j must be zeroed"). Because the first row and column are reused as markers, two booleans remember whether they originally contained a zero. Then the inner cells are zeroed from the markers, and last the first row and column themselves.
+
+**Input:** `[[1, 1, 1], [1, 0, 1], [1, 1, 1]]`.
+
+| Phase | What happens | Matrix afterwards |
+|-------|--------------|-------------------|
+| 1 | check first row and first column for zeros: none, `firstRowZero = firstColZero = false` | [[1,1,1],[1,0,1],[1,1,1]] |
+| 2 | scan inner cells: `(1,1)` is 0, so set `matrix[1][0] = 0` and `matrix[0][1] = 0` | [[1,**0**,1],[**0**,0,1],[1,1,1]] |
+| 3 | inner cell `(1,1)`: marker `matrix[1][0]` is 0 | stays 0 |
+| 3 | inner cell `(1,2)`: marker `matrix[1][0]` is 0 | [[1,0,1],[0,0,**0**],[1,1,1]] |
+| 3 | inner cell `(2,1)`: marker `matrix[0][1]` is 0 | [[1,0,1],[0,0,0],[1,**0**,1]] |
+| 3 | inner cell `(2,2)`: markers `matrix[2][0] = 1` and `matrix[0][2] = 1`, no change | [[1,0,1],[0,0,0],[1,0,1]] |
+| 4 | both flags are false, so the first row and column are left as they are | [[1,0,1],[0,0,0],[1,0,1]] |
+
+```text
+markers (first row/col)         final
+ 1 [0] 1                         1  0  1
+[0] 0  1       ------>           0  0  0
+ 1  1  1                         1  0  1
+```
+
+**Why the flags matter.** For `[[0, 1, 2, 0], [3, 4, 5, 2], [1, 3, 1, 5]]` the first row and column already contain a `0` (`firstRowZero = firstColZero = true`). No inner cell is zero, but the first-row marker at column 3 zeroes inner cells `(1,3)` and `(2,3)`. Finally the flags zero the whole first row and first column, giving `[[0,0,0,0],[0,4,5,0],[0,3,1,0]]`.
+
+**Edge cases.** `null` or a matrix with no rows returns immediately. All work is in place, O(1) extra space.
+
+**Result:** `[[1, 0, 1], [0, 0, 0], [1, 0, 1]]`, matching the class output.

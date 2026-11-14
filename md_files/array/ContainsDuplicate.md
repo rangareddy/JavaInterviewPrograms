@@ -97,36 +97,6 @@ public static boolean containsDuplicate(int[] nums) {
 | 3 | Streams | O(n) | O(n) |
 | 4 | Hash Set (Optimized) | O(n) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: keep a `HashSet` of the numbers seen so far. `Set.add` returns `false` when the value is already present, so the first `add` that fails is the first duplicate and the loop stops right there. One pass with O(1) average work per element gives O(n) time.
-
-**Input:** `nums = [1, 2, 3, 1]`. The set starts empty.
-
-| Step | `num` | `seen.add(num)` | `seen` afterwards | Action |
-|------|-------|-----------------|-------------------|--------|
-| 1 | 1 | `true` (new) | `{1}` | continue |
-| 2 | 2 | `true` | `{1, 2}` | continue |
-| 3 | 3 | `true` | `{1, 2, 3}` | continue |
-| 4 | 1 | `false` (already there) | `{1, 2, 3}` | **return `true`** |
-
-```mermaid
-flowchart LR
-    S(["seen = { }"]) --> A["1 → add ok<br/>{1}"]
-    A --> B["2 → add ok<br/>{1, 2}"]
-    B --> C["3 → add ok<br/>{1, 2, 3}"]
-    C --> D["1 → add fails"]
-    D --> E(["return true"])
-```
-
-**Edge cases.** `null` or fewer than two elements returns `false` straight away. If no value repeats (for example `[1, 2, 3, 4]`) the loop finishes and `false` is returned. With a duplicate near the front the loop ends early.
-
-**Result:** `true` for `[1, 2, 3, 1]`, `false` for `[1, 2, 3, 4]` and for a single element, matching the real class.
-
 ## Source Code
 
 ### ContainsDuplicate.java
@@ -162,3 +132,31 @@ public class ContainsDuplicate {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: keep a `HashSet` of the numbers seen so far. `Set.add` returns `false` when the value is already present, so the first `add` that fails is the first duplicate and the loop stops right there. One pass with O(1) average work per element gives O(n) time.
+
+**Input:** `nums = [1, 2, 3, 1]`. The set starts empty.
+
+| Step | `num` | `seen.add(num)` | `seen` afterwards | Action |
+|------|-------|-----------------|-------------------|--------|
+| 1 | 1 | `true` (new) | `{1}` | continue |
+| 2 | 2 | `true` | `{1, 2}` | continue |
+| 3 | 3 | `true` | `{1, 2, 3}` | continue |
+| 4 | 1 | `false` (already there) | `{1, 2, 3}` | **return `true`** |
+
+```mermaid
+flowchart LR
+    S(["seen = { }"]) --> A["1 → add ok<br/>{1}"]
+    A --> B["2 → add ok<br/>{1, 2}"]
+    B --> C["3 → add ok<br/>{1, 2, 3}"]
+    C --> D["1 → add fails"]
+    D --> E(["return true"])
+```
+
+**Edge cases.** `null` or fewer than two elements returns `false` straight away. If no value repeats (for example `[1, 2, 3, 4]`) the loop finishes and `false` is returned. With a duplicate near the front the loop ends early.
+
+**Result:** `true` for `[1, 2, 3, 1]`, `false` for `[1, 2, 3, 4]` and for a single element, matching the real class.

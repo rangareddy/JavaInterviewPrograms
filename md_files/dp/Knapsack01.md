@@ -111,29 +111,6 @@ public static int knapsack(int[] weights, int[] values, int capacity) {
 | 3 | 2D Table | O(n * capacity) | O(n * capacity) |
 | 4 | 1D Array, Capacity Descending (Optimized) | O(n * capacity) | O(capacity) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: `dp[w]` is the best value achievable with total weight at most `w` using the items processed so far. For each item, update the capacities from `capacity` **down** to the item's weight with `dp[w] = max(dp[w], dp[w - weight] + value)` - skip the item or take it on top of the best smaller bag. Going downwards means `dp[w - weight]` still holds the value from before this item, so each item is used at most once.
-
-**Input:** `weights = [1, 3, 4, 5]`, `values = [1, 4, 5, 7]`, `capacity = 7`. Start: `dp = [0, 0, 0, 0, 0, 0, 0, 0]` (indices 0 to 7).
-
-| Item (weight, value) | Capacities updated | `dp` afterwards (index 0 to 7) |
-|----------------------|--------------------|--------------------------------|
-| (1, 1) | `w = 7..1` | `[0, 1, 1, 1, 1, 1, 1, 1]` |
-| (3, 4) | `w = 7..3`, e.g. `dp[4] = max(1, dp[1] + 4) = 5` | `[0, 1, 1, 4, 5, 5, 5, 5]` |
-| (4, 5) | `w = 7..4`, e.g. `dp[7] = max(5, dp[3] + 5) = 9` | `[0, 1, 1, 4, 5, 6, 6, 9]` |
-| (5, 7) | `w = 7..5`, e.g. `dp[7] = max(9, dp[2] + 7) = 9` | `[0, 1, 1, 4, 5, 7, 8, 9]` |
-
-The best value 9 is the items of weight 3 and 4 (value 4 + 5). No diagram is added; the table is the full picture.
-
-**Edge cases.** An item heavier than the capacity (`weights = [5]`, capacity 4) never enters the inner loop and the answer is `0`. Capacity `0` gives an array of length 1 and returns `0`. Space is `O(capacity)`.
-
-**Result:** the method returns `dp[7] = 9`, matching the class output (the other samples print `220`, `0`, `0`).
-
 ## Source Code
 
 ### Knapsack01.java
@@ -165,3 +142,24 @@ public class Knapsack01 {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: `dp[w]` is the best value achievable with total weight at most `w` using the items processed so far. For each item, update the capacities from `capacity` **down** to the item's weight with `dp[w] = max(dp[w], dp[w - weight] + value)` - skip the item or take it on top of the best smaller bag. Going downwards means `dp[w - weight]` still holds the value from before this item, so each item is used at most once.
+
+**Input:** `weights = [1, 3, 4, 5]`, `values = [1, 4, 5, 7]`, `capacity = 7`. Start: `dp = [0, 0, 0, 0, 0, 0, 0, 0]` (indices 0 to 7).
+
+| Item (weight, value) | Capacities updated | `dp` afterwards (index 0 to 7) |
+|----------------------|--------------------|--------------------------------|
+| (1, 1) | `w = 7..1` | `[0, 1, 1, 1, 1, 1, 1, 1]` |
+| (3, 4) | `w = 7..3`, e.g. `dp[4] = max(1, dp[1] + 4) = 5` | `[0, 1, 1, 4, 5, 5, 5, 5]` |
+| (4, 5) | `w = 7..4`, e.g. `dp[7] = max(5, dp[3] + 5) = 9` | `[0, 1, 1, 4, 5, 6, 6, 9]` |
+| (5, 7) | `w = 7..5`, e.g. `dp[7] = max(9, dp[2] + 7) = 9` | `[0, 1, 1, 4, 5, 7, 8, 9]` |
+
+The best value 9 is the items of weight 3 and 4 (value 4 + 5). No diagram is added; the table is the full picture.
+
+**Edge cases.** An item heavier than the capacity (`weights = [5]`, capacity 4) never enters the inner loop and the answer is `0`. Capacity `0` gives an array of length 1 and returns `0`. Space is `O(capacity)`.
+
+**Result:** the method returns `dp[7] = 9`, matching the class output (the other samples print `220`, `0`, `0`).

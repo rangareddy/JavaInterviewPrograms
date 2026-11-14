@@ -186,41 +186,6 @@ public int size() {
 | 2 | Two Semaphores and a Mutex | O(1) per operation | O(capacity) |
 | 3 | ReentrantLock with notFull and notEmpty Conditions (Optimized) | O(1) per operation | O(capacity) |
 
-### Optimized Solution
-
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: a fixed-size ring buffer protected by one `ReentrantLock`, with two `Condition`s on it: `notFull` (producers wait here) and `notEmpty` (consumers wait here). `put` waits on `notFull` while `count == capacity`, stores at `tail`, moves `tail = (tail + 1) % capacity`, increments `count` and signals `notEmpty`. `take` waits on `notEmpty` while `count == 0`, reads and clears `items[head]`, moves `head` the same way, decrements `count` and signals `notFull`. Separate conditions mean a `put` only wakes consumers and a `take` only wakes producers, so `signal()` (one waiter) is enough. The waits sit in `while` loops so the condition is re-checked after every wake-up.
-
-**Input:** capacity `2`, shown here as a single-threaded sequence of operations so every state is exact (with several threads the same rules apply under the lock).
-
-| Step | Operation | What happens | `items` | `head` | `tail` | `count` |
-|------|-----------|--------------|---------|--------|--------|---------|
-| 0 | start | empty | `[_, _]` | 0 | 0 | 0 |
-| 1 | `put(1)` | store at 0, `tail = 1`, signal `notEmpty` | `[1, _]` | 0 | 1 | 1 |
-| 2 | `put(2)` | store at 1, `tail = (1 + 1) % 2 = 0` | `[1, 2]` | 0 | 0 | 2 |
-| 3 | `put(3)` | `count == 2`: would wait on `notFull` until a `take` | `[1, 2]` | 0 | 0 | 2 |
-| 4 | `take()` returns `1` | read slot 0, set it to null, `head = 1`, signal `notFull` | `[_, 2]` | 1 | 0 | 1 |
-| 5 | `put(3)` (the waiter wakes) | store at 0 (wrapped), `tail = 1` | `[3, 2]` | 1 | 1 | 2 |
-| 6 | `take()` returns `2` | read slot 1, `head = (1 + 1) % 2 = 0` | `[3, _]` | 0 | 1 | 1 |
-| 7 | `take()` returns `3` | read slot 0, `head = 1` | `[_, _]` | 1 | 1 | 0 |
-
-(`_` is a null slot.) I ran steps 1, 2, 4, 5-7 on the class and confirmed the sizes (2 after two puts) and the values `1`, then `2`, `3`; step 3 is the blocking case taken from the code.
-
-```mermaid
-flowchart LR
-    PR["put"] -->|"count == capacity"| W1["await notFull"]
-    PR -->|"otherwise"| ST["store at tail<br/>signal notEmpty"]
-    TK["take"] -->|"count == 0"| W2["await notEmpty"]
-    TK -->|"otherwise"| RD["read at head<br/>signal notFull"]
-```
-
-**Edge cases.** The constructor throws `IllegalArgumentException("capacity must be positive")` for a capacity of 0 or less. `lockInterruptibly()` and `await()` let a waiting thread be interrupted with `InterruptedException`. `take` nulls the slot so the queue does not keep a reference to a removed item, and `unlock()` is in a `finally` block so the lock is always released. `size()` reads `count` under the lock.
-
-**Result:** in `main`, 2 producers each put `1..5` and 2 consumers each take 5 items with capacity 2; the class prints `taken = 10, sum = 30, left in queue = 0` (30 = 15 + 15), the same in all three runs checked. Which consumer gets which item varies, but the total does not.
-
 ## Source Code
 
 ### BoundedBlockingQueue.java
@@ -326,3 +291,36 @@ public class BoundedBlockingQueue<T> {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+
+The idea: a fixed-size ring buffer protected by one `ReentrantLock`, with two `Condition`s on it: `notFull` (producers wait here) and `notEmpty` (consumers wait here). `put` waits on `notFull` while `count == capacity`, stores at `tail`, moves `tail = (tail + 1) % capacity`, increments `count` and signals `notEmpty`. `take` waits on `notEmpty` while `count == 0`, reads and clears `items[head]`, moves `head` the same way, decrements `count` and signals `notFull`. Separate conditions mean a `put` only wakes consumers and a `take` only wakes producers, so `signal()` (one waiter) is enough. The waits sit in `while` loops so the condition is re-checked after every wake-up.
+
+**Input:** capacity `2`, shown here as a single-threaded sequence of operations so every state is exact (with several threads the same rules apply under the lock).
+
+| Step | Operation | What happens | `items` | `head` | `tail` | `count` |
+|------|-----------|--------------|---------|--------|--------|---------|
+| 0 | start | empty | `[_, _]` | 0 | 0 | 0 |
+| 1 | `put(1)` | store at 0, `tail = 1`, signal `notEmpty` | `[1, _]` | 0 | 1 | 1 |
+| 2 | `put(2)` | store at 1, `tail = (1 + 1) % 2 = 0` | `[1, 2]` | 0 | 0 | 2 |
+| 3 | `put(3)` | `count == 2`: would wait on `notFull` until a `take` | `[1, 2]` | 0 | 0 | 2 |
+| 4 | `take()` returns `1` | read slot 0, set it to null, `head = 1`, signal `notFull` | `[_, 2]` | 1 | 0 | 1 |
+| 5 | `put(3)` (the waiter wakes) | store at 0 (wrapped), `tail = 1` | `[3, 2]` | 1 | 1 | 2 |
+| 6 | `take()` returns `2` | read slot 1, `head = (1 + 1) % 2 = 0` | `[3, _]` | 0 | 1 | 1 |
+| 7 | `take()` returns `3` | read slot 0, `head = 1` | `[_, _]` | 1 | 1 | 0 |
+
+(`_` is a null slot.) I ran steps 1, 2, 4, 5-7 on the class and confirmed the sizes (2 after two puts) and the values `1`, then `2`, `3`; step 3 is the blocking case taken from the code.
+
+```mermaid
+flowchart LR
+    PR["put"] -->|"count == capacity"| W1["await notFull"]
+    PR -->|"otherwise"| ST["store at tail<br/>signal notEmpty"]
+    TK["take"] -->|"count == 0"| W2["await notEmpty"]
+    TK -->|"otherwise"| RD["read at head<br/>signal notFull"]
+```
+
+**Edge cases.** The constructor throws `IllegalArgumentException("capacity must be positive")` for a capacity of 0 or less. `lockInterruptibly()` and `await()` let a waiting thread be interrupted with `InterruptedException`. `take` nulls the slot so the queue does not keep a reference to a removed item, and `unlock()` is in a `finally` block so the lock is always released. `size()` reads `count` under the lock.
+
+**Result:** in `main`, 2 producers each put `1..5` and 2 consumers each take 5 items with capacity 2; the class prints `taken = 10, sum = 30, left in queue = 0` (30 = 15 + 15), the same in all three runs checked. Which consumer gets which item varies, but the total does not.

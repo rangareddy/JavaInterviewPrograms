@@ -129,38 +129,6 @@ record PersonRecord(int id, String name, LocalDate dob) {
 | 3 | Immutable Types Only (java.time) (Optimized) | O(1) | O(1) |
 | 4 | Record (Java 16+) | O(1) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 3 above. The version implemented in this repository is Approach 2.
-
-#### Optimized solution explained
-
-Note: the page names Approach 3 (java.time types) as the optimized one, but the class in this repository implements Approach 2, an immutable class with **defensive copies** of the mutable `Date`, so that is what is traced here.
-
-The idea: an object is immutable if nothing can change it after construction. `ImmutablePerson` is `final` (no subclass can add mutable behaviour), all fields are `private final`, there are no setters, and the one mutable field, `Date dob`, is protected on both sides: the constructor stores a **copy** (`new Date(dob.getTime())`) so the caller's own `Date` object is not shared, and `getDob()` returns a **new copy** each time so the caller never receives the internal reference. `int` and `String` are already immutable and need no copy.
-
-**Input:** `dob = new Date(0L)` (the epoch), `new ImmutablePerson(123, "Ranga", dob)`, then two attempts to change it.
-
-| Step | Action | Which object changes | The person's internal `dob` |
-|------|--------|----------------------|-----------------------------|
-| 1 | `new ImmutablePerson(123, "Ranga", dob)` | constructor copies the date: internal copy C1 (time 0) | C1 = epoch |
-| 2 | `person.getDob()` returns a new copy C2 | C2 is a throw-away copy | C1 = epoch |
-| 3 | `.setTime(now)` on C2 | only C2 changes | C1 = epoch |
-| 4 | `dob.setTime(now)` on the caller's original | only the caller's `dob` changes (it is not C1) | C1 = epoch |
-| 5 | print the person | reads C1 | still the epoch |
-
-```mermaid
-flowchart LR
-    D["caller dob<br/>original Date"] -->|"constructor copies"| C1["internal dob C1"]
-    C1 -->|"getDob copies"| C2["returned Date C2"]
-    D -.->|"setTime changes only the original"| D
-    C2 -.->|"setTime changes only the copy"| C2
-```
-
-**Edge cases.** The constructor calls `dob.getTime()`, so passing `null` throws `NullPointerException` at construction rather than leaving a half-built object; the class does not check `id` or `name`, and `name` is safe because `String` is immutable. Without the two copies, step 3 or step 4 would silently change the person's date (the classic leak in a "final" class). The class also implements `Serializable`.
-
-**Result:** the class prints the same `ImmutablePerson{id=123, name='Ranga', dob=...}` line before and after the modification attempts. The date text is the epoch rendered in the machine's time zone (`Thu Jan 01 05:30:00 IST 1970` on this machine), which depends on the zone but is identical in both lines.
-
 ## Source Code
 
 ### ImmutableClassDemo.java
@@ -217,3 +185,33 @@ final class ImmutablePerson implements Serializable {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 3 above. The version implemented in this repository is Approach 2.
+
+Note: the page names Approach 3 (java.time types) as the optimized one, but the class in this repository implements Approach 2, an immutable class with **defensive copies** of the mutable `Date`, so that is what is traced here.
+
+The idea: an object is immutable if nothing can change it after construction. `ImmutablePerson` is `final` (no subclass can add mutable behaviour), all fields are `private final`, there are no setters, and the one mutable field, `Date dob`, is protected on both sides: the constructor stores a **copy** (`new Date(dob.getTime())`) so the caller's own `Date` object is not shared, and `getDob()` returns a **new copy** each time so the caller never receives the internal reference. `int` and `String` are already immutable and need no copy.
+
+**Input:** `dob = new Date(0L)` (the epoch), `new ImmutablePerson(123, "Ranga", dob)`, then two attempts to change it.
+
+| Step | Action | Which object changes | The person's internal `dob` |
+|------|--------|----------------------|-----------------------------|
+| 1 | `new ImmutablePerson(123, "Ranga", dob)` | constructor copies the date: internal copy C1 (time 0) | C1 = epoch |
+| 2 | `person.getDob()` returns a new copy C2 | C2 is a throw-away copy | C1 = epoch |
+| 3 | `.setTime(now)` on C2 | only C2 changes | C1 = epoch |
+| 4 | `dob.setTime(now)` on the caller's original | only the caller's `dob` changes (it is not C1) | C1 = epoch |
+| 5 | print the person | reads C1 | still the epoch |
+
+```mermaid
+flowchart LR
+    D["caller dob<br/>original Date"] -->|"constructor copies"| C1["internal dob C1"]
+    C1 -->|"getDob copies"| C2["returned Date C2"]
+    D -.->|"setTime changes only the original"| D
+    C2 -.->|"setTime changes only the copy"| C2
+```
+
+**Edge cases.** The constructor calls `dob.getTime()`, so passing `null` throws `NullPointerException` at construction rather than leaving a half-built object; the class does not check `id` or `name`, and `name` is safe because `String` is immutable. Without the two copies, step 3 or step 4 would silently change the person's date (the classic leak in a "final" class). The class also implements `Serializable`.
+
+**Result:** the class prints the same `ImmutablePerson{id=123, name='Ranga', dob=...}` line before and after the modification attempts. The date text is the epoch rendered in the machine's time zone (`Thu Jan 01 05:30:00 IST 1970` on this machine), which depends on the zone but is identical in both lines.

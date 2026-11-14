@@ -205,36 +205,6 @@ public static int longestConsecutive(int[] nums) {
 | 6 | BitSet over a Bounded Range | O(n + R) where R is the value range | O(R / 8) bytes |
 | 7 | Hash Set and Sequence Starts (Optimized) | O(n) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 7 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: put all numbers into a `HashSet`. A number is the start of a run only if `num - 1` is not in the set. For each start, count upward with `contains(current + 1)`. Since each number is walked over only as part of the one run it belongs to, the total work is O(n), without sorting.
-
-**Input:** `nums = [100, 4, 200, 1, 3, 2]`, so `set = {1, 2, 3, 4, 100, 200}`. The loop visits the set's elements in the set's own internal order, which the code does not depend on; the table lists them by value.
-
-| `num` | `num - 1` in set? | Start of a run? | Counting up | `length` | `longest` |
-|-------|-------------------|-----------------|-------------|----------|-----------|
-| 1 | no (0) | yes | 2, 3, 4 are present, 5 is not | 4 | 4 |
-| 2 | yes (1) | no, skipped | | | 4 |
-| 3 | yes | no, skipped | | | 4 |
-| 4 | yes | no, skipped | | | 4 |
-| 100 | no (99) | yes | 101 is not present | 1 | 4 |
-| 200 | no (199) | yes | 201 is not present | 1 | 4 |
-
-```text
-1 - 2 - 3 - 4        100        200
-^ start, length 4    ^ start    ^ start (length 1 each)
-```
-
-`longest` is updated with `Math.max`, so the visiting order does not change the result.
-
-**Edge cases.** A `null` or empty array returns `0`. Duplicates collapse in the set (for `[0, 3, 7, 2, 5, 8, 4, 6, 0, 1]` the answer is 9, the run `0..8`). A single number gives `1`.
-
-**Result:** `4` (the run `1, 2, 3, 4`), matching the class output.
-
 ## Source Code
 
 ### LongestConsecutiveSequence.java
@@ -281,3 +251,31 @@ public class LongestConsecutiveSequence {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
+
+The idea: put all numbers into a `HashSet`. A number is the start of a run only if `num - 1` is not in the set. For each start, count upward with `contains(current + 1)`. Since each number is walked over only as part of the one run it belongs to, the total work is O(n), without sorting.
+
+**Input:** `nums = [100, 4, 200, 1, 3, 2]`, so `set = {1, 2, 3, 4, 100, 200}`. The loop visits the set's elements in the set's own internal order, which the code does not depend on; the table lists them by value.
+
+| `num` | `num - 1` in set? | Start of a run? | Counting up | `length` | `longest` |
+|-------|-------------------|-----------------|-------------|----------|-----------|
+| 1 | no (0) | yes | 2, 3, 4 are present, 5 is not | 4 | 4 |
+| 2 | yes (1) | no, skipped | | | 4 |
+| 3 | yes | no, skipped | | | 4 |
+| 4 | yes | no, skipped | | | 4 |
+| 100 | no (99) | yes | 101 is not present | 1 | 4 |
+| 200 | no (199) | yes | 201 is not present | 1 | 4 |
+
+```text
+1 - 2 - 3 - 4        100        200
+^ start, length 4    ^ start    ^ start (length 1 each)
+```
+
+`longest` is updated with `Math.max`, so the visiting order does not change the result.
+
+**Edge cases.** A `null` or empty array returns `0`. Duplicates collapse in the set (for `[0, 3, 7, 2, 5, 8, 4, 6, 0, 1]` the answer is 9, the run `0..8`). A single number gives `1`.
+
+**Result:** `4` (the run `1, 2, 3, 4`), matching the class output.

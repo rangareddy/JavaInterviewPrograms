@@ -118,33 +118,6 @@ public static int carFleet(int target, int[] position, int[] speed) {
 | 3 | Array Indexed by Position (Small Targets) | O(n + target) | O(target) |
 | 4 | Sort and One Variable (Optimized) | O(n log n) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: a car can never overtake the car ahead of it; if it would arrive earlier, it just catches up and travels in the same fleet at the slower speed. So only arrival times matter. The code sorts the cars by position, closest to the target first, and computes each car's arrival time `(target - position) / speed`. Walking from the front, a car whose time is greater than the slowest time seen so far cannot catch the fleet ahead and starts a new fleet; a car with a time <= that value merges into the fleet ahead. Sorting makes it O(n log n). This class keeps just the variable `slowestAhead` (the top of what would be a stack), so it uses no explicit stack.
-
-**Input:** `target = 12`, `position = [10, 8, 0, 5, 3]`, `speed = [2, 4, 1, 1, 3]`. Sorted by position from the target side, the cars are 10, 8, 5, 3, 0.
-
-| Step | Position | Speed | Time = (12 - pos) / speed | slowestAhead before | Decision | fleets |
-|------|----------|-------|---------------------------|---------------------|----------|--------|
-| 1 | 10 | 2 | 2 / 2 = 1.0 | 0 | 1.0 > 0: new fleet, slowestAhead = 1.0 | 1 |
-| 2 | 8 | 4 | 4 / 4 = 1.0 | 1.0 | 1.0 > 1.0 false: joins the fleet ahead | 1 |
-| 3 | 5 | 1 | 7 / 1 = 7.0 | 1.0 | 7.0 > 1.0: new fleet, slowestAhead = 7.0 | 2 |
-| 4 | 3 | 3 | 9 / 3 = 3.0 | 7.0 | 3.0 > 7.0 false: joins | 2 |
-| 5 | 0 | 1 | 12 / 1 = 12.0 | 7.0 | 12.0 > 7.0: new fleet, slowestAhead = 12.0 | 3 |
-
-```text
-arrival times, front to back: 1.0  1.0  7.0  3.0  12.0
-fleets:                       [1.0 1.0] [7.0 3.0] [12.0]   -> 3 fleets
-```
-
-**Edge cases.** A car that reaches the target at the same time as the fleet ahead merges with it (strict `>`). One car gives `1` fleet (`target = 10, [3], [3]`). `[0, 2, 4]` with speeds `[4, 2, 1]` and target 100 has times 25, 49 and 96; from the front the order is 96, 49, 25, which only decreases, so everyone joins the first fleet and the answer is `1`. Times are computed with `double`, avoiding integer-division rounding.
-
-**Result:** `3`, matching the class output.
-
 ## Source Code
 
 ### CarFleet.java
@@ -186,3 +159,28 @@ public class CarFleet {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: a car can never overtake the car ahead of it; if it would arrive earlier, it just catches up and travels in the same fleet at the slower speed. So only arrival times matter. The code sorts the cars by position, closest to the target first, and computes each car's arrival time `(target - position) / speed`. Walking from the front, a car whose time is greater than the slowest time seen so far cannot catch the fleet ahead and starts a new fleet; a car with a time <= that value merges into the fleet ahead. Sorting makes it O(n log n). This class keeps just the variable `slowestAhead` (the top of what would be a stack), so it uses no explicit stack.
+
+**Input:** `target = 12`, `position = [10, 8, 0, 5, 3]`, `speed = [2, 4, 1, 1, 3]`. Sorted by position from the target side, the cars are 10, 8, 5, 3, 0.
+
+| Step | Position | Speed | Time = (12 - pos) / speed | slowestAhead before | Decision | fleets |
+|------|----------|-------|---------------------------|---------------------|----------|--------|
+| 1 | 10 | 2 | 2 / 2 = 1.0 | 0 | 1.0 > 0: new fleet, slowestAhead = 1.0 | 1 |
+| 2 | 8 | 4 | 4 / 4 = 1.0 | 1.0 | 1.0 > 1.0 false: joins the fleet ahead | 1 |
+| 3 | 5 | 1 | 7 / 1 = 7.0 | 1.0 | 7.0 > 1.0: new fleet, slowestAhead = 7.0 | 2 |
+| 4 | 3 | 3 | 9 / 3 = 3.0 | 7.0 | 3.0 > 7.0 false: joins | 2 |
+| 5 | 0 | 1 | 12 / 1 = 12.0 | 7.0 | 12.0 > 7.0: new fleet, slowestAhead = 12.0 | 3 |
+
+```text
+arrival times, front to back: 1.0  1.0  7.0  3.0  12.0
+fleets:                       [1.0 1.0] [7.0 3.0] [12.0]   -> 3 fleets
+```
+
+**Edge cases.** A car that reaches the target at the same time as the fleet ahead merges with it (strict `>`). One car gives `1` fleet (`target = 10, [3], [3]`). `[0, 2, 4]` with speeds `[4, 2, 1]` and target 100 has times 25, 49 and 96; from the front the order is 96, 49, 25, which only decreases, so everyone joins the first fleet and the answer is `1`. Times are computed with `double`, avoiding integer-division rounding.
+
+**Result:** `3`, matching the class output.

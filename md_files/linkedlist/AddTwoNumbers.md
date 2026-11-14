@@ -127,33 +127,6 @@ public static ListNode addTwoNumbers(ListNode l1, ListNode l2) {
 | 3 | Write the Sum into the First List | O(max(m, n)) | O(1) besides the extra nodes |
 | 4 | Iterative Addition with a Dummy Head (Optimized) | O(max(m, n)) | O(max(m, n)) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: the digits are stored in reverse order (least significant first), which is the order in which you add by hand. Walk both lists together with a `carry`. At every step add the carry and the current digits (a missing digit counts as 0), write `sum % 10` as a new node after `tail`, and keep `sum / 10` as the next carry. The loop also runs while only a carry is left, so a final carry becomes an extra node. A dummy head avoids special handling of the first node.
-
-**Input:** `l1 = [2, 4, 3]` (342) and `l2 = [5, 6, 4]` (465).
-
-| Step | `carry` in | `l1` digit | `l2` digit | `sum` | New node `sum % 10` | `carry` out | Result so far |
-|------|-----------|-----------|-----------|-------|---------------------|-------------|---------------|
-| 1 | 0 | 2 | 5 | 7 | 7 | 0 | `[7]` |
-| 2 | 0 | 4 | 6 | 10 | 0 | 1 | `[7, 0]` |
-| 3 | 1 | 3 | 4 | 8 | 8 | 0 | `[7, 0, 8]` |
-
-Both lists and the carry are now exhausted, so the loop ends.
-
-```mermaid
-flowchart LR
-    D["dummy"] --> r1["7"] --> r2["0"] --> r3["8"]
-```
-
-**Edge cases.** Lists of different length: the shorter one is treated as 0 once it ends (`[9,9,9,9,9,9,9] + [9,9,9,9]` gives `[8, 9, 9, 9, 0, 0, 0, 1]`). A leftover carry adds a node: `[5] + [5]` gives `[0, 1]`. `[0] + [0]` gives `[0]`. The result is a new list; the input lists are not changed.
-
-**Result:** `[7, 0, 8]` (807), matching the class output.
-
 ## Source Code
 
 Uses the shared helper [`ListNode`](../../src/main/java/com/ranga/linkedlist/ListNode.java) (a small `ListNode` with `of(...)` and `toString(...)` helpers for building and printing test data).
@@ -203,3 +176,28 @@ public class AddTwoNumbers {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: the digits are stored in reverse order (least significant first), which is the order in which you add by hand. Walk both lists together with a `carry`. At every step add the carry and the current digits (a missing digit counts as 0), write `sum % 10` as a new node after `tail`, and keep `sum / 10` as the next carry. The loop also runs while only a carry is left, so a final carry becomes an extra node. A dummy head avoids special handling of the first node.
+
+**Input:** `l1 = [2, 4, 3]` (342) and `l2 = [5, 6, 4]` (465).
+
+| Step | `carry` in | `l1` digit | `l2` digit | `sum` | New node `sum % 10` | `carry` out | Result so far |
+|------|-----------|-----------|-----------|-------|---------------------|-------------|---------------|
+| 1 | 0 | 2 | 5 | 7 | 7 | 0 | `[7]` |
+| 2 | 0 | 4 | 6 | 10 | 0 | 1 | `[7, 0]` |
+| 3 | 1 | 3 | 4 | 8 | 8 | 0 | `[7, 0, 8]` |
+
+Both lists and the carry are now exhausted, so the loop ends.
+
+```mermaid
+flowchart LR
+    D["dummy"] --> r1["7"] --> r2["0"] --> r3["8"]
+```
+
+**Edge cases.** Lists of different length: the shorter one is treated as 0 once it ends (`[9,9,9,9,9,9,9] + [9,9,9,9]` gives `[8, 9, 9, 9, 0, 0, 0, 1]`). A leftover carry adds a node: `[5] + [5]` gives `[0, 1]`. `[0] + [0]` gives `[0]`. The result is a new list; the input lists are not changed.
+
+**Result:** `[7, 0, 8]` (807), matching the class output.

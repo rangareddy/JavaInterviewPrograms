@@ -160,36 +160,6 @@ private static int find(int[] parent, int x) {
 | 3 | BFS with a Queue | O(m * n) | O(m * n) |
 | 4 | Union-Find with Component Sizes | O(m * n * alpha) | O(m * n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 1 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: the same flood fill as counting islands, but the DFS returns a number. `area(i, j)` is `0` for water or a cell outside the grid; for land it sets the cell to `0` (visited) and returns `1` plus the areas of its four neighbours. Every cell of the scan is passed to `area`, and the largest value seen is the answer. The class works on a copy of the grid.
-
-**Input:** a small grid (traced and run on the real class) with two islands
-
-```text
-1 1 0 1
-0 1 0 1
-0 0 0 0
-```
-
-| Scan reaches | `area(i, j)` | How the value is built | `best` |
-|--------------|--------------|------------------------|--------|
-| (0,0) | 3 | (0,0) = 1 + down 0 + right (0,1); (0,1) = 1 + down (1,1); (1,1) = 1 + nothing more | 3 |
-| (0,1), (0,2) | 0 | (0,1) already sunk, (0,2) is water | 3 |
-| (0,3) | 2 | (0,3) = 1 + down (1,3); (1,3) = 1 | 3 |
-| (1,1), (1,3) | 0 | already sunk | 3 |
-| rest | 0 | water | 3 |
-
-The cells (0,0), (0,1), (1,1) form the island of area 3; (0,3), (1,3) form the island of area 2.
-
-**Edge cases:** `null`, an empty grid or a grid with only zeros returns `0`; diagonal cells do not join (`[[1,0,1],[0,1,0]]` gives `1`). For the standard 8 x 13 grid in the class the largest island has `6` cells; `[[1,1],[1,0]]` gives `3`.
-
-**Result:** `3` for the traced grid (confirmed by calling the class), and `6` for the grid in the class `main`, the same as the class output.
-
 ## Source Code
 
 ### MaxAreaOfIsland.java
@@ -248,3 +218,31 @@ public class MaxAreaOfIsland {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 1 above, which is also the version implemented in this repository.
+
+The idea: the same flood fill as counting islands, but the DFS returns a number. `area(i, j)` is `0` for water or a cell outside the grid; for land it sets the cell to `0` (visited) and returns `1` plus the areas of its four neighbours. Every cell of the scan is passed to `area`, and the largest value seen is the answer. The class works on a copy of the grid.
+
+**Input:** a small grid (traced and run on the real class) with two islands
+
+```text
+1 1 0 1
+0 1 0 1
+0 0 0 0
+```
+
+| Scan reaches | `area(i, j)` | How the value is built | `best` |
+|--------------|--------------|------------------------|--------|
+| (0,0) | 3 | (0,0) = 1 + down 0 + right (0,1); (0,1) = 1 + down (1,1); (1,1) = 1 + nothing more | 3 |
+| (0,1), (0,2) | 0 | (0,1) already sunk, (0,2) is water | 3 |
+| (0,3) | 2 | (0,3) = 1 + down (1,3); (1,3) = 1 | 3 |
+| (1,1), (1,3) | 0 | already sunk | 3 |
+| rest | 0 | water | 3 |
+
+The cells (0,0), (0,1), (1,1) form the island of area 3; (0,3), (1,3) form the island of area 2.
+
+**Edge cases:** `null`, an empty grid or a grid with only zeros returns `0`; diagonal cells do not join (`[[1,0,1],[0,1,0]]` gives `1`). For the standard 8 x 13 grid in the class the largest island has `6` cells; `[[1,1],[1,0]]` gives `3`.
+
+**Result:** `3` for the traced grid (confirmed by calling the class), and `6` for the grid in the class `main`, the same as the class output.

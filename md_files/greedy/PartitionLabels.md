@@ -112,11 +112,49 @@ public static List<Integer> partitionLabels(String s) {
 | 2 | Merge Letter Intervals | O(n + 26 log 26) | O(1) |
 | 3 | Greedy with Last Occurrences (Optimized) | O(n) | O(1) |
 
-### Optimized Solution
+## Source Code
+
+### PartitionLabels.java
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+public class PartitionLabels {
+
+    public static void main(String[] args) {
+        String[] inputs = {"ababcbacadefegdehijhklij", "eccbbbbdec", "a", "abc"};
+        for (String s : inputs) {
+            System.out.println("Input  : s = \"" + s + "\"");
+            System.out.println("Output : " + partitionLabels(s));
+            System.out.println();
+        }
+    }
+
+    public static List<Integer> partitionLabels(String s) {
+        int[] last = new int[26];
+        for (int i = 0; i < s.length(); i++) {
+            last[s.charAt(i) - 'a'] = i;
+        }
+
+        List<Integer> sizes = new ArrayList<>();
+        int start = 0;
+        int end = 0;
+        for (int i = 0; i < s.length(); i++) {
+            end = Math.max(end, last[s.charAt(i) - 'a']);
+            if (i == end) {
+                sizes.add(end - start + 1);
+                start = i + 1;
+            }
+        }
+        return sizes;
+    }
+}
+```
+
+## Solution
 
 The optimized solution is Approach 3 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
 
 The idea: first record, for each letter, the index of its last occurrence. Then sweep with a growing end: `end` is the furthest last-occurrence of any letter seen in the current part. When the index `i` reaches `end`, every letter in the part has finished, so the part can be cut there, its size is `end - start + 1`, and the next part starts at `i + 1`. Two linear passes.
 
@@ -159,43 +197,3 @@ ababcbaca | defegde | hijhklij
 **Edge cases:** `"eccbbbbdec"` is one part because `e` starts at 0 and ends at 9, giving `[10]`. `"abc"` cuts after each letter, giving `[1, 1, 1]`. An empty string gives an empty list.
 
 **Result:** returns `[9, 7, 8]`, matching the class output.
-
-## Source Code
-
-### PartitionLabels.java
-
-```java
-import java.util.ArrayList;
-import java.util.List;
-
-public class PartitionLabels {
-
-    public static void main(String[] args) {
-        String[] inputs = {"ababcbacadefegdehijhklij", "eccbbbbdec", "a", "abc"};
-        for (String s : inputs) {
-            System.out.println("Input  : s = \"" + s + "\"");
-            System.out.println("Output : " + partitionLabels(s));
-            System.out.println();
-        }
-    }
-
-    public static List<Integer> partitionLabels(String s) {
-        int[] last = new int[26];
-        for (int i = 0; i < s.length(); i++) {
-            last[s.charAt(i) - 'a'] = i;
-        }
-
-        List<Integer> sizes = new ArrayList<>();
-        int start = 0;
-        int end = 0;
-        for (int i = 0; i < s.length(); i++) {
-            end = Math.max(end, last[s.charAt(i) - 'a']);
-            if (i == end) {
-                sizes.add(end - start + 1);
-                start = i + 1;
-            }
-        }
-        return sizes;
-    }
-}
-```

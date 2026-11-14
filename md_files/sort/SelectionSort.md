@@ -205,33 +205,6 @@ public static void selectionSortDouble(int[] arr) {
 | 6 | Bingo Sort | O(n * d) where d is the number of distinct values | O(1) |
 | 7 | Double Selection: Min and Max per Pass (Optimized) | O(n^2) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 7 above. The version implemented in this repository is Approach 1.
-
-#### Optimized solution explained
-
-The idea: split the array into a sorted prefix on the left and an unsorted rest. In each pass, scan the unsorted rest to find the index of its smallest value (`min_index`), then swap that value into the first unsorted position. After pass `i` the first `i + 1` positions hold the smallest values in order. It makes at most one swap per pass (n - 1 swaps overall). The page names a "min and max per pass" variant as the optimized one, but the class implements this basic version, which is traced here.
-
-**Input:** `arr = [12, 4, 5, 7, 9, 20, 30, 6, 15]`.
-
-| Pass i | Scan range | min_index | Minimum | Swap | Array after the pass |
-|--------|------------|-----------|---------|------|----------------------|
-| 0 | 1 to 8 | 1 | 4 | arr[0] and arr[1] | `4 12 5 7 9 20 30 6 15` |
-| 1 | 2 to 8 | 2 | 5 | arr[1] and arr[2] | `4 5 12 7 9 20 30 6 15` |
-| 2 | 3 to 8 | 7 | 6 | arr[2] and arr[7] | `4 5 6 7 9 20 30 12 15` |
-| 3 | 4 to 8 | 3 | 7 | none (same index) | `4 5 6 7 9 20 30 12 15` |
-| 4 | 5 to 8 | 4 | 9 | none | `4 5 6 7 9 20 30 12 15` |
-| 5 | 6 to 8 | 7 | 12 | arr[5] and arr[7] | `4 5 6 7 9 12 30 20 15` |
-| 6 | 7 to 8 | 8 | 15 | arr[6] and arr[8] | `4 5 6 7 9 12 15 20 30` |
-| 7 | 8 to 8 | 7 | 20 | none | `4 5 6 7 9 12 15 20 30` |
-
-Pass 2 shows why selection sort is not stable: the 12 jumps from index 2 to index 7, past other elements.
-
-**Edge cases.** `null`, empty and one-element arrays return immediately. The scan runs the same number of comparisons whatever the order (n(n-1)/2), so it is O(n^2) in every case with O(1) space. When the minimum is already in place, `swap` returns early because `i == j`.
-
-**Result:** `[4, 5, 6, 7, 9, 12, 15, 20, 30]`, matching the class output.
-
 ## Source Code
 
 ### SelectionSort.java
@@ -280,3 +253,28 @@ public class SelectionSort {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 7 above. The version implemented in this repository is Approach 1.
+
+The idea: split the array into a sorted prefix on the left and an unsorted rest. In each pass, scan the unsorted rest to find the index of its smallest value (`min_index`), then swap that value into the first unsorted position. After pass `i` the first `i + 1` positions hold the smallest values in order. It makes at most one swap per pass (n - 1 swaps overall). The page names a "min and max per pass" variant as the optimized one, but the class implements this basic version, which is traced here.
+
+**Input:** `arr = [12, 4, 5, 7, 9, 20, 30, 6, 15]`.
+
+| Pass i | Scan range | min_index | Minimum | Swap | Array after the pass |
+|--------|------------|-----------|---------|------|----------------------|
+| 0 | 1 to 8 | 1 | 4 | arr[0] and arr[1] | `4 12 5 7 9 20 30 6 15` |
+| 1 | 2 to 8 | 2 | 5 | arr[1] and arr[2] | `4 5 12 7 9 20 30 6 15` |
+| 2 | 3 to 8 | 7 | 6 | arr[2] and arr[7] | `4 5 6 7 9 20 30 12 15` |
+| 3 | 4 to 8 | 3 | 7 | none (same index) | `4 5 6 7 9 20 30 12 15` |
+| 4 | 5 to 8 | 4 | 9 | none | `4 5 6 7 9 20 30 12 15` |
+| 5 | 6 to 8 | 7 | 12 | arr[5] and arr[7] | `4 5 6 7 9 12 30 20 15` |
+| 6 | 7 to 8 | 8 | 15 | arr[6] and arr[8] | `4 5 6 7 9 12 15 20 30` |
+| 7 | 8 to 8 | 7 | 20 | none | `4 5 6 7 9 12 15 20 30` |
+
+Pass 2 shows why selection sort is not stable: the 12 jumps from index 2 to index 7, past other elements.
+
+**Edge cases.** `null`, empty and one-element arrays return immediately. The scan runs the same number of comparisons whatever the order (n(n-1)/2), so it is O(n^2) in every case with O(1) space. When the minimum is already in place, `swap` returns early because `i == j`.
+
+**Result:** `[4, 5, 6, 7, 9, 12, 15, 20, 30]`, matching the class output.

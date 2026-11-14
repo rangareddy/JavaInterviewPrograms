@@ -126,35 +126,6 @@ public static int[] twoSum(int[] nums, int target) {
 | 3 | Two-Pass Hash Map | O(n) | O(n) |
 | 4 | Single-Pass Hash Map (Optimized) | O(n) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: for every number, the partner it needs is `target - number`. Keep a map of the numbers already seen (`value -> index`), so the partner is found with one lookup instead of a second loop.
-
-**Input:** `nums = [2, 7, 11, 15]`, `target = 9`. The map starts empty.
-
-| Step | `i` | `nums[i]` | Partner needed (`9 - nums[i]`) | Lookup in the map | Action | Map afterwards |
-|------|-----|-----------|-------------------------------|-------------------|--------|----------------|
-| 1 | 0 | 2 | 7 | `7` is not there (`null`) | store `2 -> 0` | `{2=0}` |
-| 2 | 1 | 7 | 2 | `2` is there, at index `0` | **return `[0, 1]`** | |
-
-The loop stops at step 2, so `11` and `15` are never looked at.
-
-```mermaid
-flowchart LR
-    S(["map = { }"]) --> A["i = 0, value 2<br/>need 9 - 2 = 7"]
-    A -->|"7 is not in the map"| B["store 2 → 0<br/>map = {2: 0}"]
-    B --> C["i = 1, value 7<br/>need 9 - 7 = 2"]
-    C -->|"2 is in the map at index 0"| D(["return [0, 1]"])
-```
-
-**Why a number is never paired with itself.** The lookup happens *before* the number is stored. For `nums = [3, 2, 4]`, `target = 6`: at `i = 0` the partner of `3` is `3`, but the map is still empty, so `3` is stored as `3 -> 0`; at `i = 1` the partner of `2` is `4`, not in the map, so `2 -> 1` is stored; at `i = 2` the partner of `4` is `2`, found at index `1`, so the answer is `[1, 2]`, not `[0, 0]`.
-
-**If no pair exists** the loop ends without a match and the method returns `[-1, -1]`.
-
 ## Source Code
 
 ### TwoSum.java
@@ -214,3 +185,30 @@ public class TwoSum {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: for every number, the partner it needs is `target - number`. Keep a map of the numbers already seen (`value -> index`), so the partner is found with one lookup instead of a second loop.
+
+**Input:** `nums = [2, 7, 11, 15]`, `target = 9`. The map starts empty.
+
+| Step | `i` | `nums[i]` | Partner needed (`9 - nums[i]`) | Lookup in the map | Action | Map afterwards |
+|------|-----|-----------|-------------------------------|-------------------|--------|----------------|
+| 1 | 0 | 2 | 7 | `7` is not there (`null`) | store `2 -> 0` | `{2=0}` |
+| 2 | 1 | 7 | 2 | `2` is there, at index `0` | **return `[0, 1]`** | |
+
+The loop stops at step 2, so `11` and `15` are never looked at.
+
+```mermaid
+flowchart LR
+    S(["map = { }"]) --> A["i = 0, value 2<br/>need 9 - 2 = 7"]
+    A -->|"7 is not in the map"| B["store 2 → 0<br/>map = {2: 0}"]
+    B --> C["i = 1, value 7<br/>need 9 - 7 = 2"]
+    C -->|"2 is in the map at index 0"| D(["return [0, 1]"])
+```
+
+**Why a number is never paired with itself.** The lookup happens *before* the number is stored. For `nums = [3, 2, 4]`, `target = 6`: at `i = 0` the partner of `3` is `3`, but the map is still empty, so `3` is stored as `3 -> 0`; at `i = 1` the partner of `2` is `4`, not in the map, so `2 -> 1` is stored; at `i = 2` the partner of `4` is `2`, found at index `1`, so the answer is `[1, 2]`, not `[0, 0]`.
+
+**If no pair exists** the loop ends without a match and the method returns `[-1, -1]`.

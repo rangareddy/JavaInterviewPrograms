@@ -126,45 +126,6 @@ private static void backtrack(String digits, String[] letters, int index, String
 | 3 | Recursion Returning Lists | O(4^n * n) | O(4^n * n) |
 | 4 | Backtracking over the Digits (Optimized) | O(4^n * n) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: each digit position is one level of recursion. At level `index` the loop tries every letter of that digit (from the `LETTERS` table), appends it to one shared `StringBuilder`, recurses to the next digit, then deletes the last character to restore the state. When `index` reaches the number of digits the string is complete and is stored. One buffer is reused, so extra memory is only the recursion depth.
-
-**Input:** `digits = "23"` (2 = `abc`, 3 = `def`).
-
-| Step | `index` | Buffer | Action |
-|------|---------|--------|--------|
-| 1 | 0 | `a` | append `a`, go to digit 3 |
-| 2 | 1 | `ad` | `index == 2`: record `ad`; delete `d` |
-| 3 | 1 | `ae` | record `ae`; delete `e` |
-| 4 | 1 | `af` | record `af`; delete `f`, back to `a`, delete `a` |
-| 5 | 0 | `b` | append `b`; then record `bd`, `be`, `bf` the same way |
-| 6 | 0 | `c` | append `c`; then record `cd`, `ce`, `cf` |
-
-```mermaid
-graph TD
-    R["start"] --> A["a"]
-    R --> B["b"]
-    R --> C["c"]
-    A --> AD["ad"]
-    A --> AE["ae"]
-    A --> AF["af"]
-    B --> BD["bd"]
-    B --> BE["be"]
-    B --> BF["bf"]
-    C --> CD["cd"]
-    C --> CE["ce"]
-    C --> CF["cf"]
-```
-
-**Edge cases.** `null` or empty `digits` returns an empty list (not `[""]`). A single digit `"2"` returns `[a, b, c]`. Digits `7` and `9` have four letters, so `"79"` yields 16 strings.
-
-**Result:** `letterCombinations("23")` returns `[ad, ae, af, bd, be, bf, cd, ce, cf]`, matching the class output.
-
 ## Source Code
 
 ### LetterCombinationsOfAPhoneNumber.java
@@ -208,3 +169,40 @@ public class LetterCombinationsOfAPhoneNumber {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: each digit position is one level of recursion. At level `index` the loop tries every letter of that digit (from the `LETTERS` table), appends it to one shared `StringBuilder`, recurses to the next digit, then deletes the last character to restore the state. When `index` reaches the number of digits the string is complete and is stored. One buffer is reused, so extra memory is only the recursion depth.
+
+**Input:** `digits = "23"` (2 = `abc`, 3 = `def`).
+
+| Step | `index` | Buffer | Action |
+|------|---------|--------|--------|
+| 1 | 0 | `a` | append `a`, go to digit 3 |
+| 2 | 1 | `ad` | `index == 2`: record `ad`; delete `d` |
+| 3 | 1 | `ae` | record `ae`; delete `e` |
+| 4 | 1 | `af` | record `af`; delete `f`, back to `a`, delete `a` |
+| 5 | 0 | `b` | append `b`; then record `bd`, `be`, `bf` the same way |
+| 6 | 0 | `c` | append `c`; then record `cd`, `ce`, `cf` |
+
+```mermaid
+graph TD
+    R["start"] --> A["a"]
+    R --> B["b"]
+    R --> C["c"]
+    A --> AD["ad"]
+    A --> AE["ae"]
+    A --> AF["af"]
+    B --> BD["bd"]
+    B --> BE["be"]
+    B --> BF["bf"]
+    C --> CD["cd"]
+    C --> CE["ce"]
+    C --> CF["cf"]
+```
+
+**Edge cases.** `null` or empty `digits` returns an empty list (not `[""]`). A single digit `"2"` returns `[a, b, c]`. Digits `7` and `9` have four letters, so `"79"` yields 16 strings.
+
+**Result:** `letterCombinations("23")` returns `[ad, ae, af, bd, be, bf, cd, ce, cf]`, matching the class output.

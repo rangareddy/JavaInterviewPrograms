@@ -137,46 +137,6 @@ private void swap(int a, int b) {
 | 1 | Sorted Array | add O(n), peek O(1), poll O(n) for the min end | O(n) |
 | 2 | Binary Heap in an Array (Optimized) | add and poll O(log n), peek O(1) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 2 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: store a complete binary tree in an array, where the children of index `i` are `2i + 1` and `2i + 2` and the parent is `(i - 1) / 2`. The heap rule is that every parent is "before" its children, where `before(a, b)` is `a < b` for a min-heap and `a > b` for a max-heap, so the root is always the extreme value. `add` appends at the end and sifts up (swap with the parent while it is before it). `poll` returns the root, moves the last element to the root and sifts down (swap with the better child until the rule holds). Each walk follows one root-to-leaf path, so both are O(log n); `peek` is just `data[0]`.
-
-**Input:** `add 5, 3, 8, 1, 9, 2` into a min-heap, then `poll` until empty (the array is shown as it is after each operation).
-
-| Step | Operation | What happens | Array afterwards |
-|------|-----------|--------------|------------------|
-| 1 | `add(5)` | placed at index 0, no parent | `[5]` |
-| 2 | `add(3)` | index 1, parent `5`; `3 < 5`, swap | `[3, 5]` |
-| 3 | `add(8)` | index 2, parent `3`; `8 < 3` is false, stop | `[3, 5, 8]` |
-| 4 | `add(1)` | index 3, parent index 1 (`5`): swap; then parent index 0 (`3`): swap | `[1, 3, 8, 5]` |
-| 5 | `add(9)` | index 4, parent index 1 (`3`); no swap | `[1, 3, 8, 5, 9]` |
-| 6 | `add(2)` | index 5, parent index 2 (`8`): swap; parent index 0 (`1`): stop | `[1, 3, 2, 5, 9, 8]` |
-| 7 | `poll()` returns `1` | last element `8` moves to the root, children `3` and `2`, swap with `2` | `[2, 3, 8, 5, 9]` |
-| 8 | `poll()` returns `2` | `9` to the root, children `3` and `8`: swap with `3`; then child `5`: swap | `[3, 5, 8, 9]` |
-| 9 | `poll()` returns `3` | `9` to the root, children `5` and `8`: swap with `5`; no children left | `[5, 9, 8]` |
-| 10 | `poll()` returns `5` | `8` to the root, child `9` is not before it | `[8, 9]` |
-| 11 | `poll()` returns `8` | `9` to the root | `[9]` |
-| 12 | `poll()` returns `9` | size becomes 0, no sift | `[]` |
-
-```mermaid
-flowchart TD
-    A["1"] --> B["3"]
-    A --> C["2"]
-    B --> D["5"]
-    B --> E["9"]
-    C --> F["8"]
-```
-
-The diagram is the heap `[1, 3, 2, 5, 9, 8]` after step 6. Polling `1` moves `8` to the top and sifts it down past `2`.
-
-**Edge cases.** The backing array starts at 8 slots and doubles when full. `peek` and `poll` on an empty heap throw `IllegalStateException("heap is empty")`. Polling the last element skips the sift (`size > 0` check). A max-heap fed the same input flips the comparison only.
-
-**Result:** min peek is `1`, max peek is `9`; poll order is `[1, 2, 3, 5, 8, 9]` for the min-heap and `[9, 8, 5, 3, 2, 1]` for the max-heap, which matches the class output.
-
 ## Source Code
 
 ### BinaryHeap.java
@@ -288,3 +248,41 @@ public class BinaryHeap {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+
+The idea: store a complete binary tree in an array, where the children of index `i` are `2i + 1` and `2i + 2` and the parent is `(i - 1) / 2`. The heap rule is that every parent is "before" its children, where `before(a, b)` is `a < b` for a min-heap and `a > b` for a max-heap, so the root is always the extreme value. `add` appends at the end and sifts up (swap with the parent while it is before it). `poll` returns the root, moves the last element to the root and sifts down (swap with the better child until the rule holds). Each walk follows one root-to-leaf path, so both are O(log n); `peek` is just `data[0]`.
+
+**Input:** `add 5, 3, 8, 1, 9, 2` into a min-heap, then `poll` until empty (the array is shown as it is after each operation).
+
+| Step | Operation | What happens | Array afterwards |
+|------|-----------|--------------|------------------|
+| 1 | `add(5)` | placed at index 0, no parent | `[5]` |
+| 2 | `add(3)` | index 1, parent `5`; `3 < 5`, swap | `[3, 5]` |
+| 3 | `add(8)` | index 2, parent `3`; `8 < 3` is false, stop | `[3, 5, 8]` |
+| 4 | `add(1)` | index 3, parent index 1 (`5`): swap; then parent index 0 (`3`): swap | `[1, 3, 8, 5]` |
+| 5 | `add(9)` | index 4, parent index 1 (`3`); no swap | `[1, 3, 8, 5, 9]` |
+| 6 | `add(2)` | index 5, parent index 2 (`8`): swap; parent index 0 (`1`): stop | `[1, 3, 2, 5, 9, 8]` |
+| 7 | `poll()` returns `1` | last element `8` moves to the root, children `3` and `2`, swap with `2` | `[2, 3, 8, 5, 9]` |
+| 8 | `poll()` returns `2` | `9` to the root, children `3` and `8`: swap with `3`; then child `5`: swap | `[3, 5, 8, 9]` |
+| 9 | `poll()` returns `3` | `9` to the root, children `5` and `8`: swap with `5`; no children left | `[5, 9, 8]` |
+| 10 | `poll()` returns `5` | `8` to the root, child `9` is not before it | `[8, 9]` |
+| 11 | `poll()` returns `8` | `9` to the root | `[9]` |
+| 12 | `poll()` returns `9` | size becomes 0, no sift | `[]` |
+
+```mermaid
+flowchart TD
+    A["1"] --> B["3"]
+    A --> C["2"]
+    B --> D["5"]
+    B --> E["9"]
+    C --> F["8"]
+```
+
+The diagram is the heap `[1, 3, 2, 5, 9, 8]` after step 6. Polling `1` moves `8` to the top and sifts it down past `2`.
+
+**Edge cases.** The backing array starts at 8 slots and doubles when full. `peek` and `poll` on an empty heap throw `IllegalStateException("heap is empty")`. Polling the last element skips the sift (`size > 0` check). A max-heap fed the same input flips the comparison only.
+
+**Result:** min peek is `1`, max peek is `9`; poll order is `[1, 2, 3, 5, 8, 9]` for the min-heap and `[9, 8, 5, 3, 2, 1]` for the max-heap, which matches the class output.

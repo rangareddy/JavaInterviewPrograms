@@ -92,36 +92,6 @@ private void shiftIfNeeded() {
 | 1 | Costly Push | push O(n), pop/peek/empty O(1) | O(n) |
 | 2 | Two Stacks with Lazy Transfer (Optimized) | O(1) amortized per operation | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 2 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: a stack reverses order, so moving everything from one stack to another reverses it twice, which gives queue (FIFO) order. New elements are always pushed on the `input` stack. Only when a `pop` or `peek` finds the `output` stack empty are all elements moved from `input` to `output`; then the oldest element is on top of `output`. While `output` still has elements, nothing is moved, so each element is moved at most once and the cost of all operations is amortized O(1).
-
-**Input:** `push(1), push(2), peek(), pop(), empty()`, then `push(3), pop(), pop(), empty()`. Stacks are written with the top on the right.
-
-| Step | Operation | What happens | input | output | Returns |
-|------|-----------|--------------|-------|--------|---------|
-| 1 | push(1) | push on input | `1` | | |
-| 2 | push(2) | push on input | `1 2` | | |
-| 3 | peek() | output empty: move 2, then 1 | | `2 1` | 1 |
-| 4 | pop() | output not empty, no move | | `2` | 1 |
-| 5 | empty() | output still has 2 | | `2` | false |
-| 6 | push(3) | push on input | `3` | `2` | |
-| 7 | pop() | output not empty, takes 2 first (FIFO) | `3` | | 2 |
-| 8 | pop() | output empty: move 3 | | | 3 |
-| 9 | empty() | both stacks empty | | | true |
-
-```text
-push  ->  [ input ]  --(only when output is empty, move all)-->  [ output ]  ->  pop / peek
-```
-
-**Edge cases.** `empty()` must check both stacks, because elements can sit in either. In step 7 the element 3 waits in `input` even though it was pushed after the transfer, which keeps the order correct. `pop` or `peek` on an empty queue is not guarded and would throw (`NoSuchElementException` / `NullPointerException`); the problem guarantees valid calls.
-
-**Result:** the first sequence returns `1, 1, false` and the second `2, 3, true`, matching the class output.
-
 ## Source Code
 
 ### ImplementQueueUsingStacks.java
@@ -178,3 +148,31 @@ public class ImplementQueueUsingStacks {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+
+The idea: a stack reverses order, so moving everything from one stack to another reverses it twice, which gives queue (FIFO) order. New elements are always pushed on the `input` stack. Only when a `pop` or `peek` finds the `output` stack empty are all elements moved from `input` to `output`; then the oldest element is on top of `output`. While `output` still has elements, nothing is moved, so each element is moved at most once and the cost of all operations is amortized O(1).
+
+**Input:** `push(1), push(2), peek(), pop(), empty()`, then `push(3), pop(), pop(), empty()`. Stacks are written with the top on the right.
+
+| Step | Operation | What happens | input | output | Returns |
+|------|-----------|--------------|-------|--------|---------|
+| 1 | push(1) | push on input | `1` | | |
+| 2 | push(2) | push on input | `1 2` | | |
+| 3 | peek() | output empty: move 2, then 1 | | `2 1` | 1 |
+| 4 | pop() | output not empty, no move | | `2` | 1 |
+| 5 | empty() | output still has 2 | | `2` | false |
+| 6 | push(3) | push on input | `3` | `2` | |
+| 7 | pop() | output not empty, takes 2 first (FIFO) | `3` | | 2 |
+| 8 | pop() | output empty: move 3 | | | 3 |
+| 9 | empty() | both stacks empty | | | true |
+
+```text
+push  ->  [ input ]  --(only when output is empty, move all)-->  [ output ]  ->  pop / peek
+```
+
+**Edge cases.** `empty()` must check both stacks, because elements can sit in either. In step 7 the element 3 waits in `input` even though it was pushed after the transfer, which keeps the order correct. `pop` or `peek` on an empty queue is not guarded and would throw (`NoSuchElementException` / `NullPointerException`); the problem guarantees valid calls.
+
+**Result:** the first sequence returns `1, 1, false` and the second `2, 3, true`, matching the class output.

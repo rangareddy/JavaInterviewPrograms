@@ -78,35 +78,6 @@ public static List<List<Integer>> kSmallestPairs(int[] nums1, int[] nums2, int k
 | 1 | Generate All Pairs and Sort | O(n * m * log(n * m)) | O(n * m) |
 | 2 | Min-Heap over Rows (Optimized) | O(k log k) | O(k) |
 
-### Optimized Solution
-
-The optimized solution is Approach 2 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: picture a grid where cell `(i, j)` has sum `nums1[i] + nums2[j]`. Rows and columns are sorted, so the smallest unused pair is always the head of a row's remaining cells. Seed a min-heap with the first cell of the first `min(k, n)` rows, then repeat: pop the smallest, record the pair, and push the next cell of the same row `(i, j + 1)`. The heap never holds more than `k` entries, so the work is `O(k log k)`.
-
-**Input:** `nums1 = [1, 7, 11]`, `nums2 = [2, 4, 6]`, `k = 3`. Heap entries are `(sum, i, j)`; the seed is `(3, 0, 0)`, `(9, 1, 0)`, `(13, 2, 0)`.
-
-| Pop | Popped `(sum, i, j)` | Pair added | Pushed `(i, j + 1)` | Heap afterwards | `result` |
-|-----|---------------------|------------|---------------------|-----------------|----------|
-| 1 | `(3, 0, 0)` | `[1, 2]` | `(5, 0, 1)` | `5, 9, 13` | `[[1, 2]]` |
-| 2 | `(5, 0, 1)` | `[1, 4]` | `(7, 0, 2)` | `7, 9, 13` | `[[1, 2], [1, 4]]` |
-| 3 | `(7, 0, 2)` | `[1, 6]` | none, `j + 1 = 3` is past the end of `nums2` | `9, 13` | `[[1, 2], [1, 4], [1, 6]]` |
-
-`result.size() == k`, so the loop stops with `9` and `13` still unused.
-
-```text
-        nums2:  2   4   6
-nums1 = 1      [3]  [5]  [7]   <- popped in this order
-nums1 = 7       9   11   13
-nums1 = 11     13   15   17
-```
-
-**Edge cases:** an empty array or `k <= 0` returns an empty list immediately; if there are fewer than `k` pairs in total (for example `[1, 2]` and `[3]` with `k = 3`) the heap runs empty and only the existing pairs come back.
-
-**Result:** `[[1, 2], [1, 4], [1, 6]]`, the same as the class output.
-
 ## Source Code
 
 ### FindKPairsWithSmallestSums.java
@@ -151,3 +122,30 @@ public class FindKPairsWithSmallestSums {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+
+The idea: picture a grid where cell `(i, j)` has sum `nums1[i] + nums2[j]`. Rows and columns are sorted, so the smallest unused pair is always the head of a row's remaining cells. Seed a min-heap with the first cell of the first `min(k, n)` rows, then repeat: pop the smallest, record the pair, and push the next cell of the same row `(i, j + 1)`. The heap never holds more than `k` entries, so the work is `O(k log k)`.
+
+**Input:** `nums1 = [1, 7, 11]`, `nums2 = [2, 4, 6]`, `k = 3`. Heap entries are `(sum, i, j)`; the seed is `(3, 0, 0)`, `(9, 1, 0)`, `(13, 2, 0)`.
+
+| Pop | Popped `(sum, i, j)` | Pair added | Pushed `(i, j + 1)` | Heap afterwards | `result` |
+|-----|---------------------|------------|---------------------|-----------------|----------|
+| 1 | `(3, 0, 0)` | `[1, 2]` | `(5, 0, 1)` | `5, 9, 13` | `[[1, 2]]` |
+| 2 | `(5, 0, 1)` | `[1, 4]` | `(7, 0, 2)` | `7, 9, 13` | `[[1, 2], [1, 4]]` |
+| 3 | `(7, 0, 2)` | `[1, 6]` | none, `j + 1 = 3` is past the end of `nums2` | `9, 13` | `[[1, 2], [1, 4], [1, 6]]` |
+
+`result.size() == k`, so the loop stops with `9` and `13` still unused.
+
+```text
+        nums2:  2   4   6
+nums1 = 1      [3]  [5]  [7]   <- popped in this order
+nums1 = 7       9   11   13
+nums1 = 11     13   15   17
+```
+
+**Edge cases:** an empty array or `k <= 0` returns an empty list immediately; if there are fewer than `k` pairs in total (for example `[1, 2]` and `[3]` with `k = 3`) the heap runs empty and only the existing pairs come back.
+
+**Result:** `[[1, 2], [1, 4], [1, 6]]`, the same as the class output.

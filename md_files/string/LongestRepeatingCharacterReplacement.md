@@ -215,37 +215,6 @@ public static int characterReplacement(String s, int k) {
 | 6 | Prefix Counts and Binary Search on the Start | O(26 * n log n) | O(26 * n) |
 | 7 | Sliding Window with a Non-Shrinking Window (Optimized) | O(n) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 7 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: a window is valid if `windowSize - (count of its most frequent letter) <= k`, because the other letters can be replaced by that letter. `right` grows the window one letter at a time, and `maxCount` is the highest letter count seen so far. When the window becomes invalid, `left` moves by exactly one, so the window slides instead of shrinking. `maxCount` is never lowered: the answer can only grow when a larger `maxCount` appears, so a stale value never produces a wrong larger answer.
-
-**Input:** `s = "AABABBA"`, `k = 1`.
-
-| Step | `right` | Letter | Counts | `maxCount` | `size - maxCount` | Action | `left` | Window size | `best` |
-|------|---------|--------|--------|-----------|-------------------|--------|--------|-------------|--------|
-| 1 | 0 | A | A=1 | 1 | 0 | fits | 0 | 1 | 1 |
-| 2 | 1 | A | A=2 | 2 | 0 | fits | 0 | 2 | 2 |
-| 3 | 2 | B | A=2, B=1 | 2 | 1 | fits (1 <= k) | 0 | 3 | 3 |
-| 4 | 3 | A | A=3, B=1 | 3 | 1 | fits | 0 | 4 | 4 |
-| 5 | 4 | B | A=2, B=2 | 3 | 2 > 1 | drop `s[0]`=A, `left++` | 1 | 4 | 4 |
-| 6 | 5 | B | A=1, B=3 | 3 | 2 > 1 | drop `s[1]`=A, `left++` | 2 | 4 | 4 |
-| 7 | 6 | A | A=2, B=2 | 3 | 2 > 1 | drop `s[2]`=B, `left++` | 3 | 4 | 4 |
-
-```text
-index: 0 1 2 3 4 5 6
-chars: A A B A B B A
-best window: [0..3] = A A B A  (replace the one B -> AAAA)
-after that the size-4 window just slides right
-```
-
-**Edge cases.** `null` or `""` returns `0`. When the whole string already fits (`"AAAA"`, `k = 2`) the window never slides and the answer is the length, 4. Letters are assumed to be `A` to `Z` (26-slot array). The window never shrinks, so `best` is the final window size.
-
-**Result:** `4`, matching the class output.
-
 ## Source Code
 
 ### LongestRepeatingCharacterReplacement.java
@@ -286,3 +255,32 @@ public class LongestRepeatingCharacterReplacement {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
+
+The idea: a window is valid if `windowSize - (count of its most frequent letter) <= k`, because the other letters can be replaced by that letter. `right` grows the window one letter at a time, and `maxCount` is the highest letter count seen so far. When the window becomes invalid, `left` moves by exactly one, so the window slides instead of shrinking. `maxCount` is never lowered: the answer can only grow when a larger `maxCount` appears, so a stale value never produces a wrong larger answer.
+
+**Input:** `s = "AABABBA"`, `k = 1`.
+
+| Step | `right` | Letter | Counts | `maxCount` | `size - maxCount` | Action | `left` | Window size | `best` |
+|------|---------|--------|--------|-----------|-------------------|--------|--------|-------------|--------|
+| 1 | 0 | A | A=1 | 1 | 0 | fits | 0 | 1 | 1 |
+| 2 | 1 | A | A=2 | 2 | 0 | fits | 0 | 2 | 2 |
+| 3 | 2 | B | A=2, B=1 | 2 | 1 | fits (1 <= k) | 0 | 3 | 3 |
+| 4 | 3 | A | A=3, B=1 | 3 | 1 | fits | 0 | 4 | 4 |
+| 5 | 4 | B | A=2, B=2 | 3 | 2 > 1 | drop `s[0]`=A, `left++` | 1 | 4 | 4 |
+| 6 | 5 | B | A=1, B=3 | 3 | 2 > 1 | drop `s[1]`=A, `left++` | 2 | 4 | 4 |
+| 7 | 6 | A | A=2, B=2 | 3 | 2 > 1 | drop `s[2]`=B, `left++` | 3 | 4 | 4 |
+
+```text
+index: 0 1 2 3 4 5 6
+chars: A A B A B B A
+best window: [0..3] = A A B A  (replace the one B -> AAAA)
+after that the size-4 window just slides right
+```
+
+**Edge cases.** `null` or `""` returns `0`. When the whole string already fits (`"AAAA"`, `k = 2`) the window never slides and the answer is the length, 4. Letters are assumed to be `A` to `Z` (26-slot array). The window never shrinks, so `best` is the final window size.
+
+**Result:** `4`, matching the class output.

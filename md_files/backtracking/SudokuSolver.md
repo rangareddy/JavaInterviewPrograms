@@ -138,48 +138,6 @@ private static boolean solve(char[][] board, int[] rows, int[] cols, int[] boxes
 | 1 | Plain Backtracking with Validity Checks | O(9^m) with a large constant | O(m) |
 | 2 | Bitmasks with Most-Constrained Cell First (Optimized) | O(9^m) worst case, fast in practice | O(m) |
 
-### Optimized Solution
-
-The optimized solution is Approach 2 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: three bitmask arrays record which digits each row, column and 3 x 3 box already uses (bit `d` = digit `d + 1`). For a cell, `rows[r] | cols[c] | boxes[b]` is the set of used digits, so the candidates are the clear bits, found in O(1) with `Integer.bitCount`. Each recursive call first scans the not-yet-filled cells, picks the one with the fewest candidates (stopping early at 0 or 1) and swaps it to position `filled`. It then tries each candidate: set the bit in the three masks, write the digit, recurse. If the recursion fails, the bits are cleared and the next digit is tried; if no digit works the cell is swapped back and `false` is returned.
-
-**Input:** the board from `main()` (the classic puzzle starting `53..7....`), which has 51 empty cells.
-
-First moves chosen by the code (cell = row, column, 0-based); "candidates" is the count `9 - bitCount(used)` for the chosen cell.
-
-| Depth (`filled`) | Chosen cell | Candidates | Digit placed |
-|---|---|---|---|
-| 0 | (4,4) | 1 | 5 (used digits are 1,2,3,4,6,7,8,9) |
-| 1 | (4,1) | 1 | 2 |
-| 2 | (4,7) | 1 | 9 |
-| 3 | (4,2) | 1 | 6 |
-| 4 | (4,6) | 1 | 7 |
-| 5 | (5,3) | 1 | 9 |
-| 6 | (3,3) | 1 | 7 |
-| 7 | (6,4) | 1 | 3 |
-| 8 | (2,4) | 1 | 4 |
-| 9 | (2,5) | 1 | 2 |
-| 10 | (2,0) | 1 | 1 |
-| 11 | (2,3) | 1 | 3 |
-| ... | ... | 1 | one forced digit per call up to depth 50 |
-
-```text
-depth 0 : scan all 51 empties, the first with count <= 1 wins -> (4,4), only digit 5
-depth 1 : placing 5 shrank the options of row 4, column 4, box 4 -> (4,1) is now forced
-...
-depth 51: filled == empty.size() -> return true
-```
-
-For this puzzle every chosen cell had exactly one candidate, so the search never branched or backtracked: 51 recursive calls fill the board. A harder puzzle would pick a cell with 2 or more candidates and rely on the undo of the three masks and the cell when a branch fails.
-
-**Edge cases:** a board with no empty cells makes `filled == empty.size()` true at once and nothing changes. If a cell ever has 0 candidates, `available` is 0, the loop does nothing, the cell is swapped back and `false` propagates to the caller so the previous cell tries its next digit. The method assumes a valid puzzle with a solution; for an unsolvable board it simply returns with the board restored to its input state.
-
-**Result:** the board becomes
-`534678912 / 672195348 / 198342567 / 859761423 / 426853791 / 713924856 / 961537284 / 287419635 / 345286179`, the same output the class prints.
-
 ## Source Code
 
 ### SudokuSolver.java
@@ -285,3 +243,43 @@ public class SudokuSolver {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+
+The idea: three bitmask arrays record which digits each row, column and 3 x 3 box already uses (bit `d` = digit `d + 1`). For a cell, `rows[r] | cols[c] | boxes[b]` is the set of used digits, so the candidates are the clear bits, found in O(1) with `Integer.bitCount`. Each recursive call first scans the not-yet-filled cells, picks the one with the fewest candidates (stopping early at 0 or 1) and swaps it to position `filled`. It then tries each candidate: set the bit in the three masks, write the digit, recurse. If the recursion fails, the bits are cleared and the next digit is tried; if no digit works the cell is swapped back and `false` is returned.
+
+**Input:** the board from `main()` (the classic puzzle starting `53..7....`), which has 51 empty cells.
+
+First moves chosen by the code (cell = row, column, 0-based); "candidates" is the count `9 - bitCount(used)` for the chosen cell.
+
+| Depth (`filled`) | Chosen cell | Candidates | Digit placed |
+|---|---|---|---|
+| 0 | (4,4) | 1 | 5 (used digits are 1,2,3,4,6,7,8,9) |
+| 1 | (4,1) | 1 | 2 |
+| 2 | (4,7) | 1 | 9 |
+| 3 | (4,2) | 1 | 6 |
+| 4 | (4,6) | 1 | 7 |
+| 5 | (5,3) | 1 | 9 |
+| 6 | (3,3) | 1 | 7 |
+| 7 | (6,4) | 1 | 3 |
+| 8 | (2,4) | 1 | 4 |
+| 9 | (2,5) | 1 | 2 |
+| 10 | (2,0) | 1 | 1 |
+| 11 | (2,3) | 1 | 3 |
+| ... | ... | 1 | one forced digit per call up to depth 50 |
+
+```text
+depth 0 : scan all 51 empties, the first with count <= 1 wins -> (4,4), only digit 5
+depth 1 : placing 5 shrank the options of row 4, column 4, box 4 -> (4,1) is now forced
+...
+depth 51: filled == empty.size() -> return true
+```
+
+For this puzzle every chosen cell had exactly one candidate, so the search never branched or backtracked: 51 recursive calls fill the board. A harder puzzle would pick a cell with 2 or more candidates and rely on the undo of the three masks and the cell when a branch fails.
+
+**Edge cases:** a board with no empty cells makes `filled == empty.size()` true at once and nothing changes. If a cell ever has 0 candidates, `available` is 0, the loop does nothing, the cell is swapped back and `false` propagates to the caller so the previous cell tries its next digit. The method assumes a valid puzzle with a solution; for an unsolvable board it simply returns with the board restored to its input state.
+
+**Result:** the board becomes
+`534678912 / 672195348 / 198342567 / 859761423 / 426853791 / 713924856 / 961537284 / 287419635 / 345286179`, the same output the class prints.

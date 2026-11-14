@@ -132,41 +132,6 @@ public static int coinChangeBfs(int[] coins, int amount) {
 | 3 | Bottom-Up DP (Optimized) | O(amount * coins) | O(amount) |
 | 4 | BFS over the Remaining Amounts | O(amount * coins) | O(amount) |
 
-### Optimized Solution
-
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: `dp[a]` is the fewest coins that make amount `a`. To make `a`, pick a last coin `c` and add one coin to the best answer for `a - c`; take the minimum over all coins. Unreachable amounts hold the sentinel `amount + 1`, which is larger than any real answer, so a plain `min` ignores them.
-
-**Input:** `coins = [1, 2, 5]`, `amount = 11`. Start with `dp[0] = 0` and every other cell `12` (sentinel).
-
-| `a` | Candidates `dp[a - c] + 1` for `c = 1, 2, 5` | `dp[a]` |
-|-----|-----------------------------------------------|---------|
-| 1 | `dp[0]+1 = 1` | 1 |
-| 2 | `dp[1]+1 = 2`, `dp[0]+1 = 1` | 1 |
-| 3 | `dp[2]+1 = 2`, `dp[1]+1 = 2` | 2 |
-| 4 | `dp[3]+1 = 3`, `dp[2]+1 = 2` | 2 |
-| 5 | `dp[4]+1 = 3`, `dp[3]+1 = 3`, `dp[0]+1 = 1` | 1 |
-| 6 | `dp[5]+1 = 2`, `dp[4]+1 = 3`, `dp[1]+1 = 2` | 2 |
-| 7 | `dp[6]+1 = 3`, `dp[5]+1 = 2`, `dp[2]+1 = 2` | 2 |
-| 8 | `dp[7]+1 = 3`, `dp[6]+1 = 3`, `dp[3]+1 = 3` | 3 |
-| 9 | `dp[8]+1 = 4`, `dp[7]+1 = 3`, `dp[4]+1 = 3` | 3 |
-| 10 | `dp[9]+1 = 4`, `dp[8]+1 = 4`, `dp[5]+1 = 2` | 2 |
-| 11 | `dp[10]+1 = 3`, `dp[9]+1 = 4`, `dp[6]+1 = 3` | 3 |
-
-```text
-a:    0  1  2  3  4  5  6  7  8  9  10 11
-dp:  [0, 1, 1, 2, 2, 1, 2, 2, 3, 3, 2, 3]
-                                  ^  ^
-                       dp[11] = dp[10] + 1  (coin 1)   -> 5 + 5 + 1
-```
-
-**Edge cases.** `amount = 0` returns `0` (the loop never runs and `dp[0] = 0`). A negative amount returns `-1` immediately. If no combination works (for example `coins = [2]`, `amount = 3`), `dp[amount]` stays `amount + 1`, which is greater than `amount`, so the method returns `-1`.
-
-**Result:** `coinChange([1, 2, 5], 11)` returns `3`, matching the class output (the class also returns `-1` for `[2], 3` and `0` for `[1], 0`).
-
 ## Source Code
 
 ### CoinChange.java
@@ -205,3 +170,36 @@ public class CoinChange {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+
+The idea: `dp[a]` is the fewest coins that make amount `a`. To make `a`, pick a last coin `c` and add one coin to the best answer for `a - c`; take the minimum over all coins. Unreachable amounts hold the sentinel `amount + 1`, which is larger than any real answer, so a plain `min` ignores them.
+
+**Input:** `coins = [1, 2, 5]`, `amount = 11`. Start with `dp[0] = 0` and every other cell `12` (sentinel).
+
+| `a` | Candidates `dp[a - c] + 1` for `c = 1, 2, 5` | `dp[a]` |
+|-----|-----------------------------------------------|---------|
+| 1 | `dp[0]+1 = 1` | 1 |
+| 2 | `dp[1]+1 = 2`, `dp[0]+1 = 1` | 1 |
+| 3 | `dp[2]+1 = 2`, `dp[1]+1 = 2` | 2 |
+| 4 | `dp[3]+1 = 3`, `dp[2]+1 = 2` | 2 |
+| 5 | `dp[4]+1 = 3`, `dp[3]+1 = 3`, `dp[0]+1 = 1` | 1 |
+| 6 | `dp[5]+1 = 2`, `dp[4]+1 = 3`, `dp[1]+1 = 2` | 2 |
+| 7 | `dp[6]+1 = 3`, `dp[5]+1 = 2`, `dp[2]+1 = 2` | 2 |
+| 8 | `dp[7]+1 = 3`, `dp[6]+1 = 3`, `dp[3]+1 = 3` | 3 |
+| 9 | `dp[8]+1 = 4`, `dp[7]+1 = 3`, `dp[4]+1 = 3` | 3 |
+| 10 | `dp[9]+1 = 4`, `dp[8]+1 = 4`, `dp[5]+1 = 2` | 2 |
+| 11 | `dp[10]+1 = 3`, `dp[9]+1 = 4`, `dp[6]+1 = 3` | 3 |
+
+```text
+a:    0  1  2  3  4  5  6  7  8  9  10 11
+dp:  [0, 1, 1, 2, 2, 1, 2, 2, 3, 3, 2, 3]
+                                  ^  ^
+                       dp[11] = dp[10] + 1  (coin 1)   -> 5 + 5 + 1
+```
+
+**Edge cases.** `amount = 0` returns `0` (the loop never runs and `dp[0] = 0`). A negative amount returns `-1` immediately. If no combination works (for example `coins = [2]`, `amount = 3`), `dp[amount]` stays `amount + 1`, which is greater than `amount`, so the method returns `-1`.
+
+**Result:** `coinChange([1, 2, 5], 11)` returns `3`, matching the class output (the class also returns `-1` for `[2], 3` and `0` for `[1], 0`).

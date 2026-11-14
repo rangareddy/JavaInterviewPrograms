@@ -105,50 +105,6 @@ private static void collect(TreeNode node, int row, int column, List<int[]> node
 | 1 | BFS with Nested Sorted Maps | O(n log n) | O(n) |
 | 2 | Collect, Sort and Group (Optimized) | O(n log n) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 2 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: give every node a coordinate: `row` is its depth and `column` is its horizontal position (the root is column 0, a left child is one column to the left, a right child one column to the right). One depth-first walk records `{column, row, value}` for every node, the list is sorted by column, then row, then value, and a new output list starts whenever the column changes. Sorting by value as the last key is what orders two nodes sharing the same row and column.
-
-**Input:** the tree `[3, 9, 20, null, null, 15, 7]`.
-
-```mermaid
-flowchart TD
-    n3["3<br/>col 0, row 0"] --> n9["9<br/>col -1, row 1"]
-    n3 --> n20["20<br/>col 1, row 1"]
-    n20 --> n15["15<br/>col 0, row 2"]
-    n20 --> n7["7<br/>col 2, row 2"]
-```
-
-**Collect** (preorder, so the list is in the order `3, 9, 20, 15, 7`):
-
-| Visit | Node | `row` | `column` | Record `{column, row, value}` |
-|-------|------|-------|----------|-------------------------------|
-| 1 | `3` | 0 | 0 | `{0, 0, 3}` |
-| 2 | `9` | 1 | -1 | `{-1, 1, 9}` |
-| 3 | `20` | 1 | 1 | `{1, 1, 20}` |
-| 4 | `15` | 2 | 0 | `{0, 2, 15}` |
-| 5 | `7` | 2 | 2 | `{2, 2, 7}` |
-
-**Sort and group** (by column, then row, then value):
-
-| Sorted entry | `lastColumn` before | New list started? | `result` after |
-|--------------|---------------------|-------------------|----------------|
-| `{-1, 1, 9}` | min value | yes | `[[9]]` |
-| `{0, 0, 3}` | -1 | yes | `[[9], [3]]` |
-| `{0, 2, 15}` | 0 | no | `[[9], [3, 15]]` |
-| `{1, 1, 20}` | 0 | yes | `[[9], [3, 15], [20]]` |
-| `{2, 2, 7}` | 1 | yes | `[[9], [3, 15], [20], [7]]` |
-
-The result is `[[9], [3, 15], [20], [7]]`.
-
-**Edge cases.** An empty tree collects nothing, so the result is an empty list. A single node gives `[[1]]`. Two nodes in the same column and row, as for `5` and `6` in `[1, 2, 3, 4, 6, 5, 7]` (both at column 0, row 2), are ordered by value, giving `[1, 5, 6]` however the tree is arranged. Time is `O(n log n)` for the sort, space `O(n)`.
-
-**Result:** `[[9], [3, 15], [20], [7]]`, matching the class output (the other inputs print `[[4], [2], [1, 5, 6], [3], [7]]` twice and `[[1]]`).
-
 ## Source Code
 
 ### VerticalOrderTraversal.java
@@ -209,3 +165,45 @@ public class VerticalOrderTraversal {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+
+The idea: give every node a coordinate: `row` is its depth and `column` is its horizontal position (the root is column 0, a left child is one column to the left, a right child one column to the right). One depth-first walk records `{column, row, value}` for every node, the list is sorted by column, then row, then value, and a new output list starts whenever the column changes. Sorting by value as the last key is what orders two nodes sharing the same row and column.
+
+**Input:** the tree `[3, 9, 20, null, null, 15, 7]`.
+
+```mermaid
+flowchart TD
+    n3["3<br/>col 0, row 0"] --> n9["9<br/>col -1, row 1"]
+    n3 --> n20["20<br/>col 1, row 1"]
+    n20 --> n15["15<br/>col 0, row 2"]
+    n20 --> n7["7<br/>col 2, row 2"]
+```
+
+**Collect** (preorder, so the list is in the order `3, 9, 20, 15, 7`):
+
+| Visit | Node | `row` | `column` | Record `{column, row, value}` |
+|-------|------|-------|----------|-------------------------------|
+| 1 | `3` | 0 | 0 | `{0, 0, 3}` |
+| 2 | `9` | 1 | -1 | `{-1, 1, 9}` |
+| 3 | `20` | 1 | 1 | `{1, 1, 20}` |
+| 4 | `15` | 2 | 0 | `{0, 2, 15}` |
+| 5 | `7` | 2 | 2 | `{2, 2, 7}` |
+
+**Sort and group** (by column, then row, then value):
+
+| Sorted entry | `lastColumn` before | New list started? | `result` after |
+|--------------|---------------------|-------------------|----------------|
+| `{-1, 1, 9}` | min value | yes | `[[9]]` |
+| `{0, 0, 3}` | -1 | yes | `[[9], [3]]` |
+| `{0, 2, 15}` | 0 | no | `[[9], [3, 15]]` |
+| `{1, 1, 20}` | 0 | yes | `[[9], [3, 15], [20]]` |
+| `{2, 2, 7}` | 1 | yes | `[[9], [3, 15], [20], [7]]` |
+
+The result is `[[9], [3, 15], [20], [7]]`.
+
+**Edge cases.** An empty tree collects nothing, so the result is an empty list. A single node gives `[[1]]`. Two nodes in the same column and row, as for `5` and `6` in `[1, 2, 3, 4, 6, 5, 7]` (both at column 0, row 2), are ordered by value, giving `[1, 5, 6]` however the tree is arranged. Time is `O(n log n)` for the sort, space `O(n)`.
+
+**Result:** `[[9], [3, 15], [20], [7]]`, matching the class output (the other inputs print `[[4], [2], [1, 5, 6], [3], [7]]` twice and `[[1]]`).

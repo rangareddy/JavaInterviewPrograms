@@ -87,38 +87,6 @@ private static void fill(int[][] image, int r, int c, int original, int color) {
 | 1 | Breadth-First Search with a Queue | O(m * n) | O(min(m, n)) for the frontier in a grid, up to O(m * n) |
 | 2 | Recursive DFS (Optimized) | O(m * n) | O(m * n) recursion in the worst case |
 
-### Optimized Solution
-
-The optimized solution is Approach 2 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: remember the start pixel's original color, then recolor it and spread to the four neighbours that are inside the grid and still have the original color. Recoloring on entry is also the "visited" mark, so no pixel is processed twice. If the new color equals the original, the method returns at once (otherwise the fill could never tell filled pixels from unfilled ones).
-
-**Input:** `image = [[1, 1, 1], [1, 1, 0], [1, 0, 1]]`, `(sr, sc) = (1, 1)`, `color = 2`. Original color is `1`. Neighbours are tried in the order down, up, right, left.
-
-| Step | Pixel | Action | Neighbours tried |
-|------|-------|--------|------------------|
-| 1 | (1,1) | recolor to 2 | down (2,1) is 0, stop; up (0,1) continues |
-| 2 | (0,1) | recolor to 2 | down (1,1) already 2; up outside; right (0,2) continues |
-| 3 | (0,2) | recolor to 2 | down (1,2) is 0; the rest outside or already 2 |
-| 4 | (0,0) | recolor to 2 (left of (0,1)) | down (1,0) continues |
-| 5 | (1,0) | recolor to 2 | down (2,0) continues |
-| 6 | (2,0) | recolor to 2 | right (2,1) is 0; nothing else to visit |
-
-After step 6 the calls unwind: back at (1,1) the right neighbour (1,2) is 0 and the left neighbour (1,0) is already 2.
-
-```text
-start            after fill
-1 1 1            2 2 2
-1 1 0   ----->   2 2 0
-1 0 1            2 0 1      <- (2,2) is only diagonal to the region, so it stays 1
-```
-
-**Edge cases:** if the start pixel already has the target color (`[[0,0,0],[0,0,0]]`, color 0) nothing changes and the same image is returned. Pixels outside the grid or with another color end the recursion. Note: the page and the Javadoc call the region "five pixels", but the trace shows six pixels are recolored (the output has six 2s).
-
-**Result:** `[[2, 2, 2], [2, 2, 0], [2, 0, 1]]`, the same as the class output.
-
 ## Source Code
 
 ### FloodFill.java
@@ -159,3 +127,33 @@ public class FloodFill {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+
+The idea: remember the start pixel's original color, then recolor it and spread to the four neighbours that are inside the grid and still have the original color. Recoloring on entry is also the "visited" mark, so no pixel is processed twice. If the new color equals the original, the method returns at once (otherwise the fill could never tell filled pixels from unfilled ones).
+
+**Input:** `image = [[1, 1, 1], [1, 1, 0], [1, 0, 1]]`, `(sr, sc) = (1, 1)`, `color = 2`. Original color is `1`. Neighbours are tried in the order down, up, right, left.
+
+| Step | Pixel | Action | Neighbours tried |
+|------|-------|--------|------------------|
+| 1 | (1,1) | recolor to 2 | down (2,1) is 0, stop; up (0,1) continues |
+| 2 | (0,1) | recolor to 2 | down (1,1) already 2; up outside; right (0,2) continues |
+| 3 | (0,2) | recolor to 2 | down (1,2) is 0; the rest outside or already 2 |
+| 4 | (0,0) | recolor to 2 (left of (0,1)) | down (1,0) continues |
+| 5 | (1,0) | recolor to 2 | down (2,0) continues |
+| 6 | (2,0) | recolor to 2 | right (2,1) is 0; nothing else to visit |
+
+After step 6 the calls unwind: back at (1,1) the right neighbour (1,2) is 0 and the left neighbour (1,0) is already 2.
+
+```text
+start            after fill
+1 1 1            2 2 2
+1 1 0   ----->   2 2 0
+1 0 1            2 0 1      <- (2,2) is only diagonal to the region, so it stays 1
+```
+
+**Edge cases:** if the start pixel already has the target color (`[[0,0,0],[0,0,0]]`, color 0) nothing changes and the same image is returned. Pixels outside the grid or with another color end the recursion. Note: the page and the Javadoc call the region "five pixels", but the trace shows six pixels are recolored (the output has six 2s).
+
+**Result:** `[[2, 2, 2], [2, 2, 0], [2, 0, 1]]`, the same as the class output.

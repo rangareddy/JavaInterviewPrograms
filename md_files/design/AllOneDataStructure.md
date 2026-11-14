@@ -136,39 +136,6 @@ private void removeIfEmpty(Bucket bucket) {
 | 1 | HashMap with a Scan for Min and Max | inc/dec O(1), getMaxKey/getMinKey O(n) | O(n) |
 | 2 | Linked List of Count Buckets (Optimized) | O(1) for all operations | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 2 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: keep the keys grouped by count in a doubly linked list of buckets, ordered by count from smallest (next to `head`) to largest (next to `tail`). A `HashMap` gives the bucket of any key. `inc` and `dec` only move a key to the neighbouring bucket (count + 1 or count - 1), creating that bucket if it does not exist and unlinking a bucket that becomes empty. The minimum key is in `head.next`, the maximum key in `tail.prev`, so all four operations are O(1).
-
-**Input:** `inc(a)`, `inc(b)`, `inc(b)`, `getMaxKey()`, `getMinKey()`, `dec(b)`, `dec(b)`, `getMaxKey()`, `getMinKey()`. The list is `head <-> tail` (the dummy buckets have counts 0 and `Integer.MAX_VALUE`).
-
-| Step | Operation | What happens | Bucket list (count: keys) | Result |
-|------|-----------|--------------|---------------------------|--------|
-| 1 | `inc(a)` | new key; `head.next` is not a count-1 bucket, so create it | 1: {a} | |
-| 2 | `inc(b)` | new key; `head.next` is the count-1 bucket, reuse it | 1: {a, b} | |
-| 3 | `inc(b)` | `b` is in bucket 1; `next` is `tail`, not count 2, so create bucket 2 after it; move `b`; bucket 1 still has `a` | 1: {a} <-> 2: {b} | |
-| 4 | `getMaxKey()` | `tail.prev` = bucket 2 | unchanged | `b` |
-| 5 | `getMinKey()` | `head.next` = bucket 1 | unchanged | `a` |
-| 6 | `dec(b)` | bucket 2, count 2 != 1; `prev` is bucket 1 (count 1), reuse it; move `b`; bucket 2 is empty, unlink it | 1: {a, b} | |
-| 7 | `dec(b)` | bucket 1, count == 1: remove `b` from the map and from the bucket; bucket 1 still has `a` | 1: {a} | |
-| 8 | `getMaxKey()` | `tail.prev` = bucket 1 | unchanged | `a` |
-| 9 | `getMinKey()` | `head.next` = bucket 1 | unchanged | `a` |
-
-```mermaid
-flowchart LR
-    H["head 0"] <--> B1["bucket 1<br/>keys a"] <--> B2["bucket 2<br/>keys b"] <--> T["tail MAX"]
-```
-
-The diagram shows the list after step 3. When a bucket holds several keys (step 2 and 6) `getMaxKey` / `getMinKey` return any one of them, as the problem allows.
-
-**Edge cases.** `dec` of an unknown key does nothing. A key whose count drops to 0 is removed entirely. With no keys left, `head.next == tail` and both getters return `""`. Buckets are created only when needed and removed when empty, so the list never holds an empty bucket.
-
-**Result:** `b, a, a, a`, exactly what the class prints.
-
 ## Source Code
 
 ### AllOneDataStructure.java
@@ -271,3 +238,34 @@ public class AllOneDataStructure {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+
+The idea: keep the keys grouped by count in a doubly linked list of buckets, ordered by count from smallest (next to `head`) to largest (next to `tail`). A `HashMap` gives the bucket of any key. `inc` and `dec` only move a key to the neighbouring bucket (count + 1 or count - 1), creating that bucket if it does not exist and unlinking a bucket that becomes empty. The minimum key is in `head.next`, the maximum key in `tail.prev`, so all four operations are O(1).
+
+**Input:** `inc(a)`, `inc(b)`, `inc(b)`, `getMaxKey()`, `getMinKey()`, `dec(b)`, `dec(b)`, `getMaxKey()`, `getMinKey()`. The list is `head <-> tail` (the dummy buckets have counts 0 and `Integer.MAX_VALUE`).
+
+| Step | Operation | What happens | Bucket list (count: keys) | Result |
+|------|-----------|--------------|---------------------------|--------|
+| 1 | `inc(a)` | new key; `head.next` is not a count-1 bucket, so create it | 1: {a} | |
+| 2 | `inc(b)` | new key; `head.next` is the count-1 bucket, reuse it | 1: {a, b} | |
+| 3 | `inc(b)` | `b` is in bucket 1; `next` is `tail`, not count 2, so create bucket 2 after it; move `b`; bucket 1 still has `a` | 1: {a} <-> 2: {b} | |
+| 4 | `getMaxKey()` | `tail.prev` = bucket 2 | unchanged | `b` |
+| 5 | `getMinKey()` | `head.next` = bucket 1 | unchanged | `a` |
+| 6 | `dec(b)` | bucket 2, count 2 != 1; `prev` is bucket 1 (count 1), reuse it; move `b`; bucket 2 is empty, unlink it | 1: {a, b} | |
+| 7 | `dec(b)` | bucket 1, count == 1: remove `b` from the map and from the bucket; bucket 1 still has `a` | 1: {a} | |
+| 8 | `getMaxKey()` | `tail.prev` = bucket 1 | unchanged | `a` |
+| 9 | `getMinKey()` | `head.next` = bucket 1 | unchanged | `a` |
+
+```mermaid
+flowchart LR
+    H["head 0"] <--> B1["bucket 1<br/>keys a"] <--> B2["bucket 2<br/>keys b"] <--> T["tail MAX"]
+```
+
+The diagram shows the list after step 3. When a bucket holds several keys (step 2 and 6) `getMaxKey` / `getMinKey` return any one of them, as the problem allows.
+
+**Edge cases.** `dec` of an unknown key does nothing. A key whose count drops to 0 is removed entirely. With no keys left, `head.next == tail` and both getters return `""`. Buckets are created only when needed and removed when empty, so the list never holds an empty bucket.
+
+**Result:** `b, a, a, a`, exactly what the class prints.

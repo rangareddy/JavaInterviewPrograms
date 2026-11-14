@@ -105,24 +105,6 @@ public static Integer secondLargest(int[] nums) {
 | 3 | TreeSet of Distinct Values | O(n log n) | O(n) |
 | 4 | Single Pass (Optimized) | O(n) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-**Step by step on the input `[12, 35, 1, 10, 34, 1]`.** First the safeguard: the array is not `null` and has at least two elements, so the scan runs. `largest` and `second` both start as `Long.MIN_VALUE` ("nothing yet").
-
-| Step | Element | Comparison | `largest` | `second` |
-|------|---------|------------|-----------|----------|
-| start | | | none | none |
-| 1 | `12` | greater than `largest` | `12` | none |
-| 2 | `35` | greater than `largest`, so the old largest `12` becomes `second` | `35` | `12` |
-| 3 | `1` | not greater than `largest`, not greater than `second` | `35` | `12` |
-| 4 | `10` | not greater than `second` (`12`) | `35` | `12` |
-| 5 | `34` | greater than `second` and different from `largest` | `35` | `34` |
-| 6 | `1` | not greater than `second` | `35` | `34` |
-
-`second` was set, so the method returns `34`. For `[7, 7, 7]` every element after the first equals `largest` and is skipped, `second` stays "nothing yet" and the method returns `null`; a `null` array, `[]` and `[3]` return `null` straight from the safeguard.
-
 ## Source Code
 
 ### SecondLargestElement.java
@@ -161,3 +143,21 @@ public class SecondLargestElement {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+**Step by step on the input `[12, 35, 1, 10, 34, 1]`.** First the safeguard: the array is not `null` and has at least two elements, so the scan runs. `largest` and `second` both start as `Long.MIN_VALUE` ("nothing yet").
+
+| Step | Element | Comparison | `largest` | `second` |
+|------|---------|------------|-----------|----------|
+| start | | | none | none |
+| 1 | `12` | greater than `largest` | `12` | none |
+| 2 | `35` | greater than `largest`, so the old largest `12` becomes `second` | `35` | `12` |
+| 3 | `1` | not greater than `largest`, not greater than `second` | `35` | `12` |
+| 4 | `10` | not greater than `second` (`12`) | `35` | `12` |
+| 5 | `34` | greater than `second` and different from `largest` | `35` | `34` |
+| 6 | `1` | not greater than `second` | `35` | `34` |
+
+`second` was set, so the method returns `34`. For `[7, 7, 7]` every element after the first equals `largest` and is skipped, `second` stays "nothing yet" and the method returns `null`; a `null` array, `[]` and `[3]` return `null` straight from the safeguard.

@@ -122,36 +122,6 @@ public static int trap(int[] height) {
 | 3 | Monotonic Stack (Layer by Layer) | O(n) | O(n) |
 | 4 | Two Pointers (Optimized) | O(n) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: the water above a bar is `min(maxLeft, maxRight) - height`. Two pointers walk inward from both ends, keeping `leftMax` and `rightMax`. The pointer at the lower bar is processed: if `height[left] < height[right]`, the right side already has a wall at least as tall as `height[left]`, so the water above `left` depends only on `leftMax`. Otherwise the same holds for `right` with `rightMax`.
-
-**Input:** `height = [4, 2, 0, 3, 2, 5]`.
-
-| Step | `left` | `right` | `height[left]`, `height[right]` | Side processed | `leftMax` / `rightMax` | Water added | `water` |
-|------|--------|---------|----------------------------------|----------------|------------------------|-------------|---------|
-| 1 | 0 | 5 | 4, 5 | left (4 < 5) | 4 / 0 | 4 - 4 = 0 | 0 |
-| 2 | 1 | 5 | 2, 5 | left | 4 / 0 | 4 - 2 = 2 | 2 |
-| 3 | 2 | 5 | 0, 5 | left | 4 / 0 | 4 - 0 = 4 | 6 |
-| 4 | 3 | 5 | 3, 5 | left | 4 / 0 | 4 - 3 = 1 | 7 |
-| 5 | 4 | 5 | 2, 5 | left | 4 / 0 | 4 - 2 = 2 | 9 |
-
-After step 5 `left` becomes 5, equal to `right`, and the loop ends.
-
-```text
-index:   0  1  2  3  4  5
-height:  4  2  0  3  2  5
-water:   0  2  4  1  2  0     total = 9
-```
-
-**Edge cases.** `null` or fewer than 3 bars returns `0` (this covers `{}` and `{3}`). A strictly rising or falling array adds `0` at every step. Only one pass is made, with O(1) extra memory.
-
-**Result:** `9`, matching the class output.
-
 ## Source Code
 
 ### TrappingRainWater.java
@@ -195,3 +165,31 @@ public class TrappingRainWater {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
+
+The idea: the water above a bar is `min(maxLeft, maxRight) - height`. Two pointers walk inward from both ends, keeping `leftMax` and `rightMax`. The pointer at the lower bar is processed: if `height[left] < height[right]`, the right side already has a wall at least as tall as `height[left]`, so the water above `left` depends only on `leftMax`. Otherwise the same holds for `right` with `rightMax`.
+
+**Input:** `height = [4, 2, 0, 3, 2, 5]`.
+
+| Step | `left` | `right` | `height[left]`, `height[right]` | Side processed | `leftMax` / `rightMax` | Water added | `water` |
+|------|--------|---------|----------------------------------|----------------|------------------------|-------------|---------|
+| 1 | 0 | 5 | 4, 5 | left (4 < 5) | 4 / 0 | 4 - 4 = 0 | 0 |
+| 2 | 1 | 5 | 2, 5 | left | 4 / 0 | 4 - 2 = 2 | 2 |
+| 3 | 2 | 5 | 0, 5 | left | 4 / 0 | 4 - 0 = 4 | 6 |
+| 4 | 3 | 5 | 3, 5 | left | 4 / 0 | 4 - 3 = 1 | 7 |
+| 5 | 4 | 5 | 2, 5 | left | 4 / 0 | 4 - 2 = 2 | 9 |
+
+After step 5 `left` becomes 5, equal to `right`, and the loop ends.
+
+```text
+index:   0  1  2  3  4  5
+height:  4  2  0  3  2  5
+water:   0  2  4  1  2  0     total = 9
+```
+
+**Edge cases.** `null` or fewer than 3 bars returns `0` (this covers `{}` and `{3}`). A strictly rising or falling array adds `0` at every step. Only one pass is made, with O(1) extra memory.
+
+**Result:** `9`, matching the class output.

@@ -104,40 +104,6 @@ public static ListNode reverseBetween(ListNode head, int left, int right) {
 | 2 | Recursion | O(n) | O(n) recursion stack |
 | 3 | Iterative Head Insertion (Optimized) | O(n) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: reverse only the part between positions `left` and `right` in one pass. A dummy node in front of the head avoids a special case when `left = 1`. Move `prev` to the node just before position `left`; `curr` stays on the first node of the section, which ends up as its last node. Repeat `right - left` times: take the node after `curr` and splice it in right after `prev`, so each moved node lands in front of the earlier ones.
-
-**Input:** `head = [1, 2, 3, 4, 5]`, `left = 2`, `right = 4`.
-
-Setup: `dummy -> 1 -> 2 -> 3 -> 4 -> 5`; `prev` moves once (`left - 1 = 1`) to node `1`; `curr = 2`.
-
-| Round | `next` (= `curr.next`) | `curr.next = next.next` | `next.next = prev.next` | `prev.next = next` | List afterwards |
-|-------|------------------------|--------------------------|--------------------------|--------------------|-----------------|
-| start | | | | | `1 -> 2 -> 3 -> 4 -> 5` |
-| 1 | 3 | `2 -> 4` | `3 -> 2` | `1 -> 3` | `1 -> 3 -> 2 -> 4 -> 5` |
-| 2 | 4 | `2 -> 5` | `4 -> 3` | `1 -> 4` | `1 -> 4 -> 3 -> 2 -> 5` |
-
-There are `right - left = 2` rounds, and `curr` (node `2`) never moves; it just gets pushed to the end of the section.
-
-```mermaid
-flowchart LR
-    subgraph s1["Before"]
-        a1["1"] --> a2["2"] --> a3["3"] --> a4["4"] --> a5["5"]
-    end
-    subgraph s2["After round 2"]
-        b1["1"] --> b4["4"] --> b3["3"] --> b2["2"] --> b5["5"]
-    end
-```
-
-**Edge cases.** `left = right` means zero rounds and the list is unchanged (`[5]` with `1, 1` stays `[5]`). `left = 1` works because `prev` stays on the dummy node (`[1, 2, 3]` with `1, 3` gives `[3, 2, 1]`, and `[3, 5]` with `1, 2` gives `[5, 3]`). The method assumes `1 <= left <= right <= length`; it does not validate them.
-
-**Result:** `[1, 4, 3, 2, 5]`, matching the class output.
-
 ## Source Code
 
 ### ReverseLinkedListII.java
@@ -174,3 +140,35 @@ public class ReverseLinkedListII {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+
+The idea: reverse only the part between positions `left` and `right` in one pass. A dummy node in front of the head avoids a special case when `left = 1`. Move `prev` to the node just before position `left`; `curr` stays on the first node of the section, which ends up as its last node. Repeat `right - left` times: take the node after `curr` and splice it in right after `prev`, so each moved node lands in front of the earlier ones.
+
+**Input:** `head = [1, 2, 3, 4, 5]`, `left = 2`, `right = 4`.
+
+Setup: `dummy -> 1 -> 2 -> 3 -> 4 -> 5`; `prev` moves once (`left - 1 = 1`) to node `1`; `curr = 2`.
+
+| Round | `next` (= `curr.next`) | `curr.next = next.next` | `next.next = prev.next` | `prev.next = next` | List afterwards |
+|-------|------------------------|--------------------------|--------------------------|--------------------|-----------------|
+| start | | | | | `1 -> 2 -> 3 -> 4 -> 5` |
+| 1 | 3 | `2 -> 4` | `3 -> 2` | `1 -> 3` | `1 -> 3 -> 2 -> 4 -> 5` |
+| 2 | 4 | `2 -> 5` | `4 -> 3` | `1 -> 4` | `1 -> 4 -> 3 -> 2 -> 5` |
+
+There are `right - left = 2` rounds, and `curr` (node `2`) never moves; it just gets pushed to the end of the section.
+
+```mermaid
+flowchart LR
+    subgraph s1["Before"]
+        a1["1"] --> a2["2"] --> a3["3"] --> a4["4"] --> a5["5"]
+    end
+    subgraph s2["After round 2"]
+        b1["1"] --> b4["4"] --> b3["3"] --> b2["2"] --> b5["5"]
+    end
+```
+
+**Edge cases.** `left = right` means zero rounds and the list is unchanged (`[5]` with `1, 1` stays `[5]`). `left = 1` works because `prev` stays on the dummy node (`[1, 2, 3]` with `1, 3` gives `[3, 2, 1]`, and `[3, 5]` with `1, 2` gives `[5, 3]`). The method assumes `1 <= left <= right <= length`; it does not validate them.
+
+**Result:** `[1, 4, 3, 2, 5]`, matching the class output.

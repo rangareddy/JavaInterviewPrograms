@@ -89,39 +89,6 @@ static void transferGlobal(Runnable action) {
 | 2 | tryLock with Timeout and Back-off | O(1) expected | O(1) |
 | 3 | One Coarse Lock | O(1) | O(1) |
 
-### Optimized Solution
-
-The optimized solution is Approach 1 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: this demo shows both a deadlock and its fix. A deadlock needs a circular wait: thread 1 holds lock A and wants B while thread 2 holds B and wants A. The class creates exactly that, then asks the JVM to confirm it. The fix is a **consistent lock order**: if every thread takes A before B, a cycle is impossible, because whoever holds A is never waiting for something the other holds while the other waits for A.
-
-**Part 1, opposite order (`runOppositeOrder`).** Thread `deadlock-1` locks `lockA` then `lockB`; thread `deadlock-2` locks `lockB` then `lockA`. A `CountDownLatch(2)` removes the timing luck: each thread takes its first lock, counts the latch down and waits until both have counted down, so both are guaranteed to hold their first lock before either asks for the second.
-
-| Step | `deadlock-1` | `deadlock-2` | Latch count |
-|------|--------------|--------------|-------------|
-| 1 | holds A, counts down, waits on the latch | not started or starting | 1 |
-| 2 | still waiting | holds B, counts down | 0 |
-| 3 | latch open, asks for B (held by `deadlock-2`): **blocked** | latch open, asks for A (held by `deadlock-1`): **blocked** | 0 |
-| 4 | main polls `ThreadMXBean.findDeadlockedThreads()` every 20 ms (up to 50 times) | | |
-
-```mermaid
-flowchart LR
-    T1["deadlock-1"] -->|"holds"| A["lock A"]
-    T2["deadlock-2"] -->|"holds"| B["lock B"]
-    T1 -.->|"wants"| B
-    T2 -.->|"wants"| A
-```
-
-The JVM reports both threads, so the method returns the length of the id array: `2`. The threads are daemons, so they do not keep the program alive after `main` ends. If no deadlock were found after 50 polls the method would return `0`.
-
-**Part 2, same order (`runSameOrder`).** Both threads run `synchronized (lockA) { synchronized (lockB) { done.countDown(); } }`. One of them gets A first; the other waits for A, not holding anything, so there is no cycle. The first finishes and releases both, then the second runs, so `done` reaches 0 and `await(2, SECONDS)` returns `true`.
-
-**Edge cases.** The latch is what makes Part 1 deterministic; without it a thread could take both locks before the other started and no deadlock would occur. Part 2 uses a 2-second timeout so a hang would show up as `false` instead of freezing the program.
-
-**Result:** the class prints `deadlocked threads = 2` and `completed = true`, the same in all three runs checked.
-
 ## Source Code
 
 ### DeadlockDemo.java
@@ -201,3 +168,34 @@ public class DeadlockDemo {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 1 above, which is also the version implemented in this repository.
+
+The idea: this demo shows both a deadlock and its fix. A deadlock needs a circular wait: thread 1 holds lock A and wants B while thread 2 holds B and wants A. The class creates exactly that, then asks the JVM to confirm it. The fix is a **consistent lock order**: if every thread takes A before B, a cycle is impossible, because whoever holds A is never waiting for something the other holds while the other waits for A.
+
+**Part 1, opposite order (`runOppositeOrder`).** Thread `deadlock-1` locks `lockA` then `lockB`; thread `deadlock-2` locks `lockB` then `lockA`. A `CountDownLatch(2)` removes the timing luck: each thread takes its first lock, counts the latch down and waits until both have counted down, so both are guaranteed to hold their first lock before either asks for the second.
+
+| Step | `deadlock-1` | `deadlock-2` | Latch count |
+|------|--------------|--------------|-------------|
+| 1 | holds A, counts down, waits on the latch | not started or starting | 1 |
+| 2 | still waiting | holds B, counts down | 0 |
+| 3 | latch open, asks for B (held by `deadlock-2`): **blocked** | latch open, asks for A (held by `deadlock-1`): **blocked** | 0 |
+| 4 | main polls `ThreadMXBean.findDeadlockedThreads()` every 20 ms (up to 50 times) | | |
+
+```mermaid
+flowchart LR
+    T1["deadlock-1"] -->|"holds"| A["lock A"]
+    T2["deadlock-2"] -->|"holds"| B["lock B"]
+    T1 -.->|"wants"| B
+    T2 -.->|"wants"| A
+```
+
+The JVM reports both threads, so the method returns the length of the id array: `2`. The threads are daemons, so they do not keep the program alive after `main` ends. If no deadlock were found after 50 polls the method would return `0`.
+
+**Part 2, same order (`runSameOrder`).** Both threads run `synchronized (lockA) { synchronized (lockB) { done.countDown(); } }`. One of them gets A first; the other waits for A, not holding anything, so there is no cycle. The first finishes and releases both, then the second runs, so `done` reaches 0 and `await(2, SECONDS)` returns `true`.
+
+**Edge cases.** The latch is what makes Part 1 deterministic; without it a thread could take both locks before the other started and no deadlock would occur. Part 2 uses a 2-second timeout so a hang would show up as `false` instead of freezing the program.
+
+**Result:** the class prints `deadlocked threads = 2` and `completed = true`, the same in all three runs checked.

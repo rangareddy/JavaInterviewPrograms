@@ -139,32 +139,6 @@ static class ParallelStore {
 | 3 | Binary Search in a List per Key (Optimized) | set O(1), get O(log n) | O(total entries) |
 | 4 | Parallel Lists and Collections.binarySearch | set O(1), get O(log n) | O(total entries) |
 
-### Optimized Solution
-
-The optimized solution is Approach 3 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: for each key keep a list of `(timestamp, value)` entries. Because `set` calls arrive with increasing timestamps, each list is already sorted, so `get(key, t)` can binary-search for the **latest entry whose timestamp is `<= t`**. Whenever the middle entry qualifies it is remembered as the candidate and the search continues to the right for a later one; otherwise the search goes left.
-
-**Input:** `set("foo","bar",1)`, `get("foo",1)`, `get("foo",3)`, `set("foo","bar2",4)`, `get("foo",4)`, `get("foo",5)`, `get("foo",0)`.
-
-| Step | Operation | List for `foo` | Binary search (`low`, `high`, `mid`, check) | Result |
-|------|-----------|----------------|---------------------------------------------|--------|
-| 1 | `set(foo, bar, 1)` | `[(1,bar)]` | | |
-| 2 | `get(foo, 1)` | same | 0,0,0: ts 1 <= 1, result = bar, `low = 1`, stop | `"bar"` |
-| 3 | `get(foo, 3)` | same | 0,0,0: ts 1 <= 3, result = bar, stop | `"bar"` |
-| 4 | `set(foo, bar2, 4)` | `[(1,bar), (4,bar2)]` | | |
-| 5 | `get(foo, 4)` | same | 0,1,0: 1 <= 4, result = bar, `low = 1`; 1,1,1: 4 <= 4, result = bar2, `low = 2`, stop | `"bar2"` |
-| 6 | `get(foo, 5)` | same | 0,1,0: bar; 1,1,1: 4 <= 5, bar2, stop | `"bar2"` |
-| 7 | `get(foo, 0)` | same | 0,1,0: 1 <= 0 is false, `high = -1`, stop with the initial `""` | `""` |
-
-Step 6 is the useful case: no entry has timestamp 5, but the latest one before it (4) is returned.
-
-**Edge cases.** An unknown key returns `""` without any search. A timestamp earlier than every entry also returns `""` (step 7). A timestamp after the last entry returns the last value. Each `set` is O(1) (a list append) and each `get` is O(log n). The class relies on `set` timestamps being increasing; it does not sort. No diagram is added; the search table is the picture.
-
-**Result:** the gets return `"bar"`, `"bar"`, `"bar2"`, `"bar2"`, `""`, exactly what the class prints.
-
 ## Source Code
 
 ### TimeBasedKeyValueStore.java
@@ -232,3 +206,27 @@ public class TimeBasedKeyValueStore {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 3 above, which is also the version implemented in this repository.
+
+The idea: for each key keep a list of `(timestamp, value)` entries. Because `set` calls arrive with increasing timestamps, each list is already sorted, so `get(key, t)` can binary-search for the **latest entry whose timestamp is `<= t`**. Whenever the middle entry qualifies it is remembered as the candidate and the search continues to the right for a later one; otherwise the search goes left.
+
+**Input:** `set("foo","bar",1)`, `get("foo",1)`, `get("foo",3)`, `set("foo","bar2",4)`, `get("foo",4)`, `get("foo",5)`, `get("foo",0)`.
+
+| Step | Operation | List for `foo` | Binary search (`low`, `high`, `mid`, check) | Result |
+|------|-----------|----------------|---------------------------------------------|--------|
+| 1 | `set(foo, bar, 1)` | `[(1,bar)]` | | |
+| 2 | `get(foo, 1)` | same | 0,0,0: ts 1 <= 1, result = bar, `low = 1`, stop | `"bar"` |
+| 3 | `get(foo, 3)` | same | 0,0,0: ts 1 <= 3, result = bar, stop | `"bar"` |
+| 4 | `set(foo, bar2, 4)` | `[(1,bar), (4,bar2)]` | | |
+| 5 | `get(foo, 4)` | same | 0,1,0: 1 <= 4, result = bar, `low = 1`; 1,1,1: 4 <= 4, result = bar2, `low = 2`, stop | `"bar2"` |
+| 6 | `get(foo, 5)` | same | 0,1,0: bar; 1,1,1: 4 <= 5, bar2, stop | `"bar2"` |
+| 7 | `get(foo, 0)` | same | 0,1,0: 1 <= 0 is false, `high = -1`, stop with the initial `""` | `""` |
+
+Step 6 is the useful case: no entry has timestamp 5, but the latest one before it (4) is returned.
+
+**Edge cases.** An unknown key returns `""` without any search. A timestamp earlier than every entry also returns `""` (step 7). A timestamp after the last entry returns the last value. Each `set` is O(1) (a list append) and each `get` is O(log n). The class relies on `set` timestamps being increasing; it does not sort. No diagram is added; the search table is the picture.
+
+**Result:** the gets return `"bar"`, `"bar"`, `"bar2"`, `"bar2"`, `""`, exactly what the class prints.

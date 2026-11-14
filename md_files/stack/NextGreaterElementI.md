@@ -77,31 +77,6 @@ public static int[] nextGreaterElement(int[] nums1, int[] nums2) {
 | 1 | Brute Force | O(m * n) | O(1) besides the output |
 | 2 | Monotonic Stack with a Map (Optimized) | O(m + n) | O(n) |
 
-### Optimized Solution
-
-The optimized solution is Approach 2 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: instead of searching `nums2` for every query value, solve "next greater element" for all of `nums2` in one pass and store the answers in a map. A stack keeps values still waiting for a greater one (decreasing from bottom to top). When a new value `x` is larger than the top, `x` is the next greater element of the top, so it is recorded in the map and popped. Then `x` is pushed. Afterwards each element of `nums1` is looked up in the map, defaulting to `-1`. O(n + m) time.
-
-**Input:** `nums1 = [4, 1, 2]`, `nums2 = [1, 3, 4, 2]`. The stack is written bottom to top.
-
-| Step | x (from nums2) | What happens | Stack | Map |
-|------|----------------|--------------|-------|-----|
-| 1 | 1 | stack empty, push | 1 | {} |
-| 2 | 3 | 1 < 3: pop 1, record 1 → 3; push 3 | 3 | {1→3} |
-| 3 | 4 | 3 < 4: pop 3, record 3 → 4; push 4 | 4 | {1→3, 3→4} |
-| 4 | 2 | 4 < 2 is false; push 2 | 4 2 | {1→3, 3→4} |
-
-Values left on the stack (4 and 2) have no greater element to their right, so they are not in the map.
-
-Lookup for `nums1`: 4 → not in map → -1; 1 → 3; 2 → not in map → -1.
-
-**Edge cases.** The code assumes the values are distinct (as the problem states), because the map is keyed by value. A value of `nums1` with nothing greater after it in `nums2` falls back to `-1`. For `nums1 = [2, 4]`, `nums2 = [1, 2, 3, 4]` the map is {1→2, 2→3, 3→4} and the answer is `[3, -1]`. Elements are only compared to the right of their position in `nums2`, which is exactly what the single left-to-right pass guarantees.
-
-**Result:** `[-1, 3, -1]`, matching the class output.
-
 ## Source Code
 
 ### NextGreaterElementI.java
@@ -141,3 +116,26 @@ public class NextGreaterElementI {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+
+The idea: instead of searching `nums2` for every query value, solve "next greater element" for all of `nums2` in one pass and store the answers in a map. A stack keeps values still waiting for a greater one (decreasing from bottom to top). When a new value `x` is larger than the top, `x` is the next greater element of the top, so it is recorded in the map and popped. Then `x` is pushed. Afterwards each element of `nums1` is looked up in the map, defaulting to `-1`. O(n + m) time.
+
+**Input:** `nums1 = [4, 1, 2]`, `nums2 = [1, 3, 4, 2]`. The stack is written bottom to top.
+
+| Step | x (from nums2) | What happens | Stack | Map |
+|------|----------------|--------------|-------|-----|
+| 1 | 1 | stack empty, push | 1 | {} |
+| 2 | 3 | 1 < 3: pop 1, record 1 → 3; push 3 | 3 | {1→3} |
+| 3 | 4 | 3 < 4: pop 3, record 3 → 4; push 4 | 4 | {1→3, 3→4} |
+| 4 | 2 | 4 < 2 is false; push 2 | 4 2 | {1→3, 3→4} |
+
+Values left on the stack (4 and 2) have no greater element to their right, so they are not in the map.
+
+Lookup for `nums1`: 4 → not in map → -1; 1 → 3; 2 → not in map → -1.
+
+**Edge cases.** The code assumes the values are distinct (as the problem states), because the map is keyed by value. A value of `nums1` with nothing greater after it in `nums2` falls back to `-1`. For `nums1 = [2, 4]`, `nums2 = [1, 2, 3, 4]` the map is {1→2, 2→3, 3→4} and the answer is `[3, -1]`. Elements are only compared to the right of their position in `nums2`, which is exactly what the single left-to-right pass guarantees.
+
+**Result:** `[-1, 3, -1]`, matching the class output.

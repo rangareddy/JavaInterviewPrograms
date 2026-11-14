@@ -223,45 +223,6 @@ private static Node clone(Node node, Map<Node, Node> clones) {
 | 6 | BFS with an IdentityHashMap | O(V + E) | O(V) |
 | 7 | Recursive DFS with a Map (Optimized) | O(V + E) | O(V) |
 
-### Optimized Solution
-
-The optimized solution is Approach 7 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: a map `original node -> its clone` is both the memory of what was already copied and the visited set. `clone(node)` first checks the map; if a clone exists it is returned at once (this is what stops the recursion in a cyclic graph). Otherwise a new node with the same value is created, **registered in the map before** its neighbours are visited, and then each neighbour is cloned recursively and appended to the copy's neighbour list. Every node is created once and every edge is followed from both ends: O(V + E) time, O(V) space.
-
-**Input:** `adjList = [[2,4],[1,3],[2,4],[1,3]]`, a square 1-2-3-4 (node 1 is the start; the class builds the original nodes first).
-
-| Step | Call | Map has the node? | Action | Map keys afterwards |
-|------|------|-------------------|--------|---------------------|
-| 1 | `clone(1)` | no | create copy 1, register it, visit neighbours `[2, 4]` | 1 |
-| 2 | `clone(2)` (from 1) | no | create copy 2, register it, visit neighbours `[1, 3]` | 1, 2 |
-| 3 | `clone(1)` (from 2) | yes | return copy 1 (no new work, no loop) | 1, 2 |
-| 4 | `clone(3)` (from 2) | no | create copy 3, register it, visit neighbours `[2, 4]` | 1, 2, 3 |
-| 5 | `clone(2)` (from 3) | yes | return copy 2 | 1, 2, 3 |
-| 6 | `clone(4)` (from 3) | no | create copy 4, register it, visit neighbours `[1, 3]` | 1, 2, 3, 4 |
-| 7 | `clone(1)`, `clone(3)` (from 4) | yes, yes | return copy 1 and copy 3; copy 4 gets neighbours `[1, 3]` | 1, 2, 3, 4 |
-| 8 | back in 3, 2 | | copy 3 gets `[2, 4]`, copy 2 gets `[1, 3]` | |
-| 9 | `clone(4)` (from 1) | yes | return copy 4; copy 1 gets `[2, 4]` | 1, 2, 3, 4 |
-
-```mermaid
-flowchart TD
-    A["clone 1<br/>create copy 1"] --> B["clone 2<br/>create copy 2"]
-    B --> C["clone 1<br/>already in map"]
-    B --> D["clone 3<br/>create copy 3"]
-    D --> E["clone 2<br/>already in map"]
-    D --> F["clone 4<br/>create copy 4"]
-    F --> G["clone 1 and clone 3<br/>already in map"]
-    A --> H["clone 4<br/>already in map"]
-```
-
-The method returns copy 1. Its adjacency list is `[[2,4],[1,3],[2,4],[1,3]]`, but every node is a new object, so the result is not the original start node (the class prints `same object as the original: false`).
-
-**Edge cases.** `null` (empty graph, `adjList = []`) returns `null` immediately. A single node with no neighbours (`[[]]`) is copied as one new node with an empty neighbour list.
-
-**Result:** the cloned graph has the adjacency list `[[2,4],[1,3],[2,4],[1,3]]`, as printed by the class.
-
 ## Source Code
 
 ### CloneGraph.java
@@ -356,3 +317,40 @@ public class CloneGraph {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
+
+The idea: a map `original node -> its clone` is both the memory of what was already copied and the visited set. `clone(node)` first checks the map; if a clone exists it is returned at once (this is what stops the recursion in a cyclic graph). Otherwise a new node with the same value is created, **registered in the map before** its neighbours are visited, and then each neighbour is cloned recursively and appended to the copy's neighbour list. Every node is created once and every edge is followed from both ends: O(V + E) time, O(V) space.
+
+**Input:** `adjList = [[2,4],[1,3],[2,4],[1,3]]`, a square 1-2-3-4 (node 1 is the start; the class builds the original nodes first).
+
+| Step | Call | Map has the node? | Action | Map keys afterwards |
+|------|------|-------------------|--------|---------------------|
+| 1 | `clone(1)` | no | create copy 1, register it, visit neighbours `[2, 4]` | 1 |
+| 2 | `clone(2)` (from 1) | no | create copy 2, register it, visit neighbours `[1, 3]` | 1, 2 |
+| 3 | `clone(1)` (from 2) | yes | return copy 1 (no new work, no loop) | 1, 2 |
+| 4 | `clone(3)` (from 2) | no | create copy 3, register it, visit neighbours `[2, 4]` | 1, 2, 3 |
+| 5 | `clone(2)` (from 3) | yes | return copy 2 | 1, 2, 3 |
+| 6 | `clone(4)` (from 3) | no | create copy 4, register it, visit neighbours `[1, 3]` | 1, 2, 3, 4 |
+| 7 | `clone(1)`, `clone(3)` (from 4) | yes, yes | return copy 1 and copy 3; copy 4 gets neighbours `[1, 3]` | 1, 2, 3, 4 |
+| 8 | back in 3, 2 | | copy 3 gets `[2, 4]`, copy 2 gets `[1, 3]` | |
+| 9 | `clone(4)` (from 1) | yes | return copy 4; copy 1 gets `[2, 4]` | 1, 2, 3, 4 |
+
+```mermaid
+flowchart TD
+    A["clone 1<br/>create copy 1"] --> B["clone 2<br/>create copy 2"]
+    B --> C["clone 1<br/>already in map"]
+    B --> D["clone 3<br/>create copy 3"]
+    D --> E["clone 2<br/>already in map"]
+    D --> F["clone 4<br/>create copy 4"]
+    F --> G["clone 1 and clone 3<br/>already in map"]
+    A --> H["clone 4<br/>already in map"]
+```
+
+The method returns copy 1. Its adjacency list is `[[2,4],[1,3],[2,4],[1,3]]`, but every node is a new object, so the result is not the original start node (the class prints `same object as the original: false`).
+
+**Edge cases.** `null` (empty graph, `adjList = []`) returns `null` immediately. A single node with no neighbours (`[[]]`) is copied as one new node with an empty neighbour list.
+
+**Result:** the cloned graph has the adjacency list `[[2,4],[1,3],[2,4],[1,3]]`, as printed by the class.

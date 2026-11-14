@@ -74,39 +74,6 @@ public static List<Integer> findDisappearedNumbers(int[] nums) {
 | 1 | HashSet | O(n) | O(n) |
 | 2 | In-Place Sign Marking (Optimized) | O(n) | O(1) besides the output |
 
-### Optimized Solution
-
-The optimized solution is Approach 2 above, which is also the version implemented in this repository.
-
-#### Optimized solution explained
-
-The idea: every value is in `1..n`, so each value can be mapped to an index (`value - 1`). The array itself is used as the "seen" set: when value `v` is read, the element at index `v - 1` is made negative. After one pass, an index that is still positive was never pointed at, so the number `index + 1` is missing. `Math.abs` is used because an element may already have been negated.
-
-**Input:** `nums = [4, 3, 2, 7, 8, 2, 3, 1]` (`n = 8`). Marking pass:
-
-| Step | `i` | `abs(nums[i])` | Mark index | Array afterwards |
-|------|-----|----------------|------------|------------------|
-| 1 | 0 | 4 | 3 | [4, 3, 2, **-7**, 8, 2, 3, 1] |
-| 2 | 1 | 3 | 2 | [4, 3, **-2**, -7, 8, 2, 3, 1] |
-| 3 | 2 | 2 | 1 | [4, **-3**, -2, -7, 8, 2, 3, 1] |
-| 4 | 3 | 7 | 6 | [4, -3, -2, -7, 8, 2, **-3**, 1] |
-| 5 | 4 | 8 | 7 | [4, -3, -2, -7, 8, 2, -3, **-1**] |
-| 6 | 5 | 2 | 1 | already negative, unchanged |
-| 7 | 6 | 3 | 2 | already negative, unchanged |
-| 8 | 7 | 1 | 0 | [**-4**, -3, -2, -7, 8, 2, -3, -1] |
-
-Collection pass: indices with a positive value are `4` (value 8) and `5` (value 2), so the missing numbers are `4 + 1 = 5` and `5 + 1 = 6`.
-
-```text
-index:   0   1   2   3   4   5   6   7
-array:  -4  -3  -2  -7   8   2  -3  -1
-                         ^   ^  still positive -> 5 and 6 never appeared
-```
-
-**Edge cases.** An empty array returns `[]`. `[1, 2, 3]` marks every index and returns `[]`. `[2, 2, 2]` returns `[1, 3]`; the `if (nums[index] > 0)` test stops a duplicate from flipping the sign back. The class changes the array it is given (the `main` method passes a clone).
-
-**Result:** `[5, 6]`, matching the class output.
-
 ## Source Code
 
 ### FindAllNumbersDisappeared.java
@@ -144,3 +111,34 @@ public class FindAllNumbersDisappeared {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 2 above, which is also the version implemented in this repository.
+
+The idea: every value is in `1..n`, so each value can be mapped to an index (`value - 1`). The array itself is used as the "seen" set: when value `v` is read, the element at index `v - 1` is made negative. After one pass, an index that is still positive was never pointed at, so the number `index + 1` is missing. `Math.abs` is used because an element may already have been negated.
+
+**Input:** `nums = [4, 3, 2, 7, 8, 2, 3, 1]` (`n = 8`). Marking pass:
+
+| Step | `i` | `abs(nums[i])` | Mark index | Array afterwards |
+|------|-----|----------------|------------|------------------|
+| 1 | 0 | 4 | 3 | [4, 3, 2, **-7**, 8, 2, 3, 1] |
+| 2 | 1 | 3 | 2 | [4, 3, **-2**, -7, 8, 2, 3, 1] |
+| 3 | 2 | 2 | 1 | [4, **-3**, -2, -7, 8, 2, 3, 1] |
+| 4 | 3 | 7 | 6 | [4, -3, -2, -7, 8, 2, **-3**, 1] |
+| 5 | 4 | 8 | 7 | [4, -3, -2, -7, 8, 2, -3, **-1**] |
+| 6 | 5 | 2 | 1 | already negative, unchanged |
+| 7 | 6 | 3 | 2 | already negative, unchanged |
+| 8 | 7 | 1 | 0 | [**-4**, -3, -2, -7, 8, 2, -3, -1] |
+
+Collection pass: indices with a positive value are `4` (value 8) and `5` (value 2), so the missing numbers are `4 + 1 = 5` and `5 + 1 = 6`.
+
+```text
+index:   0   1   2   3   4   5   6   7
+array:  -4  -3  -2  -7   8   2  -3  -1
+                         ^   ^  still positive -> 5 and 6 never appeared
+```
+
+**Edge cases.** An empty array returns `[]`. `[1, 2, 3]` marks every index and returns `[]`. `[2, 2, 2]` returns `[1, 3]`; the `if (nums[index] > 0)` test stops a duplicate from flipping the sign back. The class changes the array it is given (the `main` method passes a clone).
+
+**Result:** `[5, 6]`, matching the class output.

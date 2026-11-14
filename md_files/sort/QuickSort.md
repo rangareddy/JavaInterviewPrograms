@@ -139,47 +139,6 @@ public static void quickSortOptimized(int[] arr, int low, int high) {
 | 3 | Three-Way Partition (Many Duplicates) | O(n log n) average, O(n) when all keys are equal | O(log n) average |
 | 4 | Random Pivot + Recurse on the Smaller Side (Optimized) | O(n log n) expected | O(log n) worst case |
 
-### Optimized Solution
-
-The optimized solution is Approach 4 above. The version implemented in this repository is Approach 1.
-
-#### Optimized solution explained
-
-The idea: pick one element as the pivot, rearrange the range so that everything `<=` the pivot is on its left and everything larger is on its right (`partition`), which puts the pivot at its final sorted index, then sort the left part and the right part the same way. Here the pivot is the rightmost element; `i` marks the end of the "<= pivot" zone and `j` scans the range, swapping each small element into that zone. On average each level does O(n) work and there are about log n levels, giving O(n log n); the sort is in place. The page names a random-pivot variant as the optimized one, but the class in this repository uses the rightmost pivot and plain recursion, which is what is traced.
-
-**Input:** `arr = [12, 4, 5, 7, 9, 20, 30, 6, 15]`.
-
-First partition (`low = 0`, `high = 8`, pivot = 15, `i` starts at -1). Elements `<= 15` are swapped to the front; 20 and 30 are skipped; when `j = 7` the value 6 is swapped with `arr[5]` (20); finally the pivot is swapped into position `i + 1 = 6`.
-
-| j | arr[j] | arr[j] <= 15 ? | i after | Array |
-|---|--------|----------------|---------|-------|
-| 0 | 12 | yes | 0 | `12 4 5 7 9 20 30 6 15` |
-| 1 | 4 | yes | 1 | unchanged |
-| 2 | 5 | yes | 2 | unchanged |
-| 3 | 7 | yes | 3 | unchanged |
-| 4 | 9 | yes | 4 | unchanged |
-| 5 | 20 | no | 4 | unchanged |
-| 6 | 30 | no | 4 | unchanged |
-| 7 | 6 | yes | 5 | `12 4 5 7 9 6 30 20 15` (swap indices 5 and 7) |
-| end | pivot 15 | swap `arr[6]` with `arr[8]` | | `12 4 5 7 9 6 15 20 30`, pivot index 6 |
-
-All partitions in the order the recursion runs them:
-
-| Range (low..high) | Pivot | Pivot ends at | Array after the partition |
-|-------------------|-------|---------------|---------------------------|
-| 0..8 | 15 | 6 | `12 4 5 7 9 6 15 20 30` |
-| 0..5 | 6 | 2 | `4 5 6 7 9 12 15 20 30` |
-| 0..1 | 5 | 1 | `4 5 6 7 9 12 15 20 30` |
-| 3..5 | 12 | 5 | `4 5 6 7 9 12 15 20 30` |
-| 3..4 | 9 | 4 | `4 5 6 7 9 12 15 20 30` |
-| 7..8 | 30 | 8 | `4 5 6 7 9 12 15 20 30` |
-
-Ranges with `low >= high` (such as 0..0, 3..3, 7..7 or 9..8) stop immediately.
-
-**Edge cases.** One element or an empty range (`low >= high`) does nothing. Duplicates are fine because the test is `<=`. A sorted or reverse-sorted array with the rightmost pivot is the worst case, O(n^2) time and deep recursion, which is the weakness the random-pivot variant addresses. The recursion needs O(log n) stack on average.
-
-**Result:** `[4, 5, 6, 7, 9, 12, 15, 20, 30]`, matching the class output.
-
 ## Source Code
 
 ### QuickSort.java
@@ -251,3 +210,42 @@ public class QuickSort {
     }
 }
 ```
+
+## Solution
+
+The optimized solution is Approach 4 above. The version implemented in this repository is Approach 1.
+
+The idea: pick one element as the pivot, rearrange the range so that everything `<=` the pivot is on its left and everything larger is on its right (`partition`), which puts the pivot at its final sorted index, then sort the left part and the right part the same way. Here the pivot is the rightmost element; `i` marks the end of the "<= pivot" zone and `j` scans the range, swapping each small element into that zone. On average each level does O(n) work and there are about log n levels, giving O(n log n); the sort is in place. The page names a random-pivot variant as the optimized one, but the class in this repository uses the rightmost pivot and plain recursion, which is what is traced.
+
+**Input:** `arr = [12, 4, 5, 7, 9, 20, 30, 6, 15]`.
+
+First partition (`low = 0`, `high = 8`, pivot = 15, `i` starts at -1). Elements `<= 15` are swapped to the front; 20 and 30 are skipped; when `j = 7` the value 6 is swapped with `arr[5]` (20); finally the pivot is swapped into position `i + 1 = 6`.
+
+| j | arr[j] | arr[j] <= 15 ? | i after | Array |
+|---|--------|----------------|---------|-------|
+| 0 | 12 | yes | 0 | `12 4 5 7 9 20 30 6 15` |
+| 1 | 4 | yes | 1 | unchanged |
+| 2 | 5 | yes | 2 | unchanged |
+| 3 | 7 | yes | 3 | unchanged |
+| 4 | 9 | yes | 4 | unchanged |
+| 5 | 20 | no | 4 | unchanged |
+| 6 | 30 | no | 4 | unchanged |
+| 7 | 6 | yes | 5 | `12 4 5 7 9 6 30 20 15` (swap indices 5 and 7) |
+| end | pivot 15 | swap `arr[6]` with `arr[8]` | | `12 4 5 7 9 6 15 20 30`, pivot index 6 |
+
+All partitions in the order the recursion runs them:
+
+| Range (low..high) | Pivot | Pivot ends at | Array after the partition |
+|-------------------|-------|---------------|---------------------------|
+| 0..8 | 15 | 6 | `12 4 5 7 9 6 15 20 30` |
+| 0..5 | 6 | 2 | `4 5 6 7 9 12 15 20 30` |
+| 0..1 | 5 | 1 | `4 5 6 7 9 12 15 20 30` |
+| 3..5 | 12 | 5 | `4 5 6 7 9 12 15 20 30` |
+| 3..4 | 9 | 4 | `4 5 6 7 9 12 15 20 30` |
+| 7..8 | 30 | 8 | `4 5 6 7 9 12 15 20 30` |
+
+Ranges with `low >= high` (such as 0..0, 3..3, 7..7 or 9..8) stop immediately.
+
+**Edge cases.** One element or an empty range (`low >= high`) does nothing. Duplicates are fine because the test is `<=`. A sorted or reverse-sorted array with the rightmost pivot is the worst case, O(n^2) time and deep recursion, which is the weakness the random-pivot variant addresses. The recursion needs O(log n) stack on average.
+
+**Result:** `[4, 5, 6, 7, 9, 12, 15, 20, 30]`, matching the class output.
