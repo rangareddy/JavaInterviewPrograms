@@ -2,22 +2,22 @@
 
 A robot starts at the top-left corner of an `m x n` grid and wants to reach the bottom-right corner, moving only down or right. Return the number of unique paths.
 
-## Algorithm Strategy (Dynamic Programming with One Row)
+## Algorithm Strategy (Combinatorics)
 
-1. Every cell can only be entered from the cell above or from the cell on its left, so `paths[i][j] = paths[i - 1][j] + paths[i][j - 1]`.
-2. The first row and the first column have exactly 1 path to each cell (straight line).
-3. Only the previous row is needed, so keep a single array `row` of length `n`, initialised with 1s.
-4. For every following row, update `row[j] += row[j - 1]` from left to right; `row[n - 1]` is the answer.
+1. Guard first: a grid with `m <= 0` or `n <= 0` has no cells, so there are 0 paths.
+2. Every path consists of exactly `m - 1` moves down and `n - 1` moves right, in any order. Choosing which of the `m + n - 2` moves go down gives `C(m + n - 2, m - 1)` paths.
+3. Compute the binomial coefficient with `k = min(m, n) - 1` multiplications: `result = result * (m + n - 2 - k + i) / i` for `i = 1 .. k`. The value is an integer after every step, so the integer division is exact.
+4. A `long` holds the intermediate products. The result must fit an `int`; if it does not, the method returns `-1` instead of a wrong number.
 
 ## Example walkthrough
 
-- For `m = 3` and `n = 2`: the row starts as `[1, 1]`; after row 2 it is `[1, 2]`; after row 3 it is `[1, 3]`.
+- For `m = 3` and `n = 2`: `k = 1`, so `result = 1 * (3 + 2 - 2 - 1 + 1) / 1 = 3`, which is `C(3, 1)`.
 - Result: `3`.
 
 ## Complexity Analysis
 
-- **Time Complexity:** `O(m * n)` — Every cell is updated once.
-- **Space Complexity:** `O(n)` — A single row.
+- **Time Complexity:** `O(min(m, n))` — One multiplication and division per step.
+- **Space Complexity:** `O(1)` — A few variables.
 
 ## Approaches
 
@@ -56,7 +56,7 @@ public static int uniquePathsTable(int m, int n) {
 - **Time Complexity:** O(m * n)
 - **Space Complexity:** O(m * n)
 
-### Approach 3: Single Row DP (Implemented)
+### Approach 3: Single Row DP
 
 A row only depends on the previous row, so one array updated left to right is enough. This is the version implemented in the repository.
 
@@ -98,7 +98,7 @@ public static int uniquePathsMath(int m, int n) {
 |---|----------|------|-------|
 | 1 | Plain Recursion | O(2^(m + n)) | O(m + n) |
 | 2 | 2D DP Table | O(m * n) | O(m * n) |
-| 3 | Single Row DP (Implemented) | O(m * n) | O(n) |
+| 3 | Single Row DP | O(m * n) | O(n) |
 | 4 | Combinatorics (Optimized) | O(min(m, n)) | O(1) |
 
 ## Source Code
@@ -106,12 +106,10 @@ public static int uniquePathsMath(int m, int n) {
 ### UniquePaths.java
 
 ```java
-import java.util.Arrays;
-
 public class UniquePaths {
 
     public static void main(String[] args) {
-        int[][] inputs = {{3, 2}, {3, 7}, {3, 3}, {1, 1}};
+        int[][] inputs = {{3, 2}, {3, 7}, {3, 3}, {1, 1}, {0, 5}, {23, 12}, {100, 100}};
         for (int[] input : inputs) {
             System.out.println("Input  : m = " + input[0] + ", n = " + input[1]);
             System.out.println("Output : " + uniquePaths(input[0], input[1]));
@@ -119,44 +117,49 @@ public class UniquePaths {
         }
     }
 
+    /**
+     * Counts the paths from the top-left to the bottom-right corner of an {@code m x n} grid.
+     *
+     * @param m the number of rows
+     * @param n the number of columns
+     * @return the number of paths; {@code 0} if the grid is empty; {@code -1} if the count does not fit an {@code int}
+     */
     public static int uniquePaths(int m, int n) {
-        int[] row = new int[n];
-        Arrays.fill(row, 1);
-        for (int i = 1; i < m; i++) {
-            for (int j = 1; j < n; j++) {
-                row[j] += row[j - 1];
+        // Guard Clause: an empty grid has no path
+        if (m <= 0 || n <= 0) {
+            return 0;
+        }
+
+        long total = (long) m + n - 2;
+        int k = Math.min(m, n) - 1;
+        long result = 1;
+        for (int i = 1; i <= k; i++) {
+            result = result * (total - k + i) / i;       // stays an integer at every step
+            if (result > Integer.MAX_VALUE) {
+                return -1;                                // the count only grows, so it can never fit an int
             }
         }
-        return row[n - 1];
+        return (int) result;
     }
 }
 ```
 
 ## Solution
 
-This repository implements Approach 3 (Single Row DP), marked `(Implemented)` in the Approaches section. The optimized approach on this page, Approach 4 (Combinatorics), is not implemented in the class.
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
-**Note:** the page names the combinatorics formula (Approach 4) as the optimized one, but the class in this repository implements Approach 3 (single-row DP). This block explains the code as written.
+The idea: every path is a sequence of `m - 1` moves down and `n - 1` moves right, in any order, so the number of paths is the number of ways to choose where the downs go: the binomial coefficient `C(m + n - 2, k)` with `k = min(m, n) - 1`. The loop builds it one factor at a time, and the result is an exact integer after every step.
 
-The idea: a cell can only be entered from above or from the left, so `paths[i][j] = paths[i-1][j] + paths[i][j-1]`. The first row and column have exactly one path each. One array `row` holds the previous row; because `row[j]` still contains the value from above when it is updated, `row[j] += row[j - 1]` adds "above" plus "left" in place.
+**Input:** `m = 3`, `n = 7`. The path has `m + n - 2 = 8` moves, and `k = min(3, 7) - 1 = 2`.
 
-**Input:** `m = 3`, `n = 3`. The row starts as `[1, 1, 1]` (the first grid row).
+| Step `i` | Calculation `result * (8 - 2 + i) / i` | `result` |
+|----------|-----------------------------------------|----------|
+| start | | 1 |
+| 1 | `1 * 7 / 1` | 7 |
+| 2 | `7 * 8 / 2` | 28 |
 
-| Grid row `i` | `j` | Update | `row` after |
-|--------------|-----|--------|-------------|
-| 0 (initial) | | all ones | `[1, 1, 1]` |
-| 1 | 1 | `row[1] = 1 + row[0] = 2` | `[1, 2, 1]` |
-| 1 | 2 | `row[2] = 1 + row[1] = 3` | `[1, 2, 3]` |
-| 2 | 1 | `row[1] = 2 + row[0] = 3` | `[1, 3, 3]` |
-| 2 | 2 | `row[2] = 3 + row[1] = 6` | `[1, 3, 6]` |
+The result is `C(8, 2) = 28`. A grid with 3 rows and 7 columns therefore has 28 paths, and only 2 multiplications were needed instead of filling 21 cells.
 
-```text
-grid of path counts       row array over time
-1  1  1                   [1, 1, 1]
-1  2  3                   [1, 2, 3]
-1  3  6   <- answer       [1, 3, 6]
-```
+**Edge cases.** `m <= 0` or `n <= 0` returns 0 through the guard clause. A `1 x n` or `m x 1` grid has `k = 0`, so the loop does not run and the answer is 1 (one straight line). `m = 23, n = 12` gives `193536720`, which still fits an `int`. For `100 x 100` the count has 58 digits; the loop notices that the intermediate value exceeds `Integer.MAX_VALUE` and returns `-1` instead of a wrong number. The intermediate products are kept in a `long`: they stay below 2^62, because the check stops the loop as soon as the value passes 2^31.
 
-**Edge cases.** `m = 1` skips the outer loop and returns `1` (single row, one path). `n = 1` makes the inner loop empty and `row[0] = 1` is returned. `1 x 1` returns `1`.
-
-**Result:** `uniquePaths(3, 3)` returns `6`, matching the class output (`uniquePaths(3, 2)` is `3`, `uniquePaths(1, 1)` is `1`).
+**Result:** `28` for `m = 3, n = 7`, matching the class output.

@@ -2,24 +2,24 @@
 
 Utility class to find the longest palindromic substring using the expand-around-center approach.
 
-## Algorithm Strategy (Expand Around Center)
+## Algorithm Strategy (Manacher's Algorithm)
 
-1. Every palindrome mirrors around its center. The center is a single character for odd-length palindromes (such as `"aba"`) or a pair of adjacent characters for even-length palindromes (such as `"abba"`).
-2. A string of length `n` has `2n - 1` possible centers. For every index `i`, try the odd center `(i, i)` and the even center `(i, i + 1)`.
-3. For each center, move `start` left and `end` right while both are inside the string and `str.charAt(start) == str.charAt(end)`.
-4. When the expansion stops, `str.substring(start + 1, end)` is the longest palindrome around that center.
-5. Keep the longest palindrome seen over all centers.
+1. Guard first: `null`, empty and single-character strings are returned as they are.
+2. Insert a separator between all characters and add sentinels at both ends, for example `"aba"` becomes `"^#a#b#a#$"`. Every palindrome of the original string is now an odd-length palindrome around one center, and the sentinels stop the expansion at the borders without bounds checks.
+3. `radius[i]` is the palindrome radius around center `i` in the new string; it equals the length of the palindrome in the original string.
+4. Keep the palindrome that reaches furthest to the right (`center`, `right`). For a position `i` inside it, the mirror position `2 * center - i` already gives a lower bound: `radius[i] = min(right - i, radius[mirror])`. Only then expand further, and move `center` and `right` when the new palindrome reaches beyond `right`.
+5. The largest radius is the longest palindrome; convert its center back with `start = (centerIndex - maxLen) / 2`.
 
 ## Example walkthrough for `"bananas"`
 
-- Center `i = 2` (letter `n`): expands `n -> ana` and stops at `"ana"` because `b != n`.
-- Center `i = 3` (letter `a`): expands `a -> nan -> anana` (length 5, new best) and stops.
+- The new string is `^#b#a#n#a#n#a#s#$`. The position of the middle letter `a` (index 8) expands to radius 5, which is `"anana"`.
+- The positions to the right of it (the second `n` and the last `a`) start from the radius of their mirror position instead of from 0, so they are not expanded again from scratch.
 - Result: `"anana"`.
 
 ## Complexity Analysis
 
-- **Time Complexity:** `O(n^2)` — There are `2n - 1` centers and each expansion takes up to `O(n)`.
-- **Space Complexity:** `O(1)` auxiliary space (excluding the result substring).
+- **Time Complexity:** `O(n)` — The right boundary only moves forward, so the total number of expansion steps is linear.
+- **Space Complexity:** `O(n)` — The transformed string and the radius array.
 
 ## Approaches
 
@@ -75,7 +75,7 @@ public static String palindromeDp(String s) {
 - **Time Complexity:** O(n^2)
 - **Space Complexity:** O(n^2)
 
-### Approach 3: Expand Around Center (Implemented)
+### Approach 3: Expand Around Center
 
 Every palindrome is centered on a character (odd length) or between two characters (even length). Expand outwards from each of the `2n - 1` centers. This is the version implemented in the repository: simple and `O(1)` space.
 
@@ -144,7 +144,7 @@ public static String palindromeManacher(String s) {
 |---|----------|------|-------|
 | 1 | Brute Force | O(n^3) | O(1) |
 | 2 | Dynamic Programming Table | O(n^2) | O(n^2) |
-| 3 | Expand Around Center (Implemented) | O(n^2) | O(1) |
+| 3 | Expand Around Center | O(n^2) | O(1) |
 | 4 | Manacher's Algorithm (Optimized) | O(n) | O(n) |
 
 ## Source Code
@@ -158,19 +158,21 @@ import java.util.List;
 public class LongestPalindrome {
 
     public static void main(String[] args) {
-        List<String> list = Arrays.asList("BBABCBCAB", "aaa", "12321", "bananas");
+        List<String> list = Arrays.asList("BBABCBCAB", "aaa", "12321", "bananas", "abba", "a", "");
         for (String str : list) {
             System.out.println("Input  : \"" + str + "\"");
             System.out.println("Output : \"" + getLongestPalindrome(str) + "\"");
             System.out.println();
         }
+        System.out.println("Input  : null");
+        System.out.println("Output : " + getLongestPalindrome(null));
     }
 
     /**
-     * Finds the longest palindromic substring of {@code str}.
+     * Finds the longest palindromic substring of {@code str} (the first one when several have the same length).
      *
      * @param str the input string
-     * @return the longest palindromic substring
+     * @return the longest palindromic substring; {@code null} for {@code null} input, and the input itself when it has fewer than two characters
      */
     private static String getLongestPalindrome(String str) {
         // Guard Clause: null, empty and single-character strings are palindromes themselves
@@ -178,69 +180,71 @@ public class LongestPalindrome {
             return str;
         }
 
-        String longest = str.substring(0, 1);
-        int n = str.length();
-        for (int i = 0; i < n; i++) {
+        StringBuilder sb = new StringBuilder("^");
+        for (int i = 0; i < str.length(); i++) {
+            sb.append('#').append(str.charAt(i));
+        }
+        String t = sb.append("#$").toString();          // e.g. "^#a#b#a#$"
 
-            // get longest palindrome with center of i (odd length)
-            String palindrome = intermediatePalindrome(str, i, i);
-            if (palindrome.length() > longest.length()) {
-                longest = palindrome;
+        int n = t.length();
+        int[] radius = new int[n];
+        int center = 0, right = 0;
+        for (int i = 1; i < n - 1; i++) {
+            if (i < right) {
+                radius[i] = Math.min(right - i, radius[2 * center - i]);
             }
-
-            // get longest palindrome with center of i, i+1 (even length)
-            palindrome = intermediatePalindrome(str, i, i + 1);
-            if (palindrome.length() > longest.length()) {
-                longest = palindrome;
+            while (t.charAt(i + 1 + radius[i]) == t.charAt(i - 1 - radius[i])) {
+                radius[i]++;
+            }
+            if (i + radius[i] > right) {
+                center = i;
+                right = i + radius[i];
             }
         }
-        return longest;
-    }
 
-    /**
-     * Expands outwards from the given center while the characters match.
-     *
-     * @param str   the input string
-     * @param start the left index of the center
-     * @param end   the right index of the center
-     * @return the palindrome found around the center
-     */
-    private static String intermediatePalindrome(String str, int start, int end) {
-        while (start >= 0 && end < str.length() && str.charAt(start) == str.charAt(end)) {
-            start--;
-            end++;
+        int maxLen = 0, centerIndex = 0;
+        for (int i = 1; i < n - 1; i++) {
+            if (radius[i] > maxLen) {
+                maxLen = radius[i];
+                centerIndex = i;
+            }
         }
-        return str.substring(start + 1, end);
+        int start = (centerIndex - maxLen) / 2;
+        return str.substring(start, start + maxLen);
     }
 }
 ```
 
 ## Solution
 
-This repository implements Approach 3 (Expand Around Center), marked `(Implemented)` in the Approaches section. The optimized approach on this page, Approach 4 (Manacher's Algorithm), is not implemented in the class.
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
-The idea: every palindrome mirrors around its center, which is either one character (odd length) or the gap between two characters (even length). For each index `i`, expand outward from `(i, i)` and from `(i, i+1)` while the two characters match, and keep the longest palindrome found. A longer one replaces the best only if it is strictly longer.
+The idea: put a `#` between all characters (and sentinels `^` and `$` at the ends) so every palindrome has odd length, then compute the radius of the palindrome around every position. A position inside an already known palindrome starts from the radius of its mirror position instead of from zero, so no character is compared again and again.
 
-**Input:** `str = "BBABCBCAB"`; start with `longest = "B"`.
+**Input:** `str = "bananas"`, which becomes `t = ^#b#a#n#a#n#a#s#$` (length 17). `radius[i]` is the palindrome radius around position `i`; the table shows how it was found.
 
-| `i` | Char | Odd expansion `(i, i)` | Even expansion `(i, i+1)` | `longest` |
-|-----|------|------------------------|---------------------------|-----------|
-| 0 | B | `B` | `BB` | `BB` |
-| 1 | B | `B` | `` (B != A) | `BB` |
-| 2 | A | `BAB` | `` | `BAB` |
-| 3 | B | `B` | `` | `BAB` |
-| 4 | C | `BCB` | `` | `BAB` (same length, not longer) |
-| 5 | B | `CBC` | `` | `BAB` |
-| 6 | C | `C` | `` | `BAB` |
-| 7 | A | `A` | `` | `BAB` |
-| 8 | B | `B` | `` (end of string) | `BAB` |
+| `i` | `t[i]` | Start value | Final `radius[i]` | New boundary |
+|-----|--------|-------------|-------------------|--------------|
+| 1 | `#` | expand from 0 | 0 | center=1, right=1 |
+| 2 | `b` | expand from 0 | 1 | center=2, right=3 |
+| 3 | `#` | expand from 0 | 0 |  |
+| 4 | `a` | expand from 0 | 1 | center=4, right=5 |
+| 5 | `#` | expand from 0 | 0 |  |
+| 6 | `n` | expand from 0 | 3 | center=6, right=9 |
+| 7 | `#` | mirror 5 gives 0 | 0 |  |
+| 8 | `a` | mirror 4 gives 1 | 5 | center=8, right=13 |
+| 9 | `#` | mirror 7 gives 0 | 0 |  |
+| 10 | `n` | mirror 6 gives 3 | 3 |  |
+| 11 | `#` | mirror 5 gives 0 | 0 |  |
+| 12 | `a` | mirror 4 gives 1 | 1 |  |
+| 13 | `#` | expand from 0 | 0 |  |
+| 14 | `s` | expand from 0 | 1 | center=14, right=15 |
+| 15 | `#` | expand from 0 | 0 |  |
 
-```text
-index: 0 1 2 3 4 5 6 7 8
-str:   B B A B C B C A B
-center i=2: A=A, then s[1]=B vs s[3]=B match, then s[0]=B vs s[4]=C stop -> "BAB"
-```
+The largest radius is 5 at position 8 (the letter `a`), so the palindrome starts at `(ci - maxLen) / 2 = (8 - 5) / 2 = 1` and has length 5: `"anana"`.
 
-**Edge cases.** `null` or a string shorter than 2 is returned as it is. With no repeats (`"abc"`) the answer is the first character. On ties the first palindrome found wins. Worst case is O(n^2) time and O(1) extra space (the substrings are created only for returns).
+**Why it is linear.** `right` only moves forward. A position inside the boundary starts from a known radius, and the `while` loop only compares characters beyond `right`, which is new ground; each character is therefore passed once by the expansion. The expand-around-center version restarts at every center, which makes it quadratic on strings like `aaaa...`.
 
-**Result:** `"BAB"`, matching the class output.
+**Edge cases.** `null`, the empty string and one-character strings are returned as they are. For `"abba"` the even centre is a separator in `t`, and the radius there is 4. When several palindromes have the same length, the first one (smallest centre) wins, because only a strictly larger radius replaces the best.
+
+**Result:** `"anana"`, matching the class output.

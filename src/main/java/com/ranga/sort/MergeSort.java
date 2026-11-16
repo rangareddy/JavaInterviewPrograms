@@ -3,31 +3,30 @@ package com.ranga.sort;
 import java.util.Arrays;
 
 /**
- * Utility class to sort an integer array using Merge Sort (divide and conquer).
+ * Utility class to sort an integer array using Merge Sort (divide and conquer) with one shared auxiliary buffer.
  *
- * <p><b>Algorithm Strategy (Divide and Merge):</b>
+ * <p><b>Algorithm Strategy (Divide and Merge with One Buffer):</b>
  * <ol>
- *   <li><b>Base case:</b> an array with {@code 0} or {@code 1} elements is already sorted, return it as is.</li>
- *   <li><b>Divide:</b> compute {@code mid = n / 2} and copy the elements into a {@code left} array
- *       ({@code arr[0..mid-1]}) and a {@code right} array ({@code arr[mid..n-1]}).</li>
- *   <li><b>Conquer:</b> recursively sort {@code left} and {@code right}.</li>
- *   <li><b>Merge:</b> keep one index per sorted half and repeatedly copy the smaller front element into the
- *       result; when one half is exhausted, copy the remainder of the other half.</li>
+ *   <li>Guard first: a {@code null} array and arrays with fewer than two elements are already sorted.</li>
+ *   <li>Allocate a single auxiliary array {@code buffer} of the same length, once, before the recursion starts.</li>
+ *   <li><b>Divide:</b> sort the index range {@code [low, high]} by sorting {@code [low, mid]} and {@code [mid + 1, high]} recursively, with {@code mid = low + (high - low) / 2}. No sub-array is copied.</li>
+ *   <li><b>Skip when ordered:</b> if {@code arr[mid] <= arr[mid + 1]} the two halves are already in order, so the merge is skipped. An already sorted array is therefore processed in linear time.</li>
+ *   <li><b>Merge:</b> copy {@code arr[low..high]} into the buffer, then write back into {@code arr}, each time taking the smaller front element of the two halves in the buffer ({@code <} on the right half, so equal keys keep their order and the sort is stable).</li>
  * </ol>
  *
  * <p><b>Example walkthrough</b> for {@code [38, 27, 43, 3]}:
  * <ul>
  *   <li>Divide: {@code [38, 27] | [43, 3]} then {@code [38] [27] | [43] [3]}</li>
- *   <li>Merge: {@code [27, 38]} and {@code [3, 43]}</li>
- *   <li>Merge: {@code [3, 27, 38, 43]}</li>
+ *   <li>Merge {@code [0..1]}: {@code [27, 38, 43, 3]}; merge {@code [2..3]}: {@code [27, 38, 3, 43]}</li>
+ *   <li>Merge {@code [0..3]}: {@code [3, 27, 38, 43]}</li>
  * </ul>
  *
  * <p><b>Complexity Analysis:</b>
  * <ul>
- *   <li><b>Time Complexity (Best):</b> {@code O(n log n)} — The array is always halved ({@code log n} levels) and each level merges in {@code O(n)}.</li>
- *   <li><b>Time Complexity (Average):</b> {@code O(n log n)} — Same as best case.</li>
- *   <li><b>Time Complexity (Worst):</b> {@code O(n log n)} — Same as best case.</li>
- *   <li><b>Space Complexity:</b> {@code O(n)} — Auxiliary arrays are created for the halves and the merged result.</li>
+ *   <li><b>Time Complexity (Best):</b> {@code O(n)} — A sorted input skips every merge and only the recursion remains.</li>
+ *   <li><b>Time Complexity (Average):</b> {@code O(n log n)} — The range is always halved ({@code log n} levels) and each level merges in {@code O(n)}.</li>
+ *   <li><b>Time Complexity (Worst):</b> {@code O(n log n)} — Same as the average case.</li>
+ *   <li><b>Space Complexity:</b> {@code O(n)} — One buffer allocated once, plus {@code O(log n)} recursion stack, instead of new arrays at every level.</li>
  * </ul>
  *
  * @author Ranga Reddy
@@ -36,65 +35,77 @@ public class MergeSort {
 
     public static void main(String[] args) {
         int[] arr = {12, 4, 5, 7, 9, 20, 30, 6, 15};
-
         System.out.println("Original Array : " + Arrays.toString(arr));
-        int[] sortedArr = mergeSort(arr);
-        System.out.println("Sorted Array   : " + Arrays.toString(sortedArr));
+        mergeSort(arr);
+        System.out.println("Sorted Array   : " + Arrays.toString(arr));
+        System.out.println();
+
+        int[] sorted = {1, 2, 3, 4, 5, 6};
+        System.out.println("Original Array : " + Arrays.toString(sorted) + "   (already sorted: every merge is skipped)");
+        mergeSort(sorted);
+        System.out.println("Sorted Array   : " + Arrays.toString(sorted));
+        System.out.println();
+
+        int[] duplicates = {3, 1, 3, 2, 1};
+        System.out.println("Original Array : " + Arrays.toString(duplicates));
+        mergeSort(duplicates);
+        System.out.println("Sorted Array   : " + Arrays.toString(duplicates));
+        System.out.println();
+
+        int[] empty = {};
+        mergeSort(empty);
+        mergeSort(null);
+        System.out.println("Empty and null arrays are returned untouched: " + Arrays.toString(empty));
     }
 
     /**
-     * Recursively splits the array in halves and merges the sorted halves.
+     * Sorts the array in ascending order, in place.
      *
-     * @param arr the array to sort
-     * @return a new sorted array
+     * @param arr the array to sort; {@code null} and arrays with fewer than two elements are left as they are
      */
-    private static int[] mergeSort(int[] arr) {
-        int n = arr.length;
-        if (n <= 1) {
-            return arr;
+    private static void mergeSort(int[] arr) {
+        // Guard Clause: nothing to sort
+        if (arr == null || arr.length <= 1) {
+            return;
         }
-
-        int mid = n / 2;
-        int[] left = new int[mid];
-        int[] right = new int[n - mid];
-
-        System.arraycopy(arr, 0, left, 0, left.length);
-        System.arraycopy(arr, mid, right, 0, right.length);
-
-        left = mergeSort(left);
-        right = mergeSort(right);
-
-        return merge(left, right);
+        mergeSort(arr, new int[arr.length], 0, arr.length - 1);
     }
 
     /**
-     * Merges two sorted arrays into one sorted array.
-     *
-     * @param left  the first sorted array
-     * @param right the second sorted array
-     * @return a sorted array containing all elements of both inputs
+     * Sorts {@code arr[low..high]} using the shared {@code buffer}.
      */
-    private static int[] merge(int[] left, int[] right) {
-        int lengthL = left.length;
-        int lengthR = right.length;
+    private static void mergeSort(int[] arr, int[] buffer, int low, int high) {
+        if (low >= high) {
+            return;
+        }
+        int mid = low + (high - low) / 2;
+        mergeSort(arr, buffer, low, mid);
+        mergeSort(arr, buffer, mid + 1, high);
 
-        int[] result = new int[lengthL + lengthR];
-        int k = 0, i = 0, j = 0;
+        // The halves are already in order: nothing to merge
+        if (arr[mid] <= arr[mid + 1]) {
+            return;
+        }
+        merge(arr, buffer, low, mid, high);
+    }
 
-        while (i < lengthL || j < lengthR) {
-            if (i < lengthL && j < lengthR) {
-                // Take the smaller front element ('<=' keeps the sort stable)
-                if (left[i] <= right[j]) {
-                    result[k++] = left[i++];
-                } else {
-                    result[k++] = right[j++];
-                }
-            } else if (i < lengthL) {
-                result[k++] = left[i++];
+    /**
+     * Merges the sorted ranges {@code arr[low..mid]} and {@code arr[mid + 1..high]}.
+     */
+    private static void merge(int[] arr, int[] buffer, int low, int mid, int high) {
+        System.arraycopy(arr, low, buffer, low, high - low + 1);
+        int i = low, j = mid + 1;
+        for (int k = low; k <= high; k++) {
+            if (i > mid) {
+                arr[k] = buffer[j++];
+            } else if (j > high) {
+                arr[k] = buffer[i++];
+            } else if (buffer[j] < buffer[i]) {
+                // Take from the right half only when it is strictly smaller ('<' keeps the sort stable)
+                arr[k] = buffer[j++];
             } else {
-                result[k++] = right[j++];
+                arr[k] = buffer[i++];
             }
         }
-        return result;
     }
 }
