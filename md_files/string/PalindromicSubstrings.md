@@ -2,22 +2,23 @@
 
 Given a string `s`, return the number of palindromic substrings in it. Substrings with different start or end positions are counted separately even if they have the same characters.
 
-## Algorithm Strategy (Expand Around Every Center)
+## Algorithm Strategy (Manacher's Algorithm)
 
-1. Every palindrome has a center: one character (odd length) or two adjacent characters (even length). There are `2n - 1` centers.
-2. For each center, expand outwards while the characters on both sides are equal.
-3. Every successful expansion step is one more palindromic substring, so add 1 to the counter each time.
-4. Return the counter after all centers have been processed.
+1. Guard first: `null` and empty strings have 0 palindromic substrings.
+2. Insert a separator between all characters and add sentinels at both ends (`"aaa"` becomes `"^#a#a#a#$"`), so every palindrome is an odd-length palindrome around one center.
+3. `radius[i]` is the palindrome radius around center `i`; it equals the length of the longest palindrome there in the original string. Reuse the mirror position of the rightmost palindrome: `radius[i] = min(right - i, radius[2 * center - i])`, then expand further and move the boundary if needed.
+4. A center with radius `r` contributes `(r + 1) / 2` palindromic substrings (the palindromes of length `r`, `r - 2`, ... that are centered there and start and end on a real character).
+5. The sum over all centers is the answer.
 
 ## Example walkthrough
 
-- For `"aaa"`: the centers produce `a, a, a` (3 single letters), `aa, aa` (2) and `aaa` (1).
+- For `"aaa"` the new string is `^#a#a#a#$`; the radii of the seven centers between the sentinels are `0, 1, 2, 3, 2, 1, 0`, which contribute `(r + 1) / 2 = 0, 1, 1, 2, 1, 1, 0`.
 - Result: `6`.
 
 ## Complexity Analysis
 
-- **Time Complexity:** `O(n^2)` — `2n - 1` centers, each expansion up to `O(n)`.
-- **Space Complexity:** `O(1)` — Only counters.
+- **Time Complexity:** `O(n)` — The right boundary only moves forward, so the total number of expansion steps is linear.
+- **Space Complexity:** `O(n)` — The transformed string and the radius array.
 
 ## Approaches
 
@@ -70,7 +71,7 @@ public static int countSubstringsDp(String s) {
 - **Time Complexity:** O(n^2)
 - **Space Complexity:** O(n^2)
 
-### Approach 3: Expand Around Every Center (Implemented)
+### Approach 3: Expand Around Every Center
 
 Expand from each of the `2n - 1` centers and count every successful step. This is the version implemented in the repository.
 
@@ -126,7 +127,7 @@ public static int countSubstringsManacher(String s) {
 |---|----------|------|-------|
 | 1 | Brute Force | O(n^3) | O(1) |
 | 2 | Dynamic Programming Table | O(n^2) | O(n^2) |
-| 3 | Expand Around Every Center (Implemented) | O(n^2) | O(1) |
+| 3 | Expand Around Every Center | O(n^2) | O(1) |
 | 4 | Manacher's Algorithm (Optimized) | O(n) | O(n) |
 
 ## Source Code
@@ -137,33 +138,40 @@ public static int countSubstringsManacher(String s) {
 public class PalindromicSubstrings {
 
     public static void main(String[] args) {
-        String[] inputs = {"abc", "aaa", "abba"};
+        String[] inputs = {"abc", "aaa", "abba", "", null};
         for (String s : inputs) {
-            System.out.println("Input  : s = \"" + s + "\"");
+            System.out.println("Input  : s = " + (s == null ? "null" : "\"" + s + "\""));
             System.out.println("Output : " + countSubstrings(s));
             System.out.println();
         }
     }
 
     public static int countSubstrings(String s) {
+        // Guard Clause: nothing to count
         if (s == null || s.isEmpty()) {
             return 0;
         }
 
-        int count = 0;
-        for (int center = 0; center < s.length(); center++) {
-            count += expand(s, center, center);         // odd length palindromes
-            count += expand(s, center, center + 1);     // even length palindromes
+        StringBuilder sb = new StringBuilder("^");
+        for (int i = 0; i < s.length(); i++) {
+            sb.append('#').append(s.charAt(i));
         }
-        return count;
-    }
+        String t = sb.append("#$").toString();
 
-    private static int expand(String s, int left, int right) {
-        int count = 0;
-        while (left >= 0 && right < s.length() && s.charAt(left) == s.charAt(right)) {
-            count++;
-            left--;
-            right++;
+        int n = t.length(), center = 0, right = 0, count = 0;
+        int[] radius = new int[n];
+        for (int i = 1; i < n - 1; i++) {
+            if (i < right) {
+                radius[i] = Math.min(right - i, radius[2 * center - i]);
+            }
+            while (t.charAt(i + 1 + radius[i]) == t.charAt(i - 1 - radius[i])) {
+                radius[i]++;
+            }
+            if (i + radius[i] > right) {
+                center = i;
+                right = i + radius[i];
+            }
+            count += (radius[i] + 1) / 2;
         }
         return count;
     }
@@ -172,27 +180,26 @@ public class PalindromicSubstrings {
 
 ## Solution
 
-This repository implements Approach 3 (Expand Around Every Center), marked `(Implemented)` in the Approaches section. The optimized approach on this page, Approach 4 (Manacher's Algorithm), is not implemented in the class.
+The optimized solution is Approach 4 above, which is also the version implemented in this repository.
 
-The idea: every palindromic substring has a center, either one character (odd length) or the gap between two (even length). For every index, expand outward from `(c, c)` and `(c, c+1)`; every step where the two ends match is one more palindromic substring, so the number of successful steps is added to `count`.
+The idea: the same transformed string and mirror trick as for the longest palindrome, but instead of keeping the maximum, every position contributes the number of palindromic substrings centred there. With radius `r`, the palindromes centred there have lengths `r`, `r - 2`, ... down to 1 or 2, which is `(r + 1) / 2` of them.
 
-**Input:** `s = "abba"`.
+**Input:** `s = "aaa"`, which becomes `t = ^#a#a#a#$`.
 
-| Center | Odd expansion `(c, c)` | Even expansion `(c, c+1)` | Added | `count` |
-|--------|------------------------|---------------------------|-------|---------|
-| 0 | `a` matches (1); then left is out of range | `a` vs `b` no (0) | 1 | 1 |
-| 1 | `b` (1); then `a` vs `b` no | `bb` (1), then `abba` (2) | 3 | 4 |
-| 2 | `b` (1); then `b` vs `a` no | `b` vs `a` no (0) | 1 | 5 |
-| 3 | `a` (1); then right is out of range | right is out of range (0) | 1 | 6 |
+| `i` | `t[i]` | `radius[i]` | `(radius + 1) / 2` |
+|-----|--------|-------------|--------------------|
+| 1 | `#` | 0 | 0 |
+| 2 | `a` | 1 | 1 |
+| 3 | `#` | 2 | 1 |
+| 4 | `a` | 3 | 2 |
+| 5 | `#` | 2 | 1 |
+| 6 | `a` | 1 | 1 |
+| 7 | `#` | 0 | 0 |
 
-The six palindromic substrings are `a`, `b`, `b`, `a`, `bb`, `abba`.
+The counts add up to 6: the three single letters, `aa` twice and `aaa` once.
 
-```text
-index: 0 1 2 3
-s:     a b b a
-center 1 (even): s[1]=s[2] -> "bb", then s[0]=s[3] -> "abba", then left < 0 stop
-```
+**A second input:** `s = "abba"` becomes `^#a#b#b#a#$`, the counts per position are 0 + 1 + 0 + 1 + 2 + 1 + 0 + 1 + 0, so the total is 6: `a`, `b`, `b`, `a`, `bb` and `abba`.
 
-**Edge cases.** `null` or `""` returns `0`. `"abc"` returns `3` (only single letters); `"aaa"` returns `6`. Each expansion stops at the first mismatch or string end, so the time is O(n^2) in the worst case with O(1) extra space.
+**Edge cases.** `null` and the empty string return 0 through the guard clause. A string of different letters, such as `abc`, has only the single-letter palindromes, so the answer is its length (3). Like the longest-palindrome version, the boundary `right` only moves forward, so the whole count is linear.
 
-**Result:** `6`, matching the class output.
+**Result:** `6` for `"aaa"` and `6` for `"abba"`, matching the class output.

@@ -2,21 +2,22 @@
 
 Given an array of strings, group the anagrams together. The groups can be returned in any order.
 
-## Algorithm Strategy (Hash Map Keyed by the Sorted Letters)
+## Algorithm Strategy (Hash Map Keyed by the Letter Counts)
 
-1. Two words are anagrams exactly when their sorted letters are equal, so the sorted word is a canonical key for the group.
-2. For every word, build the key by sorting its characters.
-3. Use `Map<String, List<String>>`: append the word to the list stored under its key.
-4. Return all the lists of the map.
+1. Guard first: a `null` array gives an empty result and `null` entries are skipped.
+2. Two words are anagrams exactly when they have the same count of every letter, so the 26 counts are a canonical key for the group. Counting is `O(k)`, which avoids the `log k` factor of sorting the letters.
+3. For a word with only lowercase letters `a`-`z`, count the letters into an `int[26]` and use `Arrays.toString(count)` as the key.
+4. Any other word (capitals, digits, other alphabets) cannot be counted in 26 slots, so its key is its sorted characters with a `'#'` prefix. A word that has such characters never shares a key with a lowercase-only word, and all its anagrams get the same key.
+5. Use `Map<String, List<String>>`: append the word to the list stored under its key, then return all the lists.
 
 ## Example walkthrough
 
-- For `["eat", "tea", "tan", "ate", "nat", "bat"]`: the keys are `aet`, `aet`, `ant`, `aet`, `ant`, `abt`.
+- For `["eat", "tea", "tan", "ate", "nat", "bat"]`: `eat`, `tea` and `ate` all count to `a=1, e=1, t=1`; `tan` and `nat` to `a=1, n=1, t=1`; `bat` to `a=1, b=1, t=1`.
 - Groups: `[eat, tea, ate]`, `[tan, nat]`, `[bat]`.
 
 ## Complexity Analysis
 
-- **Time Complexity:** `O(n * k log k)` — `n` words, each of length at most `k`, sorted once.
+- **Time Complexity:** `O(n * k)` — `n` words of length at most `k`, counted once (plus a constant 26 for building the key); words with other characters cost `O(k log k)` for the sort.
 - **Space Complexity:** `O(n * k)` — The map stores all words.
 
 ## Approaches
@@ -54,7 +55,7 @@ private static String sorted(String word) {
 - **Time Complexity:** O(n^2 * k log k)
 - **Space Complexity:** O(n * k)
 
-### Approach 2: Hash Map Keyed by the Sorted Word (Implemented)
+### Approach 2: Hash Map Keyed by the Sorted Word
 
 Anagrams have the same sorted letters, so the sorted word is a canonical key. This is the version implemented in the repository.
 
@@ -182,7 +183,7 @@ public static List<List<String>> groupAnagramsCounts(String[] strs) {
 | # | Approach | Time | Space |
 |---|----------|------|-------|
 | 1 | Brute Force (Pairwise Comparison) | O(n^2 * k log k) | O(n * k) |
-| 2 | Hash Map Keyed by the Sorted Word (Implemented) | O(n * k log k) | O(n * k) |
+| 2 | Hash Map Keyed by the Sorted Word | O(n * k log k) | O(n * k) |
 | 3 | Prime-Product Key | O(n * k) | O(n * k) |
 | 4 | Sort by Signature, Then Read the Runs | O(n * k log k + n log n * k) | O(n * k) |
 | 5 | Streams groupingBy | O(n * k log k) | O(n * k) |
@@ -203,7 +204,7 @@ import java.util.Map;
 public class GroupAnagrams {
 
     public static void main(String[] args) {
-        String[][] inputs = {{"eat", "tea", "tan", "ate", "nat", "bat"}, {""}, {"a"}};
+        String[][] inputs = {{"eat", "tea", "tan", "ate", "nat", "bat"}, {""}, {"a"}, {"Eat", "taE", "ate"}, null};
         for (String[] strs : inputs) {
             System.out.println("Input  : strs = " + Arrays.toString(strs));
             System.out.println("Output : " + groupAnagrams(strs));
@@ -212,50 +213,57 @@ public class GroupAnagrams {
     }
 
     public static List<List<String>> groupAnagrams(String[] strs) {
+        // Guard Clause: no input, no groups
         if (strs == null) {
             return new ArrayList<>();
         }
 
         Map<String, List<String>> groups = new LinkedHashMap<>();
         for (String word : strs) {
-            char[] chars = word.toCharArray();
-            Arrays.sort(chars);
-            groups.computeIfAbsent(new String(chars), key -> new ArrayList<>()).add(word);
+            if (word == null) {
+                continue;
+            }
+            groups.computeIfAbsent(keyOf(word), key -> new ArrayList<>()).add(word);
         }
         return new ArrayList<>(groups.values());
+    }
+
+    /** The letter-count key for lowercase words, the prefixed sorted letters for any other word. */
+    private static String keyOf(String word) {
+        int[] count = new int[26];
+        for (int i = 0; i < word.length(); i++) {
+            char c = word.charAt(i);
+            if (c < 'a' || c > 'z') {
+                char[] chars = word.toCharArray();
+                Arrays.sort(chars);
+                return "#" + new String(chars);
+            }
+            count[c - 'a']++;
+        }
+        return Arrays.toString(count);
     }
 }
 ```
 
 ## Solution
 
-This repository implements Approach 2 (Hash Map Keyed by the Sorted Word), marked `(Implemented)` in the Approaches section. The optimized approach on this page, Approach 7 (Hash Map Keyed by the Letter Counts), is not implemented in the class.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
-**Note:** the page names Approach 7 (letter-count key) as the optimized one, but the version coded in `GroupAnagrams.java` is Approach 2, the sorted-word key. The walkthrough below follows the class; Approach 7 differs only in how the key is built (a 26-slot count instead of the sorted letters).
+The idea: two words are anagrams exactly when they use the same letters the same number of times, so the letter counts are a key that every anagram shares. Counting the letters of a word takes one pass over it, which is cheaper than sorting its letters.
 
-The idea: all anagrams turn into the same string when their letters are sorted (`eat`, `tea`, `ate` all become `aet`). Use that sorted string as a key in a `LinkedHashMap<String, List<String>>` and add each word to its key's list. The map keeps the groups in the order they first appeared, and the answer is the list of the map's values. Cost: sorting each word, O(n * k log k).
+**Input:** `strs = ["eat", "tea", "tan", "ate", "nat", "bat"]`. The key is shown as the non-zero counts of the 26 slots (the code uses the whole `int[26]` as text).
 
-**Input:** `strs = [eat, tea, tan, ate, nat, bat]`.
+| Step | Word | Key (letter counts) | Action | Groups afterwards |
+|------|------|---------------------|--------|-------------------|
+| 1 | `eat` | `a1 e1 t1` | new group | `[[eat]]` |
+| 2 | `tea` | `a1 e1 t1` | added to the existing group | `[[eat, tea]]` |
+| 3 | `tan` | `a1 n1 t1` | new group | `[[eat, tea], [tan]]` |
+| 4 | `ate` | `a1 e1 t1` | added to the existing group | `[[eat, tea, ate], [tan]]` |
+| 5 | `nat` | `a1 n1 t1` | added to the existing group | `[[eat, tea, ate], [tan, nat]]` |
+| 6 | `bat` | `a1 b1 t1` | new group | `[[eat, tea, ate], [tan, nat], [bat]]` |
 
-| Step | `word` | Sorted key | Group action | `groups` afterwards |
-|------|--------|-----------|--------------|---------------------|
-| 1 | `eat` | `aet` | new group | `{aet=[eat]}` |
-| 2 | `tea` | `aet` | append | `{aet=[eat, tea]}` |
-| 3 | `tan` | `ant` | new group | `{aet=[eat, tea], ant=[tan]}` |
-| 4 | `ate` | `aet` | append | `{aet=[eat, tea, ate], ant=[tan]}` |
-| 5 | `nat` | `ant` | append | `{aet=[eat, tea, ate], ant=[tan, nat]}` |
-| 6 | `bat` | `abt` | new group | `{aet=[eat, tea, ate], ant=[tan, nat], abt=[bat]}` |
+The map keeps insertion order, so the groups come out in the order in which each key first appeared: `[[eat, tea, ate], [tan, nat], [bat]]`.
 
-```mermaid
-flowchart LR
-    W1["eat, tea, ate"] --> K1["key aet"]
-    W2["tan, nat"] --> K2["key ant"]
-    W3["bat"] --> K3["key abt"]
-    K1 --> R(["result = values of the map"])
-    K2 --> R
-    K3 --> R
-```
-
-**Edge cases.** A `null` array returns an empty list. An array with the empty string `[""]` gives one group `[[""]]` (the key is `""`), and `["a"]` gives `[[a]]`; an empty array gives an empty list.
+**Edge cases.** A `null` array returns an empty list, and `null` entries are skipped. The empty string has all counts 0, so `[""]` forms one group. A word with a character outside `a`-`z` (for example `Eat`) cannot be counted in 26 slots, so its key is its sorted characters with a `#` prefix: `Eat` and `taE` both get the key `#Eat`, while `ate` keeps its counting key, so capitalised and lowercase words never merge by accident. Counting costs `O(k)` per word; sorting is only used for those unusual words.
 
 **Result:** `[[eat, tea, ate], [tan, nat], [bat]]`, matching the class output.

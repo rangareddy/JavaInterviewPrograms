@@ -8,31 +8,32 @@
 
 ![Mergesort](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Merge_sort_algorithm_diagram.svg/600px-Merge_sort_algorithm_diagram.svg.png)
 
-## Algorithm Strategy (Divide and Merge)
+## Algorithm Strategy (Divide and Merge with One Buffer)
 
-1. **Base case:** an array with `0` or `1` elements is already sorted, return it as is.
-2. **Divide:** compute `mid = n / 2` and copy the elements into a `left` array (`arr[0..mid-1]`) and a `right` array (`arr[mid..n-1]`).
-3. **Conquer:** recursively sort `left` and `right`.
-4. **Merge:** keep one index per sorted half and repeatedly copy the smaller front element into the result; when one half is exhausted, copy the remainder of the other half.
+1. Guard first: a `null` array and arrays with fewer than two elements are already sorted.
+2. Allocate a single auxiliary array `buffer` of the same length, once, before the recursion starts.
+3. **Divide:** sort the index range `[low, high]` by sorting `[low, mid]` and `[mid + 1, high]` recursively, with `mid = low + (high - low) / 2`. No sub-array is copied.
+4. **Skip when ordered:** if `arr[mid] <= arr[mid + 1]` the two halves are already in order, so the merge is skipped. An already sorted array is therefore processed in linear time.
+5. **Merge:** copy `arr[low..high]` into the buffer, then write back into `arr`, each time taking the smaller front element of the two halves in the buffer (`<` on the right half, so equal keys keep their order and the sort is stable).
 
 ## Example walkthrough for `[38, 27, 43, 3]`
 
 - Divide: `[38, 27] | [43, 3]` then `[38] [27] | [43] [3]`
-- Merge: `[27, 38]` and `[3, 43]`
-- Merge: `[3, 27, 38, 43]`
+- Merge `[0..1]`: `[27, 38, 43, 3]`; merge `[2..3]`: `[27, 38, 3, 43]`
+- Merge `[0..3]`: `[3, 27, 38, 43]`
 
 ## Complexity Analysis
 
-- **Time Complexity (Best):** `O(n log n)` — The array is always halved (`log n` levels) and each level merges in `O(n)`.
-- **Time Complexity (Average):** `O(n log n)` — Same as best case.
-- **Time Complexity (Worst):** `O(n log n)` — Same as best case.
-- **Space Complexity:** `O(n)` — Auxiliary arrays are created for the halves and the merged result.
+- **Time Complexity (Best):** `O(n)` — A sorted input skips every merge and only the recursion remains.
+- **Time Complexity (Average):** `O(n log n)` — The range is always halved (`log n` levels) and each level merges in `O(n)`.
+- **Time Complexity (Worst):** `O(n log n)` — Same as the average case.
+- **Space Complexity:** `O(n)` — One buffer allocated once, plus `O(log n)` recursion stack, instead of new arrays at every level.
 
 ## Approaches
 
 The same problem can be solved in several ways. They are listed from the simplest to the most efficient.
 
-### Approach 1: Top-Down with New Arrays (Implemented)
+### Approach 1: Top-Down with New Arrays
 
 Copy each half into new arrays, sort them recursively and merge. Easy to read; allocates many short-lived arrays. This is the version implemented in the repository.
 
@@ -259,7 +260,7 @@ private static void mergeSortBuffer(int[] arr, int[] buffer, int low, int high) 
 
 | # | Approach | Time | Space |
 |---|----------|------|-------|
-| 1 | Top-Down with New Arrays (Implemented) | O(n log n) | O(n) with many temporary arrays |
+| 1 | Top-Down with New Arrays | O(n log n) | O(n) with many temporary arrays |
 | 2 | Bottom-Up (Iterative) | O(n log n) | O(n) |
 | 3 | Natural Merge Sort | Best O(n), worst O(n log n) | O(n) |
 | 4 | In-Place Merge with Rotations | O(n log^2 n) | O(log n) |
@@ -278,113 +279,115 @@ public class MergeSort {
 
     public static void main(String[] args) {
         int[] arr = {12, 4, 5, 7, 9, 20, 30, 6, 15};
-
         System.out.println("Original Array : " + Arrays.toString(arr));
-        int[] sortedArr = mergeSort(arr);
-        System.out.println("Sorted Array   : " + Arrays.toString(sortedArr));
+        mergeSort(arr);
+        System.out.println("Sorted Array   : " + Arrays.toString(arr));
+        System.out.println();
+
+        int[] sorted = {1, 2, 3, 4, 5, 6};
+        System.out.println("Original Array : " + Arrays.toString(sorted) + "   (already sorted: every merge is skipped)");
+        mergeSort(sorted);
+        System.out.println("Sorted Array   : " + Arrays.toString(sorted));
+        System.out.println();
+
+        int[] duplicates = {3, 1, 3, 2, 1};
+        System.out.println("Original Array : " + Arrays.toString(duplicates));
+        mergeSort(duplicates);
+        System.out.println("Sorted Array   : " + Arrays.toString(duplicates));
+        System.out.println();
+
+        int[] empty = {};
+        mergeSort(empty);
+        mergeSort(null);
+        System.out.println("Empty and null arrays are returned untouched: " + Arrays.toString(empty));
     }
 
     /**
-     * Recursively splits the array in halves and merges the sorted halves.
+     * Sorts the array in ascending order, in place.
      *
-     * @param arr the array to sort
-     * @return a new sorted array
+     * @param arr the array to sort; {@code null} and arrays with fewer than two elements are left as they are
      */
-    private static int[] mergeSort(int[] arr) {
-        int n = arr.length;
-        if (n <= 1) {
-            return arr;
+    private static void mergeSort(int[] arr) {
+        // Guard Clause: nothing to sort
+        if (arr == null || arr.length <= 1) {
+            return;
         }
-
-        int mid = n / 2;
-        int[] left = new int[mid];
-        int[] right = new int[n - mid];
-
-        System.arraycopy(arr, 0, left, 0, left.length);
-        System.arraycopy(arr, mid, right, 0, right.length);
-
-        left = mergeSort(left);
-        right = mergeSort(right);
-
-        return merge(left, right);
+        mergeSort(arr, new int[arr.length], 0, arr.length - 1);
     }
 
     /**
-     * Merges two sorted arrays into one sorted array.
-     *
-     * @param left  the first sorted array
-     * @param right the second sorted array
-     * @return a sorted array containing all elements of both inputs
+     * Sorts {@code arr[low..high]} using the shared {@code buffer}.
      */
-    private static int[] merge(int[] left, int[] right) {
-        int lengthL = left.length;
-        int lengthR = right.length;
+    private static void mergeSort(int[] arr, int[] buffer, int low, int high) {
+        if (low >= high) {
+            return;
+        }
+        int mid = low + (high - low) / 2;
+        mergeSort(arr, buffer, low, mid);
+        mergeSort(arr, buffer, mid + 1, high);
 
-        int[] result = new int[lengthL + lengthR];
-        int k = 0, i = 0, j = 0;
+        // The halves are already in order: nothing to merge
+        if (arr[mid] <= arr[mid + 1]) {
+            return;
+        }
+        merge(arr, buffer, low, mid, high);
+    }
 
-        while (i < lengthL || j < lengthR) {
-            if (i < lengthL && j < lengthR) {
-                // Take the smaller front element ('<=' keeps the sort stable)
-                if (left[i] <= right[j]) {
-                    result[k++] = left[i++];
-                } else {
-                    result[k++] = right[j++];
-                }
-            } else if (i < lengthL) {
-                result[k++] = left[i++];
+    /**
+     * Merges the sorted ranges {@code arr[low..mid]} and {@code arr[mid + 1..high]}.
+     */
+    private static void merge(int[] arr, int[] buffer, int low, int mid, int high) {
+        System.arraycopy(arr, low, buffer, low, high - low + 1);
+        int i = low, j = mid + 1;
+        for (int k = low; k <= high; k++) {
+            if (i > mid) {
+                arr[k] = buffer[j++];
+            } else if (j > high) {
+                arr[k] = buffer[i++];
+            } else if (buffer[j] < buffer[i]) {
+                // Take from the right half only when it is strictly smaller ('<' keeps the sort stable)
+                arr[k] = buffer[j++];
             } else {
-                result[k++] = right[j++];
+                arr[k] = buffer[i++];
             }
         }
-        return result;
     }
 }
 ```
 
 ## Solution
 
-This repository implements Approach 1 (Top-Down with New Arrays), marked `(Implemented)` in the Approaches section. The optimized approach on this page, Approach 7 (Top-Down with One Shared Buffer), is not implemented in the class.
+The optimized solution is Approach 7 above, which is also the version implemented in this repository.
 
-The idea: divide and conquer. An array of 0 or 1 elements is already sorted; otherwise copy the left half (`n / 2` elements) and the right half into new arrays, sort each recursively, and `merge` the two sorted halves by repeatedly taking the smaller front element (`<=` takes the left one on ties, which keeps the sort stable). Every level of recursion does O(n) merging work and there are about log n levels, so the time is O(n log n) for any input order. The page names a "single shared buffer" variant as the optimized one, but the class in this repository is the simple version that allocates new arrays for each split and merge, and that is what is traced.
+The idea: split the index range in half, sort each half, then merge the two sorted halves. Instead of creating new arrays for the halves, all work happens inside the original array, with one auxiliary `buffer` allocated once. A merge is skipped when the last element of the left half is not greater than the first element of the right half.
 
-**Input:** `arr = [12, 4, 5, 7, 9, 20, 30, 6, 15]`.
+**Input:** `arr = [12, 4, 5, 7, 9, 20, 30, 6, 15]` (n = 9). The halves are `[0..4]` and `[5..8]`, then `[0..2]`/`[3..4]` and `[5..6]`/`[7..8]`, and so on down to single elements. The calls finish in this order:
+
+| Step | Range | Left half | Right half | What happens |
+|------|-------|-----------|------------|--------------|
+| 1 | `[0..1]` | `12` | `4` | merge: `4 12` |
+| 2 | `[0..2]` | `4 12` | `5` | merge: `4 5 12` |
+| 3 | `[3..4]` | `7` | `9` | skipped, already in order |
+| 4 | `[0..4]` | `4 5 12` | `7 9` | merge: `4 5 7 9 12` |
+| 5 | `[5..6]` | `20` | `30` | skipped, already in order |
+| 6 | `[7..8]` | `6` | `15` | skipped, already in order |
+| 7 | `[5..8]` | `20 30` | `6 15` | merge: `6 15 20 30` |
+| 8 | `[0..8]` | `4 5 7 9 12` | `6 15 20 30` | merge: `4 5 6 7 9 12 15 20 30` |
+
+Step 2 (`[0..2]`) shows the saving: the left part `4 12` and the right part `5` are merged, but at step 3 (`[3..4]`) `7` and `9` are already in order, so nothing is copied. In total there are 8 range merges, 3 of them skipped.
 
 ```mermaid
 flowchart TD
-    A["12 4 5 7 9 20 30 6 15"] --> B["12 4 5 7"]
-    A --> C["9 20 30 6 15"]
-    B --> D["12 4"]
-    B --> E["5 7"]
-    C --> F["9 20"]
-    C --> G["30 6 15"]
-    D --> D1["12"]
-    D --> D2["4"]
-    E --> E1["5"]
-    E --> E2["7"]
-    F --> F1["9"]
-    F --> F2["20"]
-    G --> G1["30"]
-    G --> G2["6 15"]
-    G2 --> H1["6"]
-    G2 --> H2["15"]
+    A["0..8"] --> B["0..4"]
+    A --> C["5..8"]
+    B --> D["0..2"]
+    B --> E["3..4"]
+    C --> F["5..6"]
+    C --> G["7..8"]
+    D --> D1["0..1"]
+    D --> D2["2"]
 ```
 
-The recursion goes down the left side first, and every array of length 1 is returned as is. The merges then happen in this order:
-
-| Step | Merge (left + right) | Result |
-|------|----------------------|--------|
-| 1 | `[12]` + `[4]` | `[4, 12]` |
-| 2 | `[5]` + `[7]` | `[5, 7]` |
-| 3 | `[4, 12]` + `[5, 7]` | `[4, 5, 7, 12]` |
-| 4 | `[9]` + `[20]` | `[9, 20]` |
-| 5 | `[6]` + `[15]` | `[6, 15]` |
-| 6 | `[30]` + `[6, 15]` | `[6, 15, 30]` |
-| 7 | `[9, 20]` + `[6, 15, 30]` | `[6, 9, 15, 20, 30]` |
-| 8 | `[4, 5, 7, 12]` + `[6, 9, 15, 20, 30]` | `[4, 5, 6, 7, 9, 12, 15, 20, 30]` |
-
-Step 8 in detail: front elements 4 vs 6 take 4, 5 vs 6 take 5, 7 vs 6 take 6, 7 vs 9 take 7, 12 vs 9 take 9, 12 vs 15 take 12; the left array is now used up, so the rest of the right array (15, 20, 30) is copied.
-
-**Edge cases.** An empty or one-element array is returned as is (`n <= 1`). The method returns a new sorted array and does not change the input array. When one side runs out, the other side's rest is copied unchanged. Space is O(n) for the copies. A `null` array would throw `NullPointerException` at `arr.length`.
+**Edge cases.** `null`, empty and one-element arrays return at once through the guard clause. An already sorted array such as `[1, 2, 3, 4, 5, 6]` skips every merge, so the work is just the recursion (linear). Equal values keep their order, because the right half is taken only when its element is strictly smaller. The buffer is allocated once for the whole array, so the extra memory is `n` integers plus the `O(log n)` recursion stack.
 
 **Result:** `[4, 5, 6, 7, 9, 12, 15, 20, 30]`, matching the class output.

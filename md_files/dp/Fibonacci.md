@@ -22,24 +22,24 @@ Where Fn is the nth term or number
 Fn-1 is the (n-1)th term
 Fn-2 is the (n-2)th term
 
-## Algorithm Strategy (Rolling Pair)
+## Algorithm Strategy (Rolling Pair to print, Fast Doubling for one number)
 
 1. The sequence is defined by `F(0) = 0`, `F(1) = 1` and `F(i) = F(i - 1) + F(i - 2)`.
-2. Keep only the last two numbers in `first` and `second`, starting with `0` and `1`, and print them.
-3. For each remaining position, compute `third = first + second` and print it.
-4. Slide the pair forward: `first = second` and `second = third`.
-5. Stop after `n` numbers have been produced.
+2. **Printing the first `n` numbers:** keep only the last two numbers in `first` and `second`, starting with `0` and `1`, and print them. For each remaining position compute `third = first + second`, print it, and slide the pair forward.
+3. **Computing only `F(n)`:** the identities `F(2k) = F(k) * (2 * F(k + 1) - F(k))` and `F(2k + 1) = F(k)^2 + F(k + 1)^2` let one call turn the pair `(F(k), F(k + 1))` into the pair for `2k` or `2k + 1`, so `n` is halved at every step.
+4. A `long` holds values up to `F(92)`. For `n < 0` or `n > 92` the method returns `-1` instead of an overflowed number.
 
 ## Example walkthrough for `n = 6`
 
 - Start: `0 1`
 - Then `0 + 1 = 1`, `1 + 1 = 2`, `1 + 2 = 3`, `2 + 3 = 5`
 - Output: `0 1 1 2 3 5`
+- Fast doubling for `F(10)`: the pairs go `(F(0), F(1))`, `(F(1), F(2))`, `(F(2), F(3))`, `(F(5), F(6))`, `(F(10), F(11)) = (55, 89)`.
 
 ## Complexity Analysis
 
-- **Time Complexity:** `O(n)` — A single loop of `n` iterations.
-- **Space Complexity:** `O(1)` — Only three integer variables are used.
+- **Time Complexity:** `O(n)` to print `n` numbers; `O(log n)` for a single `F(n)`.
+- **Space Complexity:** `O(1)` to print; `O(log n)` recursion stack for a single `F(n)`.
 
 ## Approaches
 
@@ -159,6 +159,39 @@ public class Fibonacci {
         System.out.print("Output : ");
         printFibonacciNumber(n);
         System.out.println();
+        System.out.println();
+
+        int[] single = {10, 50, 92, 0, -1, 93};
+        for (int k : single) {
+            System.out.println("Input  : n = " + k + "   (single number with fast doubling)");
+            System.out.println("Output : " + fibonacci(k));
+        }
+    }
+
+    /**
+     * Computes {@code F(n)} with fast doubling in {@code O(log n)} steps.
+     *
+     * @param n the position in the sequence, starting at 0
+     * @return {@code F(n)}, or {@code -1} when {@code n} is negative or {@code F(n)} does not fit a {@code long} ({@code n > 92})
+     */
+    public static long fibonacci(int n) {
+        // Guard Clause: outside 0..92 there is no value that fits a long
+        if (n < 0 || n > 92) {
+            return -1;
+        }
+        return fastDoubling(n)[0];
+    }
+
+    /** Returns {F(n), F(n + 1)}. */
+    private static long[] fastDoubling(int n) {
+        if (n == 0) {
+            return new long[]{0, 1};
+        }
+        long[] half = fastDoubling(n / 2);
+        long a = half[0], b = half[1];
+        long c = a * (2 * b - a);   // F(2k)
+        long d = a * a + b * b;     // F(2k + 1)
+        return (n % 2 == 0) ? new long[]{c, d} : new long[]{d, c + d};
     }
 
     /**
@@ -191,30 +224,32 @@ public class Fibonacci {
 
 ## Solution
 
-This repository implements Approach 4 (Iterative with Two Variables), which is optimized for printing the series. Approach 5 (Fast Doubling) is the optimized choice for a single number and is not implemented in the class.
+The optimized solution is Approach 4 and 5 above, which are also the versions implemented in this repository: Approach 4 prints the series, Approach 5 computes a single number.
 
-The idea: every Fibonacci number is the sum of the two before it, so only the last two numbers need to be kept. `first` and `second` hold two consecutive numbers; each loop step prints `third = first + second` and slides the pair one position forward (`first = second; second = third`). No array is needed: O(n) time, O(1) space.
+The idea: the class does two jobs. To **print** the first `n` numbers it keeps a rolling pair and slides it forward one position per number. To get **one** number, `F(n)`, it does not walk through the sequence: the pair `(F(k), F(k + 1))` is enough to build the pair for `2k` and `2k + 1` (the doubling identities), so `n` is halved at every step.
 
-**Input:** `n = 10`. The first two numbers `0` and `1` are printed before the loop starts, with `first = 0`, `second = 1`. The loop runs for `i = 2 .. 9` (8 times).
+**Input (single number):** `n = 10`. The recursion goes `10 -> 5 -> 2 -> 1 -> 0`, and the pairs are built on the way back; `a` and `b` are the pair returned by the call for `n / 2`.
 
-| `i` | `third = first + second` | Printed | `first` after | `second` after |
-|-----|--------------------------|---------|---------------|----------------|
-| 2 | 0 + 1 = 1 | `1` | 1 | 1 |
-| 3 | 1 + 1 = 2 | `2` | 1 | 2 |
-| 4 | 1 + 2 = 3 | `3` | 2 | 3 |
-| 5 | 2 + 3 = 5 | `5` | 3 | 5 |
-| 6 | 3 + 5 = 8 | `8` | 5 | 8 |
-| 7 | 5 + 8 = 13 | `13` | 8 | 13 |
-| 8 | 8 + 13 = 21 | `21` | 13 | 21 |
-| 9 | 13 + 21 = 34 | `34` | 21 | 34 |
+| `n` | What is computed | Pair returned |
+|-----|------------------|---------------|
+| 0 | base case | `(F(0), F(1)) = (0, 1)` |
+| 1 | `n` odd: `F(1) = a^2 + b^2 = 0^2 + 1^2 = 1`; `F(2) = F(0) + F(1) = 0 + 1 = 1` | `(F(1), F(2)) = (1, 1)` |
+| 2 | `n` even: `F(2) = a * (2b - a) = 1 * (2 * 1 - 1) = 1`; `F(3) = a^2 + b^2 = 2` | `(F(2), F(3)) = (1, 2)` |
+| 5 | `n` odd: `F(5) = a^2 + b^2 = 1^2 + 2^2 = 5`; `F(6) = F(4) + F(5) = 3 + 5 = 8` | `(F(5), F(6)) = (5, 8)` |
+| 10 | `n` even: `F(10) = a * (2b - a) = 5 * (2 * 8 - 5) = 55`; `F(11) = a^2 + b^2 = 89` | `(F(10), F(11)) = (55, 89)` |
 
-```text
-0  1  1  2  3  5  8  13  21  34      <- 10 numbers, each one is the sum of the two before it
-[first second] slides one step right after every print
+Only 5 calls were made to reach `F(10) = 55`, where the rolling pair would need 10 steps. For `n = 92` the recursion is only 7 levels deep.
+
+**Input (printing):** `n = 6` starts with the pair `0 1`; then `third = 0 + 1 = 1`, `1 + 1 = 2`, `1 + 2 = 3`, `2 + 3 = 5`, and the printed series is `0 1 1 2 3 5`.
+
+```mermaid
+flowchart LR
+    A["n = 0<br/>(0, 1)"] --> B["n = 1<br/>(1, 1)"]
+    B --> C["n = 2<br/>(1, 2)"]
+    C --> D["n = 5<br/>(5, 8)"]
+    D --> E["n = 10<br/>(55, 89)"]
 ```
 
-The problem is pure arithmetic with a two-value window, so the table above is the whole trace.
+**Edge cases.** For printing, `n <= 0` prints nothing and `n = 1` prints just `0`. `fibonacci(0)` is `0`. The largest value that fits a `long` is `F(92) = 7540113804746346429`, so `n < 0` or `n > 92` returns `-1` rather than an overflowed number. The intermediate values of fast doubling never exceed `F(93)`-sized products for `n <= 92` in the middle of the calculation, because they are always `F(k)` and `F(k + 1)` with `k <= n`.
 
-**Edge cases.** For `n <= 0` the guard clause returns without printing anything. For `n == 1` only `0` is printed. For `n == 2` the loop body never runs and `0 1` is printed. The values are `int`, so the numbers overflow from the 48th number onward (F(47) = 2971215073 does not fit in an `int`).
-
-**Result:** the method prints `0 1 1 2 3 5 8 13 21 34` (it returns nothing), the same as the class output.
+**Result:** `fibonacci(10) = 55`, `fibonacci(50) = 12586269025`, `fibonacci(92) = 7540113804746346429`, matching the class output.
