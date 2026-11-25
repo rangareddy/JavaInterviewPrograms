@@ -4,11 +4,11 @@
 
 ![Java](https://img.shields.io/badge/Java-8%2B-E34F26?logo=openjdk&logoColor=white)
 ![Maven](https://img.shields.io/badge/Build-Maven-C71A36?logo=apachemaven&logoColor=white)
-![Programs](https://img.shields.io/badge/Programs-424-0078D4)
+![Programs](https://img.shields.io/badge/Programs-432-0078D4)
 ![Topics](https://img.shields.io/badge/Topics-18-2E8B57)
 ![Stars](https://img.shields.io/github/stars/rangareddy/JavaInterviewPrograms?style=social)
 
-424 interview problems solved in plain Java, each one a standalone class you can run, with a write-up that walks from the brute-force idea to the optimized solution.
+432 interview problems solved in plain Java, each one a standalone class you can run, with a write-up that walks from the brute-force idea to the optimized solution.
 
 The set covers the Blind 75, NeetCode 150, the Kohei Arai "60 LeetCode questions" list, the LeetCode problems that ten or more companies ask about, and a block of classic Java core and concurrency questions. Nothing is listed twice.
 
@@ -29,14 +29,14 @@ If it helps your preparation, a star ⭐ on the repository is appreciated.
 
 | Difficulty | Programs |
 |------------|----------|
-| 🟢 Easy | 98 |
-| 🟡 Medium | 250 |
-| 🔴 Hard | 76 |
-| **Total** | **424** |
+| 🟢 Easy | 100 |
+| 🟡 Medium | 254 |
+| 🔴 Hard | 78 |
+| **Total** | **432** |
 
 | Topic | Name | Programs |
 |-------|------|----------|
-| `01` | [Arrays & Strings](#topic-01) | 94 |
+| `01` | [Arrays & Strings](#topic-01) | 99 |
 | `02` | [Hashing](#topic-02) | 18 |
 | `03` | [Linked Lists](#topic-03) | 22 |
 | `04` | [Stacks & Queues](#topic-04) | 26 |
@@ -44,15 +44,15 @@ If it helps your preparation, a star ⭐ on the repository is appreciated.
 | `06` | [Sorting & Intervals](#topic-06) | 19 |
 | `07` | [Trees & BST](#topic-07) | 34 |
 | `08` | [Heaps](#topic-08) | 16 |
-| `09` | [Graphs](#topic-09) | 35 |
+| `09` | [Graphs](#topic-09) | 36 |
 | `10` | [Dynamic Programming](#topic-10) | 28 |
-| `11` | [Backtracking](#topic-11) | 15 |
+| `11` | [Backtracking](#topic-11) | 16 |
 | `12` | [Greedy Algorithms](#topic-12) | 15 |
 | `13` | [Tries](#topic-13) | 5 |
 | `14` | [Bit Manipulation](#topic-14) | 8 |
 | `15` | [Advanced Graphs](#topic-15) | 12 |
 | `16` | [Advanced DP](#topic-16) | 15 |
-| `17` | [Design Problems](#topic-17) | 24 |
+| `17` | [Design Problems](#topic-17) | 25 |
 | `18` | [Java Core & Concurrency](#topic-18) | 22 |
 
 ## How Each Problem Is Written ✍️
