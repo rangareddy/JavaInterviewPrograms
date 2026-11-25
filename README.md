@@ -748,6 +748,21 @@ Interview problems grouped by topic, in a recommended study order. Each page exp
 
 Most interview problems are one of a handful of patterns in disguise. Spot the signal in the statement, then pick the tool.
 
+### Quick Pattern Cheat Sheet
+
+| Problem Clue | Likely Pattern | Core Java Data Structure |
+|--------------|----------------|--------------------------|
+| Contiguous subarray / substring + max/min/longest | [Sliding Window](#1-sliding-window) | `HashMap` / `HashSet` / `int[]` |
+| Sorted array + target pair or triplet | [Two Pointers](#2-two-pointers) | Primitive indices (`left`, `right`) |
+| Sorted / rotated array, or "minimize the maximum" | [Binary Search](#3-binary-search) | Primitive indices (`low`, `high`) |
+| "Top K", "Kth largest/smallest", "K closest" | [Heap](#4-heap--top-k) | `PriorityQueue` |
+| "Next greater/smaller element" | [Monotonic Stack](#5-monotonic-stack) | `ArrayDeque` |
+| Shortest path (unweighted) or level-by-level | [BFS](#6-bfs) | `LinkedList` / `ArrayDeque` (as `Queue`) |
+| All combinations / permutations / subsets | [Backtracking](#7-backtracking) | Recursion + `ArrayList` |
+| Overlapping intervals / meeting rooms | [Merge Intervals](#8-merge-intervals) | `Arrays.sort()` + `ArrayList` |
+
+### More Clues and Examples in This Repo
+
 | If the problem says... | Reach for | Examples in this repo |
 |------------------------|-----------|-----------------------|
 | sorted array, pair or triplet with a target | Two pointers or binary search | [3Sum](./md_files/array/ThreeSum.md), [Container With Most Water](./md_files/array/ContainerWithMostWater.md) |
@@ -764,6 +779,365 @@ Most interview problems are one of a handful of patterns in disguise. Spot the s
 | intervals, meetings, schedules | Sort by start, sweep line | [The Skyline Problem](./md_files/heap/TheSkylineProblem.md) |
 | answer is monotonic in a parameter | Binary search on the answer | [Split Array Largest Sum](./md_files/search/SplitArrayLargestSum.md) |
 | build a data structure with O(1) operations | HashMap plus linked list or array | [LRU Cache](./md_files/design/LRUCache.md), [Design a Text Editor](./md_files/design/DesignTextEditor.md) |
+
+### The Patterns in Depth
+
+Each pattern below gives the signal to look for, the idea, a Java template (Java 8, null and empty input guarded), the cost, the usual traps and practice problems from this repository.
+
+#### 1. Sliding Window
+
+**Signal.** "Longest / shortest / maximum / minimum contiguous subarray or substring such that ...", with a condition that can be updated incrementally (a sum, a distinct count, a frequency map).
+
+**Idea.** Keep a window `[left, right]`. Expand `right` one step at a time and update the state. While the window is invalid (or, for "shortest", while it is still valid), shrink from `left`. Every index enters and leaves the window at most once, so the whole scan is O(n) instead of O(n²).
+
+- **Variable window** (length is the answer): longest substring without repeats, minimum size subarray with sum ≥ target.
+- **Fixed window** (length `k` given): maximum average of `k` elements, sliding window maximum. Add the new element, drop the one that falls out.
+
+**State holder.** `int[26]` or `int[128]` for letters or ASCII (fastest), `HashMap<Character, Integer>` for any character, `HashSet` when only presence matters, a running `int` or `long` for sums.
+
+```java
+// Longest substring without repeating characters: jump `left` past the previous copy
+static int longestUnique(String s) {
+    if (s == null || s.isEmpty()) return 0;
+    Map<Character, Integer> last = new HashMap<>();   // char -> last index seen
+    int best = 0, left = 0;
+    for (int right = 0; right < s.length(); right++) {
+        char c = s.charAt(right);
+        Integer prev = last.get(c);
+        if (prev != null && prev >= left) left = prev + 1;   // shrink past the duplicate
+        last.put(c, right);
+        best = Math.max(best, right - left + 1);
+    }
+    return best;
+}
+
+// Shortest subarray with sum >= target: shrink while still valid
+static int minLenAtLeast(int target, int[] nums) {
+    if (nums == null || nums.length == 0) return 0;
+    int best = Integer.MAX_VALUE, left = 0, sum = 0;
+    for (int right = 0; right < nums.length; right++) {
+        sum += nums[right];
+        while (sum >= target) {
+            best = Math.min(best, right - left + 1);
+            sum -= nums[left++];
+        }
+    }
+    return best == Integer.MAX_VALUE ? 0 : best;
+}
+```
+
+**Cost.** O(n) time, O(k) space for the state (k = alphabet or distinct values).
+
+**Traps.**
+- The standard window needs the condition to be monotonic. With negative numbers a running sum is not, so use prefix sums plus a `HashMap` ([Subarray Sum Equals K](./md_files/array/SubarraySumEqualsK.md)).
+- "Exactly K" is usually `atMost(K) - atMost(K - 1)` ([Subarrays with K Different Integers](./md_files/string/SubarraysWithKDifferentIntegers.md)).
+- When you store indices in the map, check `prev >= left`, or `left` moves backwards.
+- Remember to record the answer at the right moment: after expanding for "longest", before shrinking for "shortest".
+
+**Practice.** [Longest Substring Without Repeating Characters](./md_files/string/LongestSubString.md), [Minimum Window Substring](./md_files/string/MinimumWindowSubstring.md), [Minimum Size Subarray Sum](./md_files/array/MinimumSizeSubarraySum.md), [Longest Repeating Character Replacement](./md_files/string/LongestRepeatingCharacterReplacement.md), [Find All Anagrams in a String](./md_files/string/FindAllAnagramsInAString.md), [Sliding Window Maximum](./md_files/array/SlidingWindowMaximum.md).
+
+#### 2. Two Pointers
+
+**Signal.** A sorted array (or one you may sort) and a target pair, triplet or "closest" value; in-place removal or partitioning; palindromes; merging two sorted sequences.
+
+**Idea.** Two indices move with a rule that never skips a valid answer. In the *opposite ends* form, `left` starts at the front and `right` at the back; if the sum is too small only `left++` can help (the array is sorted), if too big only `right--` can. In the *same direction* (slow/fast) form, `fast` scans and `slow` marks the write position, or the pointers move at different speeds (cycle detection, middle of a linked list).
+
+```java
+// Pair with a given sum in a sorted array: indices, or an empty array when none exists
+static int[] twoSumSorted(int[] a, int target) {
+    if (a == null || a.length < 2) return new int[0];
+    int left = 0, right = a.length - 1;
+    while (left < right) {
+        int sum = a[left] + a[right];
+        if (sum == target) return new int[]{left, right};
+        if (sum < target) left++; else right--;
+    }
+    return new int[0];
+}
+```
+
+**Cost.** O(n) after sorting, so O(n log n) overall with a sort; O(1) extra space. A triplet problem fixes one element and runs two pointers on the rest: O(n²).
+
+**Traps.**
+- It needs sorted input. If the original indices matter, sort an index array or use a `HashMap` ([Two Sum](./md_files/array/TwoSum.md)) instead.
+- For 3Sum / 4Sum skip duplicate values after a hit, otherwise the result repeats.
+- Use `long` for sums that can overflow `int`.
+- In the slow/fast form decide whether `slow` points at the last written element or the next slot, and stay consistent.
+
+**Practice.** [Two Sum II](./md_files/array/TwoSumII.md), [3Sum](./md_files/array/ThreeSum.md), [3Sum Closest](./md_files/array/ThreeSumClosest.md), [4Sum](./md_files/array/FourSum.md), [Container With Most Water](./md_files/array/ContainerWithMostWater.md), [Trapping Rain Water](./md_files/array/TrappingRainWater.md), [Move Zeros and Ones](./md_files/array/MoveZerosAndOnes.md).
+
+#### 3. Binary Search
+
+**Signal.** A sorted or rotated array, "find the first / last position", or "the minimum value of the maximum" (or "the maximum of the minimum") where feasibility is monotonic: if `x` works, every larger `x` also works.
+
+**Idea.** Each step discards half of the range. Use the **half-open template** `[low, high)` with `while (low < high)`; it avoids the off-by-one errors of the closed form and gives the *first index where a condition becomes true* (a lower bound).
+
+- **On an array**: lower bound, upper bound, rotated array (compare `mid` with an end to see which half is sorted), peak element.
+- **On the answer** ("binary search on the answer"): the search space is a range of possible answers, and a helper `feasible(mid)` decides which half to keep. Typical: capacity to ship packages in D days, Koko eating bananas, split array largest sum.
+
+```java
+// Lower bound: first index with a[i] >= target (a.length when every element is smaller)
+static int lowerBound(int[] a, int target) {
+    if (a == null) return 0;
+    int low = 0, high = a.length;                 // search space is [low, high)
+    while (low < high) {
+        int mid = low + (high - low) / 2;         // never (low + high) / 2: overflow
+        if (a[mid] < target) low = mid + 1; else high = mid;
+    }
+    return low;
+}
+
+// Binary search on the answer: least ship capacity that delivers within `days`
+static int minCapacity(int[] weights, int days) {
+    if (weights == null || weights.length == 0) return 0;
+    int low = 0, high = 0;
+    for (int w : weights) { low = Math.max(low, w); high += w; }   // answer is in [max, sum]
+    while (low < high) {
+        int mid = low + (high - low) / 2;
+        int need = 1, load = 0;                   // days needed with capacity mid
+        for (int w : weights) {
+            if (load + w > mid) { need++; load = 0; }
+            load += w;
+        }
+        if (need <= days) high = mid; else low = mid + 1;   // feasible: try smaller
+    }
+    return low;
+}
+```
+
+**Cost.** O(log n) for an array search; O(n log(range)) for search on the answer (each check is O(n)). O(1) space.
+
+**Traps.**
+- Infinite loops come from `low = mid` with a floor midpoint; always move past `mid` on one side.
+- Pick tight, correct bounds for the answer range (low = largest single item, high = total).
+- Duplicates in a rotated array make "which half is sorted" ambiguous and degrade the worst case to O(n).
+- `Arrays.binarySearch` returns `-(insertionPoint) - 1` when absent and an *arbitrary* index among equal elements, so write your own bound when duplicates matter.
+
+**Practice.** [Binary Search](./md_files/search/BinarySearch.md), [Search in Rotated Sorted Array](./md_files/search/SearchInRotatedSortedArray.md), [First and Last Position](./md_files/search/FirstAndLastPosition.md), [Find Minimum in Rotated Sorted Array](./md_files/search/FindMinimumInRotatedSortedArray.md), [Koko Eating Bananas](./md_files/search/KokoEatingBananas.md), [Capacity to Ship Packages](./md_files/search/CapacityToShipPackages.md), [Split Array Largest Sum](./md_files/search/SplitArrayLargestSum.md), [Median of Two Sorted Arrays](./md_files/search/MedianOfTwoSortedArrays.md).
+
+#### 4. Heap / Top K
+
+**Signal.** "Top K", "K-th largest or smallest", "K closest", "K most frequent", merging K sorted lists, a running median, or repeatedly taking the current best item.
+
+**Idea.** A `PriorityQueue` gives the smallest (default) element in O(log n). To keep the **K largest**, hold a **min-heap of size K**: push each item and pop the minimum once the size exceeds K; what remains are the K largest, and the root is the K-th largest. For the K smallest use a max-heap (`Collections.reverseOrder()`). This is O(n log k), better than sorting everything when `k << n`.
+
+```java
+// K-th largest element: min-heap of size k, the root is the answer
+static int kthLargest(int[] nums, int k) {
+    if (nums == null || k < 1 || k > nums.length) return -1;   // documented sentinel
+    PriorityQueue<Integer> heap = new PriorityQueue<>();       // min-heap
+    for (int x : nums) {
+        heap.offer(x);
+        if (heap.size() > k) heap.poll();                      // drop the smallest
+    }
+    return heap.peek();
+}
+```
+
+**Variants.**
+- **Two heaps** (max-heap for the lower half, min-heap for the upper half) keep a running median ([Find Median from Data Stream](./md_files/heap/FindMedianFromDataStream.md)).
+- **Heap of (value, source)** merges K sorted sequences: pop the smallest, push the next element of the same source.
+- **Frequency first**: count with a `HashMap`, then heap the entries by count ([Top K Frequent Elements](./md_files/heap/TopKFrequentElements.md)).
+- **Lazy deletion** when an element must be removed from the middle: mark it, and discard stale tops on `poll`.
+
+**Cost.** O(n log k) time, O(k) space. `offer`/`poll` are O(log n), `peek` is O(1), `remove(Object)` is O(n).
+
+**Traps.**
+- Never write a comparator as `(a, b) -> a - b` when values can be large or negative: it overflows. Use `Integer.compare(a, b)`.
+- `PriorityQueue` iteration order is **not** sorted; only `poll` is.
+- For equal priorities define a tie-break in the comparator, or the order is unspecified.
+- Quickselect is O(n) on average if you only need the K-th value and may reorder the array.
+
+**Practice.** [Kth Largest Element in an Array](./md_files/heap/KthLargestElementInAnArray.md), [Top K Frequent Elements](./md_files/heap/TopKFrequentElements.md), [K Closest Points to Origin](./md_files/heap/KClosestPointsToOrigin.md), [Find K Closest Elements](./md_files/heap/FindKClosestElements.md), [Task Scheduler](./md_files/heap/TaskScheduler.md), [Last Stone Weight](./md_files/heap/LastStoneWeight.md).
+
+#### 5. Monotonic Stack
+
+**Signal.** "Next greater / smaller element", "previous smaller", "days until a warmer temperature", the largest rectangle in a histogram, stock span, or removing characters to get the smallest result.
+
+**Idea.** Keep a stack whose values stay in sorted order (decreasing for "next greater"). When a new element breaks the order, pop everything it beats; for each popped element the new one *is* its answer. Each index is pushed and popped once, so the pass is O(n) although there is a loop inside the loop. Store **indices**, not values, so you can compute distances and look the value up.
+
+```java
+// Next greater element to the right (-1 when none), using ArrayDeque as the stack
+static int[] nextGreater(int[] a) {
+    if (a == null) return new int[0];
+    int[] res = new int[a.length];
+    Arrays.fill(res, -1);
+    Deque<Integer> stack = new ArrayDeque<>();     // indices of elements still waiting
+    for (int i = 0; i < a.length; i++) {
+        while (!stack.isEmpty() && a[stack.peek()] < a[i]) {
+            res[stack.pop()] = a[i];               // a[i] is the next greater for it
+        }
+        stack.push(i);
+    }
+    return res;
+}
+```
+
+**Cost.** O(n) time, O(n) space.
+
+**Traps.**
+- Use `ArrayDeque`, not `java.util.Stack`. `Stack` extends `Vector` (every call is synchronized) and is legacy; `ArrayDeque` is faster and is the recommended stack.
+- `ArrayDeque` rejects `null` elements; and `push`/`pop`/`peek` work on the *head*, so do not mix them with `add`/`poll` on the tail unintentionally.
+- Decide strict versus non-strict comparison (`<` vs `<=`) for equal values; it changes which duplicate gets the answer.
+- For a circular array loop over `2 * n` indices and use `i % n` ([Next Greater Element II](./md_files/stack/NextGreaterElementII.md)).
+- Pop the leftovers after the loop when the problem needs them (histogram: append a sentinel bar of height 0).
+
+**Practice.** [Next Greater Element I](./md_files/stack/NextGreaterElementI.md), [Daily Temperatures](./md_files/stack/DailyTemperatures.md), [Online Stock Span](./md_files/stack/OnlineStockSpan.md), [Largest Rectangle in Histogram](./md_files/stack/LargestRectangleInHistogram.md), [Remove K Digits](./md_files/stack/RemoveKDigits.md), [Car Fleet](./md_files/stack/CarFleet.md), [Sum of Subarray Minimums](./md_files/stack/SumOfSubarrayMinimums.md).
+
+#### 6. BFS
+
+**Signal.** The shortest path or fewest steps when every move costs the same (a grid, a word ladder, a puzzle state), level-order traversal, "minimum number of moves", spreading simultaneously from several sources (rotting oranges).
+
+**Idea.** A FIFO queue explores nodes in order of distance from the start, so the first time you reach the target is the shortest path. Process the queue **one level at a time** (`for size = q.size()`) to count steps. Mark nodes visited **when you enqueue them**, not when you dequeue them, otherwise the same node is queued many times. For several sources, enqueue all of them first (multi-source BFS).
+
+```java
+// Fewest steps from top-left to bottom-right in a grid of 0 (open) and 1 (wall); -1 if unreachable
+static int shortestPath(int[][] grid) {
+    if (grid == null || grid.length == 0 || grid[0].length == 0 || grid[0][0] == 1) return -1;
+    int n = grid.length, m = grid[0].length;
+    boolean[][] seen = new boolean[n][m];
+    Queue<int[]> queue = new ArrayDeque<>();
+    queue.offer(new int[]{0, 0});
+    seen[0][0] = true;                                  // mark on enqueue
+    int steps = 0;
+    int[][] dirs = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+    while (!queue.isEmpty()) {
+        for (int size = queue.size(); size > 0; size--) {   // one level
+            int[] cur = queue.poll();
+            if (cur[0] == n - 1 && cur[1] == m - 1) return steps;
+            for (int[] d : dirs) {
+                int r = cur[0] + d[0], c = cur[1] + d[1];
+                if (r >= 0 && c >= 0 && r < n && c < m && grid[r][c] == 0 && !seen[r][c]) {
+                    seen[r][c] = true;
+                    queue.offer(new int[]{r, c});
+                }
+            }
+        }
+        steps++;
+    }
+    return -1;
+}
+```
+
+**Cost.** O(V + E) time (a grid has V = rows × cols, E ≈ 4V), O(V) space for the queue and the visited set.
+
+**Traps.**
+- Use `ArrayDeque` (or `LinkedList`) as the `Queue`. `offer` / `poll` return `false` / `null` instead of throwing, unlike `add` / `remove`.
+- BFS is only the shortest path for **unweighted** edges. With weights use Dijkstra (`PriorityQueue`, [Dijkstra Shortest Path](./md_files/graph/DijkstraShortestPath.md)); with weights 0 and 1 use a deque (0-1 BFS).
+- When the state is more than a position (keys held, obstacles removed, a word) put it in the visited key ([Shortest Path in a Grid with Obstacles Elimination](./md_files/graph/ShortestPathInAGridWithObstaclesElimination.md)).
+- For a word-like state, represent it as a `String` in a `HashSet` and generate neighbours on the fly.
+- Bidirectional BFS from both ends cuts the work from b^d to roughly 2·b^(d/2) when both ends are known.
+
+**Practice.** [Number of Islands](./md_files/graph/NumberOfIslands.md), [Rotting Oranges](./md_files/graph/RottingOranges.md), [Open the Lock](./md_files/graph/OpenTheLock.md), [Word Ladder II](./md_files/graph/WordLadderII.md), [Snakes and Ladders](./md_files/graph/SnakesAndLadders.md), [Minimum Knight Moves](./md_files/graph/MinimumKnightMoves.md), [Graph Traversals](./md_files/graph/GraphTraversals.md).
+
+#### 7. Backtracking
+
+**Signal.** "Generate all", "list every", "count the arrangements", "can you place / partition / fill...", with small input (n ≤ 15 or so) because the answer set is exponential.
+
+**Idea.** Build a solution one choice at a time in a shared `path`. **Choose** (add to `path`), **explore** (recurse), **un-choose** (remove it again). Prune a branch the moment it cannot lead to a valid answer. The shape depends on the problem:
+
+| Problem | Loop starts at | Reuse an element? | Duplicates |
+|---------|----------------|-------------------|------------|
+| Subsets, combinations | `start` (next index) | no | sort, skip `nums[i] == nums[i-1]` when `i > start` |
+| Combination Sum | `i` (same index) | yes | sort and skip as above |
+| Permutations | `0` with a `used[]` array | no | sort, skip a duplicate whose twin is unused |
+| Board puzzles (N-Queens, Sudoku) | each row / cell | no | none; prune with column and diagonal sets |
+
+```java
+// All subsets: record the path at every node of the decision tree
+static List<List<Integer>> subsets(int[] nums) {
+    List<List<Integer>> res = new ArrayList<>();
+    if (nums == null) return res;
+    backtrack(nums, 0, new ArrayList<>(), res);
+    return res;
+}
+
+private static void backtrack(int[] nums, int start, List<Integer> path, List<List<Integer>> res) {
+    res.add(new ArrayList<>(path));              // copy: `path` keeps changing
+    for (int i = start; i < nums.length; i++) {
+        path.add(nums[i]);                       // choose
+        backtrack(nums, i + 1, path, res);       // explore
+        path.remove(path.size() - 1);            // un-choose (index, not Integer value)
+    }
+}
+```
+
+**Cost.** Subsets O(n · 2ⁿ), permutations O(n · n!), plus O(n) recursion depth. The copy of each answer is the `n` factor.
+
+**Traps.**
+- **Copy the path** (`new ArrayList<>(path)`) before storing it; otherwise every stored answer ends up empty.
+- `path.remove(path.size() - 1)` removes by index. `path.remove(Integer.valueOf(x))` or `remove(x)` with an `int` removes something else.
+- Pruning is what makes it pass: sort first and `break` when the running total exceeds the target; track attacked columns and diagonals in boolean arrays.
+- If the same state recurs, add memoization and you have top-down DP ([Word Break II](./md_files/backtracking/WordBreakII.md)).
+- Very deep recursion can overflow the stack; convert to an explicit stack if depth reaches about 10⁴.
+
+**Practice.** [Subsets](./md_files/backtracking/Subsets.md), [Subsets II](./md_files/backtracking/SubsetsII.md), [Permutations](./md_files/backtracking/Permutations.md), [Permutations II](./md_files/backtracking/PermutationsII.md), [Combination Sum](./md_files/backtracking/CombinationSum.md), [Generate Parentheses](./md_files/backtracking/GenerateParentheses.md), [Word Search](./md_files/backtracking/WordSearch.md), [N-Queens](./md_files/backtracking/NQueens.md), [Sudoku Solver](./md_files/backtracking/SudokuSolver.md).
+
+#### 8. Merge Intervals
+
+**Signal.** Ranges `[start, end]`: merge overlapping ones, insert a new one, find free time, the minimum number of meeting rooms, remove the fewest intervals so none overlap.
+
+**Idea.** **Sort by start** and sweep once. Keep the current merged interval; if the next one starts at or before the current end they overlap, so extend the end with `max`; otherwise emit the current one and start a new one. Variants: a **min-heap of end times** counts how many rooms are in use at once; the **greedy "earliest end first"** order minimizes removals for non-overlapping selection; a **sweep line** over `+1` / `-1` events counts concurrent intervals.
+
+```java
+// Merge overlapping intervals
+static int[][] merge(int[][] intervals) {
+    if (intervals == null || intervals.length == 0) return new int[0][];
+    Arrays.sort(intervals, (x, y) -> Integer.compare(x[0], y[0]));   // by start
+    List<int[]> out = new ArrayList<>();
+    int[] cur = intervals[0];
+    for (int i = 1; i < intervals.length; i++) {
+        if (intervals[i][0] <= cur[1]) {
+            cur[1] = Math.max(cur[1], intervals[i][1]);   // overlap: extend (mind the max)
+        } else {
+            out.add(cur);
+            cur = intervals[i];
+        }
+    }
+    out.add(cur);
+    return out.toArray(new int[0][]);
+}
+```
+
+**Cost.** O(n log n) for the sort, then O(n); O(n) space for the output.
+
+**Traps.**
+- Decide whether touching intervals (`[1,2]` and `[2,3]`) overlap. Merge uses `<=`; for meeting rooms they do not conflict, so use `<`.
+- Use `Integer.compare`, not subtraction, in the comparator, because `x[0] - y[0]` overflows for extreme values.
+- Always take `Math.max` of the ends: `[1,10]` followed by `[2,3]` must stay `[1,10]`.
+- The merge above mutates the input rows (`cur` is an input array). Copy them first if the caller needs the original.
+- Already sorted input (Insert Interval) needs no sort: add the intervals before, merge the overlapping ones, add the rest.
+
+**Practice.** [Merge Intervals](./md_files/interval/MergeIntervals.md), [Insert Interval](./md_files/interval/InsertInterval.md), [Meeting Rooms](./md_files/interval/MeetingRooms.md), [Meeting Rooms II](./md_files/interval/MeetingRoomsII.md), [Non-overlapping Intervals](./md_files/interval/NonOverlappingIntervals.md), [Minimum Number of Arrows to Burst Balloons](./md_files/interval/MinimumNumberOfArrowsToBurstBalloons.md), [Interval List Intersections](./md_files/interval/IntervalListIntersections.md), [Employee Free Time](./md_files/interval/EmployeeFreeTime.md).
+
+#### Choosing Between Look-Alike Patterns
+
+| Confusable pair | Decide by |
+|-----------------|-----------|
+| Sliding window vs prefix sum + `HashMap` | Window needs a monotonic condition (non-negative numbers, or distinct counts). Negative numbers or "sum equals K" need prefix sums. |
+| Two pointers vs `HashMap` | Sorted (or sortable, indices not needed) and O(1) space wanted → pointers. Unsorted and original indices needed → map. |
+| Binary search vs two pointers | Searching one target by halving vs. walking two ends toward each other for a pair. |
+| BFS vs DFS | Shortest path or fewest steps, level by level → BFS. Exploring all paths, components, cycle checks, backtracking → DFS. |
+| Heap vs sort | Need only K items or a stream (`n log k`) → heap. Need everything ordered → sort. |
+| Greedy vs DP | If a locally best choice can be proven safe (exchange argument) → greedy. If a choice can be regretted later (overlapping subproblems) → DP. |
+| Backtracking vs DP | Must list every solution → backtracking. Only a count, minimum or maximum → DP over the same recursion with memoization. |
+
+#### Core Java Collections: Which One and Why
+
+| Need | Use | Notes |
+|------|-----|-------|
+| Stack (LIFO) | `Deque<Integer> s = new ArrayDeque<>()` with `push` / `pop` / `peek` | Not `java.util.Stack`. No `null` elements. |
+| Queue (FIFO) | `Queue<int[]> q = new ArrayDeque<>()` with `offer` / `poll` / `peek` | `LinkedList` also works and allows `null`; `ArrayDeque` is faster. |
+| Min-heap | `new PriorityQueue<>()` | Max-heap: `new PriorityQueue<>(Collections.reverseOrder())`. Custom: `(a, b) -> Integer.compare(a[0], b[0])`. |
+| Frequency / lookup | `HashMap` (O(1) average) | Use `getOrDefault` and `merge(key, 1, Integer::sum)`. |
+| Membership / seen set | `HashSet` | `add` returns `false` when already present. |
+| Sorted keys, floor / ceiling | `TreeMap` / `TreeSet` (O(log n)) | `floorKey`, `ceilingKey`, `firstKey`. |
+| Insertion-ordered map (LRU) | `LinkedHashMap` | Access order plus `removeEldestEntry`. |
+| Fixed small alphabet | `int[26]` / `int[128]` | Fastest; compare with `Arrays.equals`. |
+| Building a string | `StringBuilder` | Never `+=` in a loop (O(n²)). |
+| List of results | `ArrayList` | Copy before storing a mutable path. |
+
+Typical complexity to quote in an interview: sort `O(n log n)`; hash lookup `O(1)` average, `O(n)` worst; heap push or pop `O(log n)`; tree map operations `O(log n)`; BFS or DFS `O(V + E)`.
 
 ## Suggested Study Plan 🗓️
 
