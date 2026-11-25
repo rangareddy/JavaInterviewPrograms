@@ -1,4 +1,4 @@
-package com.ranga.math;
+package com.ranga.core;
 
 /**
  * Given four integers {@code sx}, {@code sy}, {@code tx} and {@code ty}, return {@code true} if it is possible to convert the point {@code (sx, sy)} to {@code (tx, ty)} through some operations, and {@code false} otherwise. One operation turns {@code (x, y)} into {@code (x, x + y)} or {@code (x + y, y)}.
