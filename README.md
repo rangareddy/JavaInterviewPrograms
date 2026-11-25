@@ -24,7 +24,6 @@ If it helps your preparation, a star ⭐ on the repository is appreciated.
 - **[Repository Structure 🧱](#repository-structure-)**
 - **[How to Run 🚀](#how-to-run-)**
 - **[Contributing 🤝](#contributing-)**
-- **[Resources 📚](#resources-)**
 
 ## At a Glance 📊
 
@@ -743,13 +742,5 @@ Replace the class name with any program in the tables; the package is the topic 
 ## Contributing 🤝
 
 Found a bug, a faster solution or a missing problem? Open an issue or a pull request. Please keep to the layout above: a Javadoc'd standalone class, an aligned `Input  :` and `Output :` in `main`, a page with tested approaches, and one README row. Check the tables first so a problem is not listed twice.
-
-## Resources 📚
-
-- [LeetCode](https://leetcode.com/)
-- [Blind 75](https://www.teamblind.com/post/new-year-gift---curated-list-of-top-75-leetcode-questions-to-save-your-time-oam1oFyZ)
-- [NeetCode 150](https://neetcode.io/practice)
-- [LeetCode Top Interview 150](https://leetcode.com/studyplan/top-interview-150/)
-- [Company-wise LeetCode problems](https://github.com/liquidslr/leetcode-company-wise-problems)
 
 Happy coding and good luck with your interviews! 🎉
