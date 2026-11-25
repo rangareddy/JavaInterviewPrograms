@@ -8,15 +8,15 @@ Interview problems grouped by topic, in a recommended study order. Each page exp
 
 ### 1. Complete topic coverage
 
-18 topics, 412 programs. Pick a card to jump to its problems.
+18 topics, 421 programs. Pick a card to jump to its problems.
 
 <table>
 <tr><td width="33%" align="center" valign="top"><a href="#topic-01"><img src="./images/topics/01-arrays-strings.svg" width="56" height="56" alt="Arrays &amp; Strings"></a><br><code>01</code> <b><a href="#topic-01">Arrays &amp; Strings</a></b><br><sub>Two pointers, prefix sums, sliding window</sub><br><sub><b>94</b> problems</sub></td><td width="33%" align="center" valign="top"><a href="#topic-02"><img src="./images/topics/02-hashing.svg" width="56" height="56" alt="Hashing"></a><br><code>02</code> <b><a href="#topic-02">Hashing</a></b><br><sub>HashMap, HashSet, frequency maps</sub><br><sub><b>18</b> problems</sub></td><td width="33%" align="center" valign="top"><a href="#topic-03"><img src="./images/topics/03-linked-lists.svg" width="56" height="56" alt="Linked Lists"></a><br><code>03</code> <b><a href="#topic-03">Linked Lists</a></b><br><sub>Reversal, cycles, merge, pointers</sub><br><sub><b>22</b> problems</sub></td></tr>
 <tr><td width="33%" align="center" valign="top"><a href="#topic-04"><img src="./images/topics/04-stacks-queues.svg" width="56" height="56" alt="Stacks &amp; Queues"></a><br><code>04</code> <b><a href="#topic-04">Stacks &amp; Queues</a></b><br><sub>Monotonic stack, deque, expressions</sub><br><sub><b>25</b> problems</sub></td><td width="33%" align="center" valign="top"><a href="#topic-05"><img src="./images/topics/05-binary-search.svg" width="56" height="56" alt="Binary Search"></a><br><code>05</code> <b><a href="#topic-05">Binary Search</a></b><br><sub>Search spaces, rotated arrays</sub><br><sub><b>16</b> problems</sub></td><td width="33%" align="center" valign="top"><a href="#topic-06"><img src="./images/topics/06-sorting-intervals.svg" width="56" height="56" alt="Sorting &amp; Intervals"></a><br><code>06</code> <b><a href="#topic-06">Sorting &amp; Intervals</a></b><br><sub>Merge intervals, custom sorting</sub><br><sub><b>18</b> problems</sub></td></tr>
-<tr><td width="33%" align="center" valign="top"><a href="#topic-07"><img src="./images/topics/07-trees-bst.svg" width="56" height="56" alt="Trees &amp; BST"></a><br><code>07</code> <b><a href="#topic-07">Trees &amp; BST</a></b><br><sub>DFS, BFS, traversal, construction</sub><br><sub><b>34</b> problems</sub></td><td width="33%" align="center" valign="top"><a href="#topic-08"><img src="./images/topics/08-heaps.svg" width="56" height="56" alt="Heaps"></a><br><code>08</code> <b><a href="#topic-08">Heaps</a></b><br><sub>PriorityQueue, Top K, K-way merge</sub><br><sub><b>15</b> problems</sub></td><td width="33%" align="center" valign="top"><a href="#topic-09"><img src="./images/topics/09-graphs.svg" width="56" height="56" alt="Graphs"></a><br><code>09</code> <b><a href="#topic-09">Graphs</a></b><br><sub>BFS, DFS, Dijkstra, Union-Find</sub><br><sub><b>32</b> problems</sub></td></tr>
+<tr><td width="33%" align="center" valign="top"><a href="#topic-07"><img src="./images/topics/07-trees-bst.svg" width="56" height="56" alt="Trees &amp; BST"></a><br><code>07</code> <b><a href="#topic-07">Trees &amp; BST</a></b><br><sub>DFS, BFS, traversal, construction</sub><br><sub><b>34</b> problems</sub></td><td width="33%" align="center" valign="top"><a href="#topic-08"><img src="./images/topics/08-heaps.svg" width="56" height="56" alt="Heaps"></a><br><code>08</code> <b><a href="#topic-08">Heaps</a></b><br><sub>PriorityQueue, Top K, K-way merge</sub><br><sub><b>16</b> problems</sub></td><td width="33%" align="center" valign="top"><a href="#topic-09"><img src="./images/topics/09-graphs.svg" width="56" height="56" alt="Graphs"></a><br><code>09</code> <b><a href="#topic-09">Graphs</a></b><br><sub>BFS, DFS, Dijkstra, Union-Find</sub><br><sub><b>34</b> problems</sub></td></tr>
 <tr><td width="33%" align="center" valign="top"><a href="#topic-10"><img src="./images/topics/10-dynamic-programming.svg" width="56" height="56" alt="Dynamic Programming"></a><br><code>10</code> <b><a href="#topic-10">Dynamic Programming</a></b><br><sub>Memoization, tabulation, optimization</sub><br><sub><b>28</b> problems</sub></td><td width="33%" align="center" valign="top"><a href="#topic-11"><img src="./images/topics/11-backtracking.svg" width="56" height="56" alt="Backtracking"></a><br><code>11</code> <b><a href="#topic-11">Backtracking</a></b><br><sub>Permutations, combinations, subsets</sub><br><sub><b>15</b> problems</sub></td><td width="33%" align="center" valign="top"><a href="#topic-12"><img src="./images/topics/12-greedy.svg" width="56" height="56" alt="Greedy Algorithms"></a><br><code>12</code> <b><a href="#topic-12">Greedy Algorithms</a></b><br><sub>Scheduling, selection, optimization</sub><br><sub><b>15</b> problems</sub></td></tr>
-<tr><td width="33%" align="center" valign="top"><a href="#topic-13"><img src="./images/topics/13-tries.svg" width="56" height="56" alt="Tries"></a><br><code>13</code> <b><a href="#topic-13">Tries</a></b><br><sub>Prefix search, autocomplete</sub><br><sub><b>4</b> problems</sub></td><td width="33%" align="center" valign="top"><a href="#topic-14"><img src="./images/topics/14-bit-manipulation.svg" width="56" height="56" alt="Bit Manipulation"></a><br><code>14</code> <b><a href="#topic-14">Bit Manipulation</a></b><br><sub>XOR, masks, swapping, bit operations</sub><br><sub><b>8</b> problems</sub></td><td width="33%" align="center" valign="top"><a href="#topic-15"><img src="./images/topics/15-advanced-graphs.svg" width="56" height="56" alt="Advanced Graphs"></a><br><code>15</code> <b><a href="#topic-15">Advanced Graphs</a></b><br><sub>Topological sort, MST, SCC</sub><br><sub><b>11</b> problems</sub></td></tr>
-<tr><td width="33%" align="center" valign="top"><a href="#topic-16"><img src="./images/topics/16-advanced-dp.svg" width="56" height="56" alt="Advanced DP"></a><br><code>16</code> <b><a href="#topic-16">Advanced DP</a></b><br><sub>Knapsack, interval DP, tree DP</sub><br><sub><b>14</b> problems</sub></td><td width="33%" align="center" valign="top"><a href="#topic-17"><img src="./images/topics/17-design-problems.svg" width="56" height="56" alt="Design Problems"></a><br><code>17</code> <b><a href="#topic-17">Design Problems</a></b><br><sub>LRU, LFU, data structures</sub><br><sub><b>21</b> problems</sub></td><td width="33%" align="center" valign="top"><a href="#topic-18"><img src="./images/topics/18-java-core-concurrency.svg" width="56" height="56" alt="Java Core &amp; Concurrency"></a><br><code>18</code> <b><a href="#topic-18">Java Core &amp; Concurrency</a></b><br><sub>Core Java basics, threads, locks, streams</sub><br><sub><b>22</b> problems</sub></td></tr>
+<tr><td width="33%" align="center" valign="top"><a href="#topic-13"><img src="./images/topics/13-tries.svg" width="56" height="56" alt="Tries"></a><br><code>13</code> <b><a href="#topic-13">Tries</a></b><br><sub>Prefix search, autocomplete</sub><br><sub><b>5</b> problems</sub></td><td width="33%" align="center" valign="top"><a href="#topic-14"><img src="./images/topics/14-bit-manipulation.svg" width="56" height="56" alt="Bit Manipulation"></a><br><code>14</code> <b><a href="#topic-14">Bit Manipulation</a></b><br><sub>XOR, masks, swapping, bit operations</sub><br><sub><b>8</b> problems</sub></td><td width="33%" align="center" valign="top"><a href="#topic-15"><img src="./images/topics/15-advanced-graphs.svg" width="56" height="56" alt="Advanced Graphs"></a><br><code>15</code> <b><a href="#topic-15">Advanced Graphs</a></b><br><sub>Topological sort, MST, SCC</sub><br><sub><b>12</b> problems</sub></td></tr>
+<tr><td width="33%" align="center" valign="top"><a href="#topic-16"><img src="./images/topics/16-advanced-dp.svg" width="56" height="56" alt="Advanced DP"></a><br><code>16</code> <b><a href="#topic-16">Advanced DP</a></b><br><sub>Knapsack, interval DP, tree DP</sub><br><sub><b>15</b> problems</sub></td><td width="33%" align="center" valign="top"><a href="#topic-17"><img src="./images/topics/17-design-problems.svg" width="56" height="56" alt="Design Problems"></a><br><code>17</code> <b><a href="#topic-17">Design Problems</a></b><br><sub>LRU, LFU, data structures</sub><br><sub><b>24</b> problems</sub></td><td width="33%" align="center" valign="top"><a href="#topic-18"><img src="./images/topics/18-java-core-concurrency.svg" width="56" height="56" alt="Java Core &amp; Concurrency"></a><br><code>18</code> <b><a href="#topic-18">Java Core &amp; Concurrency</a></b><br><sub>Core Java basics, threads, locks, streams</sub><br><sub><b>22</b> problems</sub></td></tr>
 </table>
 
 <a id="topic-01"></a>
@@ -332,6 +332,7 @@ Interview problems grouped by topic, in a recommended study order. Each page exp
 | 240 | [Find K Closest Elements](./md_files/heap/FindKClosestElements.md) | Medium | Binary search for the window start |
 | 241 | [Kth Smallest Element in a Sorted Matrix](./md_files/heap/KthSmallestElementInASortedMatrix.md) | Medium | Binary search on value or a min-heap of rows |
 | 242 | [Furthest Building You Can Reach](./md_files/heap/FurthestBuildingYouCanReach.md) | Medium | Min-heap of climbs covered by ladders |
+| 243 | [The Skyline Problem](./md_files/heap/TheSkylineProblem.md) | Hard | Sweep line with a max-heap of heights |
 
 <a id="topic-09"></a>
 
@@ -341,38 +342,40 @@ Interview problems grouped by topic, in a recommended study order. Each page exp
 
 | # | Problem | Difficulty | Core concept |
 |---|---------|------------|--------------|
-| 243 | [Graph Traversals (BFS and DFS)](./md_files/graph/GraphTraversals.md) | Easy | BFS and DFS |
-| 244 | [Flood Fill](./md_files/graph/FloodFill.md) | Easy | DFS |
-| 245 | [Number of Islands](./md_files/graph/NumberOfIslands.md) | Medium | DFS / BFS |
-| 246 | [Max Area of Island](./md_files/graph/MaxAreaOfIsland.md) | Medium | DFS |
-| 247 | [Surrounded Regions](./md_files/graph/SurroundedRegions.md) | Medium | Border DFS |
-| 248 | [Pacific Atlantic Water Flow](./md_files/graph/PacificAtlanticWaterFlow.md) | Medium | Multi-source DFS |
-| 249 | [Rotting Oranges](./md_files/graph/RottingOranges.md) | Medium | Multi-source BFS |
-| 250 | [Walls and Gates](./md_files/graph/WallsAndGates.md) | Medium | Multi-source BFS |
-| 251 | [Clone Graph](./md_files/graph/CloneGraph.md) | Medium | DFS + HashMap |
-| 252 | [Course Schedule](./md_files/graph/CourseSchedule.md) | Medium | Cycle detection |
-| 253 | [Word Ladder](./md_files/graph/WordLadder.md) | Hard | BFS |
-| 254 | [Evaluate Division](./md_files/graph/EvaluateDivision.md) | Medium | Weighted graph |
-| 255 | [Graph Valid Tree](./md_files/graph/GraphValidTree.md) | Medium | DFS / Union-Find |
-| 256 | [Number of Connected Components](./md_files/graph/NumberOfConnectedComponents.md) | Medium | Union-Find |
-| 257 | [Redundant Connection](./md_files/graph/RedundantConnection.md) | Medium | DSU |
-| 258 | [Accounts Merge](./md_files/graph/AccountsMerge.md) | Medium | Union-Find |
-| 259 | [Implement Union-Find from Scratch](./md_files/graph/UnionFind.md) | Medium | Path compression + Union by Rank |
-| 260 | [Network Delay Time](./md_files/graph/NetworkDelayTime.md) | Medium | Dijkstra |
-| 261 | [Cheapest Flights Within K Stops](./md_files/graph/CheapestFlightsWithinKStops.md) | Medium | Bellman-Ford / BFS |
-| 262 | [Implement Dijkstra from Scratch](./md_files/graph/DijkstraShortestPath.md) | Medium | Graph + PriorityQueue |
-| 263 | [Swim in Rising Water](./md_files/graph/SwimInRisingWater.md) | Hard | Dijkstra / binary search |
-| 264 | [Is Graph Bipartite?](./md_files/graph/IsGraphBipartite.md) | Medium | Two-colouring with BFS |
-| 265 | [Possible Bipartition](./md_files/graph/PossibleBipartition.md) | Medium | Dislike graph two-colouring |
-| 266 | [Shortest Path in Binary Matrix](./md_files/graph/ShortestPathInBinaryMatrix.md) | Medium | BFS on a grid with 8 directions |
-| 267 | [Open the Lock](./md_files/graph/OpenTheLock.md) | Medium | BFS over lock states |
-| 268 | [Number of Operations to Make Network Connected](./md_files/graph/NumberOfOperationsToMakeNetworkConnected.md) | Medium | Union-Find components |
-| 269 | [Number of Distinct Islands](./md_files/graph/NumberOfDistinctIslands.md) | Medium | Shape signature of each island |
-| 270 | [Bus Routes](./md_files/graph/BusRoutes.md) | Hard | BFS over routes, not stops |
-| 271 | [Making A Large Island](./md_files/graph/MakingALargeIsland.md) | Hard | Label islands, then try flipping each zero |
-| 272 | [Shortest Bridge](./md_files/graph/ShortestBridge.md) | Medium | DFS to find one island, multi-source BFS to the other |
-| 273 | [Minimum Knight Moves](./md_files/graph/MinimumKnightMoves.md) | Medium | BFS on an infinite board with symmetry |
-| 274 | [The Maze](./md_files/graph/TheMaze.md) | Medium | BFS where the ball rolls until it hits a wall |
+| 244 | [Graph Traversals (BFS and DFS)](./md_files/graph/GraphTraversals.md) | Easy | BFS and DFS |
+| 245 | [Flood Fill](./md_files/graph/FloodFill.md) | Easy | DFS |
+| 246 | [Number of Islands](./md_files/graph/NumberOfIslands.md) | Medium | DFS / BFS |
+| 247 | [Max Area of Island](./md_files/graph/MaxAreaOfIsland.md) | Medium | DFS |
+| 248 | [Surrounded Regions](./md_files/graph/SurroundedRegions.md) | Medium | Border DFS |
+| 249 | [Pacific Atlantic Water Flow](./md_files/graph/PacificAtlanticWaterFlow.md) | Medium | Multi-source DFS |
+| 250 | [Rotting Oranges](./md_files/graph/RottingOranges.md) | Medium | Multi-source BFS |
+| 251 | [Walls and Gates](./md_files/graph/WallsAndGates.md) | Medium | Multi-source BFS |
+| 252 | [Clone Graph](./md_files/graph/CloneGraph.md) | Medium | DFS + HashMap |
+| 253 | [Course Schedule](./md_files/graph/CourseSchedule.md) | Medium | Cycle detection |
+| 254 | [Word Ladder](./md_files/graph/WordLadder.md) | Hard | BFS |
+| 255 | [Evaluate Division](./md_files/graph/EvaluateDivision.md) | Medium | Weighted graph |
+| 256 | [Graph Valid Tree](./md_files/graph/GraphValidTree.md) | Medium | DFS / Union-Find |
+| 257 | [Number of Connected Components](./md_files/graph/NumberOfConnectedComponents.md) | Medium | Union-Find |
+| 258 | [Redundant Connection](./md_files/graph/RedundantConnection.md) | Medium | DSU |
+| 259 | [Accounts Merge](./md_files/graph/AccountsMerge.md) | Medium | Union-Find |
+| 260 | [Implement Union-Find from Scratch](./md_files/graph/UnionFind.md) | Medium | Path compression + Union by Rank |
+| 261 | [Network Delay Time](./md_files/graph/NetworkDelayTime.md) | Medium | Dijkstra |
+| 262 | [Cheapest Flights Within K Stops](./md_files/graph/CheapestFlightsWithinKStops.md) | Medium | Bellman-Ford / BFS |
+| 263 | [Implement Dijkstra from Scratch](./md_files/graph/DijkstraShortestPath.md) | Medium | Graph + PriorityQueue |
+| 264 | [Swim in Rising Water](./md_files/graph/SwimInRisingWater.md) | Hard | Dijkstra / binary search |
+| 265 | [Is Graph Bipartite?](./md_files/graph/IsGraphBipartite.md) | Medium | Two-colouring with BFS |
+| 266 | [Possible Bipartition](./md_files/graph/PossibleBipartition.md) | Medium | Dislike graph two-colouring |
+| 267 | [Shortest Path in Binary Matrix](./md_files/graph/ShortestPathInBinaryMatrix.md) | Medium | BFS on a grid with 8 directions |
+| 268 | [Open the Lock](./md_files/graph/OpenTheLock.md) | Medium | BFS over lock states |
+| 269 | [Number of Operations to Make Network Connected](./md_files/graph/NumberOfOperationsToMakeNetworkConnected.md) | Medium | Union-Find components |
+| 270 | [Number of Distinct Islands](./md_files/graph/NumberOfDistinctIslands.md) | Medium | Shape signature of each island |
+| 271 | [Bus Routes](./md_files/graph/BusRoutes.md) | Hard | BFS over routes, not stops |
+| 272 | [Making A Large Island](./md_files/graph/MakingALargeIsland.md) | Hard | Label islands, then try flipping each zero |
+| 273 | [Shortest Bridge](./md_files/graph/ShortestBridge.md) | Medium | DFS to find one island, multi-source BFS to the other |
+| 274 | [Minimum Knight Moves](./md_files/graph/MinimumKnightMoves.md) | Medium | BFS on an infinite board with symmetry |
+| 275 | [The Maze](./md_files/graph/TheMaze.md) | Medium | BFS where the ball rolls until it hits a wall |
+| 276 | [Shortest Distance from All Buildings](./md_files/graph/ShortestDistanceFromAllBuildings.md) | Hard | BFS from every building, accumulate distances |
+| 277 | [Word Ladder II](./md_files/graph/WordLadderII.md) | Hard | BFS for levels, DFS to rebuild all shortest paths |
 
 <a id="topic-10"></a>
 
@@ -382,34 +385,34 @@ Interview problems grouped by topic, in a recommended study order. Each page exp
 
 | # | Problem | Difficulty | Core concept |
 |---|---------|------------|--------------|
-| 275 | [Fibonacci](./md_files/dp/Fibonacci.md) | Easy | Recursion / memoization |
-| 276 | [Climbing Stairs](./md_files/dp/ClimbingStairs.md) | Easy | 1D DP |
-| 277 | [Min Cost Climbing Stairs](./md_files/dp/MinCostClimbingStairs.md) | Easy | 1D DP |
-| 278 | [House Robber](./md_files/dp/HouseRobber.md) | Medium | DP |
-| 279 | [House Robber II](./md_files/dp/HouseRobberII.md) | Medium | Circular DP |
-| 280 | [Decode Ways](./md_files/dp/DecodeWays.md) | Medium | 1D DP |
-| 281 | [Coin Change](./md_files/dp/CoinChange.md) | Medium | Unbounded knapsack |
-| 282 | [Word Break](./md_files/dp/WordBreak.md) | Medium | DP + HashSet |
-| 283 | [Longest Increasing Subsequence](./md_files/dp/LongestIncreasingSubsequence.md) | Medium | DP / Binary search |
-| 284 | [Unique Paths](./md_files/dp/UniquePaths.md) | Medium | Grid DP |
-| 285 | [Minimum Path Sum](./md_files/dp/MinimumPathSum.md) | Medium | Grid DP |
-| 286 | [Best Time to Buy and Sell Stock with Cooldown](./md_files/dp/BestTimeToBuyAndSellStockWithCooldown.md) | Medium | State machine DP |
-| 287 | [Longest Common Subsequence](./md_files/dp/LongestCommonSubsequence.md) | Medium | 2D DP |
-| 288 | [Longest Palindromic Subsequence](./md_files/dp/LongestPalindromicSubsequence.md) | Medium | 2D DP |
-| 289 | [Edit Distance](./md_files/dp/EditDistance.md) | Medium | 2D DP |
-| 290 | [Interleaving String](./md_files/dp/InterleavingString.md) | Medium | 2D DP |
-| 291 | [Paint Fence](./md_files/dp/PaintFence.md) | Medium | Counting DP with two states |
-| 292 | [Unique Paths II](./md_files/dp/UniquePathsII.md) | Medium | Grid DP with obstacles |
-| 293 | [K-th Symbol in Grammar](./md_files/dp/KthSymbolInGrammar.md) | Medium | Recursion on a doubling structure |
-| 294 | [Maximal Square](./md_files/dp/MaximalSquare.md) | Medium | Grid DP, min of three neighbours |
-| 295 | [Delete and Earn](./md_files/dp/DeleteAndEarn.md) | Medium | Reduce to House Robber |
-| 296 | [Perfect Squares](./md_files/dp/PerfectSquares.md) | Medium | Unbounded knapsack over squares |
-| 297 | [Triangle](./md_files/dp/TriangleMinimumPathSum.md) | Medium | Bottom-up DP in place of the last row |
-| 298 | [Find the Winner of the Circular Game](./md_files/dp/FindTheWinnerOfTheCircularGame.md) | Medium | Josephus recurrence |
-| 299 | [Minimum Cost For Tickets](./md_files/dp/MinimumCostForTickets.md) | Medium | DP over days with 1, 7 and 30 day passes |
-| 300 | [Frog Jump](./md_files/dp/FrogJump.md) | Hard | DP on (stone, last jump size) |
-| 301 | [Dungeon Game](./md_files/dp/DungeonGame.md) | Hard | DP from the princess backward |
-| 302 | [Longest String Chain](./md_files/dp/LongestStringChain.md) | Medium | DP by removing one letter |
+| 278 | [Fibonacci](./md_files/dp/Fibonacci.md) | Easy | Recursion / memoization |
+| 279 | [Climbing Stairs](./md_files/dp/ClimbingStairs.md) | Easy | 1D DP |
+| 280 | [Min Cost Climbing Stairs](./md_files/dp/MinCostClimbingStairs.md) | Easy | 1D DP |
+| 281 | [House Robber](./md_files/dp/HouseRobber.md) | Medium | DP |
+| 282 | [House Robber II](./md_files/dp/HouseRobberII.md) | Medium | Circular DP |
+| 283 | [Decode Ways](./md_files/dp/DecodeWays.md) | Medium | 1D DP |
+| 284 | [Coin Change](./md_files/dp/CoinChange.md) | Medium | Unbounded knapsack |
+| 285 | [Word Break](./md_files/dp/WordBreak.md) | Medium | DP + HashSet |
+| 286 | [Longest Increasing Subsequence](./md_files/dp/LongestIncreasingSubsequence.md) | Medium | DP / Binary search |
+| 287 | [Unique Paths](./md_files/dp/UniquePaths.md) | Medium | Grid DP |
+| 288 | [Minimum Path Sum](./md_files/dp/MinimumPathSum.md) | Medium | Grid DP |
+| 289 | [Best Time to Buy and Sell Stock with Cooldown](./md_files/dp/BestTimeToBuyAndSellStockWithCooldown.md) | Medium | State machine DP |
+| 290 | [Longest Common Subsequence](./md_files/dp/LongestCommonSubsequence.md) | Medium | 2D DP |
+| 291 | [Longest Palindromic Subsequence](./md_files/dp/LongestPalindromicSubsequence.md) | Medium | 2D DP |
+| 292 | [Edit Distance](./md_files/dp/EditDistance.md) | Medium | 2D DP |
+| 293 | [Interleaving String](./md_files/dp/InterleavingString.md) | Medium | 2D DP |
+| 294 | [Paint Fence](./md_files/dp/PaintFence.md) | Medium | Counting DP with two states |
+| 295 | [Unique Paths II](./md_files/dp/UniquePathsII.md) | Medium | Grid DP with obstacles |
+| 296 | [K-th Symbol in Grammar](./md_files/dp/KthSymbolInGrammar.md) | Medium | Recursion on a doubling structure |
+| 297 | [Maximal Square](./md_files/dp/MaximalSquare.md) | Medium | Grid DP, min of three neighbours |
+| 298 | [Delete and Earn](./md_files/dp/DeleteAndEarn.md) | Medium | Reduce to House Robber |
+| 299 | [Perfect Squares](./md_files/dp/PerfectSquares.md) | Medium | Unbounded knapsack over squares |
+| 300 | [Triangle](./md_files/dp/TriangleMinimumPathSum.md) | Medium | Bottom-up DP in place of the last row |
+| 301 | [Find the Winner of the Circular Game](./md_files/dp/FindTheWinnerOfTheCircularGame.md) | Medium | Josephus recurrence |
+| 302 | [Minimum Cost For Tickets](./md_files/dp/MinimumCostForTickets.md) | Medium | DP over days with 1, 7 and 30 day passes |
+| 303 | [Frog Jump](./md_files/dp/FrogJump.md) | Hard | DP on (stone, last jump size) |
+| 304 | [Dungeon Game](./md_files/dp/DungeonGame.md) | Hard | DP from the princess backward |
+| 305 | [Longest String Chain](./md_files/dp/LongestStringChain.md) | Medium | DP by removing one letter |
 
 <a id="topic-11"></a>
 
@@ -419,21 +422,21 @@ Interview problems grouped by topic, in a recommended study order. Each page exp
 
 | # | Problem | Difficulty | Core concept |
 |---|---------|------------|--------------|
-| 303 | [Subsets](./md_files/backtracking/Subsets.md) | Medium | Decision tree |
-| 304 | [Subsets II](./md_files/backtracking/SubsetsII.md) | Medium | Duplicate handling |
-| 305 | [Permutations](./md_files/backtracking/Permutations.md) | Medium | Backtracking |
-| 306 | [Permutations II](./md_files/backtracking/PermutationsII.md) | Medium | Duplicate handling |
-| 307 | [Combination Sum](./md_files/backtracking/CombinationSum.md) | Medium | Reusable choices |
-| 308 | [Combination Sum II](./md_files/backtracking/CombinationSumII.md) | Medium | Single-use choices |
-| 309 | [Letter Combinations of a Phone Number](./md_files/backtracking/LetterCombinationsOfAPhoneNumber.md) | Medium | Backtracking |
-| 310 | [Generate Parentheses](./md_files/backtracking/GenerateParentheses.md) | Medium | Recursive construction |
-| 311 | [Palindrome Partitioning](./md_files/backtracking/PalindromePartitioning.md) | Medium | Backtracking + palindrome check |
-| 312 | [Word Search](./md_files/backtracking/WordSearch.md) | Medium | DFS + Backtracking |
-| 313 | [N-Queens](./md_files/backtracking/NQueens.md) | Hard | Constraint search |
-| 314 | [Sudoku Solver](./md_files/backtracking/SudokuSolver.md) | Hard | Constraint propagation |
-| 315 | [Restore IP Addresses](./md_files/backtracking/RestoreIPAddresses.md) | Medium | Backtracking over segment lengths |
-| 316 | [Word Break II](./md_files/backtracking/WordBreakII.md) | Hard | Backtracking with memoisation on the suffix |
-| 317 | [Optimal Account Balancing](./md_files/backtracking/OptimalAccountBalancing.md) | Hard | Backtracking over non-zero debts |
+| 306 | [Subsets](./md_files/backtracking/Subsets.md) | Medium | Decision tree |
+| 307 | [Subsets II](./md_files/backtracking/SubsetsII.md) | Medium | Duplicate handling |
+| 308 | [Permutations](./md_files/backtracking/Permutations.md) | Medium | Backtracking |
+| 309 | [Permutations II](./md_files/backtracking/PermutationsII.md) | Medium | Duplicate handling |
+| 310 | [Combination Sum](./md_files/backtracking/CombinationSum.md) | Medium | Reusable choices |
+| 311 | [Combination Sum II](./md_files/backtracking/CombinationSumII.md) | Medium | Single-use choices |
+| 312 | [Letter Combinations of a Phone Number](./md_files/backtracking/LetterCombinationsOfAPhoneNumber.md) | Medium | Backtracking |
+| 313 | [Generate Parentheses](./md_files/backtracking/GenerateParentheses.md) | Medium | Recursive construction |
+| 314 | [Palindrome Partitioning](./md_files/backtracking/PalindromePartitioning.md) | Medium | Backtracking + palindrome check |
+| 315 | [Word Search](./md_files/backtracking/WordSearch.md) | Medium | DFS + Backtracking |
+| 316 | [N-Queens](./md_files/backtracking/NQueens.md) | Hard | Constraint search |
+| 317 | [Sudoku Solver](./md_files/backtracking/SudokuSolver.md) | Hard | Constraint propagation |
+| 318 | [Restore IP Addresses](./md_files/backtracking/RestoreIPAddresses.md) | Medium | Backtracking over segment lengths |
+| 319 | [Word Break II](./md_files/backtracking/WordBreakII.md) | Hard | Backtracking with memoisation on the suffix |
+| 320 | [Optimal Account Balancing](./md_files/backtracking/OptimalAccountBalancing.md) | Hard | Backtracking over non-zero debts |
 
 <a id="topic-12"></a>
 
@@ -443,21 +446,21 @@ Interview problems grouped by topic, in a recommended study order. Each page exp
 
 | # | Problem | Difficulty | Core concept |
 |---|---------|------------|--------------|
-| 318 | [Jump Game](./md_files/greedy/JumpGame.md) | Medium | Greedy |
-| 319 | [Jump Game II](./md_files/greedy/JumpGameII.md) | Medium | Greedy |
-| 320 | [Gas Station](./md_files/greedy/GasStation.md) | Medium | Greedy |
-| 321 | [Candy](./md_files/greedy/Candy.md) | Hard | Two-pass greedy |
-| 322 | [Hand of Straights](./md_files/greedy/HandOfStraights.md) | Medium | Greedy + TreeMap |
-| 323 | [Merge Triplets to Form Target Triplet](./md_files/greedy/MergeTripletsToFormTargetTriplet.md) | Medium | Greedy |
-| 324 | [Partition Labels](./md_files/greedy/PartitionLabels.md) | Medium | Last occurrence |
-| 325 | [Valid Parenthesis String](./md_files/greedy/ValidParenthesisString.md) | Medium | Greedy range |
-| 326 | [Best Time to Buy and Sell Stock II](./md_files/greedy/BestTimeToBuyAndSellStockII.md) | Medium | Sum of every upward move |
-| 327 | [Largest Number](./md_files/greedy/LargestNumber.md) | Medium | Custom comparator on concatenation |
-| 328 | [Boats to Save People](./md_files/greedy/BoatsToSavePeople.md) | Medium | Sort and pair heaviest with lightest |
-| 329 | [Maximum Number of Events That Can Be Attended](./md_files/greedy/MaximumNumberOfEventsThatCanBeAttended.md) | Medium | Greedy with a min-heap of end days |
-| 330 | [Minimum Number of Taps to Open to Water a Garden](./md_files/greedy/MinimumNumberOfTapsToOpenToWaterAGarden.md) | Hard | Jump game over tap ranges |
-| 331 | [Put Marbles in Bags](./md_files/greedy/PutMarblesInBags.md) | Hard | Sort adjacent pair sums |
-| 332 | [Using a Robot to Print the Lexicographically Smallest String](./md_files/greedy/UsingARobotToPrintTheLexicographicallySmallestString.md) | Medium | Stack and the smallest remaining letter |
+| 321 | [Jump Game](./md_files/greedy/JumpGame.md) | Medium | Greedy |
+| 322 | [Jump Game II](./md_files/greedy/JumpGameII.md) | Medium | Greedy |
+| 323 | [Gas Station](./md_files/greedy/GasStation.md) | Medium | Greedy |
+| 324 | [Candy](./md_files/greedy/Candy.md) | Hard | Two-pass greedy |
+| 325 | [Hand of Straights](./md_files/greedy/HandOfStraights.md) | Medium | Greedy + TreeMap |
+| 326 | [Merge Triplets to Form Target Triplet](./md_files/greedy/MergeTripletsToFormTargetTriplet.md) | Medium | Greedy |
+| 327 | [Partition Labels](./md_files/greedy/PartitionLabels.md) | Medium | Last occurrence |
+| 328 | [Valid Parenthesis String](./md_files/greedy/ValidParenthesisString.md) | Medium | Greedy range |
+| 329 | [Best Time to Buy and Sell Stock II](./md_files/greedy/BestTimeToBuyAndSellStockII.md) | Medium | Sum of every upward move |
+| 330 | [Largest Number](./md_files/greedy/LargestNumber.md) | Medium | Custom comparator on concatenation |
+| 331 | [Boats to Save People](./md_files/greedy/BoatsToSavePeople.md) | Medium | Sort and pair heaviest with lightest |
+| 332 | [Maximum Number of Events That Can Be Attended](./md_files/greedy/MaximumNumberOfEventsThatCanBeAttended.md) | Medium | Greedy with a min-heap of end days |
+| 333 | [Minimum Number of Taps to Open to Water a Garden](./md_files/greedy/MinimumNumberOfTapsToOpenToWaterAGarden.md) | Hard | Jump game over tap ranges |
+| 334 | [Put Marbles in Bags](./md_files/greedy/PutMarblesInBags.md) | Hard | Sort adjacent pair sums |
+| 335 | [Using a Robot to Print the Lexicographically Smallest String](./md_files/greedy/UsingARobotToPrintTheLexicographicallySmallestString.md) | Medium | Stack and the smallest remaining letter |
 
 <a id="topic-13"></a>
 
@@ -467,10 +470,11 @@ Interview problems grouped by topic, in a recommended study order. Each page exp
 
 | # | Problem | Difficulty | Core concept |
 |---|---------|------------|--------------|
-| 333 | [Implement Trie](./md_files/trie/ImplementTrie.md) | Medium | Prefix tree |
-| 334 | [Design Add and Search Words](./md_files/trie/DesignAddAndSearchWords.md) | Medium | Trie + DFS |
-| 335 | [Word Search II](./md_files/trie/WordSearchII.md) | Hard | Trie + Backtracking |
-| 336 | [Search Suggestions System](./md_files/trie/SearchSuggestionsSystem.md) | Medium | Sorted products and binary search per prefix |
+| 336 | [Implement Trie](./md_files/trie/ImplementTrie.md) | Medium | Prefix tree |
+| 337 | [Design Add and Search Words](./md_files/trie/DesignAddAndSearchWords.md) | Medium | Trie + DFS |
+| 338 | [Word Search II](./md_files/trie/WordSearchII.md) | Hard | Trie + Backtracking |
+| 339 | [Search Suggestions System](./md_files/trie/SearchSuggestionsSystem.md) | Medium | Sorted products and binary search per prefix |
+| 340 | [Design Search Autocomplete System](./md_files/trie/DesignSearchAutocompleteSystem.md) | Hard | Trie of sentences with counts |
 
 <a id="topic-14"></a>
 
@@ -480,14 +484,14 @@ Interview problems grouped by topic, in a recommended study order. Each page exp
 
 | # | Problem | Difficulty | Core concept |
 |---|---------|------------|--------------|
-| 337 | [Single Number](./md_files/bit/SingleNumber.md) | Easy | XOR |
-| 338 | [Single Number II](./md_files/bit/SingleNumberII.md) | Medium | Bit manipulation |
-| 339 | [Counting Bits](./md_files/bit/CountingBits.md) | Easy | DP + Bits |
-| 340 | [Reverse Bits](./md_files/bit/ReverseBits.md) | Easy | Bit operations |
-| 341 | [Number of 1 Bits](./md_files/bit/NumberOf1Bits.md) | Easy | Brian Kernighan |
-| 342 | [Swap Two Numbers Without a Temporary Variable](./md_files/bit/SwapTwoNumbers.md) | Easy | XOR / arithmetic |
-| 343 | [Pow(x, n)](./md_files/bit/PowXN.md) | Medium | Fast exponentiation by squaring |
-| 344 | [Power of Two](./md_files/bit/PowerOfTwo.md) | Easy | One set bit check |
+| 341 | [Single Number](./md_files/bit/SingleNumber.md) | Easy | XOR |
+| 342 | [Single Number II](./md_files/bit/SingleNumberII.md) | Medium | Bit manipulation |
+| 343 | [Counting Bits](./md_files/bit/CountingBits.md) | Easy | DP + Bits |
+| 344 | [Reverse Bits](./md_files/bit/ReverseBits.md) | Easy | Bit operations |
+| 345 | [Number of 1 Bits](./md_files/bit/NumberOf1Bits.md) | Easy | Brian Kernighan |
+| 346 | [Swap Two Numbers Without a Temporary Variable](./md_files/bit/SwapTwoNumbers.md) | Easy | XOR / arithmetic |
+| 347 | [Pow(x, n)](./md_files/bit/PowXN.md) | Medium | Fast exponentiation by squaring |
+| 348 | [Power of Two](./md_files/bit/PowerOfTwo.md) | Easy | One set bit check |
 
 <a id="topic-15"></a>
 
@@ -497,17 +501,18 @@ Interview problems grouped by topic, in a recommended study order. Each page exp
 
 | # | Problem | Difficulty | Core concept |
 |---|---------|------------|--------------|
-| 345 | [Course Schedule II](./md_files/graph/CourseScheduleII.md) | Medium | Topological sort |
-| 346 | [Topological Sort](./md_files/graph/TopologicalSort.md) | Medium | Kahn's algorithm / DFS |
-| 347 | [Alien Dictionary](./md_files/graph/AlienDictionary.md) | Hard | Topological sort |
-| 348 | [Minimum Spanning Tree](./md_files/graph/MinimumSpanningTree.md) | Medium | Kruskal / Prim |
-| 349 | [Min Cost to Connect All Points](./md_files/graph/MinCostToConnectAllPoints.md) | Medium | Prim / Kruskal |
-| 350 | [Critical Connections in a Network](./md_files/graph/CriticalConnections.md) | Hard | Tarjan's algorithm |
-| 351 | [Reconstruct Itinerary](./md_files/graph/ReconstructItinerary.md) | Hard | Eulerian path (Hierholzer) |
-| 352 | [Shortest Path in a Grid with Obstacles Elimination](./md_files/graph/ShortestPathInAGridWithObstaclesElimination.md) | Hard | BFS with state (row, col, eliminations left) |
-| 353 | [Parallel Courses III](./md_files/graph/ParallelCoursesIII.md) | Hard | Topological order with longest path |
-| 354 | [Minimize Malware Spread](./md_files/graph/MinimizeMalwareSpread.md) | Hard | Union-Find components with initial infections |
-| 355 | [Minimum Edge Reversals So Every Node Is Reachable](./md_files/graph/MinimumEdgeReversalsSoEveryNodeIsReachable.md) | Hard | Rerooting on a tree with reversal costs |
+| 349 | [Course Schedule II](./md_files/graph/CourseScheduleII.md) | Medium | Topological sort |
+| 350 | [Topological Sort](./md_files/graph/TopologicalSort.md) | Medium | Kahn's algorithm / DFS |
+| 351 | [Alien Dictionary](./md_files/graph/AlienDictionary.md) | Hard | Topological sort |
+| 352 | [Minimum Spanning Tree](./md_files/graph/MinimumSpanningTree.md) | Medium | Kruskal / Prim |
+| 353 | [Min Cost to Connect All Points](./md_files/graph/MinCostToConnectAllPoints.md) | Medium | Prim / Kruskal |
+| 354 | [Critical Connections in a Network](./md_files/graph/CriticalConnections.md) | Hard | Tarjan's algorithm |
+| 355 | [Reconstruct Itinerary](./md_files/graph/ReconstructItinerary.md) | Hard | Eulerian path (Hierholzer) |
+| 356 | [Shortest Path in a Grid with Obstacles Elimination](./md_files/graph/ShortestPathInAGridWithObstaclesElimination.md) | Hard | BFS with state (row, col, eliminations left) |
+| 357 | [Parallel Courses III](./md_files/graph/ParallelCoursesIII.md) | Hard | Topological order with longest path |
+| 358 | [Minimize Malware Spread](./md_files/graph/MinimizeMalwareSpread.md) | Hard | Union-Find components with initial infections |
+| 359 | [Minimum Edge Reversals So Every Node Is Reachable](./md_files/graph/MinimumEdgeReversalsSoEveryNodeIsReachable.md) | Hard | Rerooting on a tree with reversal costs |
+| 360 | [Collect Coins in a Tree](./md_files/graph/CollectCoinsInATree.md) | Hard | Prune leaves, then peel two layers |
 
 <a id="topic-16"></a>
 
@@ -517,20 +522,21 @@ Interview problems grouped by topic, in a recommended study order. Each page exp
 
 | # | Problem | Difficulty | Core concept |
 |---|---------|------------|--------------|
-| 356 | [Coin Change II](./md_files/dp/CoinChangeII.md) | Medium | Combination DP |
-| 357 | [Partition Equal Subset Sum](./md_files/dp/PartitionEqualSubsetSum.md) | Medium | Knapsack |
-| 358 | [Target Sum](./md_files/dp/TargetSum.md) | Medium | Knapsack transformation |
-| 359 | [0/1 Knapsack](./md_files/dp/Knapsack01.md) | Medium | 0/1 knapsack |
-| 360 | [Distinct Subsequences](./md_files/dp/DistinctSubsequences.md) | Hard | 2D DP |
-| 361 | [Regular Expression Matching](./md_files/dp/RegularExpressionMatching.md) | Hard | 2D DP |
-| 362 | [Burst Balloons](./md_files/dp/BurstBalloons.md) | Hard | Interval DP |
-| 363 | [Longest Increasing Path in a Matrix](./md_files/dp/LongestIncreasingPathInAMatrix.md) | Hard | DFS + Memoization |
-| 364 | [Maximum Profit in Job Scheduling](./md_files/dp/MaximumProfitInJobScheduling.md) | Hard | DP + Binary search |
-| 365 | [Russian Doll Envelopes](./md_files/dp/RussianDollEnvelopes.md) | Hard | Sort then longest increasing subsequence |
-| 366 | [Wildcard Matching](./md_files/dp/WildcardMatching.md) | Hard | Two pointers with star backtracking, or 2D DP |
-| 367 | [Maximal Rectangle](./md_files/dp/MaximalRectangle.md) | Hard | Histogram of heights per row |
-| 368 | [Remove Boxes](./md_files/dp/RemoveBoxes.md) | Hard | Interval DP with extra equal boxes attached |
-| 369 | [Cherry Pickup](./md_files/dp/CherryPickup.md) | Hard | Two walkers moving together |
+| 361 | [Coin Change II](./md_files/dp/CoinChangeII.md) | Medium | Combination DP |
+| 362 | [Partition Equal Subset Sum](./md_files/dp/PartitionEqualSubsetSum.md) | Medium | Knapsack |
+| 363 | [Target Sum](./md_files/dp/TargetSum.md) | Medium | Knapsack transformation |
+| 364 | [0/1 Knapsack](./md_files/dp/Knapsack01.md) | Medium | 0/1 knapsack |
+| 365 | [Distinct Subsequences](./md_files/dp/DistinctSubsequences.md) | Hard | 2D DP |
+| 366 | [Regular Expression Matching](./md_files/dp/RegularExpressionMatching.md) | Hard | 2D DP |
+| 367 | [Burst Balloons](./md_files/dp/BurstBalloons.md) | Hard | Interval DP |
+| 368 | [Longest Increasing Path in a Matrix](./md_files/dp/LongestIncreasingPathInAMatrix.md) | Hard | DFS + Memoization |
+| 369 | [Maximum Profit in Job Scheduling](./md_files/dp/MaximumProfitInJobScheduling.md) | Hard | DP + Binary search |
+| 370 | [Russian Doll Envelopes](./md_files/dp/RussianDollEnvelopes.md) | Hard | Sort then longest increasing subsequence |
+| 371 | [Wildcard Matching](./md_files/dp/WildcardMatching.md) | Hard | Two pointers with star backtracking, or 2D DP |
+| 372 | [Maximal Rectangle](./md_files/dp/MaximalRectangle.md) | Hard | Histogram of heights per row |
+| 373 | [Remove Boxes](./md_files/dp/RemoveBoxes.md) | Hard | Interval DP with extra equal boxes attached |
+| 374 | [Cherry Pickup](./md_files/dp/CherryPickup.md) | Hard | Two walkers moving together |
+| 375 | [Count Palindromic Subsequences](./md_files/dp/CountPalindromicSubsequences.md) | Hard | Prefix and suffix pair counts around a middle digit |
 
 <a id="topic-17"></a>
 
@@ -540,27 +546,30 @@ Interview problems grouped by topic, in a recommended study order. Each page exp
 
 | # | Problem | Difficulty | Core concept |
 |---|---------|------------|--------------|
-| 370 | [LRU Cache](./md_files/design/LRUCache.md) | Medium | HashMap + Doubly Linked List |
-| 371 | [LFU Cache](./md_files/design/LFUCache.md) | Hard | HashMap + Frequency Lists |
-| 372 | [Design Hit Counter](./md_files/design/DesignHitCounter.md) | Medium | Queue + Sliding window |
-| 373 | [Logger Rate Limiter](./md_files/design/LoggerRateLimiter.md) | Easy | HashMap + Time |
-| 374 | [Time Based Key-Value Store](./md_files/design/TimeBasedKeyValueStore.md) | Medium | HashMap + Binary search |
-| 375 | [Design Twitter](./md_files/design/DesignTwitter.md) | Medium | Heap + HashMap |
-| 376 | [Insert Delete GetRandom O(1)](./md_files/design/InsertDeleteGetRandom.md) | Medium | ArrayList + HashMap |
-| 377 | [All O(1) Data Structure](./md_files/design/AllOneDataStructure.md) | Hard | Doubly linked list + HashMap |
-| 378 | [Design Circular Queue](./md_files/design/DesignCircularQueue.md) | Medium | Array / Circular buffer |
-| 379 | [Design Skip List](./md_files/design/DesignSkipList.md) | Hard | Probabilistic data structure |
-| 380 | [Design a Min/Max Heap](./md_files/design/BinaryHeap.md) | Medium | Heap implementation |
-| 381 | [Design Browser History](./md_files/design/DesignBrowserHistory.md) | Medium | Array with a cursor, truncate on visit |
-| 382 | [Design File System](./md_files/design/DesignFileSystem.md) | Medium | HashMap of full paths |
-| 383 | [Snapshot Array](./md_files/design/SnapshotArray.md) | Medium | Per-index history with binary search |
-| 384 | [Simple Bank System](./md_files/design/SimpleBankSystem.md) | Medium | Array of balances with validation |
-| 385 | [Design Memory Allocator](./md_files/design/DesignMemoryAllocator.md) | Medium | Scan for the first free block |
-| 386 | [Design Tic-Tac-Toe](./md_files/design/DesignTicTacToe.md) | Medium | Row, column and diagonal counters |
-| 387 | [Maximum Frequency Stack](./md_files/design/MaximumFrequencyStack.md) | Hard | Stack per frequency |
-| 388 | [Design Authentication Manager](./md_files/design/DesignAuthenticationManager.md) | Medium | Map of token to expiry time |
-| 389 | [Dot Product of Two Sparse Vectors](./md_files/design/DotProductOfTwoSparseVectors.md) | Medium | Store only non-zero entries |
-| 390 | [Flatten Nested List Iterator](./md_files/design/FlattenNestedListIterator.md) | Medium | Stack of iterators |
+| 376 | [LRU Cache](./md_files/design/LRUCache.md) | Medium | HashMap + Doubly Linked List |
+| 377 | [LFU Cache](./md_files/design/LFUCache.md) | Hard | HashMap + Frequency Lists |
+| 378 | [Design Hit Counter](./md_files/design/DesignHitCounter.md) | Medium | Queue + Sliding window |
+| 379 | [Logger Rate Limiter](./md_files/design/LoggerRateLimiter.md) | Easy | HashMap + Time |
+| 380 | [Time Based Key-Value Store](./md_files/design/TimeBasedKeyValueStore.md) | Medium | HashMap + Binary search |
+| 381 | [Design Twitter](./md_files/design/DesignTwitter.md) | Medium | Heap + HashMap |
+| 382 | [Insert Delete GetRandom O(1)](./md_files/design/InsertDeleteGetRandom.md) | Medium | ArrayList + HashMap |
+| 383 | [All O(1) Data Structure](./md_files/design/AllOneDataStructure.md) | Hard | Doubly linked list + HashMap |
+| 384 | [Design Circular Queue](./md_files/design/DesignCircularQueue.md) | Medium | Array / Circular buffer |
+| 385 | [Design Skip List](./md_files/design/DesignSkipList.md) | Hard | Probabilistic data structure |
+| 386 | [Design a Min/Max Heap](./md_files/design/BinaryHeap.md) | Medium | Heap implementation |
+| 387 | [Design Browser History](./md_files/design/DesignBrowserHistory.md) | Medium | Array with a cursor, truncate on visit |
+| 388 | [Design File System](./md_files/design/DesignFileSystem.md) | Medium | HashMap of full paths |
+| 389 | [Snapshot Array](./md_files/design/SnapshotArray.md) | Medium | Per-index history with binary search |
+| 390 | [Simple Bank System](./md_files/design/SimpleBankSystem.md) | Medium | Array of balances with validation |
+| 391 | [Design Memory Allocator](./md_files/design/DesignMemoryAllocator.md) | Medium | Scan for the first free block |
+| 392 | [Design Tic-Tac-Toe](./md_files/design/DesignTicTacToe.md) | Medium | Row, column and diagonal counters |
+| 393 | [Maximum Frequency Stack](./md_files/design/MaximumFrequencyStack.md) | Hard | Stack per frequency |
+| 394 | [Design Authentication Manager](./md_files/design/DesignAuthenticationManager.md) | Medium | Map of token to expiry time |
+| 395 | [Dot Product of Two Sparse Vectors](./md_files/design/DotProductOfTwoSparseVectors.md) | Medium | Store only non-zero entries |
+| 396 | [Flatten Nested List Iterator](./md_files/design/FlattenNestedListIterator.md) | Medium | Stack of iterators |
+| 397 | [Design a Text Editor](./md_files/design/DesignTextEditor.md) | Hard | Two stacks around the cursor |
+| 398 | [Design In-Memory File System](./md_files/design/DesignInMemoryFileSystem.md) | Hard | Trie of directories and files |
+| 399 | [Block Placement Queries](./md_files/design/BlockPlacementQueries.md) | Hard | Obstacles in a sorted set and a segment tree of gaps |
 
 <a id="topic-18"></a>
 
@@ -570,25 +579,25 @@ Interview problems grouped by topic, in a recommended study order. Each page exp
 
 | # | Problem | Difficulty | Core concept |
 |---|---------|------------|--------------|
-| 391 | [Factorial](./md_files/core/Factorial.md) | Easy | Recursion / iteration |
-| 392 | [Prime Numbers](./md_files/core/PrimeNumbers.md) | Easy | Sieve of Eratosthenes |
-| 393 | [GCD and LCM](./md_files/core/GcdAndLcm.md) | Easy | Euclid's algorithm |
-| 394 | [Armstrong Number](./md_files/core/ArmstrongNumber.md) | Easy | Digit math |
-| 395 | [FizzBuzz](./md_files/core/FizzBuzz.md) | Easy | Modulo |
-| 396 | [Producer-Consumer Implementation](./md_files/threads/ProducerConsumer.md) | Medium | Raw monitor synchronization (wait() / notifyAll()) |
-| 397 | [Print Odd and Even Alternately](./md_files/threads/PrintEvenOddUsingThreads.md) | Medium | Thread coordination using wait/notify or semaphores |
-| 398 | [Print Numbers in Sequence with Three Threads](./md_files/threads/PrintNumbersWithThreeThreads.md) | Medium | wait / notifyAll |
-| 399 | [Concurrency Coordination Puzzles](./md_files/threads/ConcurrencyCoordinationPuzzles.md) | Medium | Print in Order / FooBar sequence synchronization |
-| 400 | [Thread-Safe BlockingQueue](./md_files/threads/BoundedBlockingQueue.md) | Hard | ReentrantLock + Conditions (notFull, notEmpty) |
-| 401 | [Custom Simple Thread Pool](./md_files/threads/SimpleThreadPool.md) | Hard | Worker thread pool with a task queue |
-| 402 | [Custom Read-Write Lock](./md_files/threads/CustomReadWriteLock.md) | Hard | State-based tracking for multiple readers / single writer |
-| 403 | [Deadlock and How to Avoid It](./md_files/threads/DeadlockDemo.md) | Medium | Lock ordering |
-| 404 | [Thread-Safe Singleton Variations](./md_files/core/SingletonPattern.md) | Medium | Double-Checked Locking (volatile) and Bill Pugh Holder pattern |
-| 405 | [Fully Immutable Class with Mutable Fields](./md_files/core/ImmutableClassDemo.md) | Medium | Deep defensive copying for constructors and getters |
-| 406 | [Custom Functional Interface and Collector](./md_files/core/CustomCollectors.md) | Hard | Custom stream reduction aggregation logic |
-| 407 | [Custom Resource Manager (AutoCloseable)](./md_files/core/ResourceManager.md) | Medium | Try-with-resources integration with exception suppression |
-| 408 | [Java 8 Streams Interview Questions](./md_files/core/StreamsInterviewQuestions.md) | Medium | Java 8 streams |
-| 409 | [Reverse Integer](./md_files/core/ReverseInteger.md) | Medium | Digit pop and push with overflow check |
-| 410 | [Count Primes](./md_files/core/CountPrimes.md) | Medium | Sieve of Eratosthenes |
-| 411 | [Angle Between Hands of a Clock](./md_files/core/AngleBetweenHandsOfAClock.md) | Medium | Degrees per hour and per minute |
-| 412 | [Reaching Points](./md_files/math/ReachingPoints.md) | Hard | Work backward with the Euclidean algorithm |
+| 400 | [Factorial](./md_files/core/Factorial.md) | Easy | Recursion / iteration |
+| 401 | [Prime Numbers](./md_files/core/PrimeNumbers.md) | Easy | Sieve of Eratosthenes |
+| 402 | [GCD and LCM](./md_files/core/GcdAndLcm.md) | Easy | Euclid's algorithm |
+| 403 | [Armstrong Number](./md_files/core/ArmstrongNumber.md) | Easy | Digit math |
+| 404 | [FizzBuzz](./md_files/core/FizzBuzz.md) | Easy | Modulo |
+| 405 | [Producer-Consumer Implementation](./md_files/threads/ProducerConsumer.md) | Medium | Raw monitor synchronization (wait() / notifyAll()) |
+| 406 | [Print Odd and Even Alternately](./md_files/threads/PrintEvenOddUsingThreads.md) | Medium | Thread coordination using wait/notify or semaphores |
+| 407 | [Print Numbers in Sequence with Three Threads](./md_files/threads/PrintNumbersWithThreeThreads.md) | Medium | wait / notifyAll |
+| 408 | [Concurrency Coordination Puzzles](./md_files/threads/ConcurrencyCoordinationPuzzles.md) | Medium | Print in Order / FooBar sequence synchronization |
+| 409 | [Thread-Safe BlockingQueue](./md_files/threads/BoundedBlockingQueue.md) | Hard | ReentrantLock + Conditions (notFull, notEmpty) |
+| 410 | [Custom Simple Thread Pool](./md_files/threads/SimpleThreadPool.md) | Hard | Worker thread pool with a task queue |
+| 411 | [Custom Read-Write Lock](./md_files/threads/CustomReadWriteLock.md) | Hard | State-based tracking for multiple readers / single writer |
+| 412 | [Deadlock and How to Avoid It](./md_files/threads/DeadlockDemo.md) | Medium | Lock ordering |
+| 413 | [Thread-Safe Singleton Variations](./md_files/core/SingletonPattern.md) | Medium | Double-Checked Locking (volatile) and Bill Pugh Holder pattern |
+| 414 | [Fully Immutable Class with Mutable Fields](./md_files/core/ImmutableClassDemo.md) | Medium | Deep defensive copying for constructors and getters |
+| 415 | [Custom Functional Interface and Collector](./md_files/core/CustomCollectors.md) | Hard | Custom stream reduction aggregation logic |
+| 416 | [Custom Resource Manager (AutoCloseable)](./md_files/core/ResourceManager.md) | Medium | Try-with-resources integration with exception suppression |
+| 417 | [Java 8 Streams Interview Questions](./md_files/core/StreamsInterviewQuestions.md) | Medium | Java 8 streams |
+| 418 | [Reverse Integer](./md_files/core/ReverseInteger.md) | Medium | Digit pop and push with overflow check |
+| 419 | [Count Primes](./md_files/core/CountPrimes.md) | Medium | Sieve of Eratosthenes |
+| 420 | [Angle Between Hands of a Clock](./md_files/core/AngleBetweenHandsOfAClock.md) | Medium | Degrees per hour and per minute |
+| 421 | [Reaching Points](./md_files/math/ReachingPoints.md) | Hard | Work backward with the Euclidean algorithm |
