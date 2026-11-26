@@ -763,7 +763,34 @@ Most interview problems are one of a handful of patterns in disguise. Spot the s
 | All combinations / permutations / subsets | [Backtracking](#7-backtracking) | Recursion + `ArrayList` | O(n · 2ⁿ), O(n · n!) |
 | Overlapping intervals / meeting rooms | [Merge Intervals](#8-merge-intervals) | `Arrays.sort()` + `ArrayList` | O(n log n) |
 
-**Beyond the eight.** These patterns come up just as often and have their own pages and notes: prefix sum + `HashMap` (subarray sums, negatives allowed), DFS and Union-Find (components, cycles), topological sort (dependencies), Dijkstra (weighted shortest path), dynamic programming (counting and optimizing over overlapping subproblems), greedy (a locally best choice is provably safe), trie (prefix search) and bit manipulation (XOR, masks). See the table below and the [revision notes](./NOTES.md).
+| Explore every path, components, cycles, tree questions | [DFS](#9-dfs-depth-first-search) | Recursion or `ArrayDeque` as a stack, `boolean[]` visited | O(V + E) |
+| Count ways, min or max over overlapping subproblems | [Dynamic Programming](#10-dynamic-programming) | `int[]` / `int[][]` table or memo `HashMap` | states × transitions |
+| Split into independent halves, solve, combine | [Divide and Conquer](#11-divide-and-conquer) | Recursion, temp `int[]` | O(n log n) typical |
+
+**Visual summary.**
+
+![Eight core patterns visualised: two pointers, sliding window, binary search, BFS, backtracking, dynamic programming, DFS, priority queue](./images/interview-pattern-visuals.svg)
+
+### What to Learn First (Return on Investment)
+
+Not every pattern pays off equally. Learn the high-return ones first; they show up in the most interview problems and are easier to pick up. The ratings are a study-priority guide, not a rule.
+
+| Topic | Difficulty to learn | Return on investment |
+|-------|---------------------|----------------------|
+| [Two Pointers](#2-two-pointers) | Easy | High |
+| [Sliding Window](#1-sliding-window) | Easy | High |
+| [Breadth-First Search](#6-bfs) | Easy | High |
+| [Depth-First Search](#9-dfs-depth-first-search) | Medium | High |
+| [Backtracking](#7-backtracking) | High | High |
+| [Heap](#4-heap--top-k) | Medium | Medium |
+| [Binary Search](#3-binary-search) | Easy | Medium |
+| [Dynamic Programming](#10-dynamic-programming) | High | Medium |
+| [Divide and Conquer](#11-divide-and-conquer) | Medium | Low |
+| Trie ([topic 13](#topic-13)) | Medium | Low |
+| Union-Find ([topic 09](#topic-09)) | Medium | Low |
+| Greedy ([topic 12](#topic-12)) | High | Low |
+
+Suggested order: Two Pointers → Sliding Window → BFS → DFS → Backtracking → Heap → Binary Search → Dynamic Programming, then the low-return topics as time allows. Also worth knowing from this repository: monotonic stack, merge intervals, prefix sum + `HashMap`, topological sort, Dijkstra and bit manipulation (see the clue table below and the [revision notes](./NOTES.md)).
 
 ### More Clues and Examples in This Repo
 
@@ -1113,6 +1140,156 @@ static int[][] merge(int[][] intervals) {
 - Already sorted input (Insert Interval) needs no sort: add the intervals before, merge the overlapping ones, add the rest.
 
 **Practice.** [Merge Intervals](./md_files/interval/MergeIntervals.md), [Insert Interval](./md_files/interval/InsertInterval.md), [Meeting Rooms](./md_files/interval/MeetingRooms.md), [Meeting Rooms II](./md_files/interval/MeetingRoomsII.md), [Non-overlapping Intervals](./md_files/interval/NonOverlappingIntervals.md), [Minimum Number of Arrows to Burst Balloons](./md_files/interval/MinimumNumberOfArrowsToBurstBalloons.md), [Interval List Intersections](./md_files/interval/IntervalListIntersections.md), [Employee Free Time](./md_files/interval/EmployeeFreeTime.md).
+
+#### 9. DFS (Depth-First Search)
+
+**Signal.** "Number of islands / components", "does a path exist", "all root-to-leaf paths", tree questions (depth, diameter, validate a BST), cycle detection, flood fill, anything where you must explore one branch completely before the next.
+
+**Idea.** Go as deep as possible, then back up. Recursion uses the call stack; an explicit `ArrayDeque` stack avoids stack overflow on very deep input. Mark nodes **visited when you enter them**, and decide per problem what the function returns: a boolean (found?), a number (height, count), or nothing (it mutates a result). On trees there is no visited set, because each node has one parent.
+
+- **Grid flood fill**: visit a cell, mark it, recurse to the four neighbours.
+- **Tree recursion**: answer from the children, pass context down as parameters.
+- **Directed cycle detection**: three states per node (0 unvisited, 1 in progress, 2 done); reaching a state-1 node means a cycle.
+
+```java
+// Number of islands: start a DFS at every unvisited land cell and sink what it reaches
+static int numIslands(char[][] g) {
+    if (g == null || g.length == 0 || g[0].length == 0) return 0;
+    int count = 0;
+    for (int r = 0; r < g.length; r++)
+        for (int c = 0; c < g[0].length; c++)
+            if (g[r][c] == '1') { count++; sink(g, r, c); }
+    return count;
+}
+private static void sink(char[][] g, int r, int c) {
+    if (r < 0 || c < 0 || r >= g.length || c >= g[0].length || g[r][c] != '1') return;
+    g[r][c] = '0';                                   // mark visited (mutates the input)
+    sink(g, r + 1, c); sink(g, r - 1, c); sink(g, r, c + 1); sink(g, r, c - 1);
+}
+
+// Tree: does a root-to-leaf path add up to target?
+static boolean hasPathSum(TreeNode n, int target) {
+    if (n == null) return false;
+    if (n.left == null && n.right == null) return n.val == target;     // leaf
+    return hasPathSum(n.left, target - n.val) || hasPathSum(n.right, target - n.val);
+}
+
+// Directed graph: can all courses be finished (no cycle)?
+static boolean canFinish(int n, int[][] pre) {
+    List<List<Integer>> g = new ArrayList<>();
+    for (int i = 0; i < n; i++) g.add(new ArrayList<>());
+    if (pre != null) for (int[] p : pre) g.get(p[1]).add(p[0]);
+    int[] state = new int[n];
+    for (int i = 0; i < n; i++) if (hasCycle(g, state, i)) return false;
+    return true;
+}
+private static boolean hasCycle(List<List<Integer>> g, int[] st, int u) {
+    if (st[u] == 1) return true;                     // back edge: a cycle
+    if (st[u] == 2) return false;                    // already fully explored
+    st[u] = 1;
+    for (int v : g.get(u)) if (hasCycle(g, st, v)) return true;
+    st[u] = 2;
+    return false;
+}
+```
+
+**Cost.** O(V + E) time (a grid has V = rows × cols); O(depth) stack, up to O(V) in the worst case.
+
+**Traps.**
+- Forgetting the visited mark gives infinite recursion on graphs with cycles.
+- Check bounds before reading `grid[r][c]`.
+- Recursion deeper than about 10⁴ frames can overflow; use an explicit stack.
+- In an undirected graph, pass the parent so the edge you came along is not reported as a cycle.
+- Mutating the input as a visited marker is only fine if the caller allows it; otherwise use a `boolean[][]`.
+- DFS does **not** give shortest paths in an unweighted graph; use BFS.
+
+**DFS or BFS?** Reachability, components, paths and tree recursion: DFS (shorter code). Fewest steps or level order: BFS.
+
+**Practice.** [Number of Islands](./md_files/graph/NumberOfIslands.md), [Max Area of Island](./md_files/graph/MaxAreaOfIsland.md), [Flood Fill](./md_files/graph/FloodFill.md), [Pacific Atlantic Water Flow](./md_files/graph/PacificAtlanticWaterFlow.md), [Clone Graph](./md_files/graph/CloneGraph.md), [Course Schedule](./md_files/graph/CourseSchedule.md), [Keys and Rooms](./md_files/graph/KeysAndRooms.md), [Maximum Depth of Binary Tree](./md_files/tree/MaximumDepthOfBinaryTree.md), [Path Sum II](./md_files/tree/PathSumII.md), [Graph Traversals](./md_files/graph/GraphTraversals.md).
+
+#### 10. Dynamic Programming
+
+**Signal.** "Count the number of ways", "minimum or maximum cost", "is it possible", "longest / shortest ...", where the choices repeat the same sub-situations (a brute-force recursion that recomputes the same arguments).
+
+**Idea.** Define a **state**, write the **transition** from smaller states, set the **base case**, and decide the **order** (or memoize). Two equivalent styles:
+
+- **Top-down**: write the recursion, add a cache keyed by every changing argument. Easier to derive; only computes reachable states.
+- **Bottom-up**: fill a table from the base case upward. No recursion depth problem; lets you shrink space by keeping only the last row or a few variables.
+
+Recognizing the family (1D linear, knapsack, two sequences, grid, interval, state machine) tells you the shape of the table. The [revision notes](./NOTES.md#10-dynamic-programming) list each family.
+
+```java
+// Top-down: climbing stairs with a memo array (call as climb(n, new int[n + 1]))
+static int climb(int n, int[] memo) {
+    if (n <= 1) return 1;
+    if (memo[n] != 0) return memo[n];
+    return memo[n] = climb(n - 1, memo) + climb(n - 2, memo);
+}
+
+// Bottom-up with O(1) space: house robber, best sum with no two adjacent houses
+static int rob(int[] a) {
+    if (a == null) return 0;
+    int take = 0, skip = 0;                          // best total ending with / without the current house
+    for (int x : a) {
+        int newTake = skip + x;
+        skip = Math.max(skip, take);
+        take = newTake;
+    }
+    return Math.max(take, skip);
+}
+
+// Two-sequence DP: longest common subsequence (dp[i][j] over the first i and j characters)
+static int lcs(String a, String b) {
+    if (a == null || b == null) return 0;
+    int[][] dp = new int[a.length() + 1][b.length() + 1];
+    for (int i = 1; i <= a.length(); i++)
+        for (int j = 1; j <= b.length(); j++)
+            dp[i][j] = a.charAt(i - 1) == b.charAt(j - 1)
+                    ? dp[i - 1][j - 1] + 1
+                    : Math.max(dp[i - 1][j], dp[i][j - 1]);
+    return dp[a.length()][b.length()];
+}
+```
+
+**Cost.** Number of states × work per transition, for example O(n·m) for LCS. Space can usually drop by one dimension.
+
+**Traps.**
+- Wrong state: if two different situations share one `dp` cell, the answer is wrong. Add a dimension.
+- Off-by-one between table size and string indices (use `n + 1`).
+- Infinity: `Integer.MAX_VALUE + 1` overflows; use a large sentinel such as `amount + 1`.
+- Loop direction in knapsack: 0/1 goes downward over capacity, unbounded goes upward.
+- A memo keyed on too few arguments silently returns wrong values.
+- If a greedy choice is provably safe, DP is unnecessary; if you must list all solutions, use backtracking.
+
+**Practice.** [Climbing Stairs](./md_files/dp/ClimbingStairs.md), [House Robber](./md_files/dp/HouseRobber.md), [Coin Change](./md_files/dp/CoinChange.md), [Longest Increasing Subsequence](./md_files/dp/LongestIncreasingSubsequence.md), [Unique Paths](./md_files/dp/UniquePaths.md), [Word Break](./md_files/dp/WordBreak.md), [Longest Common Subsequence](./md_files/dp/LongestCommonSubsequence.md), [Edit Distance](./md_files/dp/EditDistance.md), [Partition Equal Subset Sum](./md_files/dp/PartitionEqualSubsetSum.md), [Burst Balloons](./md_files/dp/BurstBalloons.md).
+
+#### 11. Divide and Conquer
+
+**Signal.** The problem splits into independent halves of the same shape (sort, count inversions, closest pair, build a tree from a traversal, search a matrix, merge K lists), or "find the K-th element without sorting everything".
+
+**Idea.** **Divide** the input, **conquer** each part recursively, **combine** the results. Work per level times the number of levels gives the cost: halving with a linear combine is O(n log n) (merge sort); halving and keeping only one side is O(log n) (binary search) or O(n) on average (quickselect). Unlike DP the subproblems do not overlap, so no cache is needed.
+
+```java
+// Merge sort on [lo, hi): split, sort both halves, merge through a temp array
+static void mergeSort(int[] a, int lo, int hi, int[] tmp) {
+    if (a == null || hi - lo < 2) return;
+    int mid = lo + (hi - lo) / 2;
+    mergeSort(a, lo, mid, tmp);
+    mergeSort(a, mid, hi, tmp);
+    int i = lo, j = mid, k = lo;
+    while (i < mid && j < hi) tmp[k++] = a[i] <= a[j] ? a[i++] : a[j++];   // <= keeps it stable
+    while (i < mid) tmp[k++] = a[i++];
+    while (j < hi) tmp[k++] = a[j++];
+    System.arraycopy(tmp, lo, a, lo, hi - lo);
+}
+// call: mergeSort(a, 0, a.length, new int[a.length]);
+```
+
+**Cost.** Merge sort O(n log n) time, O(n) space. Quick sort averages O(n log n) but is O(n²) on bad pivots. Recurrence: T(n) = 2T(n/2) + O(n) gives O(n log n).
+
+**Traps.** Allocate the temp array once, not per call; use half-open ranges consistently; make the combine step linear, otherwise the log factor is lost; if the halves overlap and repeat work, it is really DP.
+
+**Practice.** [Merge Sort](./md_files/sort/MergeSort.md), [Quick Sort](./md_files/sort/QuickSort.md), [Kth Largest Element in an Array](./md_files/heap/KthLargestElementInAnArray.md), [Median of Two Sorted Arrays](./md_files/search/MedianOfTwoSortedArrays.md), [Construct Tree from Preorder and Inorder](./md_files/tree/ConstructBinaryTreeFromPreorderInorder.md), [Longest Substring with At Least K Repeating Characters](./md_files/string/LongestSubstringWithAtLeastKRepeatingCharacters.md).
 
 #### Choosing Between Look-Alike Patterns
 

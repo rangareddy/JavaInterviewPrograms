@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 900" width="1280" height="900" font-family="-apple-system,Segoe UI,Helvetica,Arial,sans-serif">
+<title>Eight core interview patterns, visualised</title>
+<rect width="1280" height="900" fill="#0B1020"/>
+<circle cx="100" cy="90" r="22" fill="#F8FAFC"/>
+<circle cx="160" cy="90" r="22" fill="#F8FAFC"/>
+<circle cx="220" cy="90" r="22" fill="#F8FAFC"/>
+<circle cx="280" cy="90" r="22" fill="#F8FAFC"/>
+<circle cx="340" cy="90" r="22" fill="#F8FAFC"/>
+<polygon points="84,38 116,38 100,64" fill="#22C55E"/>
+<polygon points="324,38 356,38 340,64" fill="#EF4444"/>
+<text x="220" y="200" text-anchor="middle" font-size="30" font-weight="700" fill="#fff">Two Pointers</text>
+<circle cx="520" cy="90" r="22" fill="#F8FAFC"/>
+<circle cx="580" cy="90" r="22" fill="#F8FAFC"/>
+<circle cx="640" cy="90" r="22" fill="#F8FAFC"/>
+<circle cx="700" cy="90" r="22" fill="#F8FAFC"/>
+<circle cx="760" cy="90" r="22" fill="#F8FAFC"/>
+<rect x="490" y="60" width="180" height="60" rx="10" fill="none" stroke="#4DA8FF" stroke-width="4"/>
+<text x="640" y="200" text-anchor="middle" font-size="30" font-weight="700" fill="#fff">Sliding Window</text>
+<circle cx="940" cy="90" r="22" fill="#9CA3AF"/>
+<circle cx="1000" cy="90" r="22" fill="#9CA3AF"/>
+<circle cx="1060" cy="90" r="22" fill="#F8FAFC"/>
+<circle cx="1120" cy="90" r="22" fill="#F8FAFC"/>
+<circle cx="1180" cy="90" r="22" fill="#F8FAFC"/>
+<polygon points="1044,38 1076,38 1060,64" fill="#4DA8FF"/>
+<line x1="918" y1="106" x2="962" y2="74" stroke="#EF4444" stroke-width="5" stroke-linecap="round"/>
+<line x1="978" y1="106" x2="1022" y2="74" stroke="#EF4444" stroke-width="5" stroke-linecap="round"/>
+<text x="1060" y="200" text-anchor="middle" font-size="30" font-weight="700" fill="#fff">Binary Search</text>
+<line x1="220" y1="300" x2="155" y2="380" stroke="#4DA8FF" stroke-width="4" stroke-linecap="round"/>
+<line x1="220" y1="300" x2="285" y2="380" stroke="#4DA8FF" stroke-width="4" stroke-linecap="round"/>
+<line x1="155" y1="380" x2="115" y2="465" stroke="#F8FAFC" stroke-width="4" stroke-linecap="round"/>
+<line x1="155" y1="380" x2="190" y2="465" stroke="#F8FAFC" stroke-width="4" stroke-linecap="round"/>
+<line x1="285" y1="380" x2="250" y2="465" stroke="#F8FAFC" stroke-width="4" stroke-linecap="round"/>
+<line x1="285" y1="380" x2="325" y2="465" stroke="#F8FAFC" stroke-width="4" stroke-linecap="round"/>
+<circle cx="220" cy="300" r="24" fill="#4DA8FF"/>
+<circle cx="155" cy="380" r="24" fill="#4DA8FF"/>
+<circle cx="285" cy="380" r="24" fill="#4DA8FF"/>
+<circle cx="115" cy="465" r="24" fill="#F8FAFC"/>
+<circle cx="190" cy="465" r="24" fill="#F8FAFC"/>
+<circle cx="250" cy="465" r="24" fill="#F8FAFC"/>
+<circle cx="325" cy="465" r="24" fill="#F8FAFC"/>
+<text x="220" y="545" text-anchor="middle" font-size="30" font-weight="700" fill="#fff">Breadth-First Search</text>
+<line x1="640" y1="300" x2="575" y2="380" stroke="#4DA8FF" stroke-width="4" stroke-linecap="round"/>
+<line x1="640" y1="300" x2="705" y2="380" stroke="#F8FAFC" stroke-width="4" stroke-linecap="round"/>
+<line x1="575" y1="380" x2="535" y2="465" stroke="#4DA8FF" stroke-width="4" stroke-linecap="round"/>
+<line x1="575" y1="380" x2="610" y2="465" stroke="#4DA8FF" stroke-width="4" stroke-linecap="round"/>
+<line x1="705" y1="380" x2="670" y2="465" stroke="#F8FAFC" stroke-width="4" stroke-linecap="round"/>
+<line x1="705" y1="380" x2="745" y2="465" stroke="#F8FAFC" stroke-width="4" stroke-linecap="round"/>
+<circle cx="640" cy="300" r="24" fill="#4DA8FF"/>
+<circle cx="575" cy="380" r="24" fill="#4DA8FF"/>
+<circle cx="705" cy="380" r="24" fill="#F8FAFC"/>
+<circle cx="535" cy="465" r="24" fill="#4DA8FF"/>
+<circle cx="610" cy="465" r="24" fill="#4DA8FF"/>
+<circle cx="670" cy="465" r="24" fill="#F8FAFC"/>
+<circle cx="745" cy="465" r="24" fill="#F8FAFC"/>
+<defs><marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#EF4444"/></marker></defs>
+<line x1="549" y1="451" x2="569" y2="396" stroke="#EF4444" stroke-width="4" marker-end="url(#ah)"/>
+<line x1="579" y1="398" x2="604" y2="447" stroke="#EF4444" stroke-width="4" marker-end="url(#ah)"/>
+<text x="640" y="545" text-anchor="middle" font-size="30" font-weight="700" fill="#fff">Backtracking</text>
+<circle cx="910" cy="330" r="19" fill="#4DA8FF"/>
+<circle cx="960" cy="330" r="19" fill="#4DA8FF"/>
+<circle cx="1010" cy="330" r="19" fill="#4DA8FF"/>
+<circle cx="1060" cy="330" r="19" fill="#F8FAFC"/>
+<circle cx="1110" cy="330" r="19" fill="#F8FAFC"/>
+<circle cx="1160" cy="330" r="19" fill="#F8FAFC"/>
+<circle cx="1210" cy="330" r="19" fill="#F8FAFC"/>
+<circle cx="910" cy="382" r="19" fill="#F8FAFC"/>
+<circle cx="960" cy="382" r="19" fill="#F8FAFC"/>
+<circle cx="1010" cy="382" r="19" fill="#4DA8FF"/>
+<circle cx="1060" cy="382" r="19" fill="#4DA8FF"/>
+<circle cx="1110" cy="382" r="19" fill="#4DA8FF"/>
+<circle cx="1160" cy="382" r="19" fill="#F8FAFC"/>
+<circle cx="1210" cy="382" r="19" fill="#F8FAFC"/>
+<circle cx="910" cy="434" r="19" fill="#F8FAFC"/>
+<circle cx="960" cy="434" r="19" fill="#F8FAFC"/>
+<circle cx="1010" cy="434" r="19" fill="#F8FAFC"/>
+<circle cx="1060" cy="434" r="19" fill="#F8FAFC"/>
+<circle cx="1110" cy="434" r="19" fill="#4DA8FF"/>
+<circle cx="1160" cy="434" r="19" fill="#4DA8FF"/>
+<circle cx="1210" cy="434" r="19" fill="#4DA8FF"/>
+<text x="1060" y="545" text-anchor="middle" font-size="30" font-weight="700" fill="#fff">Dynamic Programming</text>
+<line x1="430" y1="600" x2="365" y2="680" stroke="#4DA8FF" stroke-width="4" stroke-linecap="round"/>
+<line x1="430" y1="600" x2="495" y2="680" stroke="#F8FAFC" stroke-width="4" stroke-linecap="round"/>
+<line x1="365" y1="680" x2="325" y2="765" stroke="#4DA8FF" stroke-width="4" stroke-linecap="round"/>
+<line x1="365" y1="680" x2="400" y2="765" stroke="#F8FAFC" stroke-width="4" stroke-linecap="round"/>
+<line x1="495" y1="680" x2="460" y2="765" stroke="#F8FAFC" stroke-width="4" stroke-linecap="round"/>
+<line x1="495" y1="680" x2="535" y2="765" stroke="#F8FAFC" stroke-width="4" stroke-linecap="round"/>
+<circle cx="430" cy="600" r="24" fill="#4DA8FF"/>
+<circle cx="365" cy="680" r="24" fill="#4DA8FF"/>
+<circle cx="495" cy="680" r="24" fill="#F8FAFC"/>
+<circle cx="325" cy="765" r="24" fill="#4DA8FF"/>
+<circle cx="400" cy="765" r="24" fill="#F8FAFC"/>
+<circle cx="460" cy="765" r="24" fill="#F8FAFC"/>
+<circle cx="535" cy="765" r="24" fill="#F8FAFC"/>
+<text x="430" y="845" text-anchor="middle" font-size="30" font-weight="700" fill="#fff">Depth-First Search</text>
+<line x1="860" y1="600" x2="795" y2="680" stroke="#F8FAFC" stroke-width="4" stroke-linecap="round"/>
+<line x1="860" y1="600" x2="925" y2="680" stroke="#F8FAFC" stroke-width="4" stroke-linecap="round"/>
+<line x1="795" y1="680" x2="755" y2="765" stroke="#F8FAFC" stroke-width="4" stroke-linecap="round"/>
+<line x1="795" y1="680" x2="830" y2="765" stroke="#F8FAFC" stroke-width="4" stroke-linecap="round"/>
+<line x1="925" y1="680" x2="890" y2="765" stroke="#F8FAFC" stroke-width="4" stroke-linecap="round"/>
+<line x1="925" y1="680" x2="965" y2="765" stroke="#F8FAFC" stroke-width="4" stroke-linecap="round"/>
+<circle cx="860" cy="600" r="26" fill="#F8FAFC"/>
+<text x="860" y="607" text-anchor="middle" font-size="20" font-weight="700" fill="#0B1020">2</text>
+<circle cx="795" cy="680" r="26" fill="#F8FAFC"/>
+<text x="795" y="687" text-anchor="middle" font-size="20" font-weight="700" fill="#0B1020">7</text>
+<circle cx="925" cy="680" r="26" fill="#F8FAFC"/>
+<text x="925" y="687" text-anchor="middle" font-size="20" font-weight="700" fill="#0B1020">4</text>
+<circle cx="755" cy="765" r="26" fill="#F8FAFC"/>
+<text x="755" y="772" text-anchor="middle" font-size="20" font-weight="700" fill="#0B1020">9</text>
+<circle cx="830" cy="765" r="26" fill="#F8FAFC"/>
+<text x="830" y="772" text-anchor="middle" font-size="20" font-weight="700" fill="#0B1020">13</text>
+<circle cx="890" cy="765" r="26" fill="#F8FAFC"/>
+<text x="890" y="772" text-anchor="middle" font-size="20" font-weight="700" fill="#0B1020">5</text>
+<circle cx="965" cy="765" r="26" fill="#F8FAFC"/>
+<text x="965" y="772" text-anchor="middle" font-size="20" font-weight="700" fill="#0B1020">6</text>
+<text x="860" y="845" text-anchor="middle" font-size="30" font-weight="700" fill="#fff">Priority Queue (Top K)</text>
+</svg>
