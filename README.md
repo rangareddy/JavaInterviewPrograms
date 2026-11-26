@@ -1165,6 +1165,7 @@ For each problem: read the statement, try it on your own for 20 to 30 minutes, t
 JavaInterviewPrograms/
 ├── pom.xml                      # Java 8 build, no dependencies
 ├── README.md                    # this index
+├── NOTES.md                     # condensed revision notes
 ├── images/                      # banner and topic icons
 ├── src/main/java/com/ranga/
 │   ├── array/  string/  matrix/ # one package per topic area
