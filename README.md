@@ -750,16 +750,20 @@ Most interview problems are one of a handful of patterns in disguise. Spot the s
 
 ### Quick Pattern Cheat Sheet
 
-| Problem Clue | Likely Pattern | Core Java Data Structure |
-|--------------|----------------|--------------------------|
-| Contiguous subarray / substring + max/min/longest | [Sliding Window](#1-sliding-window) | `HashMap` / `HashSet` / `int[]` |
-| Sorted array + target pair or triplet | [Two Pointers](#2-two-pointers) | Primitive indices (`left`, `right`) |
-| Sorted / rotated array, or "minimize the maximum" | [Binary Search](#3-binary-search) | Primitive indices (`low`, `high`) |
-| "Top K", "Kth largest/smallest", "K closest" | [Heap](#4-heap--top-k) | `PriorityQueue` |
-| "Next greater/smaller element" | [Monotonic Stack](#5-monotonic-stack) | `ArrayDeque` |
-| Shortest path (unweighted) or level-by-level | [BFS](#6-bfs) | `LinkedList` / `ArrayDeque` (as `Queue`) |
-| All combinations / permutations / subsets | [Backtracking](#7-backtracking) | Recursion + `ArrayList` |
-| Overlapping intervals / meeting rooms | [Merge Intervals](#8-merge-intervals) | `Arrays.sort()` + `ArrayList` |
+![8 interview patterns with clues, Java data structures and complexity](./images/interview-patterns.svg)
+
+| Problem Clue | Likely Pattern | Core Java Data Structure | Time |
+|--------------|----------------|--------------------------|------|
+| Contiguous subarray / substring + max/min/longest | [Sliding Window](#1-sliding-window) | `HashMap` / `HashSet` / `int[]` | O(n) |
+| Sorted array + target pair or triplet | [Two Pointers](#2-two-pointers) | Primitive indices (`left`, `right`) | O(n), triplets O(n²) |
+| Sorted / rotated array, or "minimize the maximum" | [Binary Search](#3-binary-search) | Primitive indices (`low`, `high`) | O(log n) |
+| "Top K", "Kth largest/smallest", "K closest" | [Heap](#4-heap--top-k) | `PriorityQueue` | O(n log k) |
+| "Next greater/smaller element" | [Monotonic Stack](#5-monotonic-stack) | `ArrayDeque` | O(n) |
+| Shortest path (unweighted) or level-by-level | [BFS](#6-bfs) | `LinkedList` / `ArrayDeque` (as `Queue`) | O(V + E) |
+| All combinations / permutations / subsets | [Backtracking](#7-backtracking) | Recursion + `ArrayList` | O(n · 2ⁿ), O(n · n!) |
+| Overlapping intervals / meeting rooms | [Merge Intervals](#8-merge-intervals) | `Arrays.sort()` + `ArrayList` | O(n log n) |
+
+**Beyond the eight.** These patterns come up just as often and have their own pages and notes: prefix sum + `HashMap` (subarray sums, negatives allowed), DFS and Union-Find (components, cycles), topological sort (dependencies), Dijkstra (weighted shortest path), dynamic programming (counting and optimizing over overlapping subproblems), greedy (a locally best choice is provably safe), trie (prefix search) and bit manipulation (XOR, masks). See the table below and the [revision notes](./NOTES.md).
 
 ### More Clues and Examples in This Repo
 
@@ -1161,6 +1165,7 @@ For each problem: read the statement, try it on your own for 20 to 30 minutes, t
 JavaInterviewPrograms/
 ├── pom.xml                      # Java 8 build, no dependencies
 ├── README.md                    # this index
+├── NOTES.md                     # condensed revision notes
 ├── images/                      # banner and topic icons
 ├── src/main/java/com/ranga/
 │   ├── array/  string/  matrix/ # one package per topic area
