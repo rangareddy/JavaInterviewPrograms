@@ -63,6 +63,8 @@ Algorithms: BFS and DFS O(V + E); Dijkstra O((V + E) log V); topological sort O(
 
 ## 3. Clue → pattern
 
+![8 interview patterns with clues, Java data structures and complexity](./images/interview-patterns.svg)
+
 | Clue in the statement | Pattern | Data structure |
 |-----------------------|---------|----------------|
 | Contiguous subarray or substring with max, min or longest | Sliding window | `HashMap`, `HashSet`, `int[]` |
