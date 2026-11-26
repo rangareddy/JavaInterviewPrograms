@@ -85,6 +85,26 @@ Algorithms: BFS and DFS O(V + E); Dijkstra O((V + E) log V); topological sort O(
 | Cache, O(1) operations on a collection | `HashMap` + linked list or array | `LinkedHashMap` |
 | Single or missing number, parity, powers of two | Bit manipulation | `int` / `long` |
 
+![Eight core patterns visualised](./images/interview-pattern-visuals.svg)
+
+**What to learn first (difficulty to learn / return on investment).**
+
+| Order | Topic | Difficulty | Return |
+|-------|-------|------------|--------|
+| 1 | Two Pointers | Easy | High |
+| 2 | Sliding Window | Easy | High |
+| 3 | BFS | Easy | High |
+| 4 | DFS | Medium | High |
+| 5 | Backtracking | High | High |
+| 6 | Heap | Medium | Medium |
+| 7 | Binary Search | Easy | Medium |
+| 8 | Dynamic Programming | High | Medium |
+| 9 | Divide and Conquer | Medium | Low |
+| 10 | Trie, Union-Find | Medium | Low |
+| 11 | Greedy | High | Low |
+
+Divide and conquer: split into independent halves, solve, combine (merge sort, quickselect, build a tree from traversals); T(n) = 2T(n/2) + O(n) is O(n log n). If the halves overlap and repeat work, it is DP. DFS: explore one branch fully, mark visited on entry, three states for directed cycles; templates in the [README](./README.md#9-dfs-depth-first-search).
+
 Look-alike pairs: sliding window needs a monotonic condition (non-negatives or distinct counts), else prefix sums. BFS for fewest steps, DFS for all paths and components. Greedy needs an exchange argument, otherwise DP. Backtracking lists every answer, DP only counts or optimizes.
 
 Longer write-ups with templates: [Pattern Cheat Sheet in the README](./README.md#pattern-cheat-sheet-).
